@@ -1,31 +1,6 @@
-<!doctype html>
-<html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Credit memo cases</title>{% include 'browser_style.html.j2' %}</head>
-<body>
-<header><span class="badge">Local proof of concept</span><h1>Credit memo cases</h1>
-<p class="subtle">Inspect source evidence, calculated metrics, exceptions, and saved memos.</p>
-<p class="notice">The bundled Delta example uses synthetic data. The offline runner uses a fake AI backend, so generated analysis is empty. Drafts require human approval.</p>
-<p class="subtle">NVDA_2026, when loaded, uses the supplied real NVIDIA filing. Its workbench includes SEC contexts, dimensions, presentation sections and candidate passages.</p>
-<div class="actions"><a href="/inspect">Upload files and preview parsed evidence</a><a href="/run">Run BO and FO together</a><a href="/bo">Business Overview runs</a><a href="/fo">Financial Overview runs</a><a href="/pipeline">Pipeline Explorer</a><a href="/docs">API explorer</a><a href="/health">Service health</a></div>
-<p><strong>Default test case:</strong> <a href="{{ '/inspect/' ~ default_case_id ~ '/1' if default_preview_ready else '/inspect' }}">Delta FY2025 PDF evidence preview</a>. <a href="/inspect">Prepare or rerun the three supplied Delta PDFs</a>.</p>
-</header>
-<main><section><h2>Saved cases</h2>
-{% if cases %}
-<div class="table-wrap"><table><thead><tr><th>Case</th><th>As of</th><th>Status</th><th>Version</th><th>Open</th></tr></thead><tbody>
-{% for case in cases %}<tr><td>{{ case.case_id }}</td><td>{{ case.as_of_date or 'not set' }}</td><td>{{ case.status }}</td><td>{{ case.version or 'none' }}</td><td>
-{% if case.preview_version %}<a href="/inspect/{{ case.case_id }}/{{ case.preview_version }}">Parsed evidence</a> · {% endif %}
-<a href="{{ request.url_for('get_workbench_html', case_id=case.case_id) }}{% if case.version %}?snapshot_version={{ case.version }}{% endif %}">Workbench</a>
-{% if case.version %} · <a href="{{ request.url_for('get_memo_html', case_id=case.case_id) }}?snapshot_version={{ case.version }}">Memo</a> · <a href="{{ request.url_for('get_memo_json', case_id=case.case_id) }}?snapshot_version={{ case.version }}">JSON</a>{% endif %}
-{% if case.has_bo_run %} · <a href="/cases/{{ case.case_id }}/bo.html">Business Overview</a>{% endif %}
-</td></tr>{% endfor %}
-</tbody></table></div>
-{% else %}<p>No cases yet. Run the bundled source package using the CLI to create a draft.</p>{% endif %}
-<p class="subtle">File uploads can now stop at parsed evidence review before the LLM stage. Resolving exceptions, approval and finalization currently use the CLI or services.</p>
-</section></main>
-<section><h2>Try the three examples</h2>
-<ul><li><strong>SYNTHETIC_2024:</strong> inspect calculated metrics, evidence quality, and the draft memo.</li>
-<li><strong>SYNTHETIC_MISSING:</strong> check that unavailable financial inputs leave results unavailable and raise exceptions.</li>
-<li><strong>SYNTHETIC_CONFLICT:</strong> inspect disagreeing revenue observations and the mandatory conflict exception.</li></ul>
-<p>Open each workbench, use the section links, and expand the data panels to trace results back to their evidence.</p>
-</section>
-</body></html>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Credit Analysis Workspace</title>{% include 'workspace_style.html.j2' %}</head><body>
+<header class="workspace-header"><span class="eyebrow">Credit analysis</span><h1>Credit Analysis Workspace</h1><p>Evidence-led analysis, from company setup to a credit memo ready for review.</p></header>
+<main><nav class="workspace-cards" aria-label="Primary navigation">
+<a class="workspace-card" href="/analysis/new"><span class="card-icon"><svg aria-hidden="true" focusable="false" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M12 12v6M9 15h6"/></svg></span><span class="card-arrow" aria-hidden="true">↗</span><h2>New Analysis</h2><p>Select a hospital company, choose your analysis settings and prepare the evidence.</p></a>
+<a class="workspace-card" href="/credit-memos"><span class="card-icon"><svg aria-hidden="true" focusable="false" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 3h10a2 2 0 0 1 2 2v13M16 7H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2Z"/><path d="M8 12h6M8 16h6"/></svg></span><span class="card-arrow" aria-hidden="true">↗</span><h2>Credit Memos</h2><p>A dedicated space for your credit memos and analysis history.</p></a>
+</nav></main><footer class="workspace-footer">Credit analysis workspace · Drafts require review before use.</footer></body></html>

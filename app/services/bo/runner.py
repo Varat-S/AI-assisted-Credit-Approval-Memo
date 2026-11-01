@@ -242,6 +242,7 @@ class BusinessOverviewRunner:
         m3_review_corrections=None,
         check_stop=None,
         on_work=None,
+        on_stage=None,
         enforce_validators: bool = True,
     ) -> None:
         settings = get_settings()
@@ -258,6 +259,7 @@ class BusinessOverviewRunner:
         # agent's model call or one deterministic step; the plan grows when a
         # follow-up, repair or remediation stage is added.
         self.on_work = on_work or (lambda done, total: None)
+        self.on_stage = on_stage or (lambda name, status, detail=None: None)
         # Sector profile: "auto" detects it from the admitted evidence, None
         # disables it, or pass a SectorProfile. ``coverage_checks`` are extra
         # case-specific coverage tests supplied with the case.
@@ -358,8 +360,10 @@ class BusinessOverviewRunner:
         from app.services.bo.evaluation import evaluate_run
         from app.services.bo.reporting import BoReportBuilder
 
+        self.on_stage("memo_preparation", "running")
         result = BoReportBuilder(self.session, output_root=self.output_root).finish(
             run, write_outputs=write_outputs, produce_pdf=produce_pdf)
+        self.on_stage("memo_preparation", "completed")
         run.work(1)
         if manifest is not None:
             result.evaluation = evaluate_run(
@@ -555,16 +559,16 @@ class _BoRun:
     def execute(self) -> None:
         self._plan_work(orchestrated=True)
         self._open_run()
-        self._foundation()
+        self._observed("foundation", self._foundation)
         self._stage("primary_specialists", set(self.primary_agent_ids))
         self._follow_up_retrieval()
         self._coverage_follow_up()
         self._resilience_stage("resilience")
         if self.enable_m4_debt:
-            self._module4_debt_phase()
+            self._observed("debt_specialist_and_validation", self._module4_debt_phase)
         if self.roster_version == "v3":
             self._build_module_conclusions()
-        self._reconcile()
+        self._observed("reconciliation", self._reconcile)
         self._stage("orchestrator", {BO_ORCHESTRATOR_ID})
         if (self.conclusion is None
                 and self.agents[BO_ORCHESTRATOR_ID].status == "rejected"):
@@ -581,6 +585,32 @@ class _BoRun:
             self.orchestrator_validation_feedback = []
         self._challenge_phase()
         self._finalize()
+
+    def _observed(self, name, operation):
+        self.runner.on_stage(name, "running")
+        try:
+            result = operation()
+        except Exception as exc:
+            self.runner.on_stage(name, "failed", str(exc))
+            raise
+        detail = None
+        status = "completed"
+        if name in {"foundation", "management_analysis_and_validator7"} and self.rebuild_block:
+            detail = {"module3": {kind: {key: value.get(key) for key in ("status", "validation_status", "error")}
+                       for kind, value in (self.rebuild_block.get("m3_rebuild") or {}).items()}}
+            if name == "management_analysis_and_validator7":
+                management = detail["module3"].get("management", {})
+                if management.get("status") in {"failed", "error", "rejected"} or management.get("validation_status") in {"failed", "rejected", "invalid"}:
+                    status = "failed"
+                elif management.get("status") in {"not_attempted", "unavailable"}:
+                    status = "skipped"
+        if name == "debt_specialist_and_validation" and self.m4_debt_result:
+            debt = self.m4_debt_result
+            detail = {"status": debt.status, "validated": debt.validated,
+                      "reason": debt.reason, "validator_issues": debt.validator_issues}
+            status = "failed" if debt.status in {"failed", "rejected", "error"} else "skipped" if debt.status == "unavailable" else "completed"
+        self.runner.on_stage(name, status, detail)
+        return result
 
     # Stages counted in the work plan up front; any other stage adds its agents when it starts.
     PLANNED_STAGES = frozenset({"primary_specialists", "resilience", "orchestrator", "challenger"})
@@ -683,7 +713,8 @@ class _BoRun:
         self.work(1)
         if self.roster_version == "v3":
             self.runner.check_stop("the Module 3 management assessment")
-            self._build_m3_packet(router, router_inputs)
+            self._observed("management_analysis_and_validator7",
+                           lambda: self._build_m3_packet(router, router_inputs))
             self.work(self._m3_units())
 
     def _build_m3_packet(self, router, router_inputs) -> None:
@@ -875,6 +906,7 @@ class _BoRun:
 
     def _stage(self, name: str, only: set[str], *, force: bool = False) -> None:
         self.runner.check_stop(name.replace("_", " "))
+        self.runner.on_stage(name, "running")
         start = self.work_done
         self.work(extra=0 if name in self.PLANNED_STAGES else len(only))
         executor = DagExecutor(
@@ -903,6 +935,13 @@ class _BoRun:
             "peak_concurrency": executor.peak_concurrency,
             "cache_hits": executor.cache_hits,
         })
+        outcomes = {key: {"status": self.agents[key].status,
+                          "detail": self.agents[key].detail,
+                          "issues": list(self.agents[key].issues)} for key in only}
+        failed = bool(report.failed) or any(v["status"] in {"failed", "rejected"} for v in outcomes.values())
+        status = "failed" if failed else "skipped" if not report.executed and report.skipped else "completed"
+        self.runner.on_stage(name, status, {"round": self.round_index, "agents": outcomes,
+                                          "failed": dict(report.failed), "skipped": dict(report.skipped)})
         # Agents that failed or were skipped are done too; _on_result counted only those that returned.
         self.work_done = start
         self.work(len(only))

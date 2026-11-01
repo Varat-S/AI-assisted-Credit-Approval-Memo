@@ -151,7 +151,7 @@ def run_bo_fo(*, database: Path, folder: str, bo_backend, fo_backend, fo_mode: s
               produce_pdf: bool = False, m3_backend=None,
               rms_request: rms.RmsRequest | None = None, on_progress=None, on_work=None,
               lock_wait: float = LOCK_WAIT_SECONDS, bo_only: bool = False,
-              stop: threading.Event | None = None, bo_validators: bool = True) -> dict:
+              stop: threading.Event | None = None, bo_validators: bool = True, on_stage=None) -> dict:
     """Run both sections at once; returns ``{"case_id", "folder", "cutoff", "bo": {...}, "fo": {...},
     "rms": {...}}``.
 
@@ -170,6 +170,8 @@ def run_bo_fo(*, database: Path, folder: str, bo_backend, fo_backend, fo_mode: s
     case_id = settled["case_id"]
     say = on_progress or (lambda section, message: None)
     tally = on_work or (lambda section, done, total: None)
+
+    stage = on_stage or (lambda section, name, status, detail=None: None)
 
     def checker(section):
         def check(step):
@@ -196,6 +198,7 @@ def run_bo_fo(*, database: Path, folder: str, bo_backend, fo_backend, fo_mode: s
                     m3_backend=m3_backend, m3_reviewer_backend=m3_backend,
                     check_stop=checker("bo"), on_work=lambda d, t: tally("bo", d, t),
                     enforce_validators=bo_validators,
+                    on_stage=lambda name, status, detail=None: stage("bo", name, status, detail),
                 ).run_case(case_id, package=package, produce_pdf=produce_pdf)
                 say("bo", "recording the Business Overview")
                 session.commit()
@@ -211,9 +214,11 @@ def run_bo_fo(*, database: Path, folder: str, bo_backend, fo_backend, fo_mode: s
             init_db(engine)
             _seed(staging, database, lock_wait)
             with factory() as session:
+                stage("fo", "workflow", "running")
                 result = FinancialOverviewRunner(
                     session, output_root=output_root, agent_backend=fo_backend, agent_mode=fo_mode,
                     check_stop=checker("fo"), on_work=lambda d, t: tally("fo", d, t),
+                    on_stage=lambda name, status, detail=None: stage("fo", name, status, detail),
                 ).run_filing(folder, case_id)
                 session.commit()
         except BaseException:
@@ -227,6 +232,7 @@ def run_bo_fo(*, database: Path, folder: str, bo_backend, fo_backend, fo_mode: s
         except Exception as exc:
             raise StagingKept(f"{exc} The Financial Overview run is kept in {staging}.", staging) from exc
         staging.unlink(missing_ok=True)
+        stage("fo", "reporting", "completed")
         return result.summary()
 
     outcome = {"case_id": case_id, "folder": folder, "cutoff": settled["cutoff"].isoformat()}
@@ -240,6 +246,8 @@ def run_bo_fo(*, database: Path, folder: str, bo_backend, fo_backend, fo_mode: s
             section = futures[future]
             try:
                 outcome[section] = {"status": "completed", "summary": future.result()}
+                if on_stage:
+                    on_stage(section, "recorded_output", "completed", outcome[section]["summary"])
                 say(section, "completed")
             except RunStopped as exc:
                 outcome[section] = {"status": "stopped", "reason": str(exc)}
@@ -318,6 +326,7 @@ def bo_summary(result, *, validators: bool = True) -> dict:
         "validators_enforced": validators,
         "conclusion_status": result.conclusion_status,
         "human_review_status": "pending",
+        "has_synthesis": bool((result.handoff or {}).get("business_topic_conclusion_id")),
         "handoff_id": (result.handoff or {}).get("handoff_id"),
         "outputs": sorted({str(Path(p).parent) for p in result.output_paths.values()}),
         "handoff_path": str(result.output_paths["handoff.json"]) if "handoff.json" in result.output_paths else None,
@@ -402,114 +411,221 @@ def _merge_prompt_versions(con, cols) -> int:
 
 
 class Jobs:
-    """Combined runs started from the browser: each runs in a background thread and is polled for progress."""
+    """Existing server-side worker with durable progress, cancellation and submission claims."""
 
-    KEEP = 20
+    def __init__(self, store_path=None):
+        self._lock = threading.RLock()
+        self._jobs, self._meters, self._stops = {}, {}, {}
+        self._persistent = set()
+        self._job_stores = {}
+        self._store_path = store_path
 
-    def __init__(self):
-        self._lock = threading.Lock()
-        self._jobs: dict[str, dict] = {}
-        self._meters: dict[str, dict[str, usage.Meter | None]] = {}  # per job: each section's backend meter
-        self._stops: dict[str, threading.Event] = {}
+    def _store(self, database=None):
+        from app.services.analysis_jobs import JobStore, store_path
+        if self._store_path:
+            return JobStore(self._store_path)
+        if database is None:
+            from app.core.config import get_settings
+            database = sqlite_path(get_settings().database_url)
+        return JobStore(store_path(database))
 
-    def start(self, **kwargs) -> str:
-        job_id = uuid.uuid4().hex[:12]
-        now = datetime.now(timezone.utc).isoformat()
-        bo_only = kwargs.get("bo_only", False)
-        rms_waits = not bo_only  # without a requested amount RMS still sizes the debt capacity
-        job = {"job_id": job_id, "status": "running", "started_at": now, "finished_at": None,
-               "folder": kwargs["folder"], "case_id": kwargs.get("case_id"), "bo_only": bo_only,
-               "bo_validators": kwargs.get("bo_validators", True), "stop_requested": False,
-               "sections": {"bo": {"status": "running", "step": "starting", "steps": []},
-                            "fo": ({"status": "skipped", "step": "not run (Business Overview only)", "steps": []}
-                                   if bo_only else {"status": "running", "step": "starting", "steps": []}),
-                            "rms": {"status": "waiting" if rms_waits else "skipped",
-                                    "step": "waits for both sections" if rms_waits
-                                    else "not run (Business Overview only)", "steps": []}},
-               "result": None, "error": None}
-        for state in job["sections"].values():
-            state["work"] = None  # {"done", "total"} once the section reports its units of work
+    def start(self, *, metadata=None, idempotency_key=None, request_hash=None, **kwargs) -> str:
+        from app.services.analysis_jobs import (StoredStop, now, register_worker, forget_worker,
+            publish_terminal, finish_record, persistence_health, JobStorageUnavailable, storage_failure)
+        store = self._store(kwargs['database']) if kwargs.get('database') or self._store_path else None
+        job_id = uuid.uuid4().hex
+        bo_only = kwargs.get('bo_only', False)
+        job = dict(job_id=job_id, status='running', execution_status='pending', created_at=now(),
+                   started_at=None, finished_at=None, folder=kwargs['folder'], case_id=kwargs.get('case_id'),
+                   bo_only=bo_only, bo_validators=kwargs.get('bo_validators', True), stop_requested=False,
+                   result=None, error=None, stages={}, events=[], memo_status='draft', worker_tracking='thread-v1',
+                   metadata=metadata or {}, cutoff=kwargs.get('cutoff').isoformat() if kwargs.get('cutoff') else None)
+        job['sections'] = {section: dict(status='skipped' if bo_only and section != 'bo' else 'waiting',
+                                        step='not selected' if bo_only and section != 'bo' else 'starting', steps=[], work=None)
+                           for section in ('bo', 'fo', 'rms')}
+        for name in ('foundation', 'primary_specialists', 'reconciliation', 'orchestrator', 'challenger', 'memo_preparation'):
+            job['stages']['bo:' + name] = dict(section='bo', label={'primary_specialists':'Specialist analysis & validation','foundation':'Evidence preparation & management analysis','reconciliation':'Validation & reconciliation','orchestrator':'Cross-module synthesis & validation','challenger':'Independent challenge'}.get(name,name.replace('_',' ').title()), status='pending', order={'foundation':10,'primary_specialists':20,'reconciliation':50,'orchestrator':60,'challenger':70,'memo_preparation':90}[name])
+        if not bo_only:
+            job['stages']['fo:workflow'] = dict(section='fo', label='Financial preparation, analysis and validation', status='pending', order=0)
+            job['stages']['fo:reporting'] = dict(section='fo', label='Financial reporting', status='pending', order=1000)
+        # Publish thread ownership BEFORE the atomic claim becomes visible to
+        # polling. This thread cannot run until all callbacks below are ready.
+        thread = threading.Thread(target=lambda: work(), name=f'bo-fo-{job_id}', daemon=True)
+        if store:
+            register_worker(store.path, job_id, thread)
+            try:
+                ident, created = store.claim(job, idempotency_key, request_hash)
+            except BaseException:
+                forget_worker(store.path, job_id)
+                raise
+            if not created:
+                forget_worker(store.path, job_id)
+                return ident
+
         with self._lock:
             self._jobs[job_id] = job
-            self._meters[job_id] = {"bo": usage.meter_of(kwargs.get("bo_backend")),
-                                    "fo": usage.meter_of(kwargs.get("fo_backend"))}
-            stop = self._stops[job_id] = threading.Event()
-            for old in sorted(self._jobs, key=lambda k: self._jobs[k]["started_at"])[:-self.KEEP]:
-                if self._jobs[old]["status"] != "running":
-                    del self._jobs[old]
-                    self._meters.pop(old, None)
-                    self._stops.pop(old, None)
+            if store:
+                self._persistent.add(job_id)
+                self._job_stores[job_id] = str(store.path.resolve())
+            self._meters[job_id] = {section: usage.meter_of(kwargs.get(key)) for section,key in
+                                   (('bo','bo_backend'),('fo','fo_backend'),('m3','m3_backend'))}
+            stop = self._stops[job_id] = StoredStop(store, job_id) if store else threading.Event()
+
+        def save(*, final=False):
+            self._with_cost(job)
+            if store:
+                try:
+                    store.save(job)
+                    persistence_health(store.path, job_id, failed=False)
+                except (OSError, sqlite3.Error, JobStorageUnavailable) as exc:
+                    persistence_health(store.path, job_id, failed=True)
+                    failure = exc if isinstance(exc, JobStorageUnavailable) else storage_failure(exc)
+                    job['persistence_error'] = str(failure)
+                    job['persistence_error_at'] = now()
+                    if final:
+                        publish_terminal(store.path, job)
+                        return  # One final attempt only; later reads reconcile.
+                    if failure is exc:
+                        raise
+                    raise failure from exc
+
+        def stage(section, name, status, detail=None):
+            with self._lock:
+                state = job['stages'].setdefault(section + ':' + name,
+                          dict(section=section, label=name.replace('_',' ').title(), status='pending'))
+                if 'order' not in state:
+                    state['order'] = (100 if name == 'recorded_output' else 15 if name == 'management_analysis_and_validator7' else 45 if 'debt' in name else 60 if 'orchestrator' in name else 70 if 'challeng' in name else 35) if section == 'bo' else len(job['stages'])
+                labels = {'primary_specialists':'Specialist analysis & validation', 'reconciliation':'Validation & reconciliation', 'orchestrator':'Cross-module synthesis & validation', 'challenger':'Independent challenge', 'foundation':'Evidence preparation & management analysis', 'memo_preparation':'Memo preparation'}
+                state['label'] = labels.get(name, state['label'])
+                state.update(status=status, detail=detail, updated_at=now())
+                if status == 'running':
+                    state['started_at'] = now()
+                else:
+                    state['finished_at'] = now()
+                if name == 'recorded_output' and isinstance(detail, dict):
+                    job.setdefault('run_ids', {})[section] = detail.get('analysis_run_id') or detail.get('run_id')
+                    job.setdefault('artifacts', {})[section] = detail.get('outputs', [])
+                    if job['result'] is None:
+                        job['result'] = {key: {'status':'pending', 'summary':{}} for key in ('bo','fo','rms')}
+                    job['result'][section] = dict(status='completed', summary=detail)
+                job['events'].append(dict(section=section, stage=name, status=status, detail=detail, at=now()))
+                save()
 
         def progress(section, message):
             with self._lock:
-                state = job["sections"][section]
-                if message in ("completed", "failed", "skipped", "stopped"):
-                    state["status"] = message
+                state = job['sections'][section]
+                if message in ('completed', 'failed', 'skipped', 'stopped'):
+                    state['status'] = message
                 else:
-                    state["status"] = "running"
-                    state["steps"].append(message)
-                    state["step"] = message
+                    state.update(status='running', step=message)
+                    state['steps'].append(message)
+                save()
 
         def tally(section, done, total):
             with self._lock:
-                job["sections"][section]["work"] = {"done": done, "total": total}
+                job['sections'][section]['work'] = dict(done=done, total=total)
+                save()
 
         def work():
             try:
-                result = run_bo_fo(on_progress=progress, on_work=tally, stop=stop, **kwargs)
                 with self._lock:
-                    job.update(result=result, case_id=result["case_id"],
-                               status="stopped" if stop.is_set() else "finished")
-                    for section in ("bo", "fo", "rms"):
-                        job["sections"][section]["status"] = result[section]["status"]
-                    if result["rms"]["status"] == "skipped":
-                        job["sections"]["rms"]["step"] = result["rms"]["reason"]
-            except Exception as exc:
+                    job.update(execution_status='running', started_at=now())
+                    save()
+                result = run_bo_fo(on_progress=progress, on_work=tally, on_stage=stage, stop=stop, **kwargs)
                 with self._lock:
-                    job.update(status="failed", error=f"{type(exc).__name__}: {exc}")
-                    if job["sections"]["rms"]["status"] == "waiting":
-                        job["sections"]["rms"].update(status="skipped", step="the run did not finish")
+                    statuses = [value['status'] for value in result.values() if isinstance(value, dict) and 'status' in value]
+                    execution = 'failed' if 'failed' in statuses else 'stopped' if 'stopped' in statuses else 'completed'
+                    job.update(result=result, case_id=result['case_id'], execution_status=execution,
+                               status='finished' if execution == 'completed' else execution,
+                               memo_status='human_review_required' if execution == 'completed' else 'unavailable_or_incomplete')
+                    for section in ('bo','fo','rms'):
+                        job['sections'][section]['status'] = result[section]['status']
+                        job['sections'][section]['step'] = result[section].get('reason', result[section].get('error', result[section]['status']))
+                    bo_conclusion = result.get('bo', {}).get('summary', {}).get('conclusion_status')
+                    if bo_conclusion in {'failed', 'rejected', 'incomplete', 'unavailable'} or result.get('bo', {}).get('summary', {}).get('has_synthesis') is False:
+                        job['memo_status'] = 'unavailable_or_incomplete'
+                    errors = [value.get('error') for value in result.values() if isinstance(value, dict) and value.get('error')]
+                    job['error'] = '\n'.join(errors) or None
+            except BaseException as exc:
+                with self._lock:
+                    terminal = 'failed' if isinstance(exc, Exception) else 'interrupted'
+                    job.update(status=terminal, execution_status=terminal, memo_status='unavailable_or_incomplete',
+                               error=f'{type(exc).__name__}: {exc}')
             finally:
                 with self._lock:
-                    job["finished_at"] = datetime.now(timezone.utc).isoformat()
-
-        threading.Thread(target=work, name=f"bo-fo-{job_id}", daemon=True).start()
+                    finish_record(job)
+                    if store:
+                        publish_terminal(store.path, job)
+                    save(final=True)
+        try:
+            thread.start()
+        except Exception as exc:
+            with self._lock:
+                job.update(status='failed', execution_status='failed', error='The analysis worker could not start.',
+                           memo_status='unavailable_or_incomplete', finished_at=now())
+                finish_record(job)
+                if store:
+                    publish_terminal(store.path, job, launch_failed=True)
+                save(final=True)
         return job_id
 
-    def stop(self, job_id: str) -> bool:
-        """Ask a running job to stop at its sections' next step; False when there is no such running job."""
+    def stop(self, job_id):
+        store = self._store()
+        if store.request_stop(job_id):
+            with self._lock:
+                if job_id in self._stops:
+                    self._stops[job_id].set()
+            return True
         with self._lock:
             job = self._jobs.get(job_id)
-            if job is None or job["status"] != "running":
+            if not job or job['execution_status'] not in {'pending','running'}:
                 return False
-            job["stop_requested"] = True
-            for state in job["sections"].values():
-                if state["status"] == "running":
-                    state["step"] = "stopping after the current step"
+            job['stop_requested'] = True
             self._stops[job_id].set()
             return True
 
-    def get(self, job_id: str) -> dict | None:
+    def get(self, job_id):
+        store = self._store()
+        saved = store.get(job_id)
+        if saved is not None:
+            return self._verified(saved)
         with self._lock:
-            job = self._jobs.get(job_id)
+            if job_id in self._persistent and self._job_stores.get(job_id) == str(store.path.resolve()):
+                from app.services.analysis_jobs import JobStorageUnavailable
+                raise JobStorageUnavailable('Analysis status cannot currently be verified because its job record is unavailable. No analysis has been restarted.')
+            job = self._jobs.get(job_id) if job_id not in self._persistent else None
             return self._with_cost(_copy(job)) if job else None
 
-    def recent(self) -> list[dict]:
+    def recent(self):
+        store = self._store()
+        saved = {j['job_id']: self._verified(j) for j in store.recent()}
         with self._lock:
-            return [self._with_cost(_copy(j))
-                    for j in sorted(self._jobs.values(), key=lambda j: j["started_at"], reverse=True)]
+            local = {ident for ident in self._persistent
+                     if self._job_stores.get(ident) == str(store.path.resolve())}
+            if local - saved.keys():
+                from app.services.analysis_jobs import JobStorageUnavailable
+                raise JobStorageUnavailable('Analysis history cannot currently be verified because job records are unavailable. No analysis has been restarted.')
+            for ident, job in self._jobs.items():
+                if ident not in self._persistent:
+                    saved.setdefault(ident, self._with_cost(_copy(job)))
+        return sorted(saved.values(), key=lambda j: j['created_at'], reverse=True)
 
-    def _with_cost(self, job: dict) -> dict:
-        """The job's model cost so far, per section and in total (live while it runs)."""
-        meters = self._meters.get(job["job_id"], {})
-        job["cost"] = {**{s: usage.summary(meters=[meters.get(s)]) for s in ("bo", "fo")},
-                       "total": usage.summary(meters=meters.values())}
+    @staticmethod
+    def _verified(job):
+        from app.services.analysis_jobs import JobStatusUnavailable, TERMINAL
+        if job.get('worker_health') == 'unverified' and job.get('execution_status') not in TERMINAL:
+            raise JobStatusUnavailable('Analysis worker status cannot currently be verified. No analysis has been restarted.')
+        return job
+
+    def _with_cost(self, job):
+        meters = self._meters.get(job['job_id'], {})
+        job['cost'] = {**{s: usage.summary(meters=[meters.get(s)]) for s in ('bo','fo','m3')},
+                       'total': usage.summary(meters=meters.values())}
         return job
 
 
-def _copy(job: dict) -> dict:
+def _copy(job):
     import copy
-
     return copy.deepcopy(job)
 
 

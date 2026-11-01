@@ -176,7 +176,8 @@ def test_workbench_shows_run_status_hypotheses_and_previews(client):
     assert http.get(f"/cases/POC_BO/bo/runs/{run_id}/handoff.json").json()[
         "human_review_status"] == "pending"
     assert http.get("/bo").status_code == 200
-    assert "Business Overview" in http.get("/").text
+    assert "Credit Analysis Workspace" in http.get("/").text
+    assert 'href="/analysis/new"' in http.get("/").text
     assert http.get(f"/cases/OTHER/bo/runs/{run_id}").status_code == 404
     assert http.get("/cases/POC_BO/bo/runs/ar_missing").status_code == 404
 
@@ -221,3 +222,72 @@ def test_migration_reports_the_business_overview_tables(tmp_path):
         assert migrate(engine) == []
     finally:
         engine.dispose()
+
+
+def test_exploratory_handoff_blocks_direct_api_and_case_final_approval(client):
+    from app.models.orm import AcceptedBusinessOverviewRow
+    from app.services.bo.reporting import handoff_content_hash
+    from app.services.review.approval import require_governed_bo
+    from app.services.review.workflow import SignOffRequiredError
+    http, summary = client
+    # Make the existing scripted fixture an advisory handoff, retaining its valid hash.
+    override = http.app.dependency_overrides[get_session]
+    generator = override()
+    session = next(generator)
+    row = session.get(AcceptedBusinessOverviewRow, summary['handoff_id'])
+    row.payload = {**row.payload, 'validators_enforced':False}
+    row.content_hash = handoff_content_hash(row.payload)
+    session.commit()
+    with pytest.raises(SignOffRequiredError, match='Exploratory'):
+        require_governed_bo(session, 'POC_BO')
+    from app.services.review.workflow import HumanReviewWorkflow
+    from app.services.review.finalization import FinalSnapshotAssembler
+    from app.core.config_registry import ConfigRegistry
+    from types import SimpleNamespace
+    with pytest.raises(SignOffRequiredError, match='Exploratory'):
+        HumanReviewWorkflow(session,case_id='POC_BO').sign_off_recommendation(reviewer='analyst',reason='Reviewed')
+    with pytest.raises(SignOffRequiredError, match='Exploratory'):
+        FinalSnapshotAssembler(session,ConfigRegistry(session)).finalize(
+            SimpleNamespace(evidence_snapshot_ref=SimpleNamespace(case_id='POC_BO')),signed_off_by='analyst')
+    generator.close()
+    run_id=summary['analysis_run_id']
+    page=http.get('/cases/POC_BO/bo.html')
+    assert 'Accept this Business Overview' not in page.text
+    response=http.post(f'/cases/POC_BO/bo/runs/{run_id}/review',data={
+        'reviewer':'analyst','reason':'Reviewed','decision':'accept','acknowledge_unresolved':'on'})
+    assert response.status_code==409 and 'Exploratory' in response.text
+    assert http.get(f'/cases/POC_BO/bo/runs/{run_id}').json()['handoff']['human_review_status']=='pending'
+
+
+def test_full_runner_emits_synthesis_and_challenge_events(tmp_path,capsys,legacy_roster,monkeypatch):
+    from app.services.bo.runner import BusinessOverviewRunner
+    events=[]
+    original=BusinessOverviewRunner.__init__
+    def observe(self,*args,**kwargs):
+        kwargs['on_stage']=lambda name,status,detail=None: events.append((name,status,detail))
+        original(self,*args,**kwargs)
+    monkeypatch.setattr(BusinessOverviewRunner,'__init__',observe)
+    monkeypatch.setattr(BusinessOverviewRunner,'run_specialists',lambda *a,**k: pytest.fail('specialists-only path'))
+    summary=_cli(tmp_path,capsys,'run-bo-case','POC_BO','--package',str(_package(tmp_path)),
+                 '--responses',str(_script(tmp_path)))
+    assert summary['conclusion_status']=='accepted'
+    assert {('primary_specialists','completed'),('reconciliation','completed'),
+            ('orchestrator','completed'),('challenger','completed'),('memo_preparation','completed')} <= {(name,status) for name,status,detail in events}
+    assert next(detail for name,status,detail in events if name=='orchestrator' and status=='completed')['agents']
+
+
+def test_workspace_reads_actual_scripted_bo_artifacts_without_latest_fallback(client,monkeypatch):
+    from app.services import bo_fo
+    http,summary=client
+    job={'job_id':'scripted-workspace','case_id':'POC_BO','metadata':{'company':'OFFLINE POC'},
+         'bo_only':True,'bo_validators':True,'execution_status':'completed','folder':'fixture',
+         'result':{'bo':{'summary':{'analysis_run_id':summary['analysis_run_id']}}}}
+    class Records:
+        def get(self,ident):return job if ident=='scripted-workspace' else None
+    monkeypatch.setattr(bo_fo,'jobs',Records())
+    review=http.get('/analysis/scripted-workspace/review')
+    assert review.status_code==200,review.text
+    assert 'Provisional view: dependence' in review.text
+    audit=http.get('/analysis/scripted-workspace/audit')
+    assert audit.status_code==200,audit.text
+    assert 'BO2-H001' in audit.text and 'Cross-Module Synthesizer' in audit.text

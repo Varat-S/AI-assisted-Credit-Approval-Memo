@@ -220,11 +220,17 @@ def get_memo_html(
 
 def _bo_call(fn, *args):
     from app.services.bo.workbench import BoRunNotFoundError
+    from app.services.pipeline.artifacts import ArtifactIntegrityError
+    from app.services.bo.handoff import HandoffError
+    from pydantic import ValidationError
 
     try:
         return fn(*args)
     except BoRunNotFoundError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except (ArtifactIntegrityError, HandoffError, ValidationError) as exc:
+        raise HTTPException(status_code=409,
+                            detail='The selected Business Overview records could not be verified.') from exc
 
 
 def _bo_run_for_case(session: Session, case_id: str, analysis_run_id: str) -> dict:

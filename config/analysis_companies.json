@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "companies": [
+    {
+      "id": "hca",
+      "label": "HCA Healthcare (HCA)",
+      "ticker": "HCA",
+      "cik": "860730",
+      "report_date": "2024-12-31",
+      "filing_folder": "HCA 10-K FY2024",
+      "source_package": "package.json"
+    }
+  ]
+}

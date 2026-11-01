@@ -276,6 +276,8 @@ class FinalSnapshotAssembler:
         from app.services.review.workflow import SignOffRequiredError
 
         case_id = snapshot.evidence_snapshot_ref.case_id
+        from app.services.review.approval import require_governed_bo
+        require_governed_bo(self._session, case_id)
 
         approval = self._session.scalars(
             select(HumanReview)

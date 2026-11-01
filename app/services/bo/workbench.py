@@ -21,7 +21,7 @@ from sqlalchemy.orm import Session
 from app.models.orm import AcceptedBusinessOverviewRow, AgenticAnalysisRun
 from app.services.bo.m3_rebuild import is_m3_block
 from app.services.bo.runner import ANALYSIS_MODE
-from app.services.pipeline.artifacts import verified_artifacts
+from app.services.pipeline.artifacts import ArtifactIntegrityError, verified_artifacts
 
 
 class BoRunNotFoundError(LookupError):
@@ -66,8 +66,77 @@ def _handoff_row(session: Session, analysis_run_id: str) -> AcceptedBusinessOver
     return row
 
 
+def verify_report_identity(session: Session, row: AcceptedBusinessOverviewRow,
+                           kind: str, payload: Any) -> None:
+    """Verify the reporting schema's identity, separately from its frozen hash.
+
+    The handoff/run and stage key identify the selected output. A correctly
+    hashed payload can still have been filed under the wrong stage key.
+    Missing required headers are corruption/unverifiable history, not absence.
+    """
+    from app.services.bo.handoff import read_handoff
+    from app.services.bo.reporting import MEMO_VERSION, AUDIT_VERSION
+
+    def require(condition):
+        if not condition:
+            raise ArtifactIntegrityError('Recorded Business Overview report identity could not be verified.')
+
+    handoff = read_handoff(session, row.handoff_id)
+    run = session.get(AgenticAnalysisRun, row.analysis_run_id)
+    require(handoff.handoff_id == row.handoff_id
+            and handoff.analysis_run_id == row.analysis_run_id
+            and handoff.case_id == row.case_id
+            and type(row.payload.get('evidence_snapshot_version')) is int
+            and handoff.evidence_snapshot_version == row.snapshot_version)
+    require(run is not None and run.case_id == row.case_id
+            and run.evidence_snapshot_version == row.snapshot_version)
+    document, version = {
+        'memo': ('business_overview_memo', MEMO_VERSION),
+        'audit': ('business_overview_audit_report', AUDIT_VERSION),
+    }[kind]
+    require(isinstance(payload, dict))
+    require(payload.get('document') == document and payload.get('version') == version)
+    case, declared_run = payload.get('case'), payload.get('run')
+    require(isinstance(case, dict) and isinstance(declared_run, dict))
+    require(case.get('case_id') == row.case_id
+            and declared_run.get('analysis_run_id') == row.analysis_run_id)
+    require(type(case.get('evidence_snapshot_version')) is int
+            and case['evidence_snapshot_version'] == row.snapshot_version)
+    if kind == 'audit':
+        snapshot = payload.get('evidence_snapshot')
+        require(isinstance(snapshot, dict))
+        require(snapshot.get('case_id') == row.case_id
+                and type(snapshot.get('snapshot_version')) is int
+                and snapshot['snapshot_version'] == row.snapshot_version)
+        # Historical finding summaries do not all carry these optional fields.
+        # When present, their declared identity must agree with the archive.
+        hypotheses = payload.get('hypotheses') or {}
+        require(isinstance(hypotheses, dict))
+        records = hypotheses.get('records') or []
+        conclusions = payload.get('conclusions') or []
+        require(isinstance(records, list) and isinstance(conclusions, list))
+        for record in [*records, *(c.get('payload') for c in conclusions if isinstance(c, dict))]:
+            if not isinstance(record, dict):
+                continue
+            for key, expected in {'analysis_run_id': row.analysis_run_id,
+                                  'case_id': row.case_id,
+                                  'snapshot_version': row.snapshot_version}.items():
+                if key in record:
+                    require(type(record[key]) is type(expected) and record[key] == expected)
+    # These references are optional in the existing handoff schema. Verify any
+    # that were recorded; never synthesize missing references for old records.
+    for key, expected in {
+        'analysis_run_id': row.analysis_run_id,
+        'evidence_snapshot_version': row.snapshot_version,
+        'audit_stage': 'bo_audit:' + row.analysis_run_id,
+    }.items():
+        if key in handoff.canonical_references:
+            value = handoff.canonical_references[key]
+            require(type(value) is type(expected) and value == expected)
+
+
 def bo_artifact(session: Session, analysis_run_id: str, kind: str) -> dict[str, Any]:
-    """The recorded ``memo`` / ``audit`` JSON, or the live ``handoff``."""
+    """Hash- and identity-verified ``memo`` / ``audit``, or the live ``handoff``."""
     row = _handoff_row(session, analysis_run_id)
     if kind == "handoff":
         return dict(row.payload)
@@ -76,7 +145,9 @@ def bo_artifact(session: Session, analysis_run_id: str, kind: str) -> dict[str, 
     name = f"bo_{kind}:{analysis_run_id}"
     for artifact in verified_artifacts(session, row.case_id, row.snapshot_version):
         if artifact.name == name:
-            return json.loads(artifact.payload_json)
+            payload = json.loads(artifact.payload_json)
+            verify_report_identity(session, row, kind, payload)
+            return payload
     raise BoRunNotFoundError(f"No recorded {kind} for run {analysis_run_id!r}.")
 
 
@@ -166,6 +237,7 @@ def bo_view(session: Session, analysis_run_id: str) -> dict[str, Any]:
             "reviewed_at": handoff.payload.get("reviewed_at"),
             "unresolved_challenges": handoff.payload["unresolved_challenges"],
             "can_accept": handoff.human_review_status == "pending"
+            and handoff.payload.get("validators_enforced", True) is not False
             and handoff.payload["business_topic_conclusion_id"] is not None,
         },
         "evidence_status": {

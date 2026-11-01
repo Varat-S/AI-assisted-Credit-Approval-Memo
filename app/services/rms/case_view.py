@@ -44,7 +44,7 @@ def _bo_panel(row):
         "analysis_run_id": row.analysis_run_id, "handoff_id": row.handoff_id,
         "human_review_status": row.human_review_status, "reviewer": payload.get("reviewer"),
         "reviewed_at": payload.get("reviewed_at"), "conclusion_status": payload.get("conclusion_status"),
-        "can_accept": row.human_review_status == "pending" and payload.get("business_topic_conclusion_id") is not None,
+        "can_accept": row.human_review_status == "pending" and payload.get("business_topic_conclusion_id") is not None and payload.get("validators_enforced", True) is not False,
         "can_reject": row.human_review_status == "pending",
         "unresolved_challenges": payload.get("unresolved_challenges") or [],
         "m4": {"present": bo.m4_present, "status": bo.m4_status, "validated": bo.m4_debt_validated,

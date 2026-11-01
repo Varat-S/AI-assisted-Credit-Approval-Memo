@@ -31,7 +31,9 @@ def test_browser_inspects_three_real_drafts_without_writing(tmp_path):
             with TestClient(app) as client:
                 home = client.get("/")
                 assert home.status_code == 200
-                assert "SYNTHETIC_CONFLICT" in home.text
+                assert "Credit Analysis Workspace" in home.text
+                assert 'href="/analysis/new"' in home.text
+                assert 'href="/credit-memos"' in home.text
                 for case in [
                     "SYNTHETIC_2024",
                     "SYNTHETIC_MISSING",

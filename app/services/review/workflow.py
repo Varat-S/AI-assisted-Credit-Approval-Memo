@@ -203,6 +203,8 @@ class HumanReviewWorkflow:
                 "snapshot_hash": approval_hash(snapshot),
                 "recommendation": snapshot.recommendation,
             }
+        from app.services.review.approval import require_governed_bo
+        require_governed_bo(self._session, case_id or self._case_id)
         return self.record_action(
             ReviewAction.SIGN_OFF_RECOMMENDATION,
             reviewer=reviewer,

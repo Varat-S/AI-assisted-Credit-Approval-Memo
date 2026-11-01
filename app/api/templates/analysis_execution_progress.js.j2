@@ -1,0 +1,100 @@
+/* Presentation only. All states come from recorded runner events, never time estimates. */
+function businessProgress(job) {
+  const entries = Object.entries(job.stages || {}).filter(([key, state]) => state.section === 'bo');
+  const events = (job.events || []).filter(event => event.section === 'bo');
+  function latest(matches) {
+    const recorded = events.filter(event => matches(event.stage));
+    if (recorded.length) return recorded[recorded.length - 1].status;
+    const states = entries.filter(([key]) => matches(key.replace(/^bo:/, '')))
+      .sort((a, b) => (a[1].updated_at || '').localeCompare(b[1].updated_at || ''));
+    return states.length ? states[states.length - 1][1].status : null;
+  }
+  const evidence = [latest(name => name === 'foundation'), latest(name => name === 'follow_up_retrieval')];
+  const specialists = [
+    latest(name => name.includes('primary_specialists')),
+    latest(name => name === 'reconciliation'),
+    latest(name => name.includes('resilience')),
+    latest(name => name === 'management_analysis_and_validator7'),
+    latest(name => name === 'debt_specialist_and_validation'),
+    latest(name => name === 'coverage_follow_up')
+  ];
+  const hidden = [latest(name => name.includes('orchestrator')),
+                  latest(name => name.includes('challenger')),
+                  latest(name => name === 'memo_preparation')];
+  const section = (job.sections || {}).bo || {};
+  const stopped = section.status === 'stopped' ||
+    (['stopped', 'interrupted'].includes(job.execution_status) && section.status !== 'completed');
+  function group(states, required) {
+    const observed = states.filter(Boolean);
+    if (observed.includes('running')) return 'running';
+    if (observed.includes('failed')) return 'failed';
+    if (required.every(index => states[index] === 'completed') &&
+        observed.every(status => ['completed', 'skipped'].includes(status))) return 'completed';
+    if (stopped || observed.includes('stopped')) return 'stopped';
+    if (observed.length && observed.every(status => status === 'skipped')) return 'skipped';
+    return 'pending';
+  }
+  const preparation = group(evidence, [0]);
+  const findings = group(specialists, [0, 1]);
+  const summary = ((job.result || {}).bo || {}).summary || {};
+  const failed = section.status === 'failed' || hidden.includes('failed') ||
+    preparation === 'failed' || findings === 'failed';
+  const incomplete = summary.has_synthesis === false || summary.conclusion_status === 'unavailable';
+  const complete = section.status === 'completed' && hidden[2] === 'completed' && !failed && !incomplete;
+  let message = '';
+  let status = 'running';
+  if (failed) {
+    status = 'failed';
+    message = 'Business Overview could not be completed. See Execution Details.';
+  } else if (complete) {
+    status = 'completed';
+    message = 'Business Overview complete. Human review remains required.';
+  } else if (incomplete) {
+    status = 'failed';
+    message = 'Credit assessment is incomplete. See Execution Details.';
+  } else if (stopped) {
+    status = 'stopped';
+    message = job.execution_status === 'interrupted' ? 'Analysis interrupted. See Execution Details.' : 'Analysis stopped.';
+  } else if (job.stop_requested && section.status !== 'completed') {
+    status = 'stopping';
+    message = 'Stopping at the next safe checkpoint…';
+  } else if (findings === 'completed' || hidden.some(state => state === 'running')) {
+    message = 'Finalising credit assessment…';
+  } else if (job.execution_status === 'failed') {
+    status = 'failed';
+    message = 'Analysis could not be completed. See Execution Details.';
+  } else if (job.execution_status === 'completed') {
+    status = 'incomplete';
+    message = 'Completion details are unavailable. See Execution Details.';
+  }
+  return {preparation, findings, complete, status, message};
+}
+
+function financialProgress(job) {
+  const stages = job.stages || {};
+  const events = (job.events || []).filter(event => event.section === 'fo');
+  const section = (job.sections || {}).fo || {};
+  function recorded(name) {
+    const matches = events.filter(event => event.stage === name);
+    return matches.length ? matches[matches.length - 1].status :
+      (stages['fo:' + name] || {}).status;
+  }
+  function state(name) {
+    let status = recorded(name) || 'pending';
+    // Individual checks can fail before the aggregate workflow emits its end event.
+    if (name === 'workflow' && ['pending', 'running'].includes(status)) {
+      const checks = Object.entries(stages).filter(([key, value]) => value.section === 'fo' &&
+        !['fo:workflow', 'fo:reporting', 'fo:recorded_output'].includes(key));
+      if (checks.some(([, value]) => value.status === 'failed')) status = 'failed';
+      else if (checks.some(([, value]) => value.status === 'running')) status = 'running';
+    }
+    if (['completed', 'failed', 'skipped', 'interrupted'].includes(status)) return status;
+    // Recovery records active stages as stopped; retain the interruption distinction in the UI.
+    if ((job.execution_status === 'interrupted' || section.status === 'interrupted') &&
+        section.status !== 'completed') return 'interrupted';
+    if (status === 'running' && section.status === 'failed') return 'failed';
+    if (status === 'running' && section.status === 'stopped') return 'stopped';
+    return status;
+  }
+  return {preparation: state('workflow'), reporting: state('reporting')};
+}

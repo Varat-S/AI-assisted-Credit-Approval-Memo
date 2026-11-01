@@ -624,3 +624,15 @@ def test_browser_refuses_a_bad_upload(client):
     bad = client.post("/run/import", files=[("files", ("x.htm", b"<html></html>", "text/html"))],
                       data={"accession": ACCESSION, "filing_date": FILED.isoformat()})
     assert bad.status_code == 400 and "Import failed" in bad.text
+
+
+def test_combined_worker_uses_full_bo_with_real_stage_observations(shared,tmp_path,monkeypatch):
+    from app.services.bo.runner import BusinessOverviewRunner
+    monkeypatch.setattr(BusinessOverviewRunner,'run_specialists',lambda *a,**k: pytest.fail('specialists-only path'))
+    events=[]
+    result=bo_fo.run_bo_fo(database=_database(tmp_path),folder=shared,bo_backend=None,fo_backend=None,
+                         fo_mode='scripted',output_root=tmp_path/'out',bo_only=True,
+                         on_stage=lambda *event:events.append(event))
+    assert result['bo']['status']=='completed',result
+    names={event[1] for event in events if event[0]=='bo'}
+    assert {'primary_specialists','reconciliation','orchestrator','challenger','memo_preparation','recorded_output'} <= names

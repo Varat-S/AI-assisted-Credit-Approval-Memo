@@ -77,7 +77,7 @@ def run_page(folder: str = Query(default=""), job: str = Query(default="")) -> H
     """Shared filings, the fetch and upload forms, and the combined run form."""
     current = bo_fo.jobs.get(job) if job else None
     if job and current is None:
-        return _page(error=f"No run {job!r} in this server session (runs are kept in memory).", status_code=404)
+        return _page(error=f"No run {job!r} in persisted history.", status_code=404)
     return _page(selected_folder=folder or (current or {}).get("folder"), job=current)
 
 

@@ -12,6 +12,8 @@ added in later milestones.
 from __future__ import annotations
 
 from fastapi import FastAPI
+from fastapi.responses import JSONResponse
+from app.services.analysis_jobs import JobStatusUnavailable
 
 from app import __version__
 from app.api.cases import router as cases_router
@@ -23,6 +25,7 @@ from app.api.financial_overview import router as financial_overview_router
 from app.api.pipeline_explorer import router as pipeline_explorer_router
 from app.api.bo_fo import router as bo_fo_router
 from app.api.credit import router as credit_router
+from app.api.analysis import router as analysis_router
 
 
 def create_app() -> FastAPI:
@@ -31,6 +34,11 @@ def create_app() -> FastAPI:
         title="AI-Assisted Credit Memo Generator (PoC)",
         version=__version__,
     )
+    @app.exception_handler(JobStatusUnavailable)
+    async def unavailable_job_status(request, exc):
+        return JSONResponse(status_code=503, content={'detail':str(exc)},
+                            headers={'Cache-Control':'no-store', 'Retry-After':'4'})
+
     app.include_router(health_router)
     app.include_router(cases_router)
     app.include_router(workbench_router)
@@ -40,6 +48,7 @@ def create_app() -> FastAPI:
     app.include_router(pipeline_explorer_router)
     app.include_router(bo_fo_router)
     app.include_router(credit_router)
+    app.include_router(analysis_router)
     return app
 
 

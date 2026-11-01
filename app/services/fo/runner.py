@@ -633,19 +633,29 @@ class FinancialOverviewRunner:
     ``precheck_transcript.json`` (exactly what it was sent and returned)."""
 
     def __init__(self, session: Session, *, output_root: str | Path | None = None,
-                 agent_backend=None, agent_mode: str = "live", check_stop=None, on_work=None) -> None:
+                 agent_backend=None, agent_mode: str = "live", check_stop=None, on_work=None, on_stage=None) -> None:
         self.session = session
         self.output_root = Path(output_root) if output_root is not None else None
         self.agent_backend = agent_backend
         self.agent_mode = agent_mode if agent_backend is not None else "none"
         # Called between steps with the next step's name; raises to stop the run (``cancel.checker``).
         self.check_stop = check_stop or (lambda step: None)
+        self.on_stage = on_stage or (lambda name, status, detail=None: None)
+        self._observed_step = None
         # Called with (steps done, steps in the run) as each step starts, and once more when the run is done.
         self.on_work = on_work or (lambda done, total: None)
         self._done, self._total = 0, BUILD_STEPS
 
     def _step(self, step: str) -> None:
         self.check_stop(step)
+        if self._observed_step:
+            self.on_stage(self._observed_step, "completed")
+        if step == "recording the run and writing its files":
+            self.on_stage("workflow", "completed")
+            self._observed_step = "reporting"
+        else:
+            self._observed_step = step
+        self.on_stage(self._observed_step, "running")
         self.on_work(self._done, self._total)
         self._done += 1
 

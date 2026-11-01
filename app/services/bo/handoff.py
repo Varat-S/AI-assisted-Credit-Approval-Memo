@@ -84,6 +84,8 @@ def review_handoff(
             "not revised in place.")
     payload = dict(row.payload)
     if decision == "accept":
+        if payload.get("validators_enforced", True) is False:
+            raise HandoffError("Exploratory Business Overview analyses cannot be approved. Run Standard Mode for governed approval.")
         if payload["business_topic_conclusion_id"] is None:
             raise HandoffError(
                 "There is no validated Business conclusion to accept.")
