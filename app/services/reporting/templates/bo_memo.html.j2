@@ -40,6 +40,28 @@
   .tablewrap { overflow-x: auto; }
   .structure-diagram { text-align: center; margin: .6rem 0; page-break-inside: avoid; }
   .structure-diagram img { max-width: 100%; height: auto; }
+  .band { position: relative; }
+  .band-a { border-left: 4px solid #23527c; padding: .2rem 0 .6rem 1rem; margin: 1.2rem 0 0; }
+  .band-b { border-left: 4px solid #6b7480; padding: .2rem 0 .6rem 1rem; margin: 0 0 1.2rem; }
+  .band-label { font-family: Arial, Helvetica, sans-serif; font-size: .72rem; font-weight: bold; text-transform: uppercase; letter-spacing: .06em; color: #fff; background: #23527c; display: inline-block; padding: .18rem .55rem; border-radius: 3px; margin: .2rem 0 .3rem; }
+  .band-b .band-label { background: #6b7480; }
+  .band-note { font-family: Arial, Helvetica, sans-serif; font-size: .82rem; color: #55606e; margin: 0 0 .6rem; }
+  .band-divider { text-align: center; margin: 1.6rem 0 1.2rem; border-top: 2px dashed #9aa3af; }
+  .band-divider span { display: inline-block; transform: translateY(-.75rem); background: #fff; padding: 0 .8rem; font-family: Arial, Helvetica, sans-serif; font-size: .78rem; font-weight: bold; color: #55606e; text-transform: uppercase; letter-spacing: .04em; }
+  @media print { .band-a, .band-b { border-left-width: 3px; } .band-divider span { transform: translateY(-.7rem); } }
+  details.collapsible { margin: 2rem 0 0; }
+  details.collapsible > summary { list-style: none; cursor: pointer; }
+  details.collapsible > summary::-webkit-details-marker { display: none; }
+  details.collapsible > summary h2 { display: inline-block; margin: 0; }
+  details.collapsible > summary::before { content: '\25B6'; font-size: .8rem; color: #55606e; margin-right: .5rem; display: inline-block; }
+  details.collapsible[open] > summary::before { content: '\25BC'; }
+  .modstatus { font-family: Arial, Helvetica, sans-serif; font-size: .82rem; margin: .2rem 0 .5rem; }
+  @media print {
+    details.collapsible > summary::before { display: none; }
+    /* Force collapsed sections open when printing so a PDF never drops evidence or calculations. */
+    details.collapsible { display: block; }
+    details.collapsible > *:not(summary) { display: revert !important; }
+  }
   @page { size: A4; margin: 16mm 14mm; }
   @media print {
     body { max-width: none; margin: 0; padding: 0; font-size: 10.5pt; }
@@ -182,6 +204,17 @@
 {% if mod.missing_information %}<h4>Information not available</h4>{{ list_or_none(mod.missing_information) }}{% endif %}
 </div>
 {% endmacro %}
+{% macro module_status_line(mc, label) %}
+{% if mc %}
+<p class="modstatus"><span class="tag {{ mc.status }}">{{ mc.status }}</span>
+{% if mc.status != 'complete' %}
+<strong>{{ label }} is incomplete.</strong> This module's governed output was not fully established, so the synthesis above rests on partial module input. Treat the gaps as open items for review.
+{% else %}{{ label }} governed output established.{% endif %}</p>
+{% if mc.failed_or_missing_agents %}<p class="small">Specialists not validated: {{ mc.failed_or_missing_agents|join(', ') }}.</p>{% endif %}
+{% if mc.unresolved_coverage_checks %}<p class="small">Unresolved coverage checks: {{ mc.unresolved_coverage_checks|join(', ') }}.</p>{% endif %}
+{% if mc.status != 'complete' and mc.missing_information %}<p class="small">Missing information: {% for i in mc.missing_information %}{{ i }}{{ '; ' if not loop.last }}{% endfor %}</p>{% endif %}
+{% endif %}
+{% endmacro %}
 
 <h1>Business Overview</h1>
 <div class="meta">
@@ -194,6 +227,10 @@
   Status: {{ memo.status.conclusion_status|replace('_', ' ') }}. {{ memo.status.text }}
   Human review: {{ memo.status.human_review_status }}.
 </div>
+
+<div class="band band-a">
+<div class="band-label">Part A &middot; Orchestrator synthesis</div>
+<p class="band-note">Authored by the cross-module synthesizer from the module outputs in Part B below. These are the synthesizer's own conclusions; judge them against the module inputs that follow.</p>
 
 <h2>Executive Business Credit Assessment</h2>
 {% if memo.executive.provisional_view %}
@@ -213,23 +250,24 @@
 <p class="notice">No validated Business conclusion is available for this run.</p>
 {% endif %}
 
-{% for s in memo.sections %}
-<h2>{{ s.title }}</h2>
-{% for c in s.claims %}{{ claim(c) }}{% endfor %}
-{% if s.headline_refs %}<p class="notice">Headline finding{{ 's' if s.headline_refs|length > 1 }} set out under Key Credit Strengths and Vulnerabilities: {% for r in s.headline_refs %}<a href="#claim-{{ r.claim_id }}">{{ r.title }}</a>{{ '; ' if not loop.last }}{% endfor %}.</p>{% endif %}
-{% if s.further_findings %}
-<h3>Further validated findings</h3>
-<p class="small">Accepted, material findings from this section's specialist that the narrative above does not rest on.</p>
-{% for f in s.further_findings %}{{ finding(f) }}{% endfor %}
-{% elif s.notice %}<p class="notice">{{ s.notice }}</p>{% endif %}
-{% if s.module %}{{ module_panel(s.module) }}{% endif %}
-{% endfor %}
-
 <h2>Key Credit Strengths and Vulnerabilities</h2>
 <div class="cols">
   <div><h3>Strengths</h3>{% for c in memo.strengths_vulnerabilities.strengths %}{{ claim(c) }}{% else %}<p class="notice">None selected.</p>{% endfor %}</div>
   <div><h3>Vulnerabilities</h3>{% for c in memo.strengths_vulnerabilities.weaknesses %}{{ claim(c) }}{% else %}<p class="notice">None selected.</p>{% endfor %}</div>
 </div>
+
+<h2>Key Credit Drivers and Risks</h2>
+<p class="small">The synthesizer's drivers and risks, grouped by theme. Each rests on the validated module findings in Part B, cited by source.</p>
+{% set ns = namespace(any=false) %}
+{% for s in memo.sections %}
+{% if s.claims %}
+<h3>{{ s.title }}</h3>
+{% for c in s.claims %}{{ claim(c) }}{% endfor %}
+{% if s.headline_refs %}<p class="notice">Also set out above under Key Credit Strengths and Vulnerabilities: {% for r in s.headline_refs %}<a href="#claim-{{ r.claim_id }}">{{ r.title }}</a>{{ '; ' if not loop.last }}{% endfor %}.</p>{% endif %}
+{% set ns.any = true %}
+{% endif %}
+{% endfor %}
+{% if not ns.any %}<p class="notice">No synthesizer driver or risk was recorded for this run.</p>{% endif %}
 
 <h2>Outstanding Questions / Data Limitations</h2>
 {% set o = memo.outstanding %}
@@ -242,19 +280,45 @@
 <table><tr><th>Severity</th><th>Issue</th><th>Finding</th><th>Claim</th></tr>
 {% for f in o.unresolved_challenges %}<tr><td>{{ f.severity }}</td><td>{{ f.issue_type|replace('_', ' ') }}</td><td>{{ f.reason }}</td><td>{{ f.target or '' }}</td></tr>{% endfor %}
 </table>{% else %}<p class="notice">None. Challenger outcome: {{ memo.status.challenge|replace('_', ' ') }}.</p>{% endif %}
+</div>
+
+<div class="band-divider">
+  <span>Below: Part B &middot; the module outputs the synthesis above was built from</span>
+</div>
+
+<div class="band band-b">
+<div class="band-label">Part B &middot; Module outputs (inputs to the synthesis)</div>
+<p class="band-note">Each panel is one module's own governed output. These are the inputs the orchestrator synthesized in Part A; the orchestrator did not re-write them. Read them to check the synthesis above is complete and accurate.</p>
+{% for s in memo.sections %}
+<h2>{{ s.title }}</h2>
+{% if s.code == 'M1S1' %}{{ module_status_line(memo.module_conclusions.get('M1'), 'Module 1 (business, industry and competitive position)') }}{% endif %}
+{% if s.module %}{{ module_status_line(s.module, s.code ~ ' (' ~ s.title ~ ')') }}{% endif %}
+{% if s.further_findings %}
+<h3>Further validated findings</h3>
+<p class="small">Accepted, material findings from this section's specialist.</p>
+{% for f in s.further_findings %}{{ finding(f) }}{% endfor %}
+{% elif s.code.startswith('M1') and not s.module %}<p class="notice">This specialist's material findings were used in the synthesis above (Part A); nothing additional remains to show here. See Module 1's status line{{ ' at the top of this part' if s.code != 'M1S1' }} for completeness.</p>
+{% elif s.notice %}<p class="notice">{{ s.notice }}</p>{% endif %}
+{% if s.module %}{{ module_panel(s.module) }}{% endif %}
+{% endfor %}
+</div>
 
 {% if memo.calculations %}
-<h2>Deterministic Calculations Referenced</h2>
+<details class="collapsible">
+<summary><h2>Deterministic Calculations Referenced</h2></summary>
 <table><tr><th>Indicator</th><th>Value</th><th>Unit</th><th>Period</th><th>Numerator</th><th>Denominator</th><th>Formula</th><th>State</th></tr>
 {% for c in memo.calculations %}<tr><td>{{ c.label }}{% if c.caveat %}<br><span class="qual">{{ c.caveat }}</span>{% endif %}</td><td>{{ c.value }}</td><td>{{ c.units }}</td><td>{{ c.period }}</td><td>{{ c.numerator.name if c.numerator else '' }}</td><td>{{ c.denominator.name if c.denominator else 'n/a' }}</td><td>{{ c.formula_id }}</td><td>{{ c.calculation_state }}</td></tr>{% endfor %}
 </table>
+</details>
 {% endif %}
 
-<h2>Evidence Cited</h2>
+<details class="collapsible">
+<summary><h2>Evidence Cited</h2></summary>
 {% if memo.sources %}
 <table><tr><th>#</th><th>Source</th><th>Location</th><th>Excerpt</th></tr>
 {% for s in memo.sources %}<tr id="src-{{ s.n }}"><td>{{ s.n }}</td><td class="src">{{ s.form or '' }} {{ s.filename or '' }}<br>{{ s.sec_accession or '' }}<br><span class="small">{{ s.evidence_id[:16] }}</span></td><td>{{ s.section or '' }}{% if s.location is not none %}, offset {{ s.location }}{% endif %}{% if s.page %}, p.{{ s.page }}{% endif %}</td><td>{{ s.excerpt }}&hellip;</td></tr>{% endfor %}
 </table>{% else %}<p class="notice">No evidence is cited.</p>{% endif %}
+</details>
 <p class="small">Generated {{ memo.run.completed_at }} &middot; {{ memo.document }} {{ memo.version }}. Rendered from the memo JSON; the accompanying audit report records every agent execution, hypothesis and validation.</p>
 </body>
 </html>
