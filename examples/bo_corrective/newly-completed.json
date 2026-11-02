@@ -1,0 +1,1590 @@
+{
+  "schema_id": "consolidated-business-overview",
+  "schema_version": "1.0",
+  "case_id": "NFH_BO",
+  "analysis_run_id": "ar_6192991fd1374eea",
+  "evidence_snapshot_version": 1,
+  "sources": [
+    {
+      "stage": "bo_memo:ar_6192991fd1374eea",
+      "sha256": "bb9c33e99f8a036b8b50888d6bcd3cad9704ffa6e1f1f6b211f7f79bb9192658",
+      "case_id": "NFH_BO",
+      "analysis_run_id": "ar_6192991fd1374eea",
+      "evidence_snapshot_version": 1
+    },
+    {
+      "stage": "bo_audit:ar_6192991fd1374eea",
+      "sha256": "f0319a25a870237d157dfd1e41688af8655cc73170bd29692333093b41f8d226",
+      "case_id": "NFH_BO",
+      "analysis_run_id": "ar_6192991fd1374eea",
+      "evidence_snapshot_version": 1
+    }
+  ],
+  "evidence_sources": [
+    {
+      "document_id": "doc_10k",
+      "evidence_id": "ev_payer",
+      "excerpt": "Medicare and Medicaid accounted for 45% of our revenues. Our managed care contracts are generally multi-year agreements that set negotiated rates; the contracts do not guarantee minimum volumes of patients. Either party may terminate an agreement on notice.",
+      "filename": "nfh-10k.htm",
+      "form": "10-K",
+      "heading": "Item 1",
+      "location": 20000,
+      "n": 1,
+      "page": null,
+      "sec_accession": "0000000001-26-000001",
+      "section": "Item 1",
+      "source_url": null
+    },
+    {
+      "document_id": "doc_10k",
+      "evidence_id": "ev_model",
+      "excerpt": "We operate 48 hospitals and 120 outpatient facilities. Our sources of revenue are patient services provided at our facilities. Demand for acute care services is essential and admissions were stable during the year.",
+      "filename": "nfh-10k.htm",
+      "form": "10-K",
+      "heading": "Item 1",
+      "location": 18000,
+      "n": 2,
+      "page": null,
+      "sec_accession": "0000000001-26-000001",
+      "section": "Item 1",
+      "source_url": null
+    },
+    {
+      "document_id": "doc_10k",
+      "evidence_id": "ev_labor",
+      "excerpt": "We face a nursing shortage and rising contract labor costs. We operate a College of Nursing to expand our training pipeline, which we believe will improve recruitment and retention. There is no assurance these initiatives will be successful.",
+      "filename": "nfh-10k.htm",
+      "form": "10-K",
+      "heading": "Item 1A",
+      "location": 14000,
+      "n": 3,
+      "page": null,
+      "sec_accession": "0000000001-26-000001",
+      "section": "Item 1A",
+      "source_url": null
+    },
+    {
+      "document_id": "doc_10k",
+      "evidence_id": "ev_compete",
+      "excerpt": "We compete with other hospitals, including not-for-profit systems, and with ambulatory surgery centers. Competitors may have greater market share in certain markets. Revenue per equivalent admission increased 4.1% due to pricing, payer mix and case mix acuity. In 2025 we operated the largest hospital network by licensed beds in most of our markets.",
+      "filename": "nfh-10k.htm",
+      "form": "10-K",
+      "heading": "Item 1",
+      "location": 4000,
+      "n": 4,
+      "page": null,
+      "sec_accession": "0000000001-26-000001",
+      "section": "Item 1",
+      "source_url": null
+    },
+    {
+      "document_id": "doc_10k",
+      "evidence_id": "ev_reg",
+      "excerpt": "We are subject to extensive regulation. A significant portion of our revenues depends on government programs, and reimbursement rates may be reduced by legislation. We cannot predict the outcome of proposed legislation. We are party to litigation and government investigations.",
+      "filename": "nfh-10k.htm",
+      "form": "10-K",
+      "heading": "Item 1A",
+      "location": 22000,
+      "n": 5,
+      "page": null,
+      "sec_accession": "0000000001-26-000001",
+      "section": "Item 1A",
+      "source_url": null
+    },
+    {
+      "document_id": "doc_10k",
+      "evidence_id": "ev_capex",
+      "excerpt": "Capital expenditures were focused on expansion of existing facilities. We completed acquisitions of three hospitals during the year; integration of these facilities is ongoing.",
+      "filename": "nfh-10k.htm",
+      "form": "10-K",
+      "heading": "Item 7",
+      "location": 2000,
+      "n": 6,
+      "page": null,
+      "sec_accession": "0000000001-26-000001",
+      "section": "Item 7",
+      "source_url": null
+    },
+    {
+      "document_id": "doc_10k",
+      "evidence_id": "ev_debt_maturity",
+      "excerpt": "The senior notes have staggered maturities; the revolving credit facility is undrawn. Refinancing of maturing tranches occurred during the year.",
+      "filename": "nfh-10k.htm",
+      "form": "10-K",
+      "heading": "Item 7",
+      "location": 6000,
+      "n": 7,
+      "page": null,
+      "sec_accession": "0000000001-26-000001",
+      "section": "Item 7",
+      "source_url": null
+    },
+    {
+      "document_id": "doc_10k",
+      "evidence_id": "ev_debt_notes",
+      "excerpt": "Our long-term debt consists of senior unsecured notes with principal of $43,700 million issued by the operating company and guaranteed by the parent. Total indebtedness was $46,492 million at year end.",
+      "filename": "nfh-10k.htm",
+      "form": "10-K",
+      "heading": "Item 8",
+      "location": 8000,
+      "n": 8,
+      "page": null,
+      "sec_accession": "0000000001-26-000001",
+      "section": "Item 8",
+      "source_url": null
+    }
+  ],
+  "sections": [
+    {
+      "title": "Corporate Structure & Debt Obligations",
+      "status": "incomplete",
+      "items": [
+        {
+          "source_stage": "bo_memo:ar_6192991fd1374eea",
+          "field_path": [
+            "module_conclusions",
+            "M3",
+            "m3_rebuild",
+            "structure",
+            "artifact"
+          ],
+          "content_hash": "5f56e49d784599aef70f8dcd22a1f4217a3874358d5c358ed7af193beb213f81",
+          "content": {
+            "artifact_type": "llm_reproducible_corporate_structure_diagrams",
+            "companies": {
+              "Northfield_Health_Systems": {
+                "company_display_name": "Northfield Health Systems",
+                "connector_paths": [
+                  {
+                    "child_id": "opco",
+                    "label": {
+                      "x_px": 728.0,
+                      "y_px": 484
+                    },
+                    "parent_id": "parent",
+                    "points": [
+                      [
+                        720.0,
+                        412
+                      ],
+                      [
+                        720.0,
+                        500
+                      ]
+                    ]
+                  },
+                  {
+                    "child_id": "hospital",
+                    "label": {
+                      "x_px": 728.0,
+                      "y_px": 684
+                    },
+                    "parent_id": "opco",
+                    "points": [
+                      [
+                        720.0,
+                        612
+                      ],
+                      [
+                        720.0,
+                        700
+                      ]
+                    ]
+                  }
+                ],
+                "layout_note": "Disjoint 260 px leaf slots; 200 px levels; canvas expands without node compression.",
+                "nodes": [
+                  {
+                    "box": {
+                      "center_x_px": 720.0,
+                      "height_px": 112,
+                      "top_y_px": 300,
+                      "width_px": 220
+                    },
+                    "display_name": "Northfield Health Systems",
+                    "id": "parent",
+                    "is_guarantor": true,
+                    "role": "Parent Co"
+                  },
+                  {
+                    "box": {
+                      "center_x_px": 720.0,
+                      "height_px": 112,
+                      "top_y_px": 500,
+                      "width_px": 220
+                    },
+                    "display_name": "Northfield Operating Company",
+                    "id": "opco",
+                    "is_guarantor": false,
+                    "role": "Borrower"
+                  },
+                  {
+                    "box": {
+                      "center_x_px": 720.0,
+                      "height_px": 112,
+                      "top_y_px": 700,
+                      "width_px": 220
+                    },
+                    "display_name": "Northfield Hospital Subsidiary",
+                    "id": "hospital",
+                    "is_guarantor": true,
+                    "role": "OpCo"
+                  }
+                ],
+                "ownership_links": [
+                  {
+                    "child_id": "opco",
+                    "ownership_percent": 100,
+                    "parent_id": "parent"
+                  },
+                  {
+                    "child_id": "hospital",
+                    "ownership_percent": 100,
+                    "parent_id": "opco"
+                  }
+                ],
+                "plain_text_tree": "Northfield Health Systems (Parent Co) [GUARANTOR SHIELD]\n\u2514\u2500\u2500 100% \u2192 Northfield Operating Company (Borrower)\n    \u2514\u2500\u2500 100% \u2192 Northfield Hospital Subsidiary (OpCo) [GUARANTOR SHIELD]",
+                "root_node_id": "parent",
+                "simulation_status": "simulated_educational_example"
+              }
+            },
+            "completion_status": "complete",
+            "how_to_use": [
+              "This file contains one case only: companies.Northfield_Health_Systems. Other companies must be supplied through their own separate single-company corporate-structure JSON files using this same schema.",
+              "Select the sole company entry and draw the structure from its nodes, ownership_links and visual_spec; do not infer or invent missing nodes or relationships.",
+              "Use display_name exactly, including punctuation and capitalization, and show role below each company name.",
+              "Render percentage labels only from ownership_links, and never infer unstated ownership.",
+              "Draw a shield when and only when is_guarantor=true.",
+              "Draw only the corporate structure, title, subtitle, legend and simulation footnote. No debt table, financial analysis, proposed loan, bank branding or other panels.",
+              "If the rendering system does not support precise pixel positioning, preserve hierarchy, left-to-right sibling order, node grouping, percentage labels and shield markers.",
+              "Never use this example unless it has been explicitly uploaded or associated with the current Northfield Health Systems analysis case; do not use it to infer any other company structure."
+            ],
+            "provenance": {
+              "authority": "submitted case assumptions; no independent legal verification",
+              "converter_version": "m3-rebuild-1.0",
+              "data_status": "simulated_educational_example",
+              "input_schema_version": "1.0",
+              "source_sha256": "ddb43c189d32829b6347d6c588ea2592dcd6a29a67d4d8bac70e826d6cdc6164"
+            },
+            "purpose": "Reproduce only the submitted corporate ownership structure and its provenance.",
+            "revision_notes": [
+              "Deterministic conversion from submitted schema 1.0; exact IDs, roles, ownership, record types and guarantor flags retained.",
+              "Reference visual design with explicit canvas expansion for larger trees."
+            ],
+            "schema_version": "2.0",
+            "simulation_disclaimer": "THIS NORTHFIELD HEALTH SYSTEMS ORGANISATION CHART IS A SIMULATED EDUCATIONAL EXAMPLE. Listed legal entities, ownership percentages, borrower designation and guarantor assignments are authoritative educational case assumptions and must not be described as verified actual corporate structure.",
+            "visual_spec": {
+              "canvas": {
+                "aspect_ratio": "1440:1080",
+                "background_hex": "#FFFFFF",
+                "height_px": 1080,
+                "width_px": 1440
+              },
+              "colors_by_role": {
+                "Borrower": "#C25A13",
+                "HoldCo": "#B34B08",
+                "JV": "#A7A7A7",
+                "OpCo": "#D99337",
+                "Other": "#A7A7A7",
+                "Parent / Borrower": "#74150F",
+                "Parent Co": "#74150F"
+              },
+              "footer": {
+                "color_hex": "#6A6A6A",
+                "font_size_px": 16,
+                "text": "Illustrative only \u2014 simulated legal entities, ownership stakes and guarantor assignments; not actual corporate information.",
+                "x_px": 30,
+                "y_px": 1038
+              },
+              "header": {
+                "subtitle_color_hex": "#142340",
+                "subtitle_font_size_px": 26,
+                "subtitle_format": "{company_display_name} (Illustrative / Simulated)",
+                "subtitle_position": {
+                  "x_px": 34,
+                  "y_px": 92
+                },
+                "title": "Corporate Structure",
+                "title_color_hex": "#142340",
+                "title_font_size_px": 53,
+                "title_position": {
+                  "x_px": 32,
+                  "y_px": 26
+                }
+              },
+              "legend": {
+                "background_hex": "#F7F9FB",
+                "border_hex": "#C8D4DF",
+                "entries": [
+                  {
+                    "color_hex": "#74150F",
+                    "label": "Parent Co"
+                  },
+                  {
+                    "color_hex": "#B34B08",
+                    "label": "HoldCo"
+                  },
+                  {
+                    "color_hex": "#C25A13",
+                    "label": "Borrower"
+                  },
+                  {
+                    "color_hex": "#D99337",
+                    "label": "Operating Co"
+                  },
+                  {
+                    "color_hex": "#A7A7A7",
+                    "label": "Other / JV"
+                  },
+                  {
+                    "label": "Illustrative guarantor",
+                    "symbol": "outlined shield with checkmark"
+                  }
+                ],
+                "height_px": 250,
+                "width_px": 255,
+                "x_px": 1155,
+                "y_px": 25
+              },
+              "negative_requirements": [
+                "No JPMorgan or any other bank name.",
+                "No loan arrows or proposed-loan callouts.",
+                "No debt obligations list.",
+                "No credit commentary or bottom callout panels.",
+                "No financial metrics, data tables, or invented numbers.",
+                "No spell-check underlines or image watermarks.",
+                "No extra header disclaimer line below the subtitle.",
+                "No legend footnote or legend note outside the listed legend entries.",
+                "For single-child relationships, no bent, stepped or diagonal-looking connectors."
+              ],
+              "node_style": {
+                "corner_radius_px": 18,
+                "fill": "look up colors_by_role using node.role",
+                "guarantor_shield": {
+                  "display_when": "node.is_guarantor is true",
+                  "fill": "none",
+                  "position": "inside node near lower-right corner",
+                  "shape": "outlined shield with checkmark",
+                  "size_px": 32,
+                  "stroke_hex": "#000000"
+                },
+                "horizontal_alignment": "center",
+                "name_font": "Arial or Aptos Bold",
+                "name_font_size_px": 19,
+                "name_wrapping": "Wrap long names into 2-3 centered lines within their rectangle. Reduce size to 15 px only when needed to prevent overflow.",
+                "role_font_size_px": 17,
+                "role_format": "({role})",
+                "role_name_override": "If role is Parent / Borrower, show (Parent / Borrower) exactly.",
+                "shape": "rounded_rectangle",
+                "text_color_hex": "#FFFFFF",
+                "vertical_alignment": "center"
+              },
+              "ownership_links_style": {
+                "avoid": "Crossed lines, arrowheads, percent labels disconnected from their links, ambiguous step-parent relationships.",
+                "bus_exception_rule": "Use a horizontal bus only when a parent has two or more children.",
+                "bus_y_rule": "Bus lies approximately midway between the parent bottom and child top; do not overlap any node.",
+                "line_color_hex": "#141414",
+                "line_width_px": 3,
+                "percentage_label": {
+                  "applies_to": "one specified parent-child link only",
+                  "font_color_hex": "#111111",
+                  "font_size_px": 19,
+                  "format": "{ownership_percent}%",
+                  "location": "beside child-specific vertical drop, above child box"
+                },
+                "sibling_grouping": "For multiple children, draw one horizontal bus per parent with individual vertical drops to each child; all drops attach to the same parent.",
+                "single_child_alignment_rule": "For any one-to-one parent-child relationship, the child node center_x_px must equal the parent node center_x_px. If supplied coordinates differ slightly, snap the child to the parent centerline.",
+                "single_child_rule": "If a parent has exactly one child, do not draw a horizontal bus. Draw one perfectly straight vertical connector from the parent bottom center to the child top center, with no elbow, no jog and no lateral offset.",
+                "style": "black orthogonal (right-angle) connector from bottom center of parent node to top center of child node"
+              }
+            }
+          },
+          "origin": "deterministic_copy"
+        },
+        {
+          "source_stage": "bo_memo:ar_6192991fd1374eea",
+          "field_path": [
+            "module_conclusions",
+            "M4",
+            "m4_analysis",
+            "deliverable_1"
+          ],
+          "content_hash": "d9cec17ba8916653f0abb11f5d441d6710d2a53b304e984f46b0697478a010fa",
+          "content": {
+            "creditor_priority_framework": {
+              "consolidated_total_indebtedness_m": 46492.0,
+              "prospective_loan_secured_placement": "A secured bank loan would rank in Tier 1 ahead of the $43.7B senior unsecured notes, benefiting from direct OpCo collateral.",
+              "prospective_loan_senior_unsecured_placement": "A senior unsecured bank loan would rank pari passu with the existing Tier 2 senior unsecured notes, sharing the HCA Healthcare, Inc. upstream guarantee.",
+              "structural_subordination_drag_ratio": 0.022,
+              "tier_1_direct_opco_secured_m": 1021.0,
+              "tier_2_senior_unsecured_guaranteed_m": 45471.0,
+              "tier_3_unguaranteed_holdco_m": 0.0
+            },
+            "extraction_source": {
+              "item_references": [
+                "Item 7 MD&A",
+                "Item 8 Note 8",
+                "Item 15 Exhibit 4.x"
+              ],
+              "narrative": "Debt population drawn from Item 8 Financial Statements, Note 8 (Long-Term Debt), cross-referenced to Item 7 MD&A Liquidity & Capital Resources and the Item 15 Exhibit Index supplemental indentures (Exhibits 4.44-4.53).",
+              "page_references": [
+                "F-18",
+                "F-19",
+                "57"
+              ]
+            },
+            "non_note_obligations_schedule": [
+              {
+                "available_facility_limit_m": 4000.0,
+                "collateral_security_status": "unsecured",
+                "guarantors_credit_support": "HCA Healthcare, Inc. guarantee",
+                "interest_rate_terms": "4.3% weighted average; 18-day average life",
+                "legal_borrower": "HCA Inc.",
+                "maturity": "Short-term",
+                "obligation_facility": "Commercial paper program",
+                "principal_drawn_m": 2207.0,
+                "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed"
+              },
+              {
+                "available_facility_limit_m": null,
+                "collateral_security_status": "secured",
+                "guarantors_credit_support": "Secured at operating subsidiary level",
+                "interest_rate_terms": "4.6% effective",
+                "legal_borrower": "HCA Inc.",
+                "maturity": "Various",
+                "obligation_facility": "Other senior secured debt (finance leases + other)",
+                "principal_drawn_m": 1021.0,
+                "priority_ranking_tier": "tier_1_direct_opco_secured"
+              },
+              {
+                "available_facility_limit_m": 8000.0,
+                "collateral_security_status": "unsecured",
+                "guarantors_credit_support": "HCA Healthcare, Inc. guarantee",
+                "interest_rate_terms": "SOFR + 1.125%",
+                "legal_borrower": "HCA Inc.",
+                "maturity": "2030",
+                "obligation_facility": "Senior unsecured revolving credit facility (5-year)",
+                "principal_drawn_m": 0.0,
+                "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed"
+              },
+              {
+                "available_facility_limit_m": null,
+                "collateral_security_status": "unsecured",
+                "guarantors_credit_support": "n/a",
+                "interest_rate_terms": "n/a (contra-liability)",
+                "legal_borrower": "HCA Inc.",
+                "maturity": "n/a",
+                "obligation_facility": "Debt issuance costs and discounts",
+                "principal_drawn_m": -436.0,
+                "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed"
+              }
+            ],
+            "reconciling_items": [],
+            "senior_notes_schedule": [
+              {
+                "collateral_security_status": "unsecured",
+                "coupon_interest_rate": "5.000% fixed",
+                "guarantors_credit_support": "Fully and unconditionally guaranteed on an unsecured basis by HCA Healthcare, Inc.",
+                "legal_borrower": "HCA Inc.",
+                "maturity_year": 2028,
+                "principal_amount_m": 700.0,
+                "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed",
+                "senior_note_series": "5.000% Senior Notes"
+              },
+              {
+                "collateral_security_status": "unsecured",
+                "coupon_interest_rate": "5.250% fixed",
+                "guarantors_credit_support": "Fully and unconditionally guaranteed on an unsecured basis by HCA Healthcare, Inc.",
+                "legal_borrower": "HCA Inc.",
+                "maturity_year": 2030,
+                "principal_amount_m": 750.0,
+                "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed",
+                "senior_note_series": "5.250% Senior Notes"
+              },
+              {
+                "collateral_security_status": "unsecured",
+                "coupon_interest_rate": "5.750% fixed",
+                "guarantors_credit_support": "Fully and unconditionally guaranteed on an unsecured basis by HCA Healthcare, Inc.",
+                "legal_borrower": "HCA Inc.",
+                "maturity_year": 2035,
+                "principal_amount_m": 1500.0,
+                "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed",
+                "senior_note_series": "5.750% Senior Notes"
+              },
+              {
+                "collateral_security_status": "unsecured",
+                "coupon_interest_rate": "6.200% fixed",
+                "guarantors_credit_support": "Fully and unconditionally guaranteed on an unsecured basis by HCA Healthcare, Inc.",
+                "legal_borrower": "HCA Inc.",
+                "maturity_year": 2055,
+                "principal_amount_m": 1250.0,
+                "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed",
+                "senior_note_series": "6.200% Senior Notes"
+              },
+              {
+                "collateral_security_status": "unsecured",
+                "coupon_interest_rate": "various fixed, 5.1% effective",
+                "guarantors_credit_support": "Fully and unconditionally guaranteed on an unsecured basis by HCA Healthcare, Inc.",
+                "legal_borrower": "HCA Inc.",
+                "maturity_year": 2064,
+                "principal_amount_m": 39050.0,
+                "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed",
+                "senior_note_series": "Other senior unsecured notes (2026-2064)"
+              },
+              {
+                "collateral_security_status": "unsecured",
+                "coupon_interest_rate": "7.19% weighted average",
+                "guarantors_credit_support": "Fully and unconditionally guaranteed on an unsecured basis by HCA Healthcare, Inc.",
+                "legal_borrower": "HCA Inc.",
+                "maturity_year": 2095,
+                "principal_amount_m": 450.0,
+                "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed",
+                "senior_note_series": "Debentures (maturities through 2095)"
+              }
+            ]
+          },
+          "origin": "deterministic_copy"
+        }
+      ],
+      "synthesis": null,
+      "limitations": [
+        "Illustrative saved Module 3 fixtures; production Module 3 acquisition was not executed in this replay."
+      ]
+    },
+    {
+      "title": "Management",
+      "status": "incomplete",
+      "items": [
+        {
+          "source_stage": "bo_memo:ar_6192991fd1374eea",
+          "field_path": [
+            "module_conclusions",
+            "M3",
+            "m3_rebuild",
+            "management",
+            "artifact"
+          ],
+          "content_hash": "7217492ea32f90d048ca2dcae64a08703e76307c704827a1b34950ec768f3108",
+          "content": {
+            "artifact_type": "senior_management_assessment",
+            "citations": [
+              {
+                "citation_id": "cite:0efc03a5c4621000",
+                "document_id": null,
+                "matching_method": "exact",
+                "normalized_quote": "Alex Sample........ 50 Chief Executive Officer",
+                "original_source_text": "Alex Sample........ 50 Chief Executive Officer",
+                "outcome": "accepted",
+                "page_char_end": 151,
+                "page_char_start": 105,
+                "passage_offset": 0,
+                "physical_page": 2,
+                "quotation_check": "passed",
+                "quote": "Alex Sample........ 50 Chief Executive Officer",
+                "source_id": "pdf:p2",
+                "source_sha256": "synthetic",
+                "span_end": 151,
+                "span_start": 105
+              },
+              {
+                "citation_id": "cite:592819c3e0c9d2bb",
+                "document_id": null,
+                "matching_method": "whitespace_typography",
+                "normalized_quote": "Alex Sample was appointed Chief Executive Officer effective May 1, 2024. Alex Sample previously served as President of the Company from January 2020 through April 2024.",
+                "original_source_text": "Alex Sample was appointed Chief Executive Officer effective May 1, 2024. Alex Sample previously served as President of the Company from January 2020 through April 2024.",
+                "outcome": "accepted",
+                "page_char_end": 320,
+                "page_char_start": 152,
+                "passage_offset": 0,
+                "physical_page": 2,
+                "quotation_check": "passed",
+                "quote": "Alex Sample was appointed Chief Executive Officer effective May 1, 2024. Alex Sample previously served as President of the Company from January 2020 through April 2024.\n",
+                "source_id": "pdf:p2",
+                "source_sha256": "synthetic",
+                "span_end": 320,
+                "span_start": 152
+              }
+            ],
+            "company": "Northfield Health Systems",
+            "completion_status": "complete",
+            "coverage": {
+              "admitted": 1,
+              "expected": 1,
+              "missing": [],
+              "verifiable": true
+            },
+            "facts": [
+              {
+                "citation_ids": [
+                  "cite:592819c3e0c9d2bb"
+                ],
+                "executive": "Alex Sample",
+                "fact_id": "fact:1",
+                "statement": "Alex Sample was appointed Chief Executive Officer effective May 1, 2024. Alex Sample previously served as President of the Company from January 2020 through April 2024.\n"
+              }
+            ],
+            "filing_period": "2025-12-31",
+            "limitations": [
+              "Offline fixture; qualitative model performance not tested.",
+              "1 individual evidence claims are unsupported; other supported claims remain usable.",
+              "Validator 7 used a saved/offline reviewer response; this execution does not verify live reviewer model performance."
+            ],
+            "model_assessment": {
+              "explanation": "Offline authored assessment: continuity benefits and potential transition uncertainty require outcome evidence.",
+              "missing_information": [],
+              "signal": "mixed",
+              "supporting_judgment_ids": [
+                "A:1",
+                "E:1"
+              ],
+              "uncertainties": []
+            },
+            "observations": [
+              {
+                "category": "transition",
+                "citation_ids": [
+                  "cite:592819c3e0c9d2bb"
+                ],
+                "direction": "negative",
+                "executive": "Alex Sample",
+                "observation_id": "A:1",
+                "review_outcome": "accepted",
+                "review_reason": "Explicit offline reviewer fixture: declared facts support the bounded test interpretation.",
+                "rule": "validator_7_review",
+                "signal": "credit_negative",
+                "supporting_fact_ids": [
+                  "fact:1"
+                ],
+                "text": "Recent significant appointment creates potential transition uncertainty; it does not establish a departure, repeated turnover or disruption.",
+                "uncertainties": [
+                  "Biography does not demonstrate realized financial effects."
+                ]
+              },
+              {
+                "category": "continuity",
+                "citation_ids": [
+                  "cite:592819c3e0c9d2bb"
+                ],
+                "direction": "positive",
+                "executive": "Alex Sample",
+                "observation_id": "E:1",
+                "review_outcome": "accepted",
+                "review_reason": "Explicit offline reviewer fixture: declared facts support the bounded test interpretation.",
+                "rule": "validator_7_review",
+                "signal": "credit_positive",
+                "supporting_fact_ids": [
+                  "fact:1"
+                ],
+                "text": "Supported internal experience mitigates potential transition uncertainty.",
+                "uncertainties": [
+                  "Biography does not demonstrate realized financial effects."
+                ]
+              }
+            ],
+            "overall_assessment": {
+              "information_direction": "unavailable",
+              "information_gaps": true,
+              "outcome": "mixed",
+              "policy": "Offline authored assessment: continuity benefits and potential transition uncertainty require outcome evidence."
+            },
+            "profiles": [
+              {
+                "appointment_date": "2024-05-01",
+                "appointment_precision": "day",
+                "citation_ids": [
+                  "cite:0efc03a5c4621000",
+                  "cite:592819c3e0c9d2bb"
+                ],
+                "name": "Alex Sample",
+                "position": "Chief Executive Officer",
+                "prior_internal_roles": [
+                  {
+                    "citation_ids": [
+                      "cite:592819c3e0c9d2bb"
+                    ],
+                    "end_date": "2024-04",
+                    "end_precision": "month",
+                    "position": "President of the Company",
+                    "start_date": "2020-01",
+                    "start_precision": "month"
+                  }
+                ],
+                "recency": "unavailable",
+                "roster_position": "Chief Executive Officer",
+                "semantic_support_check": "passed_bounded_rules",
+                "succession": "internal",
+                "tenure": {
+                  "as_of": null,
+                  "basis": "Calculated from accepted appointment claim at disclosed precision",
+                  "maximum_days": null,
+                  "minimum_days": null
+                }
+              }
+            ],
+            "rejected_profiles": [],
+            "review_window": null,
+            "roster_citation_id": null,
+            "roster_date": null,
+            "schema_version": "m3-management-assessment-3.0",
+            "source": {
+              "path": "synthetic",
+              "section_ids": [
+                "pdf:p2"
+              ],
+              "sha256": "synthetic"
+            },
+            "validation": {
+              "claim_results": [
+                {
+                  "citation_ids": [],
+                  "citation_results": [
+                    {
+                      "document_id": null,
+                      "matching_method": "exact",
+                      "normalized_quote": "As of February 1, 2025, our executive officers were as follows:",
+                      "original_source_text": "As of February 1, 2025, our executive officers were as follows:",
+                      "outcome": "accepted",
+                      "page_char_end": 104,
+                      "page_char_start": 41,
+                      "passage_offset": 0,
+                      "physical_page": 2,
+                      "quotation_check": "passed",
+                      "quote": "As of February 1, 2025, our executive officers were as follows:",
+                      "source_id": "pdf:p2",
+                      "source_sha256": "synthetic",
+                      "span_end": 104,
+                      "span_start": 41
+                    }
+                  ],
+                  "citations": [],
+                  "claim_id": "roster",
+                  "executive": "",
+                  "kind": "roster",
+                  "outcome": "unsupported",
+                  "reason": "Roster date precedes selected filing period",
+                  "semantic_matching": {
+                    "comparison_text": "As of February 1, 2025, our executive officers were as follows:",
+                    "method": "whitespace_typography",
+                    "policy": "M3-only; no letter, digit, name, date, title or negation substitutions"
+                  },
+                  "statement": "As of February 1, 2025, our executive officers were as follows:"
+                },
+                {
+                  "citation_ids": [
+                    "cite:0efc03a5c4621000"
+                  ],
+                  "citation_results": [
+                    {
+                      "document_id": null,
+                      "matching_method": "exact",
+                      "normalized_quote": "Alex Sample........ 50 Chief Executive Officer",
+                      "original_source_text": "Alex Sample........ 50 Chief Executive Officer",
+                      "outcome": "accepted",
+                      "page_char_end": 151,
+                      "page_char_start": 105,
+                      "passage_offset": 0,
+                      "physical_page": 2,
+                      "quotation_check": "passed",
+                      "quote": "Alex Sample........ 50 Chief Executive Officer",
+                      "source_id": "pdf:p2",
+                      "source_sha256": "synthetic",
+                      "span_end": 151,
+                      "span_start": 105
+                    }
+                  ],
+                  "citations": [
+                    {
+                      "document_id": null,
+                      "matching_method": "exact",
+                      "normalized_quote": "Alex Sample........ 50 Chief Executive Officer",
+                      "original_source_text": "Alex Sample........ 50 Chief Executive Officer",
+                      "outcome": "accepted",
+                      "page_char_end": 151,
+                      "page_char_start": 105,
+                      "passage_offset": 0,
+                      "physical_page": 2,
+                      "quotation_check": "passed",
+                      "quote": "Alex Sample........ 50 Chief Executive Officer",
+                      "source_id": "pdf:p2",
+                      "source_sha256": "synthetic",
+                      "span_end": 151,
+                      "span_start": 105
+                    }
+                  ],
+                  "claim_id": "executive:1:identity",
+                  "executive": "Alex Sample",
+                  "kind": "identity",
+                  "outcome": "accepted",
+                  "reason": "Claim is supported by its declared canonical citations",
+                  "semantic_matching": {
+                    "comparison_text": "Alex Sample........ 50 Chief Executive Officer",
+                    "method": "whitespace_typography",
+                    "policy": "M3-only; no letter, digit, name, date, title or negation substitutions"
+                  },
+                  "statement": "Alex Sample"
+                },
+                {
+                  "citation_ids": [
+                    "cite:0efc03a5c4621000"
+                  ],
+                  "citation_results": [
+                    {
+                      "document_id": null,
+                      "matching_method": "exact",
+                      "normalized_quote": "Alex Sample........ 50 Chief Executive Officer",
+                      "original_source_text": "Alex Sample........ 50 Chief Executive Officer",
+                      "outcome": "accepted",
+                      "page_char_end": 151,
+                      "page_char_start": 105,
+                      "passage_offset": 0,
+                      "physical_page": 2,
+                      "quotation_check": "passed",
+                      "quote": "Alex Sample........ 50 Chief Executive Officer",
+                      "source_id": "pdf:p2",
+                      "source_sha256": "synthetic",
+                      "span_end": 151,
+                      "span_start": 105
+                    }
+                  ],
+                  "citations": [
+                    {
+                      "document_id": null,
+                      "matching_method": "exact",
+                      "normalized_quote": "Alex Sample........ 50 Chief Executive Officer",
+                      "original_source_text": "Alex Sample........ 50 Chief Executive Officer",
+                      "outcome": "accepted",
+                      "page_char_end": 151,
+                      "page_char_start": 105,
+                      "passage_offset": 0,
+                      "physical_page": 2,
+                      "quotation_check": "passed",
+                      "quote": "Alex Sample........ 50 Chief Executive Officer",
+                      "source_id": "pdf:p2",
+                      "source_sha256": "synthetic",
+                      "span_end": 151,
+                      "span_start": 105
+                    }
+                  ],
+                  "claim_id": "executive:1:position",
+                  "executive": "Alex Sample",
+                  "kind": "identity",
+                  "outcome": "accepted",
+                  "reason": "Claim is supported by its declared canonical citations",
+                  "semantic_matching": {
+                    "comparison_text": "Alex Sample........ 50 Chief Executive Officer",
+                    "method": "whitespace_typography",
+                    "policy": "M3-only; no letter, digit, name, date, title or negation substitutions"
+                  },
+                  "statement": "Chief Executive Officer"
+                },
+                {
+                  "appointment_scope": "Chief Executive Officer",
+                  "citation_ids": [
+                    "cite:592819c3e0c9d2bb"
+                  ],
+                  "citation_results": [
+                    {
+                      "document_id": null,
+                      "matching_method": "whitespace_typography",
+                      "normalized_quote": "Alex Sample was appointed Chief Executive Officer effective May 1, 2024. Alex Sample previously served as President of the Company from January 2020 through April 2024.",
+                      "original_source_text": "Alex Sample was appointed Chief Executive Officer effective May 1, 2024. Alex Sample previously served as President of the Company from January 2020 through April 2024.",
+                      "outcome": "accepted",
+                      "page_char_end": 320,
+                      "page_char_start": 152,
+                      "passage_offset": 0,
+                      "physical_page": 2,
+                      "quotation_check": "passed",
+                      "quote": "Alex Sample was appointed Chief Executive Officer effective May 1, 2024. Alex Sample previously served as President of the Company from January 2020 through April 2024.\n",
+                      "source_id": "pdf:p2",
+                      "source_sha256": "synthetic",
+                      "span_end": 320,
+                      "span_start": 152
+                    }
+                  ],
+                  "citations": [
+                    {
+                      "document_id": null,
+                      "matching_method": "whitespace_typography",
+                      "normalized_quote": "Alex Sample was appointed Chief Executive Officer effective May 1, 2024. Alex Sample previously served as President of the Company from January 2020 through April 2024.",
+                      "original_source_text": "Alex Sample was appointed Chief Executive Officer effective May 1, 2024. Alex Sample previously served as President of the Company from January 2020 through April 2024.",
+                      "outcome": "accepted",
+                      "page_char_end": 320,
+                      "page_char_start": 152,
+                      "passage_offset": 0,
+                      "physical_page": 2,
+                      "quotation_check": "passed",
+                      "quote": "Alex Sample was appointed Chief Executive Officer effective May 1, 2024. Alex Sample previously served as President of the Company from January 2020 through April 2024.\n",
+                      "source_id": "pdf:p2",
+                      "source_sha256": "synthetic",
+                      "span_end": 320,
+                      "span_start": 152
+                    }
+                  ],
+                  "claim_id": "executive:1:appointment",
+                  "executive": "Alex Sample",
+                  "kind": "appointment",
+                  "outcome": "accepted",
+                  "reason": "Claim is supported by its declared canonical citations",
+                  "semantic_matching": {
+                    "comparison_text": "Alex Sample was appointed Chief Executive Officer effective May 1, 2024. Alex Sample previously served as President of the Company from January 2020 through April 2024.",
+                    "method": "whitespace_typography",
+                    "policy": "M3-only; no letter, digit, name, date, title or negation substitutions"
+                  },
+                  "statement": "Chief Executive Officer; 2024-05-01"
+                },
+                {
+                  "citation_ids": [
+                    "cite:592819c3e0c9d2bb"
+                  ],
+                  "citation_results": [
+                    {
+                      "document_id": null,
+                      "matching_method": "whitespace_typography",
+                      "normalized_quote": "Alex Sample was appointed Chief Executive Officer effective May 1, 2024. Alex Sample previously served as President of the Company from January 2020 through April 2024.",
+                      "original_source_text": "Alex Sample was appointed Chief Executive Officer effective May 1, 2024. Alex Sample previously served as President of the Company from January 2020 through April 2024.",
+                      "outcome": "accepted",
+                      "page_char_end": 320,
+                      "page_char_start": 152,
+                      "passage_offset": 0,
+                      "physical_page": 2,
+                      "quotation_check": "passed",
+                      "quote": "Alex Sample was appointed Chief Executive Officer effective May 1, 2024. Alex Sample previously served as President of the Company from January 2020 through April 2024.\n",
+                      "source_id": "pdf:p2",
+                      "source_sha256": "synthetic",
+                      "span_end": 320,
+                      "span_start": 152
+                    }
+                  ],
+                  "citations": [
+                    {
+                      "document_id": null,
+                      "matching_method": "whitespace_typography",
+                      "normalized_quote": "Alex Sample was appointed Chief Executive Officer effective May 1, 2024. Alex Sample previously served as President of the Company from January 2020 through April 2024.",
+                      "original_source_text": "Alex Sample was appointed Chief Executive Officer effective May 1, 2024. Alex Sample previously served as President of the Company from January 2020 through April 2024.",
+                      "outcome": "accepted",
+                      "page_char_end": 320,
+                      "page_char_start": 152,
+                      "passage_offset": 0,
+                      "physical_page": 2,
+                      "quotation_check": "passed",
+                      "quote": "Alex Sample was appointed Chief Executive Officer effective May 1, 2024. Alex Sample previously served as President of the Company from January 2020 through April 2024.\n",
+                      "source_id": "pdf:p2",
+                      "source_sha256": "synthetic",
+                      "span_end": 320,
+                      "span_start": 152
+                    }
+                  ],
+                  "claim_id": "executive:1:role:1",
+                  "context_evidence_ids": [
+                    "pdf:p2"
+                  ],
+                  "executive": "Alex Sample",
+                  "kind": "prior_internal_role",
+                  "outcome": "accepted",
+                  "reason": "Claim is supported by its declared canonical citations",
+                  "semantic_matching": {
+                    "comparison_text": "Alex Sample was appointed Chief Executive Officer effective May 1, 2024. Alex Sample previously served as President of the Company from January 2020 through April 2024.",
+                    "method": "whitespace_typography",
+                    "policy": "M3-only; no letter, digit, name, date, title or negation substitutions"
+                  },
+                  "statement": "President of the Company; 2020-01 to 2024-04"
+                },
+                {
+                  "citation_ids": [
+                    "cite:592819c3e0c9d2bb"
+                  ],
+                  "citation_results": [
+                    {
+                      "document_id": null,
+                      "matching_method": "whitespace_typography",
+                      "normalized_quote": "Alex Sample was appointed Chief Executive Officer effective May 1, 2024. Alex Sample previously served as President of the Company from January 2020 through April 2024.",
+                      "original_source_text": "Alex Sample was appointed Chief Executive Officer effective May 1, 2024. Alex Sample previously served as President of the Company from January 2020 through April 2024.",
+                      "outcome": "accepted",
+                      "page_char_end": 320,
+                      "page_char_start": 152,
+                      "passage_offset": 0,
+                      "physical_page": 2,
+                      "quotation_check": "passed",
+                      "quote": "Alex Sample was appointed Chief Executive Officer effective May 1, 2024. Alex Sample previously served as President of the Company from January 2020 through April 2024.\n",
+                      "source_id": "pdf:p2",
+                      "source_sha256": "synthetic",
+                      "span_end": 320,
+                      "span_start": 152
+                    }
+                  ],
+                  "citations": [
+                    {
+                      "document_id": null,
+                      "matching_method": "whitespace_typography",
+                      "normalized_quote": "Alex Sample was appointed Chief Executive Officer effective May 1, 2024. Alex Sample previously served as President of the Company from January 2020 through April 2024.",
+                      "original_source_text": "Alex Sample was appointed Chief Executive Officer effective May 1, 2024. Alex Sample previously served as President of the Company from January 2020 through April 2024.",
+                      "outcome": "accepted",
+                      "page_char_end": 320,
+                      "page_char_start": 152,
+                      "passage_offset": 0,
+                      "physical_page": 2,
+                      "quotation_check": "passed",
+                      "quote": "Alex Sample was appointed Chief Executive Officer effective May 1, 2024. Alex Sample previously served as President of the Company from January 2020 through April 2024.\n",
+                      "source_id": "pdf:p2",
+                      "source_sha256": "synthetic",
+                      "span_end": 320,
+                      "span_start": 152
+                    }
+                  ],
+                  "claim_id": "fact:1",
+                  "executive": "Alex Sample",
+                  "kind": "fact",
+                  "outcome": "accepted",
+                  "reason": "Claim is supported by its declared canonical citations",
+                  "semantic_matching": {
+                    "comparison_text": "Alex Sample was appointed Chief Executive Officer effective May 1, 2024. Alex Sample previously served as President of the Company from January 2020 through April 2024.",
+                    "method": "whitespace_typography",
+                    "policy": "M3-only; no letter, digit, name, date, title or negation substitutions"
+                  },
+                  "statement": "Alex Sample was appointed Chief Executive Officer effective May 1, 2024. Alex Sample previously served as President of the Company from January 2020 through April 2024.\n"
+                }
+              ],
+              "explicit_review_corrections": null,
+              "judgment_results": [
+                {
+                  "judgment_id": "A:1",
+                  "original_fact_ids": [
+                    "fact:1"
+                  ],
+                  "original_text": "Recent significant appointment creates potential transition uncertainty; it does not establish a departure, repeated turnover or disruption.",
+                  "outcome": "accepted",
+                  "reason": "Explicit offline reviewer fixture: declared facts support the bounded test interpretation.",
+                  "removed_fact_ids": [],
+                  "reviewed_text": "Recent significant appointment creates potential transition uncertainty; it does not establish a departure, repeated turnover or disruption.",
+                  "supporting_claim_ids": [
+                    "fact:1"
+                  ]
+                },
+                {
+                  "judgment_id": "E:1",
+                  "original_fact_ids": [
+                    "fact:1"
+                  ],
+                  "original_text": "Supported internal experience mitigates potential transition uncertainty.",
+                  "outcome": "accepted",
+                  "reason": "Explicit offline reviewer fixture: declared facts support the bounded test interpretation.",
+                  "removed_fact_ids": [],
+                  "reviewed_text": "Supported internal experience mitigates potential transition uncertainty.",
+                  "supporting_claim_ids": [
+                    "fact:1"
+                  ]
+                }
+              ],
+              "overall_references_valid": true,
+              "rejected_facts": [],
+              "rejected_judgments": [],
+              "validator_7": {
+                "decisions": [
+                  {
+                    "judgment_id": "A:1",
+                    "limitations": [],
+                    "outcome": "accepted",
+                    "reason": "Explicit offline reviewer fixture: declared facts support the bounded test interpretation.",
+                    "reviewed_text": "Recent significant appointment creates potential transition uncertainty; it does not establish a departure, repeated turnover or disruption.",
+                    "supporting_claim_ids": [
+                      "fact:1"
+                    ]
+                  },
+                  {
+                    "judgment_id": "E:1",
+                    "limitations": [],
+                    "outcome": "accepted",
+                    "reason": "Explicit offline reviewer fixture: declared facts support the bounded test interpretation.",
+                    "reviewed_text": "Supported internal experience mitigates potential transition uncertainty.",
+                    "supporting_claim_ids": [
+                      "fact:1"
+                    ]
+                  }
+                ],
+                "mode": "offline_fixture",
+                "overall": {
+                  "judgment_ids": [
+                    "A:1",
+                    "E:1"
+                  ],
+                  "limitations": [],
+                  "signal": "mixed",
+                  "text": "Offline authored assessment: continuity benefits and potential transition uncertainty require outcome evidence."
+                },
+                "principal_executives": [
+                  "Alex Sample"
+                ],
+                "scope_limitations": [
+                  "Offline fixture; qualitative model performance not tested."
+                ]
+              }
+            }
+          },
+          "origin": "deterministic_copy"
+        }
+      ],
+      "synthesis": null,
+      "limitations": [
+        "Illustrative saved Module 3 fixtures; production Module 3 acquisition was not executed in this replay."
+      ]
+    },
+    {
+      "title": "Competitive Position",
+      "status": "complete",
+      "items": [],
+      "synthesis": {
+        "schema_version": "bo-competitive-1.1",
+        "overall_assessment": {
+          "claim_id": "overall",
+          "category": "assessment",
+          "text": "Negotiated reimbursement and stable volumes coexist with operating cost pressures.",
+          "parameter_result_ids": [],
+          "evidence_ids": [
+            "ev_payer",
+            "ev_model",
+            "ev_labor"
+          ],
+          "materiality": "medium",
+          "uncertainty": "Based on disclosed conditions; effectiveness is not independently established.",
+          "hypothesis_ids": [
+            "M1S1-H001",
+            "M1S2-H001",
+            "M1S4-H001"
+          ],
+          "section": "executive",
+          "claim_type": "inference",
+          "title": null,
+          "quoted_values": [],
+          "dimension": "uncertainty",
+          "counterevidence": [],
+          "analysis": null
+        },
+        "key_drivers": [
+          {
+            "claim_id": "point-0",
+            "category": "driver",
+            "text": "Negotiated managed-care rates anchor reimbursement.",
+            "parameter_result_ids": [],
+            "evidence_ids": [
+              "ev_payer"
+            ],
+            "materiality": "medium",
+            "uncertainty": "Based on disclosed conditions; competitive outcomes remain uncertain.",
+            "hypothesis_ids": [
+              "M1S1-H001"
+            ],
+            "section": "M1S1",
+            "claim_type": "inference",
+            "title": null,
+            "quoted_values": [],
+            "dimension": "revenue",
+            "counterevidence": [],
+            "analysis": {
+              "company_evidence": "The admitted fictional filing describes multi-year managed-care agreements with negotiated rates and no minimum patient volumes.",
+              "revenue_or_cost_mechanism": "Agreed rates provide a contractual basis for reimbursement, but the absence of volume commitments leaves revenue dependent on actual patient activity.",
+              "competitive_and_credit_implication": "For lenders, contractual rate visibility is a qualified strength rather than protection against demand or payer-mix deterioration. The evidence does not demonstrate unilateral price-setting ability."
+            }
+          },
+          {
+            "claim_id": "point-1",
+            "category": "driver",
+            "text": "Stable admissions provide a volume foundation.",
+            "parameter_result_ids": [],
+            "evidence_ids": [
+              "ev_model"
+            ],
+            "materiality": "medium",
+            "uncertainty": "Based on disclosed conditions; competitive outcomes remain uncertain.",
+            "hypothesis_ids": [
+              "M1S2-H001"
+            ],
+            "section": "M1S2",
+            "claim_type": "inference",
+            "title": null,
+            "quoted_values": [],
+            "dimension": "revenue",
+            "counterevidence": [],
+            "analysis": {
+              "company_evidence": "The admitted fictional filing reports stable admissions and identifies patient services as the source of facility revenue.",
+              "revenue_or_cost_mechanism": "Patient activity converts available clinical capacity into service revenue. Stable admissions support current utilisation, while any future volume decline would leave costs to be absorbed by fewer cases.",
+              "competitive_and_credit_implication": "Observed volume stability is a revenue foundation rather than proof of a sustainable moat. Downside analysis still needs service-line profitability and sensitivity of fixed costs to activity."
+            }
+          },
+          {
+            "claim_id": "point-2",
+            "category": "driver",
+            "text": "Termination rights limit contractual durability.",
+            "parameter_result_ids": [],
+            "evidence_ids": [
+              "ev_payer"
+            ],
+            "materiality": "medium",
+            "uncertainty": "Based on disclosed conditions; competitive outcomes remain uncertain.",
+            "hypothesis_ids": [
+              "M1S3-H001"
+            ],
+            "section": "M1S3",
+            "claim_type": "inference",
+            "title": null,
+            "quoted_values": [],
+            "dimension": "vulnerability",
+            "counterevidence": [],
+            "analysis": {
+              "company_evidence": "The admitted fictional filing permits either party to terminate managed-care agreements on notice.",
+              "revenue_or_cost_mechanism": "Termination rights expose the provider to renegotiation or loss of network participation. Multi-year duration therefore does not by itself establish durable pricing power.",
+              "competitive_and_credit_implication": "The lender should distinguish negotiated prices from bargaining dominance: the disclosed exit option leaves a competitive vulnerability whose scale requires contract concentration and renewal evidence."
+            }
+          },
+          {
+            "claim_id": "point-3",
+            "category": "driver",
+            "text": "Nursing scarcity exposes the business to contract labour costs.",
+            "parameter_result_ids": [],
+            "evidence_ids": [
+              "ev_labor"
+            ],
+            "materiality": "medium",
+            "uncertainty": "Based on disclosed conditions; competitive outcomes remain uncertain.",
+            "hypothesis_ids": [
+              "M1S4-H001"
+            ],
+            "section": "M1S4",
+            "claim_type": "inference",
+            "title": null,
+            "quoted_values": [],
+            "dimension": "cost",
+            "counterevidence": [],
+            "analysis": {
+              "company_evidence": "The admitted fictional filing identifies a nursing shortage and rising contract labour costs; workforce initiatives are not assured to succeed.",
+              "revenue_or_cost_mechanism": "Scarce clinical staff can require costly contract coverage to maintain services. If staffing availability limits usable capacity, the exposure can affect both the cost base and service revenue.",
+              "competitive_and_credit_implication": "Labour availability is a competitive and credit sensitivity because continuity of service depends on clinical staffing. Announced training initiatives remain an unproven mitigant without demonstrated retention and cost outcomes."
+            }
+          },
+          {
+            "claim_id": "point-4",
+            "category": "driver",
+            "text": "Hospital and ambulatory competition constrain the competitive position.",
+            "parameter_result_ids": [],
+            "evidence_ids": [
+              "ev_compete"
+            ],
+            "materiality": "medium",
+            "uncertainty": "Based on disclosed conditions; competitive outcomes remain uncertain.",
+            "hypothesis_ids": [
+              "M1S5-H001"
+            ],
+            "section": "M1S5",
+            "claim_type": "inference",
+            "title": null,
+            "quoted_values": [],
+            "dimension": "vulnerability",
+            "counterevidence": [],
+            "analysis": {
+              "company_evidence": "The admitted fictional filing identifies hospital and ambulatory surgery competitors, including not-for-profit systems.",
+              "revenue_or_cost_mechanism": "Alternative treatment settings can compete for suitable procedures and payer relationships. A broad facility network does not establish superior margins without comparative evidence.",
+              "competitive_and_credit_implication": "Credit assessment should retain competitive substitution as a downside exposure while avoiding unsupported conclusions about lost share or profitability. Local service-line outcomes and competitor economics remain evidence gaps."
+            }
+          }
+        ],
+        "selections": [
+          {
+            "hypothesis_id": "M1S1-H001",
+            "disposition": "selected",
+            "reason": "Distinct economic driver",
+            "point_id": "point-0"
+          },
+          {
+            "hypothesis_id": "M1S2-H001",
+            "disposition": "selected",
+            "reason": "Distinct economic driver",
+            "point_id": "point-1"
+          },
+          {
+            "hypothesis_id": "M1S3-H001",
+            "disposition": "selected",
+            "reason": "Distinct economic driver",
+            "point_id": "point-2"
+          },
+          {
+            "hypothesis_id": "M1S4-H001",
+            "disposition": "selected",
+            "reason": "Distinct economic driver",
+            "point_id": "point-3"
+          },
+          {
+            "hypothesis_id": "M1S5-H001",
+            "disposition": "selected",
+            "reason": "Distinct economic driver",
+            "point_id": "point-4"
+          },
+          {
+            "hypothesis_id": "M1A6-H001",
+            "disposition": "audit_only",
+            "reason": "Overlapping operating exposures already represented",
+            "point_id": null
+          }
+        ],
+        "coverage_gaps": [],
+        "residual_uncertainty": [
+          "Competitor staffing evidence unavailable."
+        ],
+        "completeness": "complete",
+        "human_review_required": true
+      },
+      "limitations": []
+    },
+    {
+      "title": "Refinancing History",
+      "status": "complete",
+      "items": [
+        {
+          "source_stage": "bo_memo:ar_6192991fd1374eea",
+          "field_path": [
+            "module_conclusions",
+            "M4",
+            "m4_analysis",
+            "deliverable_2"
+          ],
+          "content_hash": "a03a42e610dbe311974ef23be1c94e274847e1c7bbd78ade2c5ac1e8cef8c3b7",
+          "content": {
+            "extraction_source": {
+              "item_references": [
+                "Item 7 MD&A",
+                "Item 8 Note 8"
+              ],
+              "narrative": "Refinancing activity reconstructed from Note 8 issuance and repayment disclosures and the MD&A Capital Resources discussion for FY2023-FY2025.",
+              "page_references": [
+                "F-18",
+                "55"
+              ]
+            },
+            "metrics": {
+              "historical_refinancing_distress_events": 0,
+              "refinancing_cost_spread_delta_bps": 25.0,
+              "weighted_avg_maturity_extension_years": 7.5,
+              "weighted_avg_refinancing_lead_time_months": 11.0
+            },
+            "refinancing_capacity_discipline_verdict": "Deep, repeated capital-markets access with proactive pre-maturity refinancing and zero distress events demonstrates strong refinancing capacity and discipline.",
+            "refinancing_log": [
+              {
+                "coupon_interest_terms": "5.000%-6.200% fixed + FRN",
+                "execution_date_fiscal_period": "Feb 2025",
+                "new_extended_maturity": "2028-2055",
+                "obligation_series_description": "February 2025 senior notes ($5.25B)",
+                "original_retired_maturity": null,
+                "principal_amount_m": 5250.0,
+                "transaction_category": "new_issuance",
+                "use_of_proceeds_impact": "Repay senior unsecured credit facility + general corporate purposes."
+              },
+              {
+                "coupon_interest_terms": "4.300%-5.700% fixed",
+                "execution_date_fiscal_period": "Oct 2025",
+                "new_extended_maturity": "2030-2055",
+                "obligation_series_description": "October 2025 senior notes ($3.25B)",
+                "original_retired_maturity": null,
+                "principal_amount_m": 3250.0,
+                "transaction_category": "new_issuance",
+                "use_of_proceeds_impact": "Repay commercial paper + GCP."
+              },
+              {
+                "coupon_interest_terms": "5.375% fixed",
+                "execution_date_fiscal_period": "FY2025",
+                "new_extended_maturity": null,
+                "obligation_series_description": "5.375% senior notes",
+                "original_retired_maturity": "2025",
+                "principal_amount_m": 2600.0,
+                "transaction_category": "repayment_at_maturity",
+                "use_of_proceeds_impact": "Repaid at scheduled maturity."
+              },
+              {
+                "coupon_interest_terms": "5.875% fixed",
+                "execution_date_fiscal_period": "FY2025",
+                "new_extended_maturity": null,
+                "obligation_series_description": "5.875% senior notes due 2026",
+                "original_retired_maturity": "2026",
+                "principal_amount_m": 1500.0,
+                "transaction_category": "early_redemption",
+                "use_of_proceeds_impact": "Redeemed early ahead of maturity."
+              }
+            ]
+          },
+          "origin": "deterministic_copy"
+        },
+        {
+          "source_stage": "bo_memo:ar_6192991fd1374eea",
+          "field_path": [
+            "module_conclusions",
+            "M4",
+            "m4_analysis",
+            "deliverable_4"
+          ],
+          "content_hash": "7093eb7c1b0629e2be3f9a2d5142ffead2a4a96a745ba43d2632bfd5393bbdfb",
+          "content": {
+            "core_credit_assessment": "HCA presents a strong, well-managed debt structure with proven refinancing access and prudent stewardship; a prospective bank lender ranks pari passu with existing senior unsecured notes absent collateral.",
+            "evidence_synthesis_narrative": "Deliverables 1-3 show a predominantly senior-unsecured capital structure guaranteed by the HoldCo, a disciplined and deep refinancing track record, and internally funded growth alongside large but controlled shareholder distributions.",
+            "executive_credit_summary_box": {
+              "executive_takeaways": [
+                "Predominantly senior unsecured structure guaranteed by the HoldCo.",
+                "Proven, disciplined refinancing access with no distress events.",
+                "Internally funded growth; distributions large but controlled."
+              ],
+              "overall_credit_rating_verdict": "satisfactory",
+              "recommended_loan_placement": "senior_unsecured_tier_2",
+              "target_entity_and_period": "HCA Healthcare, Inc. - FY2025 (10-K)"
+            },
+            "strategy_capital_supplement": {
+              "contributes": "strategy / capital-allocation merit findings (acquisition, integration, capex strategy)",
+              "findings": [
+                {
+                  "admissibility": "established",
+                  "agent_id": "m4_strategy_capital",
+                  "claim": "Three hospital acquisitions were completed and their integration remains ongoing.",
+                  "claim_type": "fact",
+                  "component_hypothesis_ids": [],
+                  "confidence": "medium",
+                  "contradicting_evidence_ids": [],
+                  "corrects_hypothesis_id": null,
+                  "credit_mechanism": null,
+                  "direction": "mixed",
+                  "disposition": "supported",
+                  "evidence_quotes": [
+                    {
+                      "evidence_id": "ev_capex",
+                      "quote": "We completed acquisitions of three hospitals during the year; integration of these facilities is ongoing"
+                    }
+                  ],
+                  "hypothesis_id": "M4-H001",
+                  "interaction_kind": null,
+                  "interpretation": {},
+                  "materiality": "high",
+                  "missing_information": [],
+                  "mitigant": null,
+                  "quoted_values": [],
+                  "section": "M4",
+                  "supporting_evidence_ids": [
+                    "ev_capex"
+                  ],
+                  "validation_notes": []
+                }
+              ],
+              "note": "Supplements the debt specialist's conclusion; does NOT draw leverage or debt-service conclusions (those are the debt specialist's and Financial Overview's).",
+              "source_agent": "m4_strategy_capital"
+            },
+            "synthesis_matrix": [
+              {
+                "analytical_scope_pillar": "Debt structure & priority",
+                "bank_lender_implications": "Unsecured loan is pari passu Tier 2; collateral would lift to Tier 1.",
+                "core_empirical_evidence": "$46.49B total debt; 97.8% senior unsecured guaranteed; drag ratio 0.022.",
+                "deliverable_verdict": "Satisfactory"
+              },
+              {
+                "analytical_scope_pillar": "Refinancing history",
+                "bank_lender_implications": "Low refinancing/rollover risk.",
+                "core_empirical_evidence": "$8.5B issued FY2025; proactive pre-maturity refinancing; 0 distress events.",
+                "deliverable_verdict": "Strong"
+              },
+              {
+                "analytical_scope_pillar": "Financial stewardship",
+                "bank_lender_implications": "Monitor distribution appetite vs leverage headroom.",
+                "core_empirical_evidence": "CAPEX self-funded; $19.9B buybacks partly debt-funded; leverage within policy.",
+                "deliverable_verdict": "Satisfactory"
+              },
+              {
+                "analytical_scope_pillar": "Strategy & Capital Allocation (Agent A)",
+                "bank_lender_implications": "Strategy/capital-allocation observation; leverage and debt-service implications are assessed by the debt specialist (Agent B) and Financial Overview, not here.",
+                "core_empirical_evidence": "Three hospital acquisitions were completed and their integration remains ongoing. [1 cited]",
+                "deliverable_verdict": "mixed"
+              }
+            ]
+          },
+          "origin": "deterministic_copy"
+        }
+      ],
+      "synthesis": null,
+      "limitations": []
+    },
+    {
+      "title": "Industry",
+      "status": "incomplete",
+      "items": [
+        {
+          "source_stage": "bo_memo:ar_6192991fd1374eea",
+          "field_path": [
+            "module_conclusions",
+            "M2",
+            "findings"
+          ],
+          "content_hash": "ee0279d50547d8f1c12f1ff876eda31cb17d96050ae8660f0e9051d9d6c58ae7",
+          "content": [
+            {
+              "admissibility": "qualified_narrative",
+              "agent_id": "m2_industry",
+              "claim": "The industry is extensively regulated and exposed to legislative reimbursement reductions.",
+              "claim_type": "fact",
+              "component_hypothesis_ids": [],
+              "confidence": "medium",
+              "contradicting_evidence_ids": [],
+              "corrects_hypothesis_id": null,
+              "credit_mechanism": null,
+              "direction": "negative",
+              "disposition": "qualified",
+              "evidence_quotes": [
+                {
+                  "evidence_id": "ev_reg",
+                  "quote": "We are subject to extensive regulation"
+                }
+              ],
+              "hypothesis_id": "M2-H001",
+              "interaction_kind": null,
+              "interpretation": {},
+              "materiality": "high",
+              "missing_information": [],
+              "mitigant": null,
+              "quoted_values": [],
+              "section": "M2",
+              "supporting_evidence_ids": [
+                "ev_reg"
+              ],
+              "validation_notes": [
+                "generic_risk_disclosure_only: Supported only by risk-factor language about what could happen; it may be reported as a disclosed risk, not as an event that has occurred.",
+                "quote_does_not_cover_claim: The quote is verified, but it shares almost no wording with the claim, so it does not show that the filing states the claim; treated as the specialist's inference."
+              ]
+            }
+          ],
+          "origin": "deterministic_copy"
+        }
+      ],
+      "synthesis": null,
+      "limitations": [
+        "Missing standalone Industry report: this roster records governed industry findings only. All available findings are preserved below; no replacement report has been generated."
+      ]
+    }
+  ],
+  "audit_stage": "bo_audit:ar_6192991fd1374eea",
+  "governance": {
+    "challenge": "accepted",
+    "conclusion_status": "human_review_required",
+    "human_review_status": "pending",
+    "remediation_round_performed": false,
+    "text": "Unresolved material challenge. This is NOT a final Business Overview; mandatory human review."
+  },
+  "challenge": {
+    "agent_run_id": "6e88081b-e579-4a6d-91af-0d1368ccafed",
+    "conclusion_id": "tc_ce31641f504f4cf5",
+    "decision": {
+      "deterministic_only": false,
+      "escalated": false,
+      "requires_rerun": false,
+      "rerun_parameter_ids": [],
+      "rerun_scope": []
+    },
+    "findings": [],
+    "issues": [],
+    "model_stated_outcome": "accepted",
+    "outcome": "accepted",
+    "round": 0,
+    "status": "validated",
+    "summary": "No material defect identified."
+  },
+  "execution_mode": "offline_simulation"
+}

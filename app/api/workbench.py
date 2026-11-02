@@ -314,7 +314,19 @@ def get_bo_artifact_html(
     _bo_run_for_case(session, case_id, analysis_run_id)
     payload = (_bo_call(reviewed_memo, session, analysis_run_id) if kind == "memo"
                else _bo_call(bo_artifact, session, analysis_run_id, kind))
-    render = render_memo_html if kind == "memo" else render_audit_html
+    if kind == "memo":
+        from app.services.bo.consolidated import load
+        from app.services.bo.reporting import render_consolidated_html
+        row = _bo_run_for_case(session, case_id, analysis_run_id)
+        consolidated = _bo_call(load, session, case_id, analysis_run_id, row["case"]["evidence_snapshot_version"])
+        if consolidated:
+            consolidated = {**consolidated, "governance": payload["status"]}
+            payload = consolidated
+            render = render_consolidated_html
+        else:
+            render = render_memo_html
+    else:
+        render = render_audit_html
     return HTMLResponse(render(payload))
 
 
@@ -360,7 +372,19 @@ def get_bo_artifact_pdf(
     _bo_run_for_case(session, case_id, analysis_run_id)
     payload = (_bo_call(reviewed_memo, session, analysis_run_id) if kind == "memo"
                else _bo_call(bo_artifact, session, analysis_run_id, kind))
-    render = render_memo_html if kind == "memo" else render_audit_html
+    if kind == "memo":
+        from app.services.bo.consolidated import load
+        from app.services.bo.reporting import render_consolidated_html
+        row = _bo_run_for_case(session, case_id, analysis_run_id)
+        consolidated = _bo_call(load, session, case_id, analysis_run_id, row["case"]["evidence_snapshot_version"])
+        if consolidated:
+            consolidated = {**consolidated, "governance": payload["status"]}
+            payload = consolidated
+            render = lambda artifact: render_consolidated_html(artifact, expand_evidence=True)
+        else:
+            render = render_memo_html
+    else:
+        render = render_audit_html
     backend = detect_pdf_backend()
     if backend is None:
         raise HTTPException(

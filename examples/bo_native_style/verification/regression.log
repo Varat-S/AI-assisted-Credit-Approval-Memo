@@ -1,0 +1,8 @@
+........................................................................ [ 37%]
+.............................................................Fatal Python error: Segmentation fault
+
+Thread 0x0000000171d6b000 (most recent call first):
+  File "/Users/Daniel/.local/share/uv/python/cpython-3.11.15-macos-aarch64-none/lib/python3.11/selectors.py", line 99 in select
+  File "/Users/Daniel/.local/share/uv/python/cpython-3.11.15-macos-aarch64-none/lib/python3.11/asyncio/base_events.py", line 1898 in _run_once
+  File "/Users/Daniel/.local/share/uv/python/cpython-3.11.15-macos-aarch64-none/lib/python3.11/asyncio/base_events.py", line 91 in run_forever
+  File "/Users/Daniel/.local/share/uv/python/cpython-3.11.15-macos-aarch64-none/lib/python3.11/asyncio/unix_events.py", line 70 in close

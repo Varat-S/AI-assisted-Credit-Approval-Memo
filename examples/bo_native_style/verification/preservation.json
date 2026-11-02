@@ -1,0 +1,14 @@
+{
+  "protected": {
+    "files_checked": 297,
+    "changed": []
+  },
+  "records": {
+    "files_checked": 9,
+    "changed": [
+      "/var/folders/7t/tnf0mwt17038pq708xnqvfb40000gq/T/bo-corrective-q8e2j44k/jobs.sqlite"
+    ]
+  },
+  "terminal_job_payloads_unchanged_since_snapshot": true,
+  "job_sidecar_note": "Existing JobStore reads execute PRAGMA user_version=1, changing SQLite header bytes. Terminal job payloads, statuses and run references did not change; no job recovered or restarted."
+}

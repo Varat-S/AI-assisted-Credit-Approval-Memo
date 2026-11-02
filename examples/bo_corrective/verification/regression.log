@@ -1,0 +1,59 @@
+........................................................................ [ 24%]
+........................................................................ [ 49%]
+........................................................................ [ 74%]
+....................................................F...F............... [ 99%]
+..                                                                       [100%]
+=================================== FAILURES ===================================
+_________ test_both_m4_specialists_reach_governed_output_and_synthesis _________
+
+db_session = <sqlalchemy.orm.session.Session object at 0x117249150>
+tmp_path = PosixPath('/private/var/folders/7t/tnf0mwt17038pq708xnqvfb40000gq/T/pytest-of-Daniel/pytest-24/test_both_m4_specialists_reach0')
+
+    def test_both_m4_specialists_reach_governed_output_and_synthesis(db_session, tmp_path):
+        result, backend = _run(db_session, tmp_path)
+    
+        m4 = result.memo["module_conclusions"]["M4"]
+        # Strategy specialist's findings are present (roster-v3 m4_strategy_capital).
+        assert "debt_structure_refinancing" in m4["capabilities"]
+        assert "strategy_capital" in m4["capabilities"]
+        # Debt specialist contribution survives into the governed M4 output.
+        debt = m4["m4_debt_assessment"]
+        assert debt is not None
+        assert debt["status"] == "validated"
+        assert debt["validated"] is True
+        assert debt["validator_id"] == "validator_8_debt_structure"
+        assert debt["assessment"]["deliverable_1"]["senior_notes_schedule"]
+        assert debt["validator_report"]["passed"] is True
+        # The debt specialist was invoked exactly once (no duplicate model calls).
+        assert backend.calls("m4_debt") == 1
+    
+        # It flows through to synthesis + challenger + governance.
+        assert result.handoff["module_conclusions"]["M4"]["m4_debt_assessment"]["validated"]
+        assert result.audit["challenger"]["rounds"]  # challenger ran
+        # A clean debt result does not block the run.
+>       assert result.conclusion_status in {"accepted", "accepted_with_qualification"}
+E       AssertionError: assert 'human_review_required' in {'accepted', 'accepted_with_qualification'}
+E        +  where 'human_review_required' = BoRunResult(analysis_run_id='ar_db6839e3f49c494d', case_id='NFH_BO', snapshot_version=1, conclusion_status='human_revi...niel/pytest-24/test_both_m4_specialists_reach0/out/bo/NFH_BO/ar_db6839e3f49c494d/audit_report.html')}, evaluation=None).conclusion_status
+
+tests/integration/test_bo_m4_dual_specialist.py:103: AssertionError
+________________ test_validators_off_still_drafts_the_full_memo ________________
+
+db_session = <sqlalchemy.orm.session.Session object at 0x1196f6090>
+tmp_path = PosixPath('/private/var/folders/7t/tnf0mwt17038pq708xnqvfb40000gq/T/pytest-of-Daniel/pytest-24/test_validators_off_still_draf0')
+
+    def test_validators_off_still_drafts_the_full_memo(db_session, tmp_path):
+        result, _ = _run(db_session, tmp_path, enforce=False)
+        assert result.memo["sections"] and result.handoff["business_topic_conclusion_id"]
+        assert result.audit["orchestrator"]["history"][-1]["status"] in (
+            "accepted", "accepted_unvalidated")
+        engine = [h for h in result.audit["hypotheses"]["records"]
+                  if h["validator_version"].startswith("bo-hypothesis-validator")]
+>       assert engine and all(h["validator_version"].endswith("+advisory") for h in engine)
+E       AssertionError: assert ([{'hypothesis_id': 'M1S5-H001', 'analysis_run_id': 'ar_6aaf1f9730854f9d', 'agent_id': 'm1_competitive_durability', 'ag...': 'ar_6aaf1f9730854f9d', 'agent_id': 'm2_industry', 'agent_run_id': 'c15c8d58-ffb1-424c-b740-d4c8a9405b7b', ...}, ...] and False)
+E        +  where False = all(<generator object test_validators_off_still_drafts_the_full_memo.<locals>.<genexpr> at 0x111094740>)
+
+tests/integration/test_bo_m4_dual_specialist.py:165: AssertionError
+=========================== short test summary info ============================
+FAILED tests/integration/test_bo_m4_dual_specialist.py::test_both_m4_specialists_reach_governed_output_and_synthesis
+FAILED tests/integration/test_bo_m4_dual_specialist.py::test_validators_off_still_drafts_the_full_memo
+2 failed, 288 passed, 1 warning in 107.64s (0:01:47)

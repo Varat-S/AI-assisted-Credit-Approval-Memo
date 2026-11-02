@@ -1,0 +1,63 @@
+{# Layout only: colour/typography/surfaces come from the existing workspace and memo styles. #}
+<style>
+.consolidated-bo{overflow-wrap:anywhere}
+.consolidated-bo a{color:var(--c-1e5d60)}
+.consolidated-bo .bo-section{border-top:1px solid var(--c-e4e9e7);padding:24px 0;scroll-margin-top:20px}
+.consolidated-bo .bo-section-head{display:flex;gap:14px;align-items:baseline;margin-bottom:16px}
+.consolidated-bo .bo-number{flex:0 0 24px;white-space:nowrap;font-size:.75rem;font-weight:600;color:var(--c-315e62)}
+.consolidated-bo .bo-section-head h2{font-size:1.18rem;font-weight:600;margin:0;padding:0;border:0}
+.consolidated-bo h3{font-size:1rem;font-weight:600;margin:18px 0 8px}
+.consolidated-bo p,.consolidated-bo li{font-size:.9rem;line-height:1.6}
+.consolidated-bo .bo-caption,.consolidated-bo .bo-provenance,.consolidated-bo .bo-caption p{font-size:.78rem;color:var(--c-687780);line-height:1.6}
+.consolidated-bo .bo-provenance{margin:14px 0}
+.consolidated-bo .bo-governance{margin-bottom:24px}
+.consolidated-bo .bo-two-columns{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:30px;align-items:start}
+.consolidated-bo .bo-two-columns>*{min-width:0}
+.consolidated-bo .bo-diagram-scroll{overflow-x:auto;max-width:100%;border:1px solid var(--c-dce2e1);border-radius:8px;background:var(--c-ffffff)}
+.consolidated-bo .bo-diagram{display:block;width:100%;min-width:0;height:auto}
+.consolidated-bo .bo-table-scroll{max-width:100%;margin:14px 0 20px}
+.consolidated-bo .bo-table{min-width:640px}
+.consolidated-bo .bo-table th{font-size:.75rem;font-weight:600;vertical-align:bottom}
+.consolidated-bo .bo-table td{font-size:.8rem;line-height:1.6;vertical-align:top;min-width:90px}
+.consolidated-bo .bo-debt-table{min-width:0;table-layout:fixed}
+.consolidated-bo .bo-debt-table th:first-child{width:30%}
+.consolidated-bo .bo-debt-table th:nth-child(2){width:20%;text-align:right}
+.consolidated-bo .bo-debt-table th:nth-child(3){width:15%}
+.consolidated-bo .bo-debt-table td{min-width:0;padding:10px 8px}
+.consolidated-bo .bo-debt-table td>div{margin-bottom:9px}
+.consolidated-bo .numeric{text-align:right;font-variant-numeric:tabular-nums}
+.consolidated-bo .bo-fields{display:block;margin:0}
+.consolidated-bo .bo-fields>div{margin:12px 0;min-width:0}
+.consolidated-bo .bo-fields dt{font-size:.78rem;color:var(--c-687780);text-transform:capitalize}
+.consolidated-bo .bo-fields dd{margin:3px 0 0;min-width:0}
+.consolidated-bo .bo-verbatim{white-space:pre-wrap}
+.consolidated-bo .bo-point{padding:14px 0;border-bottom:1px solid var(--c-e2e8e5)}
+.consolidated-bo .bo-point h3{margin:0 0 12px}
+.consolidated-bo blockquote{margin:16px 0;padding-left:14px;border-left:3px solid var(--c-c9d9d3);font-size:.85rem;color:var(--c-586e71)}
+.consolidated-bo .bo-timeline{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px 0;list-style:none;padding:12px 0 0;margin:20px 0 24px}
+.consolidated-bo .bo-event{position:relative;border-top:1px solid var(--c-d8e0df);padding:22px 22px 0 0;min-width:0;margin:0}
+.consolidated-bo .bo-event:before{content:'';position:absolute;width:9px;height:9px;background:var(--c-315e62);border-radius:50%;top:-5px;left:0}
+.consolidated-bo .bo-event-date{font-size:1.15rem;font-weight:600;line-height:1.3;color:var(--c-315e62);margin:0 0 14px}
+.consolidated-bo .bo-event h3{margin:8px 0;font-size:.9rem;line-height:1.5}
+.consolidated-bo .bo-conclusion{background:var(--c-edf5f1);border:1px solid var(--c-c9dcd3);border-radius:8px;padding:18px 20px;margin:24px 0}
+.consolidated-bo summary{cursor:pointer}
+.consolidated-bo details[open]{padding-bottom:8px}
+.consolidated-bo .bo-qualification{font-size:.8rem;color:var(--c-6e684e)}
+@media(max-width:850px){.consolidated-bo .bo-two-columns{grid-template-columns:1fr;gap:24px}}
+@media(max-width:600px){.consolidated-bo .bo-debt-table{min-width:560px}.consolidated-bo .bo-diagram{min-width:0;width:100%}.consolidated-bo .bo-section-head{gap:12px}.consolidated-bo .bo-timeline{display:block;padding-left:6px}.consolidated-bo .bo-event{border-top:0;border-left:1px solid var(--c-d8e0df);padding:0 0 28px 24px}.consolidated-bo .bo-event:before{top:8px;left:-5px}}
+@media print{.consolidated-bo .bo-two-columns{display:block}.consolidated-bo .bo-diagram{min-width:0;width:100%}.consolidated-bo .bo-table-scroll{overflow:visible}.consolidated-bo .bo-table{min-width:0;table-layout:fixed}.consolidated-bo .bo-table td{min-width:0;padding:4px;font-size:9pt}.consolidated-bo .bo-table th{padding:4px;font-size:9pt}.consolidated-bo .bo-section-head,.consolidated-bo .bo-point h3{break-after:avoid}.consolidated-bo .bo-timeline{display:block}.consolidated-bo .bo-event{break-inside:avoid}}
+</style>
+
+<style>
+.consolidated-bo .bo-print-only,.consolidated-bo .bo-scroll-hint{display:none}
+.consolidated-bo .bo-quick-evidence{margin:10px 0 16px;font-size:.82rem}
+.consolidated-bo .bo-quick-evidence>summary,.consolidated-bo .bo-debt-details>summary{color:var(--c-315e62);font-size:.8rem}
+.consolidated-bo .bo-evidence-body{padding:14px 16px;margin-top:10px;background:var(--c-f5f8f7);border-radius:8px}
+.consolidated-bo .bo-source+.bo-source{margin-top:20px;border-top:1px solid var(--c-e2e8e5);padding-top:14px}
+.consolidated-bo .bo-debt-row td{border-bottom:0}
+.consolidated-bo .bo-debt-detail-row td{padding:0 8px 10px;border-bottom:1px solid var(--c-e2e8e5)}
+.consolidated-bo .bo-debt-extra{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 24px;padding:14px 16px;margin:10px 0;background:var(--c-f5f8f7);border-radius:8px}
+.consolidated-bo .bo-debt-extra>div{min-width:0}.consolidated-bo .bo-debt-extra p{margin:4px 0;font-size:.82rem}
+@media(max-width:600px){.consolidated-bo .bo-scroll-hint{display:block;font-size:.78rem;color:var(--c-687780)}.consolidated-bo .bo-debt-details{max-width:calc(100vw - 96px)}.consolidated-bo .bo-debt-extra{grid-template-columns:1fr}}
+@media print{.consolidated-bo .bo-print-only{display:block;font-size:9pt}.consolidated-bo .bo-provenance{display:none}.consolidated-bo .bo-debt-details::details-content,.consolidated-bo .bo-quick-evidence::details-content{content-visibility:visible!important}.consolidated-bo .bo-evidence-body{background:transparent;padding:6px 0}.consolidated-bo .bo-print-expand a:after{content:' (' attr(href) ')';font-size:8pt}}
+</style>

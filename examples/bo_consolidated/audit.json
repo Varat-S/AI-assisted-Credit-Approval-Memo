@@ -1,0 +1,5606 @@
+{
+  "document": "business_overview_audit_report",
+  "version": "bo-audit-1.0",
+  "notice": "This report lists recorded events: structured agent outputs, tool actions, validations and evidence decisions. It does not expose or reconstruct model-private reasoning.",
+  "case": {
+    "case_id": "NFH_BO",
+    "borrower": "Northfield Health Systems",
+    "borrower_entity_id": "NFH",
+    "as_of_date": "2025-12-31",
+    "evidence_cutoff": "2026-03-01T00:00:00+00:00",
+    "evidence_snapshot_version": 1
+  },
+  "run": {
+    "analysis_run_id": "ar_5f1d1e213ea4435c",
+    "scope": "business_overview_only",
+    "execution_mode": "offline_simulation",
+    "execution_label": "OFFLINE SIMULATION: agent responses came from a scripted fake backend, not a live model. This demonstrates the pipeline, not model analysis.",
+    "validators_enforced": true,
+    "agent_registry_version": "agent-registry-3.1.0",
+    "agent_registry_hash": "9331cadbe33edcc84c56320823263bd59e236482fec8646f8fa4f4406a124eb1",
+    "started_at": "2026-11-02T05:18:58.267583+00:00",
+    "completed_at": "2026-11-02T05:18:58.513008+00:00"
+  },
+  "conclusion_status": "human_review_required",
+  "sources": {
+    "documents": [
+      {
+        "document_id": "doc_10k",
+        "filename": "nfh-10k.htm",
+        "role": "primary_inline_xbrl",
+        "form": "10-K",
+        "accession": "0000000001-26-000001",
+        "cik": null,
+        "filing_date": null,
+        "report_date": null,
+        "available_at": null,
+        "source_url": null,
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+        "parser": null
+      }
+    ],
+    "sec_filings": [],
+    "rejected_sources": [],
+    "prior_escalations": []
+  },
+  "evidence_snapshot": {
+    "case_id": "NFH_BO",
+    "snapshot_version": 1,
+    "schema_version": "1.2",
+    "content_hash": "b80c894f0c1780370430a51bdd3f7b6ff6763f90c0ca1f90b94a5e316df17536",
+    "config_versions": {},
+    "fact_count": 2,
+    "narrative_passage_count": 14,
+    "human_verified_fact_count": 0
+  },
+  "registry": {
+    "version": "agent-registry-3.1.0",
+    "hash": "9331cadbe33edcc84c56320823263bd59e236482fec8646f8fa4f4406a124eb1",
+    "total_registered_jobs": 29,
+    "active_agent_ids": [
+      "m1_revenue_quality",
+      "m1_customer_stickiness",
+      "m1_pricing_power",
+      "m1_operating_model",
+      "m1_competitive_durability",
+      "m1_resilience_integration",
+      "m2_industry",
+      "m4_strategy_capital",
+      "business_orchestrator",
+      "business_challenge"
+    ],
+    "inactive_registered_agent_ids": [
+      "accounting_audit_quality",
+      "business_concentration_mitigant",
+      "cashflow_working_capital",
+      "collateral_security_guarantee",
+      "covenant_extraction",
+      "credit_orchestrator",
+      "cross_topic_challenge",
+      "debt_liquidity_terms",
+      "ebitda_adjustments",
+      "facility_terms",
+      "financial_challenge",
+      "financial_orchestrator",
+      "forecast_stress_drivers",
+      "governance_information_mitigant",
+      "legal_undertakings_conditions",
+      "leverage_coverage_mitigant",
+      "liquidity_refinancing_mitigant",
+      "structuring_challenge",
+      "structuring_orchestrator"
+    ],
+    "v1_to_v2_agent_map": {
+      "business_model": "bo_business_model_revenue",
+      "customer_supplier_contract": "bo_customers_contracts",
+      "competition_pricing": "bo_competition_pricing",
+      "management_governance": "bo_operations_management",
+      "ma_capex_execution": "bo_operations_management",
+      "regulatory_material_events": "bo_regulation_external"
+    }
+  },
+  "prompts": {
+    "bo_business_model_revenue": {
+      "prompt_id": "bo_business_model_revenue_v1.0",
+      "version": 1,
+      "content_hash": "c600b89af2387d0559208d276c04480ae6372bd2cda1de16eb842feb048f095a",
+      "response_schema_hash": "4db6d1a28748523cfe3403958c8f0626377c1211d038667a2014adb961f1195a"
+    },
+    "bo_competition_pricing": {
+      "prompt_id": "bo_competition_pricing_v1.0",
+      "version": 1,
+      "content_hash": "e1f57a5022858c6b8d6b7e6d5f6ed6fdc1cfa629feec3da05b581cf8faccf81f",
+      "response_schema_hash": "4db6d1a28748523cfe3403958c8f0626377c1211d038667a2014adb961f1195a"
+    },
+    "bo_competitive_challenger_v1": {
+      "prompt_id": "bo_competitive_challenger_v1_v1.0",
+      "version": 1,
+      "content_hash": "f6cb78833d0fbdef53ed9e146f516555b98daad9ccb156a19285acf252ab2bc6",
+      "response_schema_hash": "5c280e6b2279bff5b5d65949bcc26706f294be6394e02a3e966e3a672281d4d8"
+    },
+    "bo_competitive_consolidated_v1": {
+      "prompt_id": "bo_competitive_consolidated_v1_v1.0",
+      "version": 1,
+      "content_hash": "01df6d988d91c508b95e05266f85f6a987549709288e480922b2201372d5cc42",
+      "response_schema_hash": "062d8b28af4dd3b76893781a999b59c92cc0d9ba5af89d8ff08e26f870df9b87"
+    },
+    "bo_customers_contracts": {
+      "prompt_id": "bo_customers_contracts_v1.0",
+      "version": 1,
+      "content_hash": "409066a7e0a622d2cddb2f1e607cf16680c330dbb3d617eeb4b98efa28a8426b",
+      "response_schema_hash": "4db6d1a28748523cfe3403958c8f0626377c1211d038667a2014adb961f1195a"
+    },
+    "bo_operations_management": {
+      "prompt_id": "bo_operations_management_v1.0",
+      "version": 1,
+      "content_hash": "a8766efb0c38ba49b491f4df164d67f07a84c22948d3e052a0a6bc23f390c97d",
+      "response_schema_hash": "4db6d1a28748523cfe3403958c8f0626377c1211d038667a2014adb961f1195a"
+    },
+    "bo_regulation_external": {
+      "prompt_id": "bo_regulation_external_v1.0",
+      "version": 1,
+      "content_hash": "f79e10dae0ad3a381992b07673d018e421434ed0bb87beedba2f3ed905e62176",
+      "response_schema_hash": "4db6d1a28748523cfe3403958c8f0626377c1211d038667a2014adb961f1195a"
+    },
+    "bo_resilience_interactions": {
+      "prompt_id": "bo_resilience_interactions_v1.0",
+      "version": 1,
+      "content_hash": "126dc69a8754344c8b46c81dda1f7aea027dd796ac1f59dda8c7274ab7dc6ced",
+      "response_schema_hash": "4db6d1a28748523cfe3403958c8f0626377c1211d038667a2014adb961f1195a"
+    },
+    "bo_v2_business_challenge": {
+      "prompt_id": "bo_v2_business_challenge_v1.0",
+      "version": 1,
+      "content_hash": "5943c14f3733bbc9d669021bf35d64de00773c3091d345f48f1f29fe8da875e1",
+      "response_schema_hash": "5c280e6b2279bff5b5d65949bcc26706f294be6394e02a3e966e3a672281d4d8"
+    },
+    "bo_v2_business_orchestrator": {
+      "prompt_id": "bo_v2_business_orchestrator_v1.0",
+      "version": 1,
+      "content_hash": "0b19ab7c85e39ac5572ba0592f4721b06d3c9c22442d2e015d866425e976249f",
+      "response_schema_hash": "0f7000429c7aaa58260586868375d6f35f2d0b0deeef80a2e094b49cf9cba75f"
+    },
+    "bo_v3_premise_entailment": {
+      "prompt_id": "bo_v3_premise_entailment_v1.0",
+      "version": 1,
+      "content_hash": "31b405f0b89996c51cd0542959a1d9bbd87d0cc486744dadd45212ac83a95684",
+      "response_schema_hash": "c00d57cbe54fb88285f4fabe9b81d6dcc32d1210ace51944b4da5e3844181a8d"
+    },
+    "m1_competitive_durability": {
+      "prompt_id": "m1_competitive_durability_v1.0",
+      "version": 1,
+      "content_hash": "cf17df267b28e6bdb974f4fc2665561236512fe239e942bf2c4a1e7182d39e2f",
+      "response_schema_hash": "4db6d1a28748523cfe3403958c8f0626377c1211d038667a2014adb961f1195a"
+    },
+    "m1_competitive_durability__parameters": {
+      "prompt_id": "m1_competitive_durability__parameters_v1.0",
+      "version": 1,
+      "content_hash": "e514720082fc42a5e4e358d4714473a82cefee4f14949b1b49fadcb3e384d001",
+      "response_schema_hash": "64637c3b0d6f8ee5ae3bd55a71b01f40e31729457d50b50129ef9c34f5b594f6"
+    },
+    "m1_customer_stickiness": {
+      "prompt_id": "m1_customer_stickiness_v1.0",
+      "version": 1,
+      "content_hash": "09c945ba73cec02fa0ae8c508f2629f8105dfc426f7ead3fb9568b75ccbfcd4a",
+      "response_schema_hash": "4db6d1a28748523cfe3403958c8f0626377c1211d038667a2014adb961f1195a"
+    },
+    "m1_customer_stickiness__parameters": {
+      "prompt_id": "m1_customer_stickiness__parameters_v1.0",
+      "version": 1,
+      "content_hash": "11bc2b1b63a119fe86f7751e1428adfefd8d7c51152adbb88df1903ad9d88736",
+      "response_schema_hash": "64637c3b0d6f8ee5ae3bd55a71b01f40e31729457d50b50129ef9c34f5b594f6"
+    },
+    "m1_operating_model": {
+      "prompt_id": "m1_operating_model_v1.0",
+      "version": 1,
+      "content_hash": "439bf564202f294c72b369258e00e2949937b59660837380b31cea525a101468",
+      "response_schema_hash": "4db6d1a28748523cfe3403958c8f0626377c1211d038667a2014adb961f1195a"
+    },
+    "m1_operating_model__parameters": {
+      "prompt_id": "m1_operating_model__parameters_v1.0",
+      "version": 1,
+      "content_hash": "8a16192161ac337dea42895c28d80a6e9ad817344d66cf10fb44c27f7f04fa60",
+      "response_schema_hash": "64637c3b0d6f8ee5ae3bd55a71b01f40e31729457d50b50129ef9c34f5b594f6"
+    },
+    "m1_pricing_power": {
+      "prompt_id": "m1_pricing_power_v1.0",
+      "version": 1,
+      "content_hash": "be2465e80942b6a7a156e50a8b8f0015d5cbbacf55e85d9070988c32e7caeced",
+      "response_schema_hash": "4db6d1a28748523cfe3403958c8f0626377c1211d038667a2014adb961f1195a"
+    },
+    "m1_pricing_power__parameters": {
+      "prompt_id": "m1_pricing_power__parameters_v1.0",
+      "version": 1,
+      "content_hash": "c536045fe60ac347234aa09ce6ea49337c2017646956db029350b46588f75061",
+      "response_schema_hash": "64637c3b0d6f8ee5ae3bd55a71b01f40e31729457d50b50129ef9c34f5b594f6"
+    },
+    "m1_resilience_integration": {
+      "prompt_id": "m1_resilience_integration_v1.0",
+      "version": 1,
+      "content_hash": "7311b3320dbac6a2f53c6ff5039e4c62b19b11c6ed108cad57d67983261a641f",
+      "response_schema_hash": "4db6d1a28748523cfe3403958c8f0626377c1211d038667a2014adb961f1195a"
+    },
+    "m1_resilience_integration__parameters": {
+      "prompt_id": "m1_resilience_integration__parameters_v1.0",
+      "version": 1,
+      "content_hash": "1498a47bcc6e6836dabe83b4f4a214526f8e9d4d6f3e32d9a5522e0b18522c87",
+      "response_schema_hash": "64637c3b0d6f8ee5ae3bd55a71b01f40e31729457d50b50129ef9c34f5b594f6"
+    },
+    "m1_revenue_quality": {
+      "prompt_id": "m1_revenue_quality_v1.0",
+      "version": 1,
+      "content_hash": "677e5cc88f5cb9796eed43ab561a8dae970232a48445b43c8546613c9d056489",
+      "response_schema_hash": "4db6d1a28748523cfe3403958c8f0626377c1211d038667a2014adb961f1195a"
+    },
+    "m1_revenue_quality__parameters": {
+      "prompt_id": "m1_revenue_quality__parameters_v1.0",
+      "version": 1,
+      "content_hash": "cc5b27862390f51aea2efd1f0d243bc932009dccf16018669c51db5aacbcd8c5",
+      "response_schema_hash": "64637c3b0d6f8ee5ae3bd55a71b01f40e31729457d50b50129ef9c34f5b594f6"
+    },
+    "m2_industry": {
+      "prompt_id": "m2_industry_v1.0",
+      "version": 1,
+      "content_hash": "5164c5fd8c40e9d038ceb4e5017273a5ed86ecdf55e80d7ba0d18dd79339832a",
+      "response_schema_hash": "4db6d1a28748523cfe3403958c8f0626377c1211d038667a2014adb961f1195a"
+    },
+    "m2_industry__parameters": {
+      "prompt_id": "m2_industry__parameters_v1.0",
+      "version": 1,
+      "content_hash": "c71d5d96c4a8b7aa286fa2c71cab0ddc106a3d422d1a2b9b6fa0944d67fe630f",
+      "response_schema_hash": "64637c3b0d6f8ee5ae3bd55a71b01f40e31729457d50b50129ef9c34f5b594f6"
+    },
+    "m4_strategy_capital": {
+      "prompt_id": "m4_strategy_capital_v1.0",
+      "version": 1,
+      "content_hash": "d80a22c9b17eec4480e17acfcbd230f361397bf023dd148ff7fb195858b880e5",
+      "response_schema_hash": "4db6d1a28748523cfe3403958c8f0626377c1211d038667a2014adb961f1195a"
+    },
+    "m4_strategy_capital__parameters": {
+      "prompt_id": "m4_strategy_capital__parameters_v1.0",
+      "version": 1,
+      "content_hash": "e05a12581ce31083262c9bc6fb2cdfe15b6777b9638a43f1343d0c7cd5ce126a",
+      "response_schema_hash": "64637c3b0d6f8ee5ae3bd55a71b01f40e31729457d50b50129ef9c34f5b594f6"
+    }
+  },
+  "agents": [
+    {
+      "agent_id": "m1_revenue_quality",
+      "code": "M1S1",
+      "role": "Pricing Power",
+      "task_type": "m1_revenue_quality",
+      "model_tier": "narrow",
+      "dependencies": [],
+      "owned_parameters": [
+        "pricing_power_assessment",
+        "revenue_realisation_assessment"
+      ],
+      "task_sections": [],
+      "agent_definition_hash": "abca11e212f672a0a3e7883318e02b230ca6f44146059d1c78b1074526cd13ca",
+      "prompt_name": "m1_revenue_quality",
+      "status": "validated",
+      "detail": null,
+      "validation_issues": [],
+      "validator_adjustments": [],
+      "runs": [
+        {
+          "agent_run_id": "55da1ef6-b065-40a3-9ab9-7000911ae064",
+          "execution_wave": 0,
+          "validation_status": "valid",
+          "validation_detail": null,
+          "model_id": "scripted-offline-simulation-v1",
+          "prompt_id": "m1_revenue_quality_v1.0",
+          "prompt_version": 1,
+          "prompt_hash": "677e5cc88f5cb9796eed43ab561a8dae970232a48445b43c8546613c9d056489",
+          "input_hash": "9bfb3acde8051d6be4a9b8926b742068cc493694b6599fa7654ed3c5710ea5ad",
+          "cache_key": "a8edcc81752ee5ad4168ff0b2872441a276a7e3ec9188b138329c848049a6bd4",
+          "reused_from_cache": false,
+          "rerun_reason": null,
+          "error_state": null,
+          "latency_ms": 44,
+          "usage": null,
+          "parent_run_ids": [],
+          "input_evidence_count": 3,
+          "created_at": "2026-11-02T05:18:58.401427+00:00"
+        }
+      ]
+    },
+    {
+      "agent_id": "m1_customer_stickiness",
+      "code": "M1S2",
+      "role": "Demand Defensiveness",
+      "task_type": "m1_customer_stickiness",
+      "model_tier": "narrow",
+      "dependencies": [],
+      "owned_parameters": [
+        "business_model_classification",
+        "revenue_recurrence_assessment",
+        "demand_defensiveness_assessment",
+        "cyclicality_seasonality_assessment"
+      ],
+      "task_sections": [],
+      "agent_definition_hash": "9b5e3f1e5ce8bfc2dd968a3eb8cd1835e03eb05bd90e285382da7bedc2211c2d",
+      "prompt_name": "m1_customer_stickiness",
+      "status": "validated",
+      "detail": null,
+      "validation_issues": [],
+      "validator_adjustments": [],
+      "runs": [
+        {
+          "agent_run_id": "3e859e65-5baa-457d-aef7-111774e18d58",
+          "execution_wave": 0,
+          "validation_status": "valid",
+          "validation_detail": null,
+          "model_id": "scripted-offline-simulation-v1",
+          "prompt_id": "m1_customer_stickiness_v1.0",
+          "prompt_version": 1,
+          "prompt_hash": "09c945ba73cec02fa0ae8c508f2629f8105dfc426f7ead3fb9568b75ccbfcd4a",
+          "input_hash": "ecb255b1c835cd5bbe0addacee9345e2aac3ef218f917e5e0982bae0f4efc972",
+          "cache_key": "6499f4573b9e21b01b36ab203b0b53062172ff4501abfbd75bc6a2002e7a63d7",
+          "reused_from_cache": false,
+          "rerun_reason": null,
+          "error_state": null,
+          "latency_ms": 19,
+          "usage": null,
+          "parent_run_ids": [],
+          "input_evidence_count": 5,
+          "created_at": "2026-11-02T05:18:58.370584+00:00"
+        }
+      ]
+    },
+    {
+      "agent_id": "m1_pricing_power",
+      "code": "M1S3",
+      "role": "Customer Stickiness",
+      "task_type": "m1_pricing_power",
+      "model_tier": "narrow",
+      "dependencies": [],
+      "owned_parameters": [
+        "customer_dependence_assessment",
+        "contract_termination_risk_assessment",
+        "switching_cost_assessment"
+      ],
+      "task_sections": [],
+      "agent_definition_hash": "433e8eaf2a15253bfeb0c24514675576a53af82d8fcf0a00d2bea84ed9269aa3",
+      "prompt_name": "m1_pricing_power",
+      "status": "validated",
+      "detail": null,
+      "validation_issues": [],
+      "validator_adjustments": [
+        {
+          "hypothesis_id": "M1S3-H001",
+          "note": "generic_risk_disclosure_only: Supported only by risk-factor language about what could happen; it may be reported as a disclosed risk, not as an event that has occurred."
+        },
+        {
+          "hypothesis_id": "(output)",
+          "note": "Indicators supplied but bound by no hypothesis: pr_41fcb1c6f28141aa, pr_491c8a3d2eca4be2, pr_73a92ffeb6ed409b, pr_cc2835adbf014f98."
+        }
+      ],
+      "runs": [
+        {
+          "agent_run_id": "0f7e904a-7e49-4dce-bcb6-9661692c543e",
+          "execution_wave": 0,
+          "validation_status": "valid",
+          "validation_detail": null,
+          "model_id": "scripted-offline-simulation-v1",
+          "prompt_id": "m1_pricing_power_v1.0",
+          "prompt_version": 1,
+          "prompt_hash": "be2465e80942b6a7a156e50a8b8f0015d5cbbacf55e85d9070988c32e7caeced",
+          "input_hash": "f16e3a9b1649716d01289f305f2d7a4cd85e874443f548214e3aa12f629c7389",
+          "cache_key": "cb1b4dc2f3e9f57e76148428ec08c0130f18c60312b90155c6e4af6bf2f4381b",
+          "reused_from_cache": false,
+          "rerun_reason": null,
+          "error_state": null,
+          "latency_ms": 35,
+          "usage": null,
+          "parent_run_ids": [],
+          "input_evidence_count": 2,
+          "created_at": "2026-11-02T05:18:58.391151+00:00"
+        }
+      ]
+    },
+    {
+      "agent_id": "m1_operating_model",
+      "code": "M1S4",
+      "role": "Cost Resilience",
+      "task_type": "m1_operating_model",
+      "model_tier": "narrow",
+      "dependencies": [],
+      "owned_parameters": [
+        "workforce_cost_resilience_assessment",
+        "supplier_dependence_assessment"
+      ],
+      "task_sections": [],
+      "agent_definition_hash": "134c43ea53e7de16176dd5a887349902b07f614dcf78aee95c84ae6045f29ee8",
+      "prompt_name": "m1_operating_model",
+      "status": "validated",
+      "detail": null,
+      "validation_issues": [],
+      "validator_adjustments": [],
+      "runs": [
+        {
+          "agent_run_id": "5c56844d-2301-4b36-991c-462631df0cb3",
+          "execution_wave": 0,
+          "validation_status": "valid",
+          "validation_detail": null,
+          "model_id": "scripted-offline-simulation-v1",
+          "prompt_id": "m1_operating_model_v1.0",
+          "prompt_version": 1,
+          "prompt_hash": "439bf564202f294c72b369258e00e2949937b59660837380b31cea525a101468",
+          "input_hash": "1f357409f4521cf9e5de1e506f026334c44dd2d80117213d11b20206c1b3bb6a",
+          "cache_key": "41d7893003cd9b3e9f3302d9ee7988f24cd507915d19eddfa1e2f04b2ef137d3",
+          "reused_from_cache": false,
+          "rerun_reason": null,
+          "error_state": null,
+          "latency_ms": 27,
+          "usage": null,
+          "parent_run_ids": [],
+          "input_evidence_count": 2,
+          "created_at": "2026-11-02T05:18:58.380911+00:00"
+        }
+      ]
+    },
+    {
+      "agent_id": "m1_competitive_durability",
+      "code": "M1S5",
+      "role": "Competitive Positioning",
+      "task_type": "m1_competitive_durability",
+      "model_tier": "narrow",
+      "dependencies": [],
+      "owned_parameters": [
+        "competitive_position_assessment",
+        "competitive_pressure_assessment",
+        "barriers_to_entry_assessment"
+      ],
+      "task_sections": [],
+      "agent_definition_hash": "9a21970c8de4f7b703926f0faacc230745aa32fb5606e34029521f6e801b963c",
+      "prompt_name": "m1_competitive_durability",
+      "status": "validated",
+      "detail": null,
+      "validation_issues": [],
+      "validator_adjustments": [],
+      "runs": [
+        {
+          "agent_run_id": "3300f36e-47fd-44ad-8d72-1e23a51dc6cf",
+          "execution_wave": 0,
+          "validation_status": "valid",
+          "validation_detail": null,
+          "model_id": "scripted-offline-simulation-v1",
+          "prompt_id": "m1_competitive_durability_v1.0",
+          "prompt_version": 1,
+          "prompt_hash": "cf17df267b28e6bdb974f4fc2665561236512fe239e942bf2c4a1e7182d39e2f",
+          "input_hash": "abf7618f7819b156031acbdadd753faf70a7fa10ddf2a130ef1565b93a687cf9",
+          "cache_key": "6ee97241f2a53dd5f63a02733c375d1ccf03d23eaf747f742c4634fc40f89f21",
+          "reused_from_cache": false,
+          "rerun_reason": null,
+          "error_state": null,
+          "latency_ms": 11,
+          "usage": null,
+          "parent_run_ids": [],
+          "input_evidence_count": 1,
+          "created_at": "2026-11-02T05:18:58.357446+00:00"
+        }
+      ]
+    },
+    {
+      "agent_id": "m1_resilience_integration",
+      "code": "M1A6",
+      "role": "Business Resilience, Risk Interactions & Synthesis",
+      "task_type": "m1_resilience_integration",
+      "model_tier": "narrow",
+      "dependencies": [
+        "m1_revenue_quality",
+        "m1_customer_stickiness",
+        "m1_pricing_power",
+        "m1_operating_model",
+        "m1_competitive_durability"
+      ],
+      "owned_parameters": [
+        "compound_risk_assessment",
+        "mitigating_capability_assessment"
+      ],
+      "task_sections": [],
+      "agent_definition_hash": "22664bd4084fdc560ea387b7b962568c546db4945e8afac7d68f85b3ae1b4856",
+      "prompt_name": "m1_resilience_integration",
+      "status": "validated",
+      "detail": null,
+      "validation_issues": [],
+      "validator_adjustments": [
+        {
+          "hypothesis_id": "(output)",
+          "note": "Indicators supplied but bound by no hypothesis: pr_41fcb1c6f28141aa, pr_491c8a3d2eca4be2, pr_73a92ffeb6ed409b, pr_cc2835adbf014f98."
+        }
+      ],
+      "runs": [
+        {
+          "agent_run_id": "2943f453-a0a0-40b0-bdbf-171a2b171de9",
+          "execution_wave": 1,
+          "validation_status": "valid",
+          "validation_detail": null,
+          "model_id": "scripted-offline-simulation-v1",
+          "prompt_id": "m1_resilience_integration_v1.0",
+          "prompt_version": 1,
+          "prompt_hash": "7311b3320dbac6a2f53c6ff5039e4c62b19b11c6ed108cad57d67983261a641f",
+          "input_hash": "11ba27f73bf34593783b4557885823f63887f854d266991a2c5669d75dcec14c",
+          "cache_key": "5d5f6286099f1ea12bd8d502572294e763505303182d5f766ddc3e48c4f77e82",
+          "reused_from_cache": false,
+          "rerun_reason": null,
+          "error_state": null,
+          "latency_ms": 9,
+          "usage": null,
+          "parent_run_ids": [
+            "55da1ef6-b065-40a3-9ab9-7000911ae064",
+            "3e859e65-5baa-457d-aef7-111774e18d58",
+            "0f7e904a-7e49-4dce-bcb6-9661692c543e",
+            "5c56844d-2301-4b36-991c-462631df0cb3",
+            "3300f36e-47fd-44ad-8d72-1e23a51dc6cf"
+          ],
+          "input_evidence_count": 5,
+          "created_at": "2026-11-02T05:18:58.446696+00:00"
+        }
+      ]
+    },
+    {
+      "agent_id": "m2_industry",
+      "code": "M2",
+      "role": "Industry Information",
+      "task_type": "m2_industry",
+      "model_tier": "narrow",
+      "dependencies": [],
+      "owned_parameters": [
+        "regulatory_dependency_assessment",
+        "external_event_exposure_assessment"
+      ],
+      "task_sections": [],
+      "agent_definition_hash": "1023b1f5f7857f0ded748c60b5dc2e447ccdffe065c4ae3a536e7d3c9c4cb8a6",
+      "prompt_name": "m2_industry",
+      "status": "validated",
+      "detail": null,
+      "validation_issues": [],
+      "validator_adjustments": [
+        {
+          "hypothesis_id": "M2-H001",
+          "note": "generic_risk_disclosure_only: Supported only by risk-factor language about what could happen; it may be reported as a disclosed risk, not as an event that has occurred."
+        },
+        {
+          "hypothesis_id": "M2-H001",
+          "note": "quote_does_not_cover_claim: The quote is verified, but it shares almost no wording with the claim, so it does not show that the filing states the claim; treated as the specialist's inference."
+        },
+        {
+          "hypothesis_id": "(output)",
+          "note": "Indicators supplied but bound by no hypothesis: pr_41fcb1c6f28141aa, pr_491c8a3d2eca4be2, pr_73a92ffeb6ed409b, pr_cc2835adbf014f98."
+        }
+      ],
+      "runs": [
+        {
+          "agent_run_id": "43752ed0-ad0b-41fa-8e7d-e61da41205f5",
+          "execution_wave": 0,
+          "validation_status": "valid",
+          "validation_detail": null,
+          "model_id": "scripted-offline-simulation-v1",
+          "prompt_id": "m2_industry_v1.0",
+          "prompt_version": 1,
+          "prompt_hash": "5164c5fd8c40e9d038ceb4e5017273a5ed86ecdf55e80d7ba0d18dd79339832a",
+          "input_hash": "cbc291e23df7839e7c80b89450c80a207843b0b2f432fd0755c14978d4b41780",
+          "cache_key": "0210b0c7b920a6e77e3c820558a891266cec8a71e4652f48a1a2c5564fbc33ef",
+          "reused_from_cache": false,
+          "rerun_reason": null,
+          "error_state": null,
+          "latency_ms": 52,
+          "usage": null,
+          "parent_run_ids": [],
+          "input_evidence_count": 6,
+          "created_at": "2026-11-02T05:18:58.412179+00:00"
+        }
+      ]
+    },
+    {
+      "agent_id": "m4_strategy_capital",
+      "code": "M4",
+      "role": "Strategy & Capital Allocation / Financial Stewardship",
+      "task_type": "m4_strategy_capital",
+      "model_tier": "narrow",
+      "dependencies": [],
+      "owned_parameters": [
+        "acquisition_strategy_assessment",
+        "integration_risk_assessment",
+        "capex_strategy_assessment"
+      ],
+      "task_sections": [
+        "acquisition_strategy",
+        "integration_risk",
+        "capex_strategy",
+        "financial_stewardship_and_execution"
+      ],
+      "agent_definition_hash": "f03be21cbdb45aa0d4481e808875135bbee9199ec591ae786545f67e7685a169",
+      "prompt_name": "m4_strategy_capital",
+      "status": "validated",
+      "detail": null,
+      "validation_issues": [],
+      "validator_adjustments": [
+        {
+          "hypothesis_id": "(output)",
+          "note": "Indicators supplied but bound by no hypothesis: pr_2ce617bba0824363, pr_8fac72b0f59846a6."
+        }
+      ],
+      "runs": [
+        {
+          "agent_run_id": "183d5602-de62-4623-93a8-4a32ced31835",
+          "execution_wave": 0,
+          "validation_status": "valid",
+          "validation_detail": null,
+          "model_id": "scripted-offline-simulation-v1",
+          "prompt_id": "m4_strategy_capital_v1.0",
+          "prompt_version": 1,
+          "prompt_hash": "d80a22c9b17eec4480e17acfcbd230f361397bf023dd148ff7fb195858b880e5",
+          "input_hash": "e8922e002165ba6143eabb5183cfdfa3c2111c238a087a41983e5228fd083832",
+          "cache_key": "71eac36d022ec339d47879db933c7dd32e2e9c5d6249e4246d35ae861a2d625c",
+          "reused_from_cache": false,
+          "rerun_reason": null,
+          "error_state": null,
+          "latency_ms": 8,
+          "usage": null,
+          "parent_run_ids": [],
+          "input_evidence_count": 2,
+          "created_at": "2026-11-02T05:18:58.422881+00:00"
+        }
+      ]
+    },
+    {
+      "agent_id": "business_orchestrator",
+      "code": null,
+      "role": "orchestrate",
+      "task_type": "orchestrate",
+      "model_tier": "orchestrator",
+      "dependencies": [
+        "m1_revenue_quality",
+        "m1_customer_stickiness",
+        "m1_pricing_power",
+        "m1_operating_model",
+        "m1_competitive_durability",
+        "m1_resilience_integration",
+        "m2_industry",
+        "m4_strategy_capital"
+      ],
+      "owned_parameters": [],
+      "task_sections": [],
+      "agent_definition_hash": "0cc5cf56798128198d1421b809b9b52674e27f5d853c4cff7ccbcc75f207b06f",
+      "prompt_name": "bo_v2_business_orchestrator",
+      "status": "validated",
+      "detail": null,
+      "validation_issues": [],
+      "validator_adjustments": [],
+      "runs": [
+        {
+          "agent_run_id": "6e888a18-51e3-4cdc-b6a8-d80a89b7bcfc",
+          "execution_wave": 2,
+          "validation_status": "valid",
+          "validation_detail": null,
+          "model_id": "scripted-offline-simulation-v1",
+          "prompt_id": "bo_competitive_consolidated_v1_v1.0",
+          "prompt_version": 1,
+          "prompt_hash": "01df6d988d91c508b95e05266f85f6a987549709288e480922b2201372d5cc42",
+          "input_hash": "e46265c151deb6bb8383c32e8346a41854e746a85e4b54729ff8cb1365f52ce5",
+          "cache_key": "20719a74cd1d62ebb14116901240bf1b10f49a3717ff73bc6c8ec59a683163fa",
+          "reused_from_cache": false,
+          "rerun_reason": null,
+          "error_state": null,
+          "latency_ms": 6,
+          "usage": null,
+          "parent_run_ids": [
+            "55da1ef6-b065-40a3-9ab9-7000911ae064",
+            "3e859e65-5baa-457d-aef7-111774e18d58",
+            "0f7e904a-7e49-4dce-bcb6-9661692c543e",
+            "5c56844d-2301-4b36-991c-462631df0cb3",
+            "3300f36e-47fd-44ad-8d72-1e23a51dc6cf",
+            "2943f453-a0a0-40b0-bdbf-171a2b171de9",
+            "43752ed0-ad0b-41fa-8e7d-e61da41205f5",
+            "183d5602-de62-4623-93a8-4a32ced31835"
+          ],
+          "input_evidence_count": 6,
+          "created_at": "2026-11-02T05:18:58.486764+00:00"
+        }
+      ]
+    },
+    {
+      "agent_id": "business_challenge",
+      "code": null,
+      "role": "challenge",
+      "task_type": "challenge",
+      "model_tier": "challenge",
+      "dependencies": [
+        "business_orchestrator"
+      ],
+      "owned_parameters": [],
+      "task_sections": [],
+      "agent_definition_hash": "d7d7ddcc65c7442430e58deecab100f06e0ce60173915dc2c5a8240740ced637",
+      "prompt_name": "bo_v2_business_challenge",
+      "status": "validated",
+      "detail": null,
+      "validation_issues": [],
+      "validator_adjustments": [],
+      "runs": [
+        {
+          "agent_run_id": "8db98700-b8e6-4c75-9db0-019a7e9572e7",
+          "execution_wave": 3,
+          "validation_status": "valid",
+          "validation_detail": null,
+          "model_id": "scripted-offline-simulation-v1",
+          "prompt_id": "bo_competitive_challenger_v1_v1.0",
+          "prompt_version": 1,
+          "prompt_hash": "f6cb78833d0fbdef53ed9e146f516555b98daad9ccb156a19285acf252ab2bc6",
+          "input_hash": "08d30792f2491b078db54d281aee63dcc18f2b9e8c5452d7fbf4ffee3633ea17",
+          "cache_key": "ece804766d12dfa1deb2d84c6e5c863f61f1de5ad28e56dfc83b57603fc005e7",
+          "reused_from_cache": false,
+          "rerun_reason": null,
+          "error_state": null,
+          "latency_ms": 2,
+          "usage": null,
+          "parent_run_ids": [
+            "6e888a18-51e3-4cdc-b6a8-d80a89b7bcfc"
+          ],
+          "input_evidence_count": 6,
+          "created_at": "2026-11-02T05:18:58.508508+00:00"
+        }
+      ]
+    }
+  ],
+  "execution": {
+    "stages": [
+      {
+        "stage": "primary_specialists",
+        "round": 0,
+        "requested": [
+          "m1_competitive_durability",
+          "m1_customer_stickiness",
+          "m1_operating_model",
+          "m1_pricing_power",
+          "m1_revenue_quality",
+          "m2_industry",
+          "m4_strategy_capital"
+        ],
+        "executed": [
+          "m1_competitive_durability",
+          "m1_customer_stickiness",
+          "m1_operating_model",
+          "m1_pricing_power",
+          "m1_revenue_quality",
+          "m2_industry",
+          "m4_strategy_capital"
+        ],
+        "failed": {},
+        "skipped": {},
+        "peak_concurrency": 6,
+        "cache_hits": 0
+      },
+      {
+        "stage": "resilience",
+        "round": 0,
+        "requested": [
+          "m1_resilience_integration"
+        ],
+        "executed": [
+          "m1_resilience_integration"
+        ],
+        "failed": {},
+        "skipped": {},
+        "peak_concurrency": 1,
+        "cache_hits": 0
+      },
+      {
+        "stage": "orchestrator",
+        "round": 0,
+        "requested": [
+          "business_orchestrator"
+        ],
+        "executed": [
+          "business_orchestrator"
+        ],
+        "failed": {},
+        "skipped": {},
+        "peak_concurrency": 1,
+        "cache_hits": 0
+      },
+      {
+        "stage": "challenger",
+        "round": 0,
+        "requested": [
+          "business_challenge"
+        ],
+        "executed": [
+          "business_challenge"
+        ],
+        "failed": {},
+        "skipped": {},
+        "peak_concurrency": 1,
+        "cache_hits": 0
+      }
+    ],
+    "ai_calls": 10,
+    "cache_reuses": 0,
+    "agent_run_records": 10,
+    "token_usage": "not_reported",
+    "runtime_seconds": 0.245
+  },
+  "evidence_packets": [
+    {
+      "agent_id": "m1_revenue_quality",
+      "packet_hash": "cf26caf32b69ef147f554236cbb49b742b35ae30e12cde069c3fa1c41309b4f6",
+      "router_version": "evidence-router-1.1.0",
+      "passage_count": 3,
+      "indicator_count": 0,
+      "evidence": [
+        {
+          "evidence_id": "ev_compete",
+          "filename": "nfh-10k.htm",
+          "section": "Item 1",
+          "location": 4000,
+          "sec_accession": "0000000001-26-000001"
+        },
+        {
+          "evidence_id": "ev_payer",
+          "filename": "nfh-10k.htm",
+          "section": "Item 1",
+          "location": 20000,
+          "sec_accession": "0000000001-26-000001"
+        },
+        {
+          "evidence_id": "ev_reg",
+          "filename": "nfh-10k.htm",
+          "section": "Item 1A",
+          "location": 22000,
+          "sec_accession": "0000000001-26-000001"
+        }
+      ],
+      "instruction_like_passages": []
+    },
+    {
+      "agent_id": "m1_customer_stickiness",
+      "packet_hash": "1537ab83a4bb873d24593678e472443f13517baef22bc8cb8a3bed8a411134c2",
+      "router_version": "evidence-router-1.1.0",
+      "passage_count": 5,
+      "indicator_count": 0,
+      "evidence": [
+        {
+          "evidence_id": "ev_admit",
+          "filename": "nfh-10k.htm",
+          "section": "Item 7",
+          "location": 0,
+          "sec_accession": "0000000001-26-000001"
+        },
+        {
+          "evidence_id": "ev_compete",
+          "filename": "nfh-10k.htm",
+          "section": "Item 1",
+          "location": 4000,
+          "sec_accession": "0000000001-26-000001"
+        },
+        {
+          "evidence_id": "ev_model",
+          "filename": "nfh-10k.htm",
+          "section": "Item 1",
+          "location": 18000,
+          "sec_accession": "0000000001-26-000001"
+        },
+        {
+          "evidence_id": "ev_season",
+          "filename": "nfh-10k.htm",
+          "section": "Item 1A",
+          "location": 24000,
+          "sec_accession": "0000000001-26-000001"
+        },
+        {
+          "evidence_id": "ev_uninsured",
+          "filename": "nfh-10k.htm",
+          "section": "Item 7",
+          "location": 26000,
+          "sec_accession": "0000000001-26-000001"
+        }
+      ],
+      "instruction_like_passages": []
+    },
+    {
+      "agent_id": "m1_pricing_power",
+      "packet_hash": "bf270dd13fc8af312e0eaa49858550242bfb63ca0315ccdfae72d9c866a15ff8",
+      "router_version": "evidence-router-1.1.0",
+      "passage_count": 2,
+      "indicator_count": 4,
+      "evidence": [
+        {
+          "evidence_id": "ev_labor",
+          "filename": "nfh-10k.htm",
+          "section": "Item 1A",
+          "location": 14000,
+          "sec_accession": "0000000001-26-000001"
+        },
+        {
+          "evidence_id": "ev_payer",
+          "filename": "nfh-10k.htm",
+          "section": "Item 1",
+          "location": 20000,
+          "sec_accession": "0000000001-26-000001"
+        }
+      ],
+      "instruction_like_passages": []
+    },
+    {
+      "agent_id": "m1_operating_model",
+      "packet_hash": "d9e9185093facfa44328f2cfe6bdeb4f5155a6f2073aed83fb1ffdc948b0b14d",
+      "router_version": "evidence-router-1.1.0",
+      "passage_count": 2,
+      "indicator_count": 0,
+      "evidence": [
+        {
+          "evidence_id": "ev_inject",
+          "filename": "nfh-10k.htm",
+          "section": "Item 1",
+          "location": 12000,
+          "sec_accession": "0000000001-26-000001"
+        },
+        {
+          "evidence_id": "ev_labor",
+          "filename": "nfh-10k.htm",
+          "section": "Item 1A",
+          "location": 14000,
+          "sec_accession": "0000000001-26-000001"
+        }
+      ],
+      "instruction_like_passages": [
+        "ev_inject"
+      ]
+    },
+    {
+      "agent_id": "m1_competitive_durability",
+      "packet_hash": "8c1367412f8a63dab9664e7b532cf46a8403f6f23db19e7db61aa03f192b5293",
+      "router_version": "evidence-router-1.1.0",
+      "passage_count": 1,
+      "indicator_count": 0,
+      "evidence": [
+        {
+          "evidence_id": "ev_compete",
+          "filename": "nfh-10k.htm",
+          "section": "Item 1",
+          "location": 4000,
+          "sec_accession": "0000000001-26-000001"
+        }
+      ],
+      "instruction_like_passages": []
+    },
+    {
+      "agent_id": "m1_resilience_integration",
+      "packet_hash": "97fa1c9f000483bfb6ee98e1ee8c25ec7b7744602ce4421ab72c58334f50b298",
+      "router_version": "evidence-router-1.1.0",
+      "passage_count": 2,
+      "indicator_count": 4,
+      "evidence": [
+        {
+          "evidence_id": "ev_labor",
+          "filename": "nfh-10k.htm",
+          "section": "Item 1A",
+          "location": 14000,
+          "sec_accession": "0000000001-26-000001"
+        },
+        {
+          "evidence_id": "ev_reg",
+          "filename": "nfh-10k.htm",
+          "section": "Item 1A",
+          "location": 22000,
+          "sec_accession": "0000000001-26-000001"
+        }
+      ],
+      "instruction_like_passages": []
+    },
+    {
+      "agent_id": "m2_industry",
+      "packet_hash": "4e17dac088364e1ad170d7bc59b6fa15f92359fa7ab52348c0613f5ba944459f",
+      "router_version": "evidence-router-1.1.0",
+      "passage_count": 6,
+      "indicator_count": 4,
+      "evidence": [
+        {
+          "evidence_id": "ev_admit",
+          "filename": "nfh-10k.htm",
+          "section": "Item 7",
+          "location": 0,
+          "sec_accession": "0000000001-26-000001"
+        },
+        {
+          "evidence_id": "ev_compete",
+          "filename": "nfh-10k.htm",
+          "section": "Item 1",
+          "location": 4000,
+          "sec_accession": "0000000001-26-000001"
+        },
+        {
+          "evidence_id": "ev_geo",
+          "filename": "nfh-10k.htm",
+          "section": "Item 1A",
+          "location": 10000,
+          "sec_accession": "0000000001-26-000001"
+        },
+        {
+          "evidence_id": "ev_reg",
+          "filename": "nfh-10k.htm",
+          "section": "Item 1A",
+          "location": 22000,
+          "sec_accession": "0000000001-26-000001"
+        },
+        {
+          "evidence_id": "ev_season",
+          "filename": "nfh-10k.htm",
+          "section": "Item 1A",
+          "location": 24000,
+          "sec_accession": "0000000001-26-000001"
+        },
+        {
+          "evidence_id": "ev_uninsured",
+          "filename": "nfh-10k.htm",
+          "section": "Item 7",
+          "location": 26000,
+          "sec_accession": "0000000001-26-000001"
+        }
+      ],
+      "instruction_like_passages": []
+    },
+    {
+      "agent_id": "m4_strategy_capital",
+      "packet_hash": "8e7caa08d822c1f26c741ef8eea0bd2a9e0991730d11e3d6977b94fdb2125272",
+      "router_version": "evidence-router-1.1.0",
+      "passage_count": 2,
+      "indicator_count": 2,
+      "evidence": [
+        {
+          "evidence_id": "ev_capex",
+          "filename": "nfh-10k.htm",
+          "section": "Item 7",
+          "location": 2000,
+          "sec_accession": "0000000001-26-000001"
+        },
+        {
+          "evidence_id": "ev_labor",
+          "filename": "nfh-10k.htm",
+          "section": "Item 1A",
+          "location": 14000,
+          "sec_accession": "0000000001-26-000001"
+        }
+      ],
+      "instruction_like_passages": []
+    },
+    {
+      "agent_id": "m3_corporate_management_input",
+      "packet_hash": "559841f45d9d5fc2adc8fe4f344451d48f3d3bdeb9edeb8ddefca484fc658441",
+      "router_version": "evidence-router-1.1.0",
+      "passage_count": 0,
+      "indicator_count": 0,
+      "evidence": [],
+      "instruction_like_passages": []
+    },
+    {
+      "agent_id": "m1_resilience_integration",
+      "packet_hash": "cafc821ba8ceb3e47f820694cc09849d60bc7edd80334af3e5157c4f0f47562c",
+      "router_version": "evidence-router-1.1.0",
+      "passage_count": 2,
+      "indicator_count": 4,
+      "evidence": [
+        {
+          "evidence_id": "ev_compete",
+          "filename": "nfh-10k.htm",
+          "section": "Item 1",
+          "location": 4000,
+          "sec_accession": "0000000001-26-000001"
+        },
+        {
+          "evidence_id": "ev_labor",
+          "filename": "nfh-10k.htm",
+          "section": "Item 1A",
+          "location": 14000,
+          "sec_accession": "0000000001-26-000001"
+        },
+        {
+          "evidence_id": "ev_model",
+          "filename": "nfh-10k.htm",
+          "section": "Item 1",
+          "location": 18000,
+          "sec_accession": "0000000001-26-000001"
+        },
+        {
+          "evidence_id": "ev_payer",
+          "filename": "nfh-10k.htm",
+          "section": "Item 1",
+          "location": 20000,
+          "sec_accession": "0000000001-26-000001"
+        },
+        {
+          "evidence_id": "ev_reg",
+          "filename": "nfh-10k.htm",
+          "section": "Item 1A",
+          "location": 22000,
+          "sec_accession": "0000000001-26-000001"
+        }
+      ],
+      "instruction_like_passages": []
+    }
+  ],
+  "retrieval": {
+    "attempts": [
+      {
+        "attempt_id": "ra_17e7d056b9c89a26a219",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m1_revenue_quality",
+        "query_id": "m1s1.pricing",
+        "purpose": "support",
+        "terms": [
+          "pric(?:e|es|ing)",
+          "rate increases?",
+          "reimbursement rates?",
+          "revenue per",
+          "negotiat"
+        ],
+        "origin": "plan",
+        "status": "performed",
+        "passages_searched": 3,
+        "results": [
+          {
+            "evidence_id": "ev_compete",
+            "document_id": "doc_10k",
+            "section": "Item 1",
+            "heading": "Item 1",
+            "location": 4000,
+            "page": null,
+            "sec_accession": "0000000001-26-000001",
+            "score": 202,
+            "matched_terms": [
+              "pric(?:e|es|ing)",
+              "revenue per"
+            ]
+          },
+          {
+            "evidence_id": "ev_payer",
+            "document_id": "doc_10k",
+            "section": "Item 1",
+            "heading": "Item 1",
+            "location": 20000,
+            "page": null,
+            "sec_accession": "0000000001-26-000001",
+            "score": 101,
+            "matched_terms": [
+              "negotiat"
+            ]
+          },
+          {
+            "evidence_id": "ev_reg",
+            "document_id": "doc_10k",
+            "section": "Item 1A",
+            "heading": "Item 1A",
+            "location": 22000,
+            "page": null,
+            "sec_accession": "0000000001-26-000001",
+            "score": 101,
+            "matched_terms": [
+              "reimbursement rates?"
+            ]
+          }
+        ],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_f453efd00a4467cf0317",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m1_revenue_quality",
+        "query_id": "m1s1.rate_setting",
+        "purpose": "support",
+        "terms": [
+          "reimbursement rates?",
+          "negotiated rates?",
+          "pricing terms?",
+          "Medicare benchmark",
+          "contract renewals?"
+        ],
+        "origin": "plan",
+        "status": "performed",
+        "passages_searched": 3,
+        "results": [
+          {
+            "evidence_id": "ev_payer",
+            "document_id": "doc_10k",
+            "section": "Item 1",
+            "heading": "Item 1",
+            "location": 20000,
+            "page": null,
+            "sec_accession": "0000000001-26-000001",
+            "score": 101,
+            "matched_terms": [
+              "negotiated rates?"
+            ]
+          },
+          {
+            "evidence_id": "ev_reg",
+            "document_id": "doc_10k",
+            "section": "Item 1A",
+            "heading": "Item 1A",
+            "location": 22000,
+            "page": null,
+            "sec_accession": "0000000001-26-000001",
+            "score": 101,
+            "matched_terms": [
+              "reimbursement rates?"
+            ]
+          }
+        ],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_020cb7159f3166a56a48",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m1_revenue_quality",
+        "query_id": "m1s1.price_limits",
+        "purpose": "contradict",
+        "terms": [
+          "price transparency",
+          "reimbursement (?:cuts?|reductions?)",
+          "site-neutral",
+          "pay[eo]r consolidation",
+          "pricing pressure"
+        ],
+        "origin": "plan",
+        "status": "no_results",
+        "passages_searched": 3,
+        "results": [],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_fc10afe8995130661d87",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m1_revenue_quality",
+        "query_id": "m1s1.realised_price",
+        "purpose": "support",
+        "terms": [
+          "net revenue per",
+          "revenue per (?:admission|visit|unit)",
+          "commercial rates?",
+          "implicit price concessions"
+        ],
+        "origin": "plan",
+        "status": "no_results",
+        "passages_searched": 3,
+        "results": [],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_cbd1569ddbe554373cbd",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m1_revenue_quality",
+        "query_id": "m1s1.results",
+        "purpose": "support",
+        "terms": [
+          "compared to the (?:same period|prior year|year ended)",
+          "primarily (?:due|attributable) to",
+          "driven (?:primarily )?by",
+          "same[- ](?:store|facility) basis",
+          "revenues? per",
+          "pricing",
+          "rate increases?"
+        ],
+        "origin": "plan",
+        "status": "performed",
+        "passages_searched": 3,
+        "results": [
+          {
+            "evidence_id": "ev_compete",
+            "document_id": "doc_10k",
+            "section": "Item 1",
+            "heading": "Item 1",
+            "location": 4000,
+            "page": null,
+            "sec_accession": "0000000001-26-000001",
+            "score": 202,
+            "matched_terms": [
+              "pricing",
+              "revenues? per"
+            ]
+          }
+        ],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_a897fc763209fddd3404",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m1_customer_stickiness",
+        "query_id": "m1s2.demand_resilience",
+        "purpose": "support",
+        "terms": [
+          "demand for",
+          "essential",
+          "non-?discretionary",
+          "recurring",
+          "admissions",
+          "occupancy"
+        ],
+        "origin": "plan",
+        "status": "performed",
+        "passages_searched": 5,
+        "results": [
+          {
+            "evidence_id": "ev_model",
+            "document_id": "doc_10k",
+            "section": "Item 1",
+            "heading": "Item 1",
+            "location": 18000,
+            "page": null,
+            "sec_accession": "0000000001-26-000001",
+            "score": 303,
+            "matched_terms": [
+              "admissions",
+              "demand for",
+              "essential"
+            ]
+          },
+          {
+            "evidence_id": "ev_admit",
+            "document_id": "doc_10k",
+            "section": "Item 7",
+            "heading": "Item 7",
+            "location": 0,
+            "page": null,
+            "sec_accession": "0000000001-26-000001",
+            "score": 202,
+            "matched_terms": [
+              "admissions",
+              "occupancy"
+            ]
+          },
+          {
+            "evidence_id": "ev_season",
+            "document_id": "doc_10k",
+            "section": "Item 1A",
+            "heading": "Item 1A",
+            "location": 24000,
+            "page": null,
+            "sec_accession": "0000000001-26-000001",
+            "score": 101,
+            "matched_terms": [
+              "admissions"
+            ]
+          }
+        ],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_7a4b0fea6cebab413305",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m1_customer_stickiness",
+        "query_id": "m1s2.demand_fragility",
+        "purpose": "contradict",
+        "terms": [
+          "seasonal",
+          "cyclical",
+          "economic (?:downturn|conditions)",
+          "recession",
+          "unemployment",
+          "elective",
+          "declin\\w* in (?:volumes?|demand|admissions)"
+        ],
+        "origin": "plan",
+        "status": "performed",
+        "passages_searched": 5,
+        "results": [
+          {
+            "evidence_id": "ev_season",
+            "document_id": "doc_10k",
+            "section": "Item 1A",
+            "heading": "Item 1A",
+            "location": 24000,
+            "page": null,
+            "sec_accession": "0000000001-26-000001",
+            "score": 404,
+            "matched_terms": [
+              "economic (?:downturn|conditions)",
+              "elective",
+              "seasonal",
+              "unemployment"
+            ]
+          }
+        ],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_86c23a643eb0b4d09cce",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m1_customer_stickiness",
+        "query_id": "m1s2.volume_trends",
+        "purpose": "support",
+        "terms": [
+          "admissions?",
+          "visits?",
+          "procedures?",
+          "surgeries",
+          "transactions?",
+          "shipments?"
+        ],
+        "origin": "plan",
+        "status": "performed",
+        "passages_searched": 5,
+        "results": [
+          {
+            "evidence_id": "ev_season",
+            "document_id": "doc_10k",
+            "section": "Item 1A",
+            "heading": "Item 1A",
+            "location": 24000,
+            "page": null,
+            "sec_accession": "0000000001-26-000001",
+            "score": 202,
+            "matched_terms": [
+              "admissions?",
+              "procedures?"
+            ]
+          },
+          {
+            "evidence_id": "ev_admit",
+            "document_id": "doc_10k",
+            "section": "Item 7",
+            "heading": "Item 7",
+            "location": 0,
+            "page": null,
+            "sec_accession": "0000000001-26-000001",
+            "score": 101,
+            "matched_terms": [
+              "admissions?"
+            ]
+          },
+          {
+            "evidence_id": "ev_compete",
+            "document_id": "doc_10k",
+            "section": "Item 1",
+            "heading": "Item 1",
+            "location": 4000,
+            "page": null,
+            "sec_accession": "0000000001-26-000001",
+            "score": 101,
+            "matched_terms": [
+              "admissions?"
+            ]
+          }
+        ],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_94519077a5f33d4c989a",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m1_customer_stickiness",
+        "query_id": "m1s2.volume_mix",
+        "purpose": "contradict",
+        "terms": [
+          "uninsured",
+          "pay[eo]r mix",
+          "disenrollment",
+          "disenrolment",
+          "elective",
+          "outpatient"
+        ],
+        "origin": "plan",
+        "status": "performed",
+        "passages_searched": 5,
+        "results": [
+          {
+            "evidence_id": "ev_compete",
+            "document_id": "doc_10k",
+            "section": "Item 1",
+            "heading": "Item 1",
+            "location": 4000,
+            "page": null,
+            "sec_accession": "0000000001-26-000001",
+            "score": 101,
+            "matched_terms": [
+              "pay[eo]r mix"
+            ]
+          },
+          {
+            "evidence_id": "ev_model",
+            "document_id": "doc_10k",
+            "section": "Item 1",
+            "heading": "Item 1",
+            "location": 18000,
+            "page": null,
+            "sec_accession": "0000000001-26-000001",
+            "score": 101,
+            "matched_terms": [
+              "outpatient"
+            ]
+          },
+          {
+            "evidence_id": "ev_season",
+            "document_id": "doc_10k",
+            "section": "Item 1A",
+            "heading": "Item 1A",
+            "location": 24000,
+            "page": null,
+            "sec_accession": "0000000001-26-000001",
+            "score": 101,
+            "matched_terms": [
+              "elective"
+            ]
+          },
+          {
+            "evidence_id": "ev_uninsured",
+            "document_id": "doc_10k",
+            "section": "Item 7",
+            "heading": "Item 7",
+            "location": 26000,
+            "page": null,
+            "sec_accession": "0000000001-26-000001",
+            "score": 101,
+            "matched_terms": [
+              "uninsured"
+            ]
+          }
+        ],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_82754d09d43ab6ef8499",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m1_customer_stickiness",
+        "query_id": "m1s2.capacity",
+        "purpose": "mitigant_challenge",
+        "terms": [
+          "occupancy",
+          "length of stay",
+          "staffing (?:shortage|constraint)",
+          "capacity constraints?"
+        ],
+        "origin": "plan",
+        "status": "performed",
+        "passages_searched": 5,
+        "results": [
+          {
+            "evidence_id": "ev_admit",
+            "document_id": "doc_10k",
+            "section": "Item 7",
+            "heading": "Item 7",
+            "location": 0,
+            "page": null,
+            "sec_accession": "0000000001-26-000001",
+            "score": 101,
+            "matched_terms": [
+              "occupancy"
+            ]
+          }
+        ],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_630281c5bf7f92cbcf7d",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m1_customer_stickiness",
+        "query_id": "m1s2.results",
+        "purpose": "support",
+        "terms": [
+          "compared to the (?:same period|prior year|year ended)",
+          "primarily (?:due|attributable) to",
+          "driven (?:primarily )?by",
+          "same[- ](?:store|facility) basis",
+          "(?:net )?(?:operating )?revenues? (?:increased|decreased)",
+          "volumes? (?:increased|decreased)"
+        ],
+        "origin": "plan",
+        "status": "no_results",
+        "passages_searched": 5,
+        "results": [],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_c9ba2f10e4adb0d1845b",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m1_pricing_power",
+        "query_id": "m1s3.contract_terms",
+        "purpose": "support",
+        "terms": [
+          "contracts?",
+          "agreements?",
+          "renew",
+          "negotiat",
+          "multi-?year"
+        ],
+        "origin": "plan",
+        "status": "performed",
+        "passages_searched": 2,
+        "results": [
+          {
+            "evidence_id": "ev_payer",
+            "document_id": "doc_10k",
+            "section": "Item 1",
+            "heading": "Item 1",
+            "location": 20000,
+            "page": null,
+            "sec_accession": "0000000001-26-000001",
+            "score": 406,
+            "matched_terms": [
+              "agreements?",
+              "contracts?",
+              "multi-?year",
+              "negotiat"
+            ]
+          },
+          {
+            "evidence_id": "ev_labor",
+            "document_id": "doc_10k",
+            "section": "Item 1A",
+            "heading": "Item 1A",
+            "location": 14000,
+            "page": null,
+            "sec_accession": "0000000001-26-000001",
+            "score": 101,
+            "matched_terms": [
+              "contracts?"
+            ]
+          }
+        ],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_4cb8d3b31c3e472a75d8",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m1_pricing_power",
+        "query_id": "m1s3.contract_limits",
+        "purpose": "contradict",
+        "terms": [
+          "terminat",
+          "no assurance",
+          "not guarantee",
+          "may not (?:renew|be renewed)",
+          "narrow networks?",
+          "out-of-network",
+          "minimum (?:volumes?|purchases?)"
+        ],
+        "origin": "plan",
+        "status": "performed",
+        "passages_searched": 2,
+        "results": [
+          {
+            "evidence_id": "ev_payer",
+            "document_id": "doc_10k",
+            "section": "Item 1",
+            "heading": "Item 1",
+            "location": 20000,
+            "page": null,
+            "sec_accession": "0000000001-26-000001",
+            "score": 303,
+            "matched_terms": [
+              "minimum (?:volumes?|purchases?)",
+              "not guarantee",
+              "terminat"
+            ]
+          },
+          {
+            "evidence_id": "ev_labor",
+            "document_id": "doc_10k",
+            "section": "Item 1A",
+            "heading": "Item 1A",
+            "location": 14000,
+            "page": null,
+            "sec_accession": "0000000001-26-000001",
+            "score": 101,
+            "matched_terms": [
+              "no assurance"
+            ]
+          }
+        ],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_6344b0ff44e2bff951b6",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m1_pricing_power",
+        "query_id": "m1s3.retention",
+        "purpose": "support",
+        "terms": [
+          "retention",
+          "repeat (?:use|purchase)",
+          "renewal",
+          "referrals?",
+          "in-network",
+          "continuity of care"
+        ],
+        "origin": "plan",
+        "status": "performed",
+        "passages_searched": 2,
+        "results": [
+          {
+            "evidence_id": "ev_labor",
+            "document_id": "doc_10k",
+            "section": "Item 1A",
+            "heading": "Item 1A",
+            "location": 14000,
+            "page": null,
+            "sec_accession": "0000000001-26-000001",
+            "score": 101,
+            "matched_terms": [
+              "retention"
+            ]
+          }
+        ],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_c42b4fdd77026262c71d",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m1_pricing_power",
+        "query_id": "m1s3.switching",
+        "purpose": "contradict",
+        "terms": [
+          "narrow networks?",
+          "out-of-network",
+          "switching",
+          "exclusive arrangements?",
+          "physician (?:recruitment|retention)"
+        ],
+        "origin": "plan",
+        "status": "no_results",
+        "passages_searched": 2,
+        "results": [],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_8ea751e1b170c8410de4",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m1_pricing_power",
+        "query_id": "m1s3.access",
+        "purpose": "mitigant",
+        "terms": [
+          "network of",
+          "outpatient sites?",
+          "access points?",
+          "integrated services?",
+          "patient experience"
+        ],
+        "origin": "plan",
+        "status": "no_results",
+        "passages_searched": 2,
+        "results": [],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_13aee66843ef92a8bb7a",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m1_operating_model",
+        "query_id": "m1s4.cost_structure",
+        "purpose": "support",
+        "terms": [
+          "fixed costs?",
+          "operating leverage",
+          "salaries",
+          "supplies",
+          "utili[sz]ation",
+          "capacity"
+        ],
+        "origin": "plan",
+        "status": "no_results",
+        "passages_searched": 2,
+        "results": [],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_b25ed3515d3db0e0ba1a",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m1_operating_model",
+        "query_id": "m1s4.workforce",
+        "purpose": "contradict",
+        "terms": [
+          "labor",
+          "nurs",
+          "physicians?",
+          "staffing",
+          "contract labor",
+          "shortage",
+          "collective bargaining",
+          "turnover"
+        ],
+        "origin": "plan",
+        "status": "performed",
+        "passages_searched": 2,
+        "results": [
+          {
+            "evidence_id": "ev_labor",
+            "document_id": "doc_10k",
+            "section": "Item 1A",
+            "heading": "Item 1A",
+            "location": 14000,
+            "page": null,
+            "sec_accession": "0000000001-26-000001",
+            "score": 405,
+            "matched_terms": [
+              "contract labor",
+              "labor",
+              "nurs",
+              "shortage"
+            ]
+          }
+        ],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_de5bc120b6a53144f396",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m1_operating_model",
+        "query_id": "m1s4.workforce_initiatives",
+        "purpose": "mitigant",
+        "terms": [
+          "training",
+          "college",
+          "education",
+          "pipeline",
+          "recruit",
+          "retention"
+        ],
+        "origin": "plan",
+        "status": "performed",
+        "passages_searched": 2,
+        "results": [
+          {
+            "evidence_id": "ev_labor",
+            "document_id": "doc_10k",
+            "section": "Item 1A",
+            "heading": "Item 1A",
+            "location": 14000,
+            "page": null,
+            "sec_accession": "0000000001-26-000001",
+            "score": 505,
+            "matched_terms": [
+              "college",
+              "pipeline",
+              "recruit",
+              "retention",
+              "training"
+            ]
+          }
+        ],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_47a074172c968236267d",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m1_operating_model",
+        "query_id": "m1s4.initiative_limits",
+        "purpose": "mitigant_challenge",
+        "terms": [
+          "no assurance",
+          "may not be (?:able|successful)",
+          "unable to",
+          "increas\\w* (?:in )?(?:labor|costs)"
+        ],
+        "origin": "plan",
+        "status": "performed",
+        "passages_searched": 2,
+        "results": [
+          {
+            "evidence_id": "ev_labor",
+            "document_id": "doc_10k",
+            "section": "Item 1A",
+            "heading": "Item 1A",
+            "location": 14000,
+            "page": null,
+            "sec_accession": "0000000001-26-000001",
+            "score": 101,
+            "matched_terms": [
+              "no assurance"
+            ]
+          }
+        ],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_03a58030c71ab965af18",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m1_operating_model",
+        "query_id": "m1s4.procurement",
+        "purpose": "support",
+        "terms": [
+          "supply (?:costs?|chain)",
+          "group purchasing",
+          "procurement",
+          "purchasing organi[sz]ation"
+        ],
+        "origin": "plan",
+        "status": "performed",
+        "passages_searched": 2,
+        "results": [
+          {
+            "evidence_id": "ev_inject",
+            "document_id": "doc_10k",
+            "section": "Item 1",
+            "heading": "Item 1",
+            "location": 12000,
+            "page": null,
+            "sec_accession": "0000000001-26-000001",
+            "score": 202,
+            "matched_terms": [
+              "group purchasing",
+              "purchasing organi[sz]ation"
+            ]
+          }
+        ],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_8c50f5104c65ec07cb03",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m1_operating_model",
+        "query_id": "m1s4.suppliers",
+        "purpose": "support",
+        "terms": [
+          "suppliers?",
+          "group purchasing",
+          "sole[- ]source",
+          "single[- ]source",
+          "vendors?"
+        ],
+        "origin": "plan",
+        "status": "performed",
+        "passages_searched": 2,
+        "results": [
+          {
+            "evidence_id": "ev_inject",
+            "document_id": "doc_10k",
+            "section": "Item 1",
+            "heading": "Item 1",
+            "location": 12000,
+            "page": null,
+            "sec_accession": "0000000001-26-000001",
+            "score": 202,
+            "matched_terms": [
+              "group purchasing",
+              "suppliers?"
+            ]
+          }
+        ],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_03aac3d6e9746cb43249",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m1_operating_model",
+        "query_id": "m1s4.results",
+        "purpose": "support",
+        "terms": [
+          "compared to the (?:same period|prior year|year ended)",
+          "primarily (?:due|attributable) to",
+          "driven (?:primarily )?by",
+          "same[- ](?:store|facility) basis",
+          "as a percentage of (?:net )?(?:operating )?revenues?",
+          "(?:salaries|supplies|labou?r costs?)\\b.{0,60}(?:increased|decreased)"
+        ],
+        "origin": "plan",
+        "status": "no_results",
+        "passages_searched": 2,
+        "results": [],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_2b7a8b11e260759c0eed",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m1_competitive_durability",
+        "query_id": "m1s5.position",
+        "purpose": "support",
+        "terms": [
+          "compet",
+          "market share",
+          "market position",
+          "competitors?"
+        ],
+        "origin": "plan",
+        "status": "performed",
+        "passages_searched": 1,
+        "results": [
+          {
+            "evidence_id": "ev_compete",
+            "document_id": "doc_10k",
+            "section": "Item 1",
+            "heading": "Item 1",
+            "location": 4000,
+            "page": null,
+            "sec_accession": "0000000001-26-000001",
+            "score": 304,
+            "matched_terms": [
+              "compet",
+              "competitors?",
+              "market share"
+            ]
+          }
+        ],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_77244aac56e9087c8953",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m1_competitive_durability",
+        "query_id": "m1s5.threats",
+        "purpose": "contradict",
+        "terms": [
+          "new entrants?",
+          "substitut",
+          "alternative (?:sites?|providers?)",
+          "ambulatory",
+          "tele(?:health|medicine)",
+          "price transparency",
+          "pressure"
+        ],
+        "origin": "plan",
+        "status": "performed",
+        "passages_searched": 1,
+        "results": [
+          {
+            "evidence_id": "ev_compete",
+            "document_id": "doc_10k",
+            "section": "Item 1",
+            "heading": "Item 1",
+            "location": 4000,
+            "page": null,
+            "sec_accession": "0000000001-26-000001",
+            "score": 101,
+            "matched_terms": [
+              "ambulatory"
+            ]
+          }
+        ],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_d939aad7b72ad3080231",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m1_competitive_durability",
+        "query_id": "m1s5.defences",
+        "purpose": "mitigant",
+        "terms": [
+          "barriers? to entry",
+          "certificate of need",
+          "scale",
+          "network",
+          "switching",
+          "reputation"
+        ],
+        "origin": "plan",
+        "status": "performed",
+        "passages_searched": 1,
+        "results": [
+          {
+            "evidence_id": "ev_compete",
+            "document_id": "doc_10k",
+            "section": "Item 1",
+            "heading": "Item 1",
+            "location": 4000,
+            "page": null,
+            "sec_accession": "0000000001-26-000001",
+            "score": 101,
+            "matched_terms": [
+              "network"
+            ]
+          }
+        ],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_642aa874b727e7a572d5",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m1_competitive_durability",
+        "query_id": "m1s5.defence_limits",
+        "purpose": "mitigant_challenge",
+        "terms": [
+          "repeal\\w*",
+          "physician-owned",
+          "tax-exempt|not-for-profit",
+          "case mix|acuity",
+          "pay[eo]r mix"
+        ],
+        "origin": "plan",
+        "status": "performed",
+        "passages_searched": 1,
+        "results": [
+          {
+            "evidence_id": "ev_compete",
+            "document_id": "doc_10k",
+            "section": "Item 1",
+            "heading": "Item 1",
+            "location": 4000,
+            "page": null,
+            "sec_accession": "0000000001-26-000001",
+            "score": 304,
+            "matched_terms": [
+              "case mix|acuity",
+              "pay[eo]r mix",
+              "tax-exempt|not-for-profit"
+            ]
+          }
+        ],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_a5ac79447ed33bdcbdae",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m1_resilience_integration",
+        "query_id": "m1a6.interactions",
+        "purpose": "support",
+        "terms": [
+          "exacerbat",
+          "together with",
+          "in addition to",
+          "concentrat",
+          "depend"
+        ],
+        "origin": "plan",
+        "status": "performed",
+        "passages_searched": 2,
+        "results": [
+          {
+            "evidence_id": "ev_reg",
+            "document_id": "doc_10k",
+            "section": "Item 1A",
+            "heading": "Item 1A",
+            "location": 22000,
+            "page": null,
+            "sec_accession": "0000000001-26-000001",
+            "score": 101,
+            "matched_terms": [
+              "depend"
+            ]
+          }
+        ],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_50e273886411e95a4d1d",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m1_resilience_integration",
+        "query_id": "m1a6.capabilities",
+        "purpose": "mitigant",
+        "terms": [
+          "scale",
+          "diversif",
+          "flexib",
+          "contingency",
+          "business continuity"
+        ],
+        "origin": "plan",
+        "status": "no_results",
+        "passages_searched": 2,
+        "results": [],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_e59206c67af5a49fd3fd",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m1_resilience_integration",
+        "query_id": "m1a6.capability_limits",
+        "purpose": "mitigant_challenge",
+        "terms": [
+          "no assurance",
+          "may not be (?:able|sufficient)",
+          "limited ability"
+        ],
+        "origin": "plan",
+        "status": "performed",
+        "passages_searched": 2,
+        "results": [
+          {
+            "evidence_id": "ev_labor",
+            "document_id": "doc_10k",
+            "section": "Item 1A",
+            "heading": "Item 1A",
+            "location": 14000,
+            "page": null,
+            "sec_accession": "0000000001-26-000001",
+            "score": 101,
+            "matched_terms": [
+              "no assurance"
+            ]
+          }
+        ],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_252a5b5c9def4b62c416",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m2_industry",
+        "query_id": "m2.structure",
+        "purpose": "support",
+        "terms": [
+          "industry",
+          "market structure",
+          "fragmented",
+          "consolidat",
+          "competitors?"
+        ],
+        "origin": "plan",
+        "status": "performed",
+        "passages_searched": 6,
+        "results": [
+          {
+            "evidence_id": "ev_compete",
+            "document_id": "doc_10k",
+            "section": "Item 1",
+            "heading": "Item 1",
+            "location": 4000,
+            "page": null,
+            "sec_accession": "0000000001-26-000001",
+            "score": 101,
+            "matched_terms": [
+              "competitors?"
+            ]
+          },
+          {
+            "evidence_id": "ev_geo",
+            "document_id": "doc_10k",
+            "section": "Item 1A",
+            "heading": "Item 1A",
+            "location": 10000,
+            "page": null,
+            "sec_accession": "0000000001-26-000001",
+            "score": 101,
+            "matched_terms": [
+              "consolidat"
+            ]
+          }
+        ],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_1fe359f7c8eae00d2acc",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m2_industry",
+        "query_id": "m2.cyclicality",
+        "purpose": "contradict",
+        "terms": [
+          "cyclical",
+          "recession",
+          "economic conditions",
+          "seasonal",
+          "demand volatility"
+        ],
+        "origin": "plan",
+        "status": "performed",
+        "passages_searched": 6,
+        "results": [
+          {
+            "evidence_id": "ev_season",
+            "document_id": "doc_10k",
+            "section": "Item 1A",
+            "heading": "Item 1A",
+            "location": 24000,
+            "page": null,
+            "sec_accession": "0000000001-26-000001",
+            "score": 101,
+            "matched_terms": [
+              "seasonal"
+            ]
+          }
+        ],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_9441e2bf1615cbff6a1a",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m2_industry",
+        "query_id": "m2.regulation",
+        "purpose": "support",
+        "terms": [
+          "regulat",
+          "legislat",
+          "compliance",
+          "licens",
+          "accredit",
+          "government programs?",
+          "reimbursement"
+        ],
+        "origin": "plan",
+        "status": "performed",
+        "passages_searched": 6,
+        "results": [
+          {
+            "evidence_id": "ev_reg",
+            "document_id": "doc_10k",
+            "section": "Item 1A",
+            "heading": "Item 1A",
+            "location": 22000,
+            "page": null,
+            "sec_accession": "0000000001-26-000001",
+            "score": 405,
+            "matched_terms": [
+              "government programs?",
+              "legislat",
+              "regulat",
+              "reimbursement"
+            ]
+          },
+          {
+            "evidence_id": "ev_compete",
+            "document_id": "doc_10k",
+            "section": "Item 1",
+            "heading": "Item 1",
+            "location": 4000,
+            "page": null,
+            "sec_accession": "0000000001-26-000001",
+            "score": 101,
+            "matched_terms": [
+              "licens"
+            ]
+          }
+        ],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_38dbb926a40f145069ad",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m2_industry",
+        "query_id": "m2.external",
+        "purpose": "support",
+        "terms": [
+          "hurricanes?",
+          "natural disasters?",
+          "weather",
+          "pandemic",
+          "cyber",
+          "geographic\\w* concentrat",
+          "state of|states of"
+        ],
+        "origin": "plan",
+        "status": "performed",
+        "passages_searched": 6,
+        "results": [
+          {
+            "evidence_id": "ev_geo",
+            "document_id": "doc_10k",
+            "section": "Item 1A",
+            "heading": "Item 1A",
+            "location": 10000,
+            "page": null,
+            "sec_accession": "0000000001-26-000001",
+            "score": 303,
+            "matched_terms": [
+              "hurricanes?",
+              "natural disasters?",
+              "state of|states of"
+            ]
+          },
+          {
+            "evidence_id": "ev_admit",
+            "document_id": "doc_10k",
+            "section": "Item 7",
+            "heading": "Item 7",
+            "location": 0,
+            "page": null,
+            "sec_accession": "0000000001-26-000001",
+            "score": 101,
+            "matched_terms": [
+              "state of|states of"
+            ]
+          }
+        ],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_39404205a999f8251faf",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m2_industry",
+        "query_id": "m2.forecast_vs_existing",
+        "purpose": "contradict",
+        "terms": [
+          "cannot predict",
+          "proposed",
+          "uncertain",
+          "could (?:adversely|materially)"
+        ],
+        "origin": "plan",
+        "status": "performed",
+        "passages_searched": 6,
+        "results": [
+          {
+            "evidence_id": "ev_reg",
+            "document_id": "doc_10k",
+            "section": "Item 1A",
+            "heading": "Item 1A",
+            "location": 22000,
+            "page": null,
+            "sec_accession": "0000000001-26-000001",
+            "score": 202,
+            "matched_terms": [
+              "cannot predict",
+              "proposed"
+            ]
+          },
+          {
+            "evidence_id": "ev_uninsured",
+            "document_id": "doc_10k",
+            "section": "Item 7",
+            "heading": "Item 7",
+            "location": 26000,
+            "page": null,
+            "sec_accession": "0000000001-26-000001",
+            "score": 101,
+            "matched_terms": [
+              "uncertain"
+            ]
+          }
+        ],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_df5d957266e9bd964d2e",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m2_industry",
+        "query_id": "m2.trends",
+        "purpose": "support",
+        "terms": [
+          "industry trends?",
+          "regulatory changes?",
+          "market growth",
+          "technological change",
+          "sustainable cash"
+        ],
+        "origin": "plan",
+        "status": "no_results",
+        "passages_searched": 6,
+        "results": [],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_d39ce5ec4ad6ba5c0572",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m4_strategy_capital",
+        "query_id": "m4.capital_deployment",
+        "purpose": "support",
+        "terms": [
+          "acquisitions?",
+          "integrat",
+          "capital expenditures?",
+          "expansion",
+          "construction",
+          "divestitures?"
+        ],
+        "origin": "plan",
+        "status": "performed",
+        "passages_searched": 2,
+        "results": [
+          {
+            "evidence_id": "ev_capex",
+            "document_id": "doc_10k",
+            "section": "Item 7",
+            "heading": "Item 7",
+            "location": 2000,
+            "page": null,
+            "sec_accession": "0000000001-26-000001",
+            "score": 404,
+            "matched_terms": [
+              "acquisitions?",
+              "capital expenditures?",
+              "expansion",
+              "integrat"
+            ]
+          }
+        ],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_9a3cf21fb70539df6897",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m4_strategy_capital",
+        "query_id": "m4.strategy",
+        "purpose": "support",
+        "terms": [
+          "strategy",
+          "strategic priorities?",
+          "capital allocation",
+          "investment program"
+        ],
+        "origin": "plan",
+        "status": "no_results",
+        "passages_searched": 2,
+        "results": [],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_f76a32779332ebe45ee9",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m4_strategy_capital",
+        "query_id": "m4.integration",
+        "purpose": "contradict",
+        "terms": [
+          "integration",
+          "acquisition risks?",
+          "synerg",
+          "impairment",
+          "failed to achieve"
+        ],
+        "origin": "plan",
+        "status": "performed",
+        "passages_searched": 2,
+        "results": [
+          {
+            "evidence_id": "ev_capex",
+            "document_id": "doc_10k",
+            "section": "Item 7",
+            "heading": "Item 7",
+            "location": 2000,
+            "page": null,
+            "sec_accession": "0000000001-26-000001",
+            "score": 101,
+            "matched_terms": [
+              "integration"
+            ]
+          }
+        ],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_8d64278efb67e62125e8",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m4_strategy_capital",
+        "query_id": "m4.outcomes",
+        "purpose": "mitigant",
+        "terms": [
+          "returns? on",
+          "realized synergies?",
+          "completed integration",
+          "cost savings?",
+          "on budget"
+        ],
+        "origin": "plan",
+        "status": "no_results",
+        "passages_searched": 2,
+        "results": [],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_e4f9f68f651e85f619d3",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m4_strategy_capital",
+        "query_id": "m4.intention_limits",
+        "purpose": "mitigant_challenge",
+        "terms": [
+          "intend",
+          "plan to",
+          "expect to",
+          "may acquire",
+          "no assurance"
+        ],
+        "origin": "plan",
+        "status": "performed",
+        "passages_searched": 2,
+        "results": [
+          {
+            "evidence_id": "ev_labor",
+            "document_id": "doc_10k",
+            "section": "Item 1A",
+            "heading": "Item 1A",
+            "location": 14000,
+            "page": null,
+            "sec_accession": "0000000001-26-000001",
+            "score": 101,
+            "matched_terms": [
+              "no assurance"
+            ]
+          }
+        ],
+        "hypothesis_id": null,
+        "round_index": 0
+      }
+    ],
+    "gaps": [
+      {
+        "attempt_id": "ra_020cb7159f3166a56a48",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m1_revenue_quality",
+        "query_id": "m1s1.price_limits",
+        "purpose": "contradict",
+        "terms": [
+          "price transparency",
+          "reimbursement (?:cuts?|reductions?)",
+          "site-neutral",
+          "pay[eo]r consolidation",
+          "pricing pressure"
+        ],
+        "origin": "plan",
+        "status": "no_results",
+        "passages_searched": 3,
+        "results": [],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_fc10afe8995130661d87",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m1_revenue_quality",
+        "query_id": "m1s1.realised_price",
+        "purpose": "support",
+        "terms": [
+          "net revenue per",
+          "revenue per (?:admission|visit|unit)",
+          "commercial rates?",
+          "implicit price concessions"
+        ],
+        "origin": "plan",
+        "status": "no_results",
+        "passages_searched": 3,
+        "results": [],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_630281c5bf7f92cbcf7d",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m1_customer_stickiness",
+        "query_id": "m1s2.results",
+        "purpose": "support",
+        "terms": [
+          "compared to the (?:same period|prior year|year ended)",
+          "primarily (?:due|attributable) to",
+          "driven (?:primarily )?by",
+          "same[- ](?:store|facility) basis",
+          "(?:net )?(?:operating )?revenues? (?:increased|decreased)",
+          "volumes? (?:increased|decreased)"
+        ],
+        "origin": "plan",
+        "status": "no_results",
+        "passages_searched": 5,
+        "results": [],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_c42b4fdd77026262c71d",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m1_pricing_power",
+        "query_id": "m1s3.switching",
+        "purpose": "contradict",
+        "terms": [
+          "narrow networks?",
+          "out-of-network",
+          "switching",
+          "exclusive arrangements?",
+          "physician (?:recruitment|retention)"
+        ],
+        "origin": "plan",
+        "status": "no_results",
+        "passages_searched": 2,
+        "results": [],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_8ea751e1b170c8410de4",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m1_pricing_power",
+        "query_id": "m1s3.access",
+        "purpose": "mitigant",
+        "terms": [
+          "network of",
+          "outpatient sites?",
+          "access points?",
+          "integrated services?",
+          "patient experience"
+        ],
+        "origin": "plan",
+        "status": "no_results",
+        "passages_searched": 2,
+        "results": [],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_13aee66843ef92a8bb7a",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m1_operating_model",
+        "query_id": "m1s4.cost_structure",
+        "purpose": "support",
+        "terms": [
+          "fixed costs?",
+          "operating leverage",
+          "salaries",
+          "supplies",
+          "utili[sz]ation",
+          "capacity"
+        ],
+        "origin": "plan",
+        "status": "no_results",
+        "passages_searched": 2,
+        "results": [],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_03aac3d6e9746cb43249",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m1_operating_model",
+        "query_id": "m1s4.results",
+        "purpose": "support",
+        "terms": [
+          "compared to the (?:same period|prior year|year ended)",
+          "primarily (?:due|attributable) to",
+          "driven (?:primarily )?by",
+          "same[- ](?:store|facility) basis",
+          "as a percentage of (?:net )?(?:operating )?revenues?",
+          "(?:salaries|supplies|labou?r costs?)\\b.{0,60}(?:increased|decreased)"
+        ],
+        "origin": "plan",
+        "status": "no_results",
+        "passages_searched": 2,
+        "results": [],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_50e273886411e95a4d1d",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m1_resilience_integration",
+        "query_id": "m1a6.capabilities",
+        "purpose": "mitigant",
+        "terms": [
+          "scale",
+          "diversif",
+          "flexib",
+          "contingency",
+          "business continuity"
+        ],
+        "origin": "plan",
+        "status": "no_results",
+        "passages_searched": 2,
+        "results": [],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_df5d957266e9bd964d2e",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m2_industry",
+        "query_id": "m2.trends",
+        "purpose": "support",
+        "terms": [
+          "industry trends?",
+          "regulatory changes?",
+          "market growth",
+          "technological change",
+          "sustainable cash"
+        ],
+        "origin": "plan",
+        "status": "no_results",
+        "passages_searched": 6,
+        "results": [],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_9a3cf21fb70539df6897",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m4_strategy_capital",
+        "query_id": "m4.strategy",
+        "purpose": "support",
+        "terms": [
+          "strategy",
+          "strategic priorities?",
+          "capital allocation",
+          "investment program"
+        ],
+        "origin": "plan",
+        "status": "no_results",
+        "passages_searched": 2,
+        "results": [],
+        "hypothesis_id": null,
+        "round_index": 0
+      },
+      {
+        "attempt_id": "ra_8d64278efb67e62125e8",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m4_strategy_capital",
+        "query_id": "m4.outcomes",
+        "purpose": "mitigant",
+        "terms": [
+          "returns? on",
+          "realized synergies?",
+          "completed integration",
+          "cost savings?",
+          "on budget"
+        ],
+        "origin": "plan",
+        "status": "no_results",
+        "passages_searched": 2,
+        "results": [],
+        "hypothesis_id": null,
+        "round_index": 0
+      }
+    ],
+    "follow_up": "not_performed",
+    "budget": {
+      "max_passages_per_agent": 24,
+      "max_chars_per_agent": 54000,
+      "max_followup_rounds": 1,
+      "max_followup_requests": 3,
+      "max_followup_terms": 6,
+      "max_followup_passages": 2
+    }
+  },
+  "hypotheses": {
+    "records": [
+      {
+        "hypothesis_id": "M1S5-H001",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m1_competitive_durability",
+        "agent_run_id": "3300f36e-47fd-44ad-8d72-1e23a51dc6cf",
+        "topic": "business",
+        "section": "M1S5",
+        "claim": "The company competes with hospitals and ambulatory surgery centres.",
+        "claim_type": "fact",
+        "direction": "negative",
+        "supporting_evidence_ids": [
+          "ev_compete"
+        ],
+        "contradicting_evidence_ids": [],
+        "evidence_quotes": [
+          {
+            "evidence_id": "ev_compete",
+            "quote": "We compete with other hospitals, including not-for-profit systems, and with ambulatory surgery centers"
+          }
+        ],
+        "parameter_result_ids": [],
+        "quoted_values": [],
+        "disposition": "supported",
+        "admissibility": "established",
+        "confidence": "medium",
+        "materiality": "high",
+        "credit_mechanism": null,
+        "interpretation": {},
+        "missing_information": [],
+        "display_priority": "display",
+        "review_required": false,
+        "corrects_hypothesis_id": null,
+        "parameter_id": null,
+        "mitigant": null,
+        "component_hypothesis_ids": [],
+        "interaction_kind": null,
+        "validation_notes": [],
+        "evidence_basis": "general_statement",
+        "model_stated": {
+          "claim_type": "fact",
+          "disposition": "supported",
+          "evidence_basis": null,
+          "materiality": "high",
+          "quotes": [
+            {
+              "evidence_id": "ev_compete",
+              "quote": "We compete with other hospitals, including not-for-profit systems, and with ambulatory surgery centers"
+            }
+          ]
+        },
+        "review_flags": [],
+        "transmission_mechanism": null,
+        "fo_handoffs": [],
+        "recovery": [],
+        "supersedes_id": null,
+        "acceptance_state": "accepted",
+        "validator_id": "validator_5",
+        "validator_version": "bo-hypothesis-validator-2.2.1",
+        "presentation_basis": {},
+        "investigation": {},
+        "record_id": "hyp_0debe0ca7f0d4430"
+      },
+      {
+        "hypothesis_id": "M1S2-H001",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m1_customer_stickiness",
+        "agent_run_id": "3e859e65-5baa-457d-aef7-111774e18d58",
+        "topic": "business",
+        "section": "M1S2",
+        "claim": "Admissions were stable during the year.",
+        "claim_type": "fact",
+        "direction": "positive",
+        "supporting_evidence_ids": [
+          "ev_model"
+        ],
+        "contradicting_evidence_ids": [],
+        "evidence_quotes": [
+          {
+            "evidence_id": "ev_model",
+            "quote": "admissions were stable during the year"
+          }
+        ],
+        "parameter_result_ids": [],
+        "quoted_values": [],
+        "disposition": "supported",
+        "admissibility": "established",
+        "confidence": "medium",
+        "materiality": "high",
+        "credit_mechanism": null,
+        "interpretation": {},
+        "missing_information": [],
+        "display_priority": "display",
+        "review_required": false,
+        "corrects_hypothesis_id": null,
+        "parameter_id": null,
+        "mitigant": null,
+        "component_hypothesis_ids": [],
+        "interaction_kind": null,
+        "validation_notes": [],
+        "evidence_basis": "company_specific_disclosure",
+        "model_stated": {
+          "claim_type": "fact",
+          "disposition": "supported",
+          "evidence_basis": null,
+          "materiality": "high",
+          "quotes": [
+            {
+              "evidence_id": "ev_model",
+              "quote": "admissions were stable during the year"
+            }
+          ]
+        },
+        "review_flags": [],
+        "transmission_mechanism": null,
+        "fo_handoffs": [],
+        "recovery": [],
+        "supersedes_id": null,
+        "acceptance_state": "accepted",
+        "validator_id": "validator_2",
+        "validator_version": "bo-hypothesis-validator-2.2.1",
+        "presentation_basis": {},
+        "investigation": {},
+        "record_id": "hyp_2bf8899a49e444a2"
+      },
+      {
+        "hypothesis_id": "M1S4-H001",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m1_operating_model",
+        "agent_run_id": "5c56844d-2301-4b36-991c-462631df0cb3",
+        "topic": "business",
+        "section": "M1S4",
+        "claim": "A nursing shortage and rising contract labour costs pressure the operating model.",
+        "claim_type": "fact",
+        "direction": "negative",
+        "supporting_evidence_ids": [
+          "ev_labor"
+        ],
+        "contradicting_evidence_ids": [],
+        "evidence_quotes": [
+          {
+            "evidence_id": "ev_labor",
+            "quote": "We face a nursing shortage and rising contract labor costs"
+          }
+        ],
+        "parameter_result_ids": [],
+        "quoted_values": [],
+        "disposition": "supported",
+        "admissibility": "established",
+        "confidence": "medium",
+        "materiality": "high",
+        "credit_mechanism": null,
+        "interpretation": {},
+        "missing_information": [],
+        "display_priority": "display",
+        "review_required": false,
+        "corrects_hypothesis_id": null,
+        "parameter_id": null,
+        "mitigant": null,
+        "component_hypothesis_ids": [],
+        "interaction_kind": null,
+        "validation_notes": [],
+        "evidence_basis": "general_statement",
+        "model_stated": {
+          "claim_type": "fact",
+          "disposition": "supported",
+          "evidence_basis": null,
+          "materiality": "high",
+          "quotes": [
+            {
+              "evidence_id": "ev_labor",
+              "quote": "We face a nursing shortage and rising contract labor costs"
+            }
+          ]
+        },
+        "review_flags": [],
+        "transmission_mechanism": null,
+        "fo_handoffs": [],
+        "recovery": [],
+        "supersedes_id": null,
+        "acceptance_state": "accepted",
+        "validator_id": "validator_4",
+        "validator_version": "bo-hypothesis-validator-2.2.1",
+        "presentation_basis": {},
+        "investigation": {},
+        "record_id": "hyp_5fd2b8278fc34371"
+      },
+      {
+        "hypothesis_id": "M1S3-H001",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m1_pricing_power",
+        "agent_run_id": "0f7e904a-7e49-4dce-bcb6-9661692c543e",
+        "topic": "business",
+        "section": "M1S3",
+        "claim": "Either party may terminate a managed-care agreement on notice.",
+        "claim_type": "fact",
+        "direction": "negative",
+        "supporting_evidence_ids": [
+          "ev_payer"
+        ],
+        "contradicting_evidence_ids": [],
+        "evidence_quotes": [
+          {
+            "evidence_id": "ev_payer",
+            "quote": "Either party may terminate an agreement on notice"
+          }
+        ],
+        "parameter_result_ids": [],
+        "quoted_values": [],
+        "disposition": "qualified",
+        "admissibility": "qualified_narrative",
+        "confidence": "medium",
+        "materiality": "high",
+        "credit_mechanism": null,
+        "interpretation": {},
+        "missing_information": [],
+        "display_priority": "display",
+        "review_required": true,
+        "corrects_hypothesis_id": null,
+        "parameter_id": null,
+        "mitigant": null,
+        "component_hypothesis_ids": [],
+        "interaction_kind": null,
+        "validation_notes": [
+          "generic_risk_disclosure_only: Supported only by risk-factor language about what could happen; it may be reported as a disclosed risk, not as an event that has occurred."
+        ],
+        "evidence_basis": "generic_risk_disclosure",
+        "model_stated": {
+          "claim_type": "fact",
+          "disposition": "supported",
+          "evidence_basis": null,
+          "materiality": "high",
+          "quotes": [
+            {
+              "evidence_id": "ev_payer",
+              "quote": "Either party may terminate an agreement on notice"
+            }
+          ]
+        },
+        "review_flags": [
+          {
+            "rule_id": "generic_risk_disclosure_only",
+            "layer": "D_evidence_sufficiency",
+            "effect": "qualify",
+            "description": "Supported only by risk-factor language about what could happen; it may be reported as a disclosed risk, not as an event that has occurred.",
+            "heuristic": true,
+            "fo_handoff_variable": null,
+            "correction": null
+          }
+        ],
+        "transmission_mechanism": null,
+        "fo_handoffs": [],
+        "recovery": [],
+        "supersedes_id": null,
+        "acceptance_state": "accepted",
+        "validator_id": "validator_3",
+        "validator_version": "bo-hypothesis-validator-2.2.1",
+        "presentation_basis": {},
+        "investigation": {},
+        "record_id": "hyp_9e92155e8c2b434a"
+      },
+      {
+        "hypothesis_id": "M1S1-H001",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m1_revenue_quality",
+        "agent_run_id": "55da1ef6-b065-40a3-9ab9-7000911ae064",
+        "topic": "business",
+        "section": "M1S1",
+        "claim": "Managed-care agreements set negotiated rates.",
+        "claim_type": "fact",
+        "direction": "neutral",
+        "supporting_evidence_ids": [
+          "ev_payer"
+        ],
+        "contradicting_evidence_ids": [],
+        "evidence_quotes": [
+          {
+            "evidence_id": "ev_payer",
+            "quote": "Our managed care contracts are generally multi-year agreements that set negotiated rates"
+          }
+        ],
+        "parameter_result_ids": [],
+        "quoted_values": [],
+        "disposition": "supported",
+        "admissibility": "established",
+        "confidence": "medium",
+        "materiality": "high",
+        "credit_mechanism": null,
+        "interpretation": {},
+        "missing_information": [],
+        "display_priority": "display",
+        "review_required": false,
+        "corrects_hypothesis_id": null,
+        "parameter_id": null,
+        "mitigant": null,
+        "component_hypothesis_ids": [],
+        "interaction_kind": null,
+        "validation_notes": [],
+        "evidence_basis": "general_statement",
+        "model_stated": {
+          "claim_type": "fact",
+          "disposition": "supported",
+          "evidence_basis": null,
+          "materiality": "high",
+          "quotes": [
+            {
+              "evidence_id": "ev_payer",
+              "quote": "Our managed care contracts are generally multi-year agreements that set negotiated rates"
+            }
+          ]
+        },
+        "review_flags": [],
+        "transmission_mechanism": null,
+        "fo_handoffs": [],
+        "recovery": [],
+        "supersedes_id": null,
+        "acceptance_state": "accepted",
+        "validator_id": "validator_1",
+        "validator_version": "bo-hypothesis-validator-2.2.1",
+        "presentation_basis": {},
+        "investigation": {},
+        "record_id": "hyp_8cb504365458422e"
+      },
+      {
+        "hypothesis_id": "M2-H001",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m2_industry",
+        "agent_run_id": "43752ed0-ad0b-41fa-8e7d-e61da41205f5",
+        "topic": "business",
+        "section": "M2",
+        "claim": "The industry is extensively regulated and exposed to legislative reimbursement reductions.",
+        "claim_type": "fact",
+        "direction": "negative",
+        "supporting_evidence_ids": [
+          "ev_reg"
+        ],
+        "contradicting_evidence_ids": [],
+        "evidence_quotes": [
+          {
+            "evidence_id": "ev_reg",
+            "quote": "We are subject to extensive regulation"
+          }
+        ],
+        "parameter_result_ids": [],
+        "quoted_values": [],
+        "disposition": "qualified",
+        "admissibility": "qualified_narrative",
+        "confidence": "medium",
+        "materiality": "high",
+        "credit_mechanism": null,
+        "interpretation": {},
+        "missing_information": [],
+        "display_priority": "display",
+        "review_required": true,
+        "corrects_hypothesis_id": null,
+        "parameter_id": null,
+        "mitigant": null,
+        "component_hypothesis_ids": [],
+        "interaction_kind": null,
+        "validation_notes": [
+          "generic_risk_disclosure_only: Supported only by risk-factor language about what could happen; it may be reported as a disclosed risk, not as an event that has occurred.",
+          "quote_does_not_cover_claim: The quote is verified, but it shares almost no wording with the claim, so it does not show that the filing states the claim; treated as the specialist's inference."
+        ],
+        "evidence_basis": "generic_risk_disclosure",
+        "model_stated": {
+          "claim_type": "fact",
+          "disposition": "supported",
+          "evidence_basis": null,
+          "materiality": "high",
+          "quotes": [
+            {
+              "evidence_id": "ev_reg",
+              "quote": "We are subject to extensive regulation"
+            }
+          ]
+        },
+        "review_flags": [
+          {
+            "rule_id": "generic_risk_disclosure_only",
+            "layer": "D_evidence_sufficiency",
+            "effect": "qualify",
+            "description": "Supported only by risk-factor language about what could happen; it may be reported as a disclosed risk, not as an event that has occurred.",
+            "heuristic": true,
+            "fo_handoff_variable": null,
+            "correction": null
+          },
+          {
+            "rule_id": "quote_does_not_cover_claim",
+            "layer": "D_evidence_sufficiency",
+            "effect": "qualify",
+            "description": "The quote is verified, but it shares almost no wording with the claim, so it does not show that the filing states the claim; treated as the specialist's inference.",
+            "heuristic": true,
+            "fo_handoff_variable": null,
+            "correction": "Quote the sentence that states the claim, or present the claim as an inference."
+          }
+        ],
+        "transmission_mechanism": null,
+        "fo_handoffs": [],
+        "recovery": [],
+        "supersedes_id": null,
+        "acceptance_state": "accepted",
+        "validator_id": "validator_6",
+        "validator_version": "bo-hypothesis-validator-2.2.1",
+        "presentation_basis": {},
+        "investigation": {},
+        "record_id": "hyp_2ac292a3397241d8"
+      },
+      {
+        "hypothesis_id": "M4-H001",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m4_strategy_capital",
+        "agent_run_id": "183d5602-de62-4623-93a8-4a32ced31835",
+        "topic": "business",
+        "section": "M4",
+        "claim": "Three hospital acquisitions were completed and their integration remains ongoing.",
+        "claim_type": "fact",
+        "direction": "mixed",
+        "supporting_evidence_ids": [
+          "ev_capex"
+        ],
+        "contradicting_evidence_ids": [],
+        "evidence_quotes": [
+          {
+            "evidence_id": "ev_capex",
+            "quote": "We completed acquisitions of three hospitals during the year; integration of these facilities is ongoing"
+          }
+        ],
+        "parameter_result_ids": [],
+        "quoted_values": [],
+        "disposition": "supported",
+        "admissibility": "established",
+        "confidence": "medium",
+        "materiality": "high",
+        "credit_mechanism": null,
+        "interpretation": {},
+        "missing_information": [],
+        "display_priority": "display",
+        "review_required": false,
+        "corrects_hypothesis_id": null,
+        "parameter_id": null,
+        "mitigant": null,
+        "component_hypothesis_ids": [],
+        "interaction_kind": null,
+        "validation_notes": [],
+        "evidence_basis": "company_specific_disclosure",
+        "model_stated": {
+          "claim_type": "fact",
+          "disposition": "supported",
+          "evidence_basis": null,
+          "materiality": "high",
+          "quotes": [
+            {
+              "evidence_id": "ev_capex",
+              "quote": "We completed acquisitions of three hospitals during the year; integration of these facilities is ongoing"
+            }
+          ]
+        },
+        "review_flags": [],
+        "transmission_mechanism": null,
+        "fo_handoffs": [],
+        "recovery": [],
+        "supersedes_id": null,
+        "acceptance_state": "accepted",
+        "validator_id": "validator_8",
+        "validator_version": "bo-hypothesis-validator-2.2.1",
+        "presentation_basis": {},
+        "investigation": {},
+        "record_id": "hyp_c3b407c8a8ee44d1"
+      },
+      {
+        "hypothesis_id": "M1A6-H001",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "agent_id": "m1_resilience_integration",
+        "agent_run_id": "2943f453-a0a0-40b0-bdbf-171a2b171de9",
+        "topic": "business",
+        "section": "M1A6",
+        "claim": "Labour scarcity may intensify competitive pressure for clinical staff and weaken operating resilience.",
+        "claim_type": "inference",
+        "direction": "negative",
+        "supporting_evidence_ids": [
+          "ev_labor",
+          "ev_compete"
+        ],
+        "contradicting_evidence_ids": [],
+        "evidence_quotes": [],
+        "parameter_result_ids": [],
+        "quoted_values": [],
+        "disposition": "qualified",
+        "admissibility": "qualified_narrative",
+        "confidence": "medium_low",
+        "materiality": "high",
+        "credit_mechanism": null,
+        "interpretation": {},
+        "missing_information": [
+          "Competitor staffing data"
+        ],
+        "display_priority": "display",
+        "review_required": true,
+        "corrects_hypothesis_id": null,
+        "parameter_id": null,
+        "mitigant": null,
+        "component_hypothesis_ids": [
+          "M1S4-H001",
+          "M1S5-H001"
+        ],
+        "interaction_kind": "compound_risk",
+        "validation_notes": [],
+        "evidence_basis": "inference",
+        "model_stated": {
+          "claim_type": "inference",
+          "disposition": "qualified",
+          "evidence_basis": null,
+          "materiality": "high",
+          "quotes": []
+        },
+        "review_flags": [],
+        "transmission_mechanism": "Competition for scarce clinical staff can raise costs and constrain service capacity.",
+        "fo_handoffs": [],
+        "recovery": [],
+        "supersedes_id": null,
+        "acceptance_state": "accepted",
+        "validator_id": "agent6_governance",
+        "validator_version": "bo-hypothesis-validator-2.2.1",
+        "presentation_basis": {},
+        "investigation": {},
+        "record_id": "hyp_f7a4c884273f4b25"
+      }
+    ],
+    "statistics": {
+      "overall": {
+        "supported": 5,
+        "qualified": 3,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "by_agent": {
+        "m1_revenue_quality": {
+          "supported": 1,
+          "qualified": 0,
+          "rejected": 0,
+          "unverified": 0
+        },
+        "m1_customer_stickiness": {
+          "supported": 1,
+          "qualified": 0,
+          "rejected": 0,
+          "unverified": 0
+        },
+        "m1_pricing_power": {
+          "supported": 0,
+          "qualified": 1,
+          "rejected": 0,
+          "unverified": 0
+        },
+        "m1_operating_model": {
+          "supported": 1,
+          "qualified": 0,
+          "rejected": 0,
+          "unverified": 0
+        },
+        "m1_competitive_durability": {
+          "supported": 1,
+          "qualified": 0,
+          "rejected": 0,
+          "unverified": 0
+        },
+        "m1_resilience_integration": {
+          "supported": 0,
+          "qualified": 1,
+          "rejected": 0,
+          "unverified": 0
+        },
+        "m2_industry": {
+          "supported": 0,
+          "qualified": 1,
+          "rejected": 0,
+          "unverified": 0
+        },
+        "m4_strategy_capital": {
+          "supported": 1,
+          "qualified": 0,
+          "rejected": 0,
+          "unverified": 0
+        }
+      }
+    },
+    "rejected": [],
+    "unverified": [],
+    "corrections": []
+  },
+  "calculations": [
+    {
+      "parameter_result_id": "pr_2ce617bba0824363",
+      "parameter_id": "capex_to_revenue",
+      "label": "Capital expenditure / revenue",
+      "value": 0.05,
+      "units": "ratio",
+      "period": "2025-12-31",
+      "numerator": {
+        "name": "capex",
+        "inputs": {
+          "capex": 50.0,
+          "revenue": 1000.0
+        }
+      },
+      "denominator": {
+        "name": "revenue"
+      },
+      "source_fact_ids": [
+        "f_rev"
+      ],
+      "formula_id": "capex_to_revenue",
+      "definition_version": "capex_to_revenue@1",
+      "calculation_state": "ok",
+      "caveat": null,
+      "group": "capital"
+    },
+    {
+      "parameter_result_id": "pr_8fac72b0f59846a6",
+      "parameter_id": "free_cash_flow",
+      "label": "Cash from operations less capital expenditure",
+      "value": 150.0,
+      "units": "USD_million",
+      "period": "2025-12-31",
+      "numerator": {
+        "name": "cfo - capex",
+        "inputs": {
+          "cfo": 200.0,
+          "capex": 50.0
+        }
+      },
+      "denominator": null,
+      "source_fact_ids": [
+        "f_rev"
+      ],
+      "formula_id": "free_cash_flow",
+      "definition_version": "free_cash_flow@1",
+      "calculation_state": "ok",
+      "caveat": "Operating cash flow less capital expenditure. This is NOT contractual cash available for debt service; debt-service capacity is assessed in the Financial Overview.",
+      "group": "cash"
+    },
+    {
+      "parameter_result_id": "pr_41fcb1c6f28141aa",
+      "parameter_id": "revenue_share.statement_geographical.other_states",
+      "label": "Share of consolidated revenue: other_states (statement_geographical)",
+      "value": 0.48,
+      "units": "ratio",
+      "period": "2025-12-31",
+      "numerator": {
+        "name": "revenue[nfh:OtherStatesMember]",
+        "value": 480.0,
+        "fact_id": "f_ot"
+      },
+      "denominator": {
+        "name": "consolidated_revenue",
+        "value": 1000.0,
+        "fact_id": "f_rev"
+      },
+      "source_fact_ids": [
+        "f_ot",
+        "f_rev"
+      ],
+      "formula_id": "safe_ratio",
+      "definition_version": "5cf7fc6e37094c03367ff6d70d9e167a3a6d35424a70f8033d12ec0f328c8547",
+      "calculation_state": "ok",
+      "caveat": null,
+      "group": "geography"
+    },
+    {
+      "parameter_result_id": "pr_491c8a3d2eca4be2",
+      "parameter_id": "revenue_share.statement_geographical.texas",
+      "label": "Share of consolidated revenue: texas (statement_geographical)",
+      "value": 0.3,
+      "units": "ratio",
+      "period": "2025-12-31",
+      "numerator": {
+        "name": "revenue[nfh:TexasMember]",
+        "value": 300.0,
+        "fact_id": "f_tx"
+      },
+      "denominator": {
+        "name": "consolidated_revenue",
+        "value": 1000.0,
+        "fact_id": "f_rev"
+      },
+      "source_fact_ids": [
+        "f_tx",
+        "f_rev"
+      ],
+      "formula_id": "safe_ratio",
+      "definition_version": "e42a2a4b225b7c7625eb717912e93482af0f20ebbeeb89297141891b5670f369",
+      "calculation_state": "ok",
+      "caveat": null,
+      "group": "geography"
+    },
+    {
+      "parameter_result_id": "pr_73a92ffeb6ed409b",
+      "parameter_id": "revenue_share.statement_geographical.florida",
+      "label": "Share of consolidated revenue: florida (statement_geographical)",
+      "value": 0.22,
+      "units": "ratio",
+      "period": "2025-12-31",
+      "numerator": {
+        "name": "revenue[nfh:FloridaMember]",
+        "value": 220.0,
+        "fact_id": "f_fl"
+      },
+      "denominator": {
+        "name": "consolidated_revenue",
+        "value": 1000.0,
+        "fact_id": "f_rev"
+      },
+      "source_fact_ids": [
+        "f_fl",
+        "f_rev"
+      ],
+      "formula_id": "safe_ratio",
+      "definition_version": "b498e4bc4c1d175fa1e36015bf6b56cd913ade480917d208c9e071716ce7ef73",
+      "calculation_state": "ok",
+      "caveat": null,
+      "group": "geography"
+    },
+    {
+      "parameter_result_id": "pr_cc2835adbf014f98",
+      "parameter_id": "revenue_hhi.statement_geographical",
+      "label": "Revenue concentration index (HHI): statement_geographical",
+      "value": 0.3688,
+      "units": "index",
+      "period": "2025-12-31",
+      "numerator": {
+        "name": "sum of squared member shares",
+        "members": [
+          "other_states",
+          "texas",
+          "florida"
+        ]
+      },
+      "denominator": {
+        "name": "sum_of_reported_members",
+        "value": 1000.0
+      },
+      "source_fact_ids": [
+        "f_ot",
+        "f_tx",
+        "f_fl"
+      ],
+      "formula_id": "hhi",
+      "definition_version": "bff693d1ebcc0872468a282f694edf13360f089d32f2c29ea10fb29e85804cef",
+      "calculation_state": "ok",
+      "caveat": null,
+      "group": "geography"
+    }
+  ],
+  "parameters": [
+    {
+      "parameter_result_id": "pr_2ce617bba0824363",
+      "parameter_id": "capex_to_revenue",
+      "topic": "financial",
+      "method": "deterministic",
+      "value": 0.05,
+      "status": "ok",
+      "agent_id": null,
+      "agent_run_id": null,
+      "formula_id": "capex_to_revenue",
+      "formula_version": "1",
+      "evidence_ids": [],
+      "source_fact_ids": [
+        "f_rev"
+      ],
+      "source_parameter_ids": [],
+      "supersedes_id": null,
+      "acceptance_state": "accepted"
+    },
+    {
+      "parameter_result_id": "pr_8fac72b0f59846a6",
+      "parameter_id": "free_cash_flow",
+      "topic": "financial",
+      "method": "deterministic",
+      "value": 150.0,
+      "status": "ok",
+      "agent_id": null,
+      "agent_run_id": null,
+      "formula_id": "free_cash_flow",
+      "formula_version": "1",
+      "evidence_ids": [],
+      "source_fact_ids": [
+        "f_rev"
+      ],
+      "source_parameter_ids": [],
+      "supersedes_id": null,
+      "acceptance_state": "accepted"
+    },
+    {
+      "parameter_result_id": "pr_41fcb1c6f28141aa",
+      "parameter_id": "revenue_share.statement_geographical.other_states",
+      "topic": "business",
+      "method": "deterministic",
+      "value": 0.48,
+      "status": "ok",
+      "agent_id": null,
+      "agent_run_id": null,
+      "formula_id": "safe_ratio",
+      "formula_version": "5cf7fc6e37094c03367ff6d70d9e167a3a6d35424a70f8033d12ec0f328c8547",
+      "evidence_ids": [],
+      "source_fact_ids": [
+        "f_ot",
+        "f_rev"
+      ],
+      "source_parameter_ids": [],
+      "supersedes_id": null,
+      "acceptance_state": "accepted"
+    },
+    {
+      "parameter_result_id": "pr_491c8a3d2eca4be2",
+      "parameter_id": "revenue_share.statement_geographical.texas",
+      "topic": "business",
+      "method": "deterministic",
+      "value": 0.3,
+      "status": "ok",
+      "agent_id": null,
+      "agent_run_id": null,
+      "formula_id": "safe_ratio",
+      "formula_version": "e42a2a4b225b7c7625eb717912e93482af0f20ebbeeb89297141891b5670f369",
+      "evidence_ids": [],
+      "source_fact_ids": [
+        "f_tx",
+        "f_rev"
+      ],
+      "source_parameter_ids": [],
+      "supersedes_id": null,
+      "acceptance_state": "accepted"
+    },
+    {
+      "parameter_result_id": "pr_73a92ffeb6ed409b",
+      "parameter_id": "revenue_share.statement_geographical.florida",
+      "topic": "business",
+      "method": "deterministic",
+      "value": 0.22,
+      "status": "ok",
+      "agent_id": null,
+      "agent_run_id": null,
+      "formula_id": "safe_ratio",
+      "formula_version": "b498e4bc4c1d175fa1e36015bf6b56cd913ade480917d208c9e071716ce7ef73",
+      "evidence_ids": [],
+      "source_fact_ids": [
+        "f_fl",
+        "f_rev"
+      ],
+      "source_parameter_ids": [],
+      "supersedes_id": null,
+      "acceptance_state": "accepted"
+    },
+    {
+      "parameter_result_id": "pr_cc2835adbf014f98",
+      "parameter_id": "revenue_hhi.statement_geographical",
+      "topic": "business",
+      "method": "deterministic",
+      "value": 0.3688,
+      "status": "ok",
+      "agent_id": null,
+      "agent_run_id": null,
+      "formula_id": "hhi",
+      "formula_version": "bff693d1ebcc0872468a282f694edf13360f089d32f2c29ea10fb29e85804cef",
+      "evidence_ids": [],
+      "source_fact_ids": [
+        "f_ot",
+        "f_tx",
+        "f_fl"
+      ],
+      "source_parameter_ids": [],
+      "supersedes_id": null,
+      "acceptance_state": "accepted"
+    }
+  ],
+  "reconciliation": {
+    "duplicate_groups": [],
+    "contradictions": [],
+    "overlapping_evidence": [
+      {
+        "evidence_id": "ev_compete",
+        "hypothesis_ids": [
+          "M1A6-H001",
+          "M1S5-H001"
+        ],
+        "agent_ids": [
+          "m1_competitive_durability",
+          "m1_resilience_integration"
+        ]
+      },
+      {
+        "evidence_id": "ev_labor",
+        "hypothesis_ids": [
+          "M1A6-H001",
+          "M1S4-H001"
+        ],
+        "agent_ids": [
+          "m1_operating_model",
+          "m1_resilience_integration"
+        ]
+      },
+      {
+        "evidence_id": "ev_payer",
+        "hypothesis_ids": [
+          "M1S1-H001",
+          "M1S3-H001"
+        ],
+        "agent_ids": [
+          "m1_pricing_power",
+          "m1_revenue_quality"
+        ]
+      }
+    ],
+    "disconfirming": [],
+    "orchestrator_merged_duplicates": []
+  },
+  "resilience_retrieval_feedback": [
+    {
+      "agent_id": "m1_resilience_integration",
+      "round": 0,
+      "validator_version": "bo-hypothesis-validator-2.2.1",
+      "enforce_validators": true,
+      "status": "no_actionable_requests",
+      "initial_run_id": "2943f453-a0a0-40b0-bdbf-171a2b171de9",
+      "provisional_response": {
+        "hypotheses": [
+          {
+            "claim": "Labour scarcity may intensify competitive pressure for clinical staff and weaken operating resilience.",
+            "claim_type": "inference",
+            "component_hypothesis_ids": [
+              "M1S4-H001",
+              "M1S5-H001"
+            ],
+            "confidence": "medium_low",
+            "direction": "negative",
+            "display_priority": "display",
+            "disposition": "qualified",
+            "hypothesis_id": "M1A6-H001",
+            "interaction_kind": "compound_risk",
+            "materiality": "high",
+            "missing_information": [
+              "Competitor staffing data"
+            ],
+            "supporting_evidence_ids": [
+              "ev_labor",
+              "ev_compete"
+            ],
+            "transmission_mechanism": "Competition for scarce clinical staff can raise costs and constrain service capacity."
+          }
+        ],
+        "parameters": []
+      },
+      "provisional_hypotheses": [
+        {
+          "hypothesis_id": "M1A6-H001",
+          "analysis_run_id": "ar_5f1d1e213ea4435c",
+          "agent_id": "m1_resilience_integration",
+          "agent_run_id": "2943f453-a0a0-40b0-bdbf-171a2b171de9",
+          "topic": "business",
+          "section": "M1A6",
+          "claim": "Labour scarcity may intensify competitive pressure for clinical staff and weaken operating resilience.",
+          "claim_type": "inference",
+          "direction": "negative",
+          "supporting_evidence_ids": [
+            "ev_labor",
+            "ev_compete"
+          ],
+          "contradicting_evidence_ids": [],
+          "evidence_quotes": [],
+          "parameter_result_ids": [],
+          "quoted_values": [],
+          "disposition": "qualified",
+          "admissibility": "qualified_narrative",
+          "confidence": "medium_low",
+          "materiality": "high",
+          "credit_mechanism": null,
+          "interpretation": {},
+          "missing_information": [
+            "Competitor staffing data"
+          ],
+          "display_priority": "display",
+          "review_required": true,
+          "corrects_hypothesis_id": null,
+          "parameter_id": null,
+          "mitigant": null,
+          "component_hypothesis_ids": [
+            "M1S4-H001",
+            "M1S5-H001"
+          ],
+          "interaction_kind": "compound_risk",
+          "validation_notes": [],
+          "evidence_basis": "inference",
+          "model_stated": {
+            "claim_type": "inference",
+            "disposition": "qualified",
+            "evidence_basis": null,
+            "materiality": "high",
+            "quotes": []
+          },
+          "review_flags": [],
+          "transmission_mechanism": "Competition for scarce clinical staff can raise costs and constrain service capacity.",
+          "fo_handoffs": [],
+          "recovery": [],
+          "supersedes_id": null,
+          "acceptance_state": "accepted",
+          "validator_id": "agent6_governance",
+          "validator_version": "bo-hypothesis-validator-2.2.1",
+          "presentation_basis": {},
+          "investigation": {}
+        }
+      ],
+      "initial_validator_adjustments": [
+        {
+          "hypothesis_id": "(output)",
+          "note": "Indicators supplied but bound by no hypothesis: pr_41fcb1c6f28141aa, pr_491c8a3d2eca4be2, pr_73a92ffeb6ed409b, pr_cc2835adbf014f98."
+        }
+      ],
+      "initial_parameter_adjustments": [],
+      "requests": [],
+      "information_gaps": [
+        {
+          "gap_id": "a6_gap_1",
+          "original_gap": "Competitor staffing data",
+          "source": "hypothesis_level",
+          "hypothesis_id": "M1A6-H001",
+          "eligible": false,
+          "outcome": "not_specific",
+          "reason": "Too broad, too few subject concepts, or excessive text length.",
+          "terms": [],
+          "purpose": null,
+          "deduplication": "not_applicable",
+          "query_index": null,
+          "attempt_ids": [],
+          "retrieved_evidence_ids": [],
+          "newly_admitted_evidence_ids": [],
+          "new_evidence_admitted": false,
+          "reconsideration_occurred": false,
+          "unresolved": true,
+          "resolution": "not_deterministically_established",
+          "normalized_gap": "Competitor staffing data"
+        }
+      ],
+      "retrieval_bridge_version": "a6-gap-bridge-1",
+      "new_evidence_ids": [],
+      "unresolved_requests": [],
+      "final_run_id": "2943f453-a0a0-40b0-bdbf-171a2b171de9",
+      "outstanding_information_gaps": [
+        "a6_gap_1"
+      ],
+      "final_reported_information_gaps": {
+        "response_level": [],
+        "hypothesis_level": [
+          {
+            "hypothesis_id": "M1A6-H001",
+            "missing_information": [
+              "Competitor staffing data"
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "resilience_analysis": [
+    {
+      "hypothesis_id": "M1A6-H001",
+      "analysis_run_id": "ar_5f1d1e213ea4435c",
+      "agent_id": "m1_resilience_integration",
+      "agent_run_id": "2943f453-a0a0-40b0-bdbf-171a2b171de9",
+      "topic": "business",
+      "section": "M1A6",
+      "claim": "Labour scarcity may intensify competitive pressure for clinical staff and weaken operating resilience.",
+      "claim_type": "inference",
+      "direction": "negative",
+      "supporting_evidence_ids": [
+        "ev_labor",
+        "ev_compete"
+      ],
+      "contradicting_evidence_ids": [],
+      "evidence_quotes": [],
+      "parameter_result_ids": [],
+      "quoted_values": [],
+      "disposition": "qualified",
+      "admissibility": "qualified_narrative",
+      "confidence": "medium_low",
+      "materiality": "high",
+      "credit_mechanism": null,
+      "interpretation": {},
+      "missing_information": [
+        "Competitor staffing data"
+      ],
+      "display_priority": "display",
+      "review_required": true,
+      "corrects_hypothesis_id": null,
+      "parameter_id": null,
+      "mitigant": null,
+      "component_hypothesis_ids": [
+        "M1S4-H001",
+        "M1S5-H001"
+      ],
+      "interaction_kind": "compound_risk",
+      "validation_notes": [],
+      "evidence_basis": "inference",
+      "model_stated": {
+        "claim_type": "inference",
+        "disposition": "qualified",
+        "evidence_basis": null,
+        "materiality": "high",
+        "quotes": []
+      },
+      "review_flags": [],
+      "transmission_mechanism": "Competition for scarce clinical staff can raise costs and constrain service capacity.",
+      "fo_handoffs": [],
+      "recovery": [],
+      "supersedes_id": null,
+      "acceptance_state": "accepted",
+      "validator_id": "agent6_governance",
+      "validator_version": "bo-hypothesis-validator-2.2.1",
+      "presentation_basis": {},
+      "investigation": {},
+      "record_id": "hyp_f7a4c884273f4b25"
+    }
+  ],
+  "module_conclusions": {
+    "M1": {
+      "module": "M1",
+      "status": "complete",
+      "agent_ids": [
+        "m1_revenue_quality",
+        "m1_customer_stickiness",
+        "m1_pricing_power",
+        "m1_operating_model",
+        "m1_competitive_durability",
+        "m1_resilience_integration"
+      ],
+      "failed_or_missing_agents": [],
+      "unresolved_coverage_checks": [],
+      "findings": [
+        {
+          "hypothesis_id": "M1S1-H001",
+          "agent_id": "m1_revenue_quality",
+          "section": "M1S1",
+          "claim": "Managed-care agreements set negotiated rates.",
+          "claim_type": "fact",
+          "direction": "neutral",
+          "disposition": "supported",
+          "admissibility": "established",
+          "confidence": "medium",
+          "materiality": "high",
+          "credit_mechanism": null,
+          "interpretation": {},
+          "supporting_evidence_ids": [
+            "ev_payer"
+          ],
+          "contradicting_evidence_ids": [],
+          "evidence_quotes": [
+            {
+              "evidence_id": "ev_payer",
+              "quote": "Our managed care contracts are generally multi-year agreements that set negotiated rates"
+            }
+          ],
+          "quoted_values": [],
+          "missing_information": [],
+          "corrects_hypothesis_id": null,
+          "mitigant": null,
+          "component_hypothesis_ids": [],
+          "interaction_kind": null,
+          "validation_notes": []
+        },
+        {
+          "hypothesis_id": "M1S2-H001",
+          "agent_id": "m1_customer_stickiness",
+          "section": "M1S2",
+          "claim": "Admissions were stable during the year.",
+          "claim_type": "fact",
+          "direction": "positive",
+          "disposition": "supported",
+          "admissibility": "established",
+          "confidence": "medium",
+          "materiality": "high",
+          "credit_mechanism": null,
+          "interpretation": {},
+          "supporting_evidence_ids": [
+            "ev_model"
+          ],
+          "contradicting_evidence_ids": [],
+          "evidence_quotes": [
+            {
+              "evidence_id": "ev_model",
+              "quote": "admissions were stable during the year"
+            }
+          ],
+          "quoted_values": [],
+          "missing_information": [],
+          "corrects_hypothesis_id": null,
+          "mitigant": null,
+          "component_hypothesis_ids": [],
+          "interaction_kind": null,
+          "validation_notes": []
+        },
+        {
+          "hypothesis_id": "M1S3-H001",
+          "agent_id": "m1_pricing_power",
+          "section": "M1S3",
+          "claim": "Either party may terminate a managed-care agreement on notice.",
+          "claim_type": "fact",
+          "direction": "negative",
+          "disposition": "qualified",
+          "admissibility": "qualified_narrative",
+          "confidence": "medium",
+          "materiality": "high",
+          "credit_mechanism": null,
+          "interpretation": {},
+          "supporting_evidence_ids": [
+            "ev_payer"
+          ],
+          "contradicting_evidence_ids": [],
+          "evidence_quotes": [
+            {
+              "evidence_id": "ev_payer",
+              "quote": "Either party may terminate an agreement on notice"
+            }
+          ],
+          "quoted_values": [],
+          "missing_information": [],
+          "corrects_hypothesis_id": null,
+          "mitigant": null,
+          "component_hypothesis_ids": [],
+          "interaction_kind": null,
+          "validation_notes": [
+            "generic_risk_disclosure_only: Supported only by risk-factor language about what could happen; it may be reported as a disclosed risk, not as an event that has occurred."
+          ]
+        },
+        {
+          "hypothesis_id": "M1S4-H001",
+          "agent_id": "m1_operating_model",
+          "section": "M1S4",
+          "claim": "A nursing shortage and rising contract labour costs pressure the operating model.",
+          "claim_type": "fact",
+          "direction": "negative",
+          "disposition": "supported",
+          "admissibility": "established",
+          "confidence": "medium",
+          "materiality": "high",
+          "credit_mechanism": null,
+          "interpretation": {},
+          "supporting_evidence_ids": [
+            "ev_labor"
+          ],
+          "contradicting_evidence_ids": [],
+          "evidence_quotes": [
+            {
+              "evidence_id": "ev_labor",
+              "quote": "We face a nursing shortage and rising contract labor costs"
+            }
+          ],
+          "quoted_values": [],
+          "missing_information": [],
+          "corrects_hypothesis_id": null,
+          "mitigant": null,
+          "component_hypothesis_ids": [],
+          "interaction_kind": null,
+          "validation_notes": []
+        },
+        {
+          "hypothesis_id": "M1S5-H001",
+          "agent_id": "m1_competitive_durability",
+          "section": "M1S5",
+          "claim": "The company competes with hospitals and ambulatory surgery centres.",
+          "claim_type": "fact",
+          "direction": "negative",
+          "disposition": "supported",
+          "admissibility": "established",
+          "confidence": "medium",
+          "materiality": "high",
+          "credit_mechanism": null,
+          "interpretation": {},
+          "supporting_evidence_ids": [
+            "ev_compete"
+          ],
+          "contradicting_evidence_ids": [],
+          "evidence_quotes": [
+            {
+              "evidence_id": "ev_compete",
+              "quote": "We compete with other hospitals, including not-for-profit systems, and with ambulatory surgery centers"
+            }
+          ],
+          "quoted_values": [],
+          "missing_information": [],
+          "corrects_hypothesis_id": null,
+          "mitigant": null,
+          "component_hypothesis_ids": [],
+          "interaction_kind": null,
+          "validation_notes": []
+        },
+        {
+          "hypothesis_id": "M1A6-H001",
+          "agent_id": "m1_resilience_integration",
+          "section": "M1A6",
+          "claim": "Labour scarcity may intensify competitive pressure for clinical staff and weaken operating resilience.",
+          "claim_type": "inference",
+          "direction": "negative",
+          "disposition": "qualified",
+          "admissibility": "qualified_narrative",
+          "confidence": "medium_low",
+          "materiality": "high",
+          "credit_mechanism": null,
+          "interpretation": {},
+          "supporting_evidence_ids": [
+            "ev_labor",
+            "ev_compete"
+          ],
+          "contradicting_evidence_ids": [],
+          "evidence_quotes": [],
+          "quoted_values": [],
+          "missing_information": [
+            "Competitor staffing data"
+          ],
+          "corrects_hypothesis_id": null,
+          "mitigant": null,
+          "component_hypothesis_ids": [
+            "M1S4-H001",
+            "M1S5-H001"
+          ],
+          "interaction_kind": "compound_risk",
+          "validation_notes": []
+        }
+      ],
+      "audit_only_hypothesis_ids": [],
+      "missing_information": [
+        "Competitor staffing data"
+      ]
+    },
+    "M2": {
+      "module": "M2",
+      "status": "complete",
+      "agent_ids": [
+        "m2_industry"
+      ],
+      "failed_or_missing_agents": [],
+      "unresolved_coverage_checks": [],
+      "findings": [
+        {
+          "hypothesis_id": "M2-H001",
+          "agent_id": "m2_industry",
+          "section": "M2",
+          "claim": "The industry is extensively regulated and exposed to legislative reimbursement reductions.",
+          "claim_type": "fact",
+          "direction": "negative",
+          "disposition": "qualified",
+          "admissibility": "qualified_narrative",
+          "confidence": "medium",
+          "materiality": "high",
+          "credit_mechanism": null,
+          "interpretation": {},
+          "supporting_evidence_ids": [
+            "ev_reg"
+          ],
+          "contradicting_evidence_ids": [],
+          "evidence_quotes": [
+            {
+              "evidence_id": "ev_reg",
+              "quote": "We are subject to extensive regulation"
+            }
+          ],
+          "quoted_values": [],
+          "missing_information": [],
+          "corrects_hypothesis_id": null,
+          "mitigant": null,
+          "component_hypothesis_ids": [],
+          "interaction_kind": null,
+          "validation_notes": [
+            "generic_risk_disclosure_only: Supported only by risk-factor language about what could happen; it may be reported as a disclosed risk, not as an event that has occurred.",
+            "quote_does_not_cover_claim: The quote is verified, but it shares almost no wording with the claim, so it does not show that the filing states the claim; treated as the specialist's inference."
+          ]
+        }
+      ],
+      "audit_only_hypothesis_ids": [],
+      "missing_information": []
+    },
+    "M3": {
+      "module": "M3",
+      "workflow": "m3-rebuild",
+      "schema_version": "m3-rebuild-handoff-1.0",
+      "status": "incomplete",
+      "agent_ids": [
+        "m3_structure_conversion",
+        "m3_management_assessment"
+      ],
+      "findings": [],
+      "m3_rebuild": {
+        "structure": {
+          "status": "not_attempted",
+          "validation_status": "not_attempted",
+          "artifact": null,
+          "error": "Corporate onboarding JSON unavailable"
+        },
+        "management": {
+          "status": "not_attempted",
+          "validation_status": "not_attempted",
+          "artifact": null,
+          "error": "Selected company Form 10-K unavailable"
+        }
+      },
+      "source_manifest": "/private/var/folders/7t/tnf0mwt17038pq708xnqvfb40000gq/T/tmp12la38x8/out/m3_rebuild/NFH_BO/run_b2a563bcc7f2/m3_rebuild_manifest.json",
+      "source_run_id": "run_b2a563bcc7f2",
+      "missing_information": [
+        "Educational structure is not a verified legal/obligor assessment. Management observations are bounded continuity rules, not competence/governance ratings."
+      ],
+      "consumption_instruction": "Read the two typed artifacts independently. Preserve directions, gaps, quotations and simulation provenance. Do not convert these into legacy scored hypotheses, verified entities, cash-flow claims or governance ratings."
+    },
+    "M4": {
+      "module": "M4",
+      "status": "complete",
+      "agent_ids": [
+        "m4_strategy_capital"
+      ],
+      "failed_or_missing_agents": [],
+      "unresolved_coverage_checks": [],
+      "findings": [
+        {
+          "hypothesis_id": "M4-H001",
+          "agent_id": "m4_strategy_capital",
+          "section": "M4",
+          "claim": "Three hospital acquisitions were completed and their integration remains ongoing.",
+          "claim_type": "fact",
+          "direction": "mixed",
+          "disposition": "supported",
+          "admissibility": "established",
+          "confidence": "medium",
+          "materiality": "high",
+          "credit_mechanism": null,
+          "interpretation": {},
+          "supporting_evidence_ids": [
+            "ev_capex"
+          ],
+          "contradicting_evidence_ids": [],
+          "evidence_quotes": [
+            {
+              "evidence_id": "ev_capex",
+              "quote": "We completed acquisitions of three hospitals during the year; integration of these facilities is ongoing"
+            }
+          ],
+          "quoted_values": [],
+          "missing_information": [],
+          "corrects_hypothesis_id": null,
+          "mitigant": null,
+          "component_hypothesis_ids": [],
+          "interaction_kind": null,
+          "validation_notes": []
+        }
+      ],
+      "audit_only_hypothesis_ids": [],
+      "missing_information": [],
+      "m4_governed_output_version": "bo-m4-governed-1.0",
+      "capabilities": [
+        "strategy_capital",
+        "debt_structure_refinancing"
+      ],
+      "m4_debt_assessment": {
+        "version": "bo-m4-debt-assessment-1.0",
+        "agent_id": "module4_debt_structure_specialist",
+        "validator_id": "validator_8_debt_structure",
+        "status": "validated",
+        "validated": true,
+        "assessment": {
+          "deliverable_1": {
+            "extraction_source": {
+              "narrative": "Debt population drawn from Item 8 Financial Statements, Note 8 (Long-Term Debt), cross-referenced to Item 7 MD&A Liquidity & Capital Resources and the Item 15 Exhibit Index supplemental indentures (Exhibits 4.44-4.53).",
+              "item_references": [
+                "Item 7 MD&A",
+                "Item 8 Note 8",
+                "Item 15 Exhibit 4.x"
+              ],
+              "page_references": [
+                "F-18",
+                "F-19",
+                "57"
+              ]
+            },
+            "senior_notes_schedule": [
+              {
+                "senior_note_series": "5.000% Senior Notes",
+                "legal_borrower": "HCA Inc.",
+                "principal_amount_m": 700.0,
+                "coupon_interest_rate": "5.000% fixed",
+                "maturity_year": 2028,
+                "collateral_security_status": "unsecured",
+                "guarantors_credit_support": "Fully and unconditionally guaranteed on an unsecured basis by HCA Healthcare, Inc.",
+                "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed"
+              },
+              {
+                "senior_note_series": "5.250% Senior Notes",
+                "legal_borrower": "HCA Inc.",
+                "principal_amount_m": 750.0,
+                "coupon_interest_rate": "5.250% fixed",
+                "maturity_year": 2030,
+                "collateral_security_status": "unsecured",
+                "guarantors_credit_support": "Fully and unconditionally guaranteed on an unsecured basis by HCA Healthcare, Inc.",
+                "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed"
+              },
+              {
+                "senior_note_series": "5.750% Senior Notes",
+                "legal_borrower": "HCA Inc.",
+                "principal_amount_m": 1500.0,
+                "coupon_interest_rate": "5.750% fixed",
+                "maturity_year": 2035,
+                "collateral_security_status": "unsecured",
+                "guarantors_credit_support": "Fully and unconditionally guaranteed on an unsecured basis by HCA Healthcare, Inc.",
+                "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed"
+              },
+              {
+                "senior_note_series": "6.200% Senior Notes",
+                "legal_borrower": "HCA Inc.",
+                "principal_amount_m": 1250.0,
+                "coupon_interest_rate": "6.200% fixed",
+                "maturity_year": 2055,
+                "collateral_security_status": "unsecured",
+                "guarantors_credit_support": "Fully and unconditionally guaranteed on an unsecured basis by HCA Healthcare, Inc.",
+                "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed"
+              },
+              {
+                "senior_note_series": "Other senior unsecured notes (2026-2064)",
+                "legal_borrower": "HCA Inc.",
+                "principal_amount_m": 39050.0,
+                "coupon_interest_rate": "various fixed, 5.1% effective",
+                "maturity_year": 2064,
+                "collateral_security_status": "unsecured",
+                "guarantors_credit_support": "Fully and unconditionally guaranteed on an unsecured basis by HCA Healthcare, Inc.",
+                "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed"
+              },
+              {
+                "senior_note_series": "Debentures (maturities through 2095)",
+                "legal_borrower": "HCA Inc.",
+                "principal_amount_m": 450.0,
+                "coupon_interest_rate": "7.19% weighted average",
+                "maturity_year": 2095,
+                "collateral_security_status": "unsecured",
+                "guarantors_credit_support": "Fully and unconditionally guaranteed on an unsecured basis by HCA Healthcare, Inc.",
+                "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed"
+              }
+            ],
+            "non_note_obligations_schedule": [
+              {
+                "obligation_facility": "Commercial paper program",
+                "legal_borrower": "HCA Inc.",
+                "principal_drawn_m": 2207.0,
+                "available_facility_limit_m": 4000.0,
+                "interest_rate_terms": "4.3% weighted average; 18-day average life",
+                "maturity": "Short-term",
+                "collateral_security_status": "unsecured",
+                "guarantors_credit_support": "HCA Healthcare, Inc. guarantee",
+                "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed"
+              },
+              {
+                "obligation_facility": "Other senior secured debt (finance leases + other)",
+                "legal_borrower": "HCA Inc.",
+                "principal_drawn_m": 1021.0,
+                "available_facility_limit_m": null,
+                "interest_rate_terms": "4.6% effective",
+                "maturity": "Various",
+                "collateral_security_status": "secured",
+                "guarantors_credit_support": "Secured at operating subsidiary level",
+                "priority_ranking_tier": "tier_1_direct_opco_secured"
+              },
+              {
+                "obligation_facility": "Senior unsecured revolving credit facility (5-year)",
+                "legal_borrower": "HCA Inc.",
+                "principal_drawn_m": 0.0,
+                "available_facility_limit_m": 8000.0,
+                "interest_rate_terms": "SOFR + 1.125%",
+                "maturity": "2030",
+                "collateral_security_status": "unsecured",
+                "guarantors_credit_support": "HCA Healthcare, Inc. guarantee",
+                "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed"
+              },
+              {
+                "obligation_facility": "Debt issuance costs and discounts",
+                "legal_borrower": "HCA Inc.",
+                "principal_drawn_m": -436.0,
+                "available_facility_limit_m": null,
+                "interest_rate_terms": "n/a (contra-liability)",
+                "maturity": "n/a",
+                "collateral_security_status": "unsecured",
+                "guarantors_credit_support": "n/a",
+                "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed"
+              }
+            ],
+            "creditor_priority_framework": {
+              "tier_1_direct_opco_secured_m": 1021.0,
+              "tier_2_senior_unsecured_guaranteed_m": 45471.0,
+              "tier_3_unguaranteed_holdco_m": 0.0,
+              "consolidated_total_indebtedness_m": 46492.0,
+              "structural_subordination_drag_ratio": 0.022,
+              "prospective_loan_secured_placement": "A secured bank loan would rank in Tier 1 ahead of the $43.7B senior unsecured notes, benefiting from direct OpCo collateral.",
+              "prospective_loan_senior_unsecured_placement": "A senior unsecured bank loan would rank pari passu with the existing Tier 2 senior unsecured notes, sharing the HCA Healthcare, Inc. upstream guarantee."
+            },
+            "reconciling_items": []
+          },
+          "deliverable_2": {
+            "extraction_source": {
+              "narrative": "Refinancing activity reconstructed from Note 8 issuance and repayment disclosures and the MD&A Capital Resources discussion for FY2023-FY2025.",
+              "item_references": [
+                "Item 7 MD&A",
+                "Item 8 Note 8"
+              ],
+              "page_references": [
+                "F-18",
+                "55"
+              ]
+            },
+            "refinancing_log": [
+              {
+                "transaction_category": "new_issuance",
+                "obligation_series_description": "February 2025 senior notes ($5.25B)",
+                "principal_amount_m": 5250.0,
+                "coupon_interest_terms": "5.000%-6.200% fixed + FRN",
+                "execution_date_fiscal_period": "Feb 2025",
+                "original_retired_maturity": null,
+                "new_extended_maturity": "2028-2055",
+                "use_of_proceeds_impact": "Repay senior unsecured credit facility + general corporate purposes."
+              },
+              {
+                "transaction_category": "new_issuance",
+                "obligation_series_description": "October 2025 senior notes ($3.25B)",
+                "principal_amount_m": 3250.0,
+                "coupon_interest_terms": "4.300%-5.700% fixed",
+                "execution_date_fiscal_period": "Oct 2025",
+                "original_retired_maturity": null,
+                "new_extended_maturity": "2030-2055",
+                "use_of_proceeds_impact": "Repay commercial paper + GCP."
+              },
+              {
+                "transaction_category": "repayment_at_maturity",
+                "obligation_series_description": "5.375% senior notes",
+                "principal_amount_m": 2600.0,
+                "coupon_interest_terms": "5.375% fixed",
+                "execution_date_fiscal_period": "FY2025",
+                "original_retired_maturity": "2025",
+                "new_extended_maturity": null,
+                "use_of_proceeds_impact": "Repaid at scheduled maturity."
+              },
+              {
+                "transaction_category": "early_redemption",
+                "obligation_series_description": "5.875% senior notes due 2026",
+                "principal_amount_m": 1500.0,
+                "coupon_interest_terms": "5.875% fixed",
+                "execution_date_fiscal_period": "FY2025",
+                "original_retired_maturity": "2026",
+                "new_extended_maturity": null,
+                "use_of_proceeds_impact": "Redeemed early ahead of maturity."
+              }
+            ],
+            "metrics": {
+              "weighted_avg_refinancing_lead_time_months": 11.0,
+              "refinancing_cost_spread_delta_bps": 25.0,
+              "weighted_avg_maturity_extension_years": 7.5,
+              "historical_refinancing_distress_events": 0
+            },
+            "refinancing_capacity_discipline_verdict": "Deep, repeated capital-markets access with proactive pre-maturity refinancing and zero distress events demonstrates strong refinancing capacity and discipline."
+          },
+          "deliverable_3": {
+            "extraction_source": {
+              "narrative": "Capital deployment reconciled from the Consolidated Statements of Cash Flows and MD&A Capital Resources, FY2023-FY2025.",
+              "item_references": [
+                "Item 7 MD&A",
+                "Item 8 Cash Flow Statements"
+              ],
+              "page_references": [
+                "F-7",
+                "54"
+              ]
+            },
+            "capital_deployment_reconciliation": [
+              {
+                "capital_allocation_stream": "Capital expenditures",
+                "specific_use_description": "Facility expansion, beds, technology",
+                "cumulative_amount_3y_m": 14563.0,
+                "primary_funding_source": "Operating cash flow",
+                "leverage_impact": "Self-funded from operating cash flow; leverage-neutral."
+              },
+              {
+                "capital_allocation_stream": "Acquisitions",
+                "specific_use_description": "Bolt-on hospital/ASC acquisitions",
+                "cumulative_amount_3y_m": 1298.0,
+                "primary_funding_source": "Operating cash flow",
+                "leverage_impact": "Self-funded; immaterial effect on net debt."
+              },
+              {
+                "capital_allocation_stream": "Share repurchases",
+                "specific_use_description": "Buybacks under board authorizations",
+                "cumulative_amount_3y_m": 19920.0,
+                "primary_funding_source": "Operating cash flow + debt",
+                "leverage_impact": "Partly debt-funded; added to net debt but leverage kept within policy."
+              },
+              {
+                "capital_allocation_stream": "Dividends",
+                "specific_use_description": "Quarterly common dividends",
+                "cumulative_amount_3y_m": 2030.0,
+                "primary_funding_source": "Operating cash flow",
+                "leverage_impact": "Self-funded from OCF; leverage-neutral."
+              }
+            ],
+            "debt_utilisation_matrix": {
+              "debt_funded_vs_internally_funded_deployment": "CAPEX, M&A and dividends self-funded by $32.6B of 3-year operating cash flow; only part of the $19.9B of buybacks was debt-funded, so most deployment did not add to net debt.",
+              "shareholder_distributions_vs_leverage_balance": "Aggressive buybacks ($19.9B/3y) partly debt-funded, but net debt / EBITDA kept within policy while EBITDA grew."
+            },
+            "debt_utilisation_leverage_verdict": "Capital deployment is predominantly internally funded; the debt-funded portion of distributions added to net debt but leverage remained within a controlled policy range."
+          },
+          "deliverable_4": {
+            "evidence_synthesis_narrative": "Deliverables 1-3 show a predominantly senior-unsecured capital structure guaranteed by the HoldCo, a disciplined and deep refinancing track record, and internally funded growth alongside large but controlled shareholder distributions.",
+            "core_credit_assessment": "HCA presents a strong, well-managed debt structure with proven refinancing access and prudent stewardship; a prospective bank lender ranks pari passu with existing senior unsecured notes absent collateral.",
+            "synthesis_matrix": [
+              {
+                "analytical_scope_pillar": "Debt structure & priority",
+                "core_empirical_evidence": "$46.49B total debt; 97.8% senior unsecured guaranteed; drag ratio 0.022.",
+                "deliverable_verdict": "Satisfactory",
+                "bank_lender_implications": "Unsecured loan is pari passu Tier 2; collateral would lift to Tier 1."
+              },
+              {
+                "analytical_scope_pillar": "Refinancing history",
+                "core_empirical_evidence": "$8.5B issued FY2025; proactive pre-maturity refinancing; 0 distress events.",
+                "deliverable_verdict": "Strong",
+                "bank_lender_implications": "Low refinancing/rollover risk."
+              },
+              {
+                "analytical_scope_pillar": "Financial stewardship",
+                "core_empirical_evidence": "CAPEX self-funded; $19.9B buybacks partly debt-funded; leverage within policy.",
+                "deliverable_verdict": "Satisfactory",
+                "bank_lender_implications": "Monitor distribution appetite vs leverage headroom."
+              }
+            ],
+            "executive_credit_summary_box": {
+              "target_entity_and_period": "HCA Healthcare, Inc. - FY2025 (10-K)",
+              "overall_credit_rating_verdict": "satisfactory",
+              "executive_takeaways": [
+                "Predominantly senior unsecured structure guaranteed by the HoldCo.",
+                "Proven, disciplined refinancing access with no distress events.",
+                "Internally funded growth; distributions large but controlled."
+              ],
+              "recommended_loan_placement": "senior_unsecured_tier_2"
+            }
+          }
+        },
+        "validator_report": {
+          "passed": true,
+          "checks": [
+            {
+              "check_id": "V8-01-RECONCILIATION",
+              "name": "Debt tranche reconciliation to reported total indebtedness",
+              "passed": true,
+              "detail": "Sum of drawn tranches 46,492.000M vs reported total 46,492.000M (delta 0.000M, tolerance 1.000M).",
+              "observed": {
+                "senior_notes_sum_m": 43700.0,
+                "non_note_drawn_sum_m": 2792.0,
+                "tranche_sum_m": 46492.0,
+                "reconciling_items_m": 0,
+                "reported_total_m": 46492.0,
+                "delta_m": 0.0,
+                "gap_m": 0.0
+              }
+            },
+            {
+              "check_id": "V8-02-SUBORDINATION-RATIO",
+              "name": "Structural subordination drag ratio recomputation",
+              "passed": true,
+              "detail": "Recomputed drag ratio 0.0220 vs claimed 0.0220 (delta 0.0000, tolerance 0.0005).",
+              "observed": {
+                "tier_1_m": 1021.0,
+                "consolidated_total_m": 46492.0,
+                "recomputed_ratio": 0.021960767443861308,
+                "claimed_ratio": 0.022,
+                "delta": 3.923255613869081e-05
+              }
+            },
+            {
+              "check_id": "V8-03-MATURITY-ORDER",
+              "name": "Senior-note maturity chronological ordering",
+              "passed": true,
+              "detail": "Maturity years are in chronological order.",
+              "observed": {
+                "maturity_years": [
+                  2028,
+                  2030,
+                  2035,
+                  2055,
+                  2064,
+                  2095
+                ],
+                "first_violation": null
+              }
+            },
+            {
+              "check_id": "V8-04-LEGAL-ENTITY",
+              "name": "Legal entity / borrower-guarantor attribution",
+              "passed": true,
+              "detail": "Every tranche names a legal borrower with coherent credit support.",
+              "observed": {
+                "problem_count": 0,
+                "problems": []
+              }
+            },
+            {
+              "check_id": "V8-05-DOUBLE-COUNTING",
+              "name": "No double-counting of undrawn limits / intercompany debt",
+              "passed": true,
+              "detail": "Reported total 46,492.000M does not include undrawn headroom 9,793.000M or intercompany 0.000M (drawn-only total 46,492.000M).",
+              "observed": {
+                "reported_total_m": 46492.0,
+                "drawn_total_m": 46492.0,
+                "undrawn_headroom_m": 9793.0,
+                "intercompany_m": 0,
+                "inflated_total_m": 56285.0
+              }
+            },
+            {
+              "check_id": "V8-06-RECONCILING-ITEMS",
+              "name": "Reconciling items shown verbatim by the filing",
+              "passed": true,
+              "detail": "No reconciling items.",
+              "observed": {
+                "items": [],
+                "verified_total_m": 0,
+                "share_of_total": 0.0
+              }
+            }
+          ]
+        },
+        "validator_issues": [],
+        "escalation_id": null,
+        "evidence_ids": [
+          "ev_debt_maturity",
+          "ev_debt_notes",
+          "fact_total_debt",
+          "fact_senior_notes",
+          "fact_total_debt",
+          "fact_senior_notes"
+        ],
+        "reason": null,
+        "model_invoked": true,
+        "reconciliation_followup": null,
+        "dropped_reconciling_items": []
+      },
+      "m4_debt_status": "validated",
+      "m4_analysis": {
+        "schema_version": "bo-m4-analysis-1.0",
+        "artifact_kind": "m4_analysis",
+        "module": "M4",
+        "contributors": {
+          "agent_b_debt_structure": {
+            "agent_id": "module4_debt_structure_specialist",
+            "produces": "deliverables_1_to_4",
+            "status": "validated",
+            "validated": true
+          },
+          "agent_a_strategy_capital": {
+            "agent_id": "m4_strategy_capital",
+            "produces": "strategy_hypotheses",
+            "status": "validated",
+            "usable_findings": 1
+          }
+        },
+        "requires_human_review": true,
+        "forced_outcome": false,
+        "note": "Deterministically assembled from the two independent Module 4 agents; no new credit judgement is introduced at this layer. Draft analytical work for human review.",
+        "deliverable_1": {
+          "extraction_source": {
+            "narrative": "Debt population drawn from Item 8 Financial Statements, Note 8 (Long-Term Debt), cross-referenced to Item 7 MD&A Liquidity & Capital Resources and the Item 15 Exhibit Index supplemental indentures (Exhibits 4.44-4.53).",
+            "item_references": [
+              "Item 7 MD&A",
+              "Item 8 Note 8",
+              "Item 15 Exhibit 4.x"
+            ],
+            "page_references": [
+              "F-18",
+              "F-19",
+              "57"
+            ]
+          },
+          "senior_notes_schedule": [
+            {
+              "senior_note_series": "5.000% Senior Notes",
+              "legal_borrower": "HCA Inc.",
+              "principal_amount_m": 700.0,
+              "coupon_interest_rate": "5.000% fixed",
+              "maturity_year": 2028,
+              "collateral_security_status": "unsecured",
+              "guarantors_credit_support": "Fully and unconditionally guaranteed on an unsecured basis by HCA Healthcare, Inc.",
+              "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed"
+            },
+            {
+              "senior_note_series": "5.250% Senior Notes",
+              "legal_borrower": "HCA Inc.",
+              "principal_amount_m": 750.0,
+              "coupon_interest_rate": "5.250% fixed",
+              "maturity_year": 2030,
+              "collateral_security_status": "unsecured",
+              "guarantors_credit_support": "Fully and unconditionally guaranteed on an unsecured basis by HCA Healthcare, Inc.",
+              "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed"
+            },
+            {
+              "senior_note_series": "5.750% Senior Notes",
+              "legal_borrower": "HCA Inc.",
+              "principal_amount_m": 1500.0,
+              "coupon_interest_rate": "5.750% fixed",
+              "maturity_year": 2035,
+              "collateral_security_status": "unsecured",
+              "guarantors_credit_support": "Fully and unconditionally guaranteed on an unsecured basis by HCA Healthcare, Inc.",
+              "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed"
+            },
+            {
+              "senior_note_series": "6.200% Senior Notes",
+              "legal_borrower": "HCA Inc.",
+              "principal_amount_m": 1250.0,
+              "coupon_interest_rate": "6.200% fixed",
+              "maturity_year": 2055,
+              "collateral_security_status": "unsecured",
+              "guarantors_credit_support": "Fully and unconditionally guaranteed on an unsecured basis by HCA Healthcare, Inc.",
+              "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed"
+            },
+            {
+              "senior_note_series": "Other senior unsecured notes (2026-2064)",
+              "legal_borrower": "HCA Inc.",
+              "principal_amount_m": 39050.0,
+              "coupon_interest_rate": "various fixed, 5.1% effective",
+              "maturity_year": 2064,
+              "collateral_security_status": "unsecured",
+              "guarantors_credit_support": "Fully and unconditionally guaranteed on an unsecured basis by HCA Healthcare, Inc.",
+              "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed"
+            },
+            {
+              "senior_note_series": "Debentures (maturities through 2095)",
+              "legal_borrower": "HCA Inc.",
+              "principal_amount_m": 450.0,
+              "coupon_interest_rate": "7.19% weighted average",
+              "maturity_year": 2095,
+              "collateral_security_status": "unsecured",
+              "guarantors_credit_support": "Fully and unconditionally guaranteed on an unsecured basis by HCA Healthcare, Inc.",
+              "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed"
+            }
+          ],
+          "non_note_obligations_schedule": [
+            {
+              "obligation_facility": "Commercial paper program",
+              "legal_borrower": "HCA Inc.",
+              "principal_drawn_m": 2207.0,
+              "available_facility_limit_m": 4000.0,
+              "interest_rate_terms": "4.3% weighted average; 18-day average life",
+              "maturity": "Short-term",
+              "collateral_security_status": "unsecured",
+              "guarantors_credit_support": "HCA Healthcare, Inc. guarantee",
+              "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed"
+            },
+            {
+              "obligation_facility": "Other senior secured debt (finance leases + other)",
+              "legal_borrower": "HCA Inc.",
+              "principal_drawn_m": 1021.0,
+              "available_facility_limit_m": null,
+              "interest_rate_terms": "4.6% effective",
+              "maturity": "Various",
+              "collateral_security_status": "secured",
+              "guarantors_credit_support": "Secured at operating subsidiary level",
+              "priority_ranking_tier": "tier_1_direct_opco_secured"
+            },
+            {
+              "obligation_facility": "Senior unsecured revolving credit facility (5-year)",
+              "legal_borrower": "HCA Inc.",
+              "principal_drawn_m": 0.0,
+              "available_facility_limit_m": 8000.0,
+              "interest_rate_terms": "SOFR + 1.125%",
+              "maturity": "2030",
+              "collateral_security_status": "unsecured",
+              "guarantors_credit_support": "HCA Healthcare, Inc. guarantee",
+              "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed"
+            },
+            {
+              "obligation_facility": "Debt issuance costs and discounts",
+              "legal_borrower": "HCA Inc.",
+              "principal_drawn_m": -436.0,
+              "available_facility_limit_m": null,
+              "interest_rate_terms": "n/a (contra-liability)",
+              "maturity": "n/a",
+              "collateral_security_status": "unsecured",
+              "guarantors_credit_support": "n/a",
+              "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed"
+            }
+          ],
+          "creditor_priority_framework": {
+            "tier_1_direct_opco_secured_m": 1021.0,
+            "tier_2_senior_unsecured_guaranteed_m": 45471.0,
+            "tier_3_unguaranteed_holdco_m": 0.0,
+            "consolidated_total_indebtedness_m": 46492.0,
+            "structural_subordination_drag_ratio": 0.022,
+            "prospective_loan_secured_placement": "A secured bank loan would rank in Tier 1 ahead of the $43.7B senior unsecured notes, benefiting from direct OpCo collateral.",
+            "prospective_loan_senior_unsecured_placement": "A senior unsecured bank loan would rank pari passu with the existing Tier 2 senior unsecured notes, sharing the HCA Healthcare, Inc. upstream guarantee."
+          },
+          "reconciling_items": []
+        },
+        "deliverable_2": {
+          "extraction_source": {
+            "narrative": "Refinancing activity reconstructed from Note 8 issuance and repayment disclosures and the MD&A Capital Resources discussion for FY2023-FY2025.",
+            "item_references": [
+              "Item 7 MD&A",
+              "Item 8 Note 8"
+            ],
+            "page_references": [
+              "F-18",
+              "55"
+            ]
+          },
+          "refinancing_log": [
+            {
+              "transaction_category": "new_issuance",
+              "obligation_series_description": "February 2025 senior notes ($5.25B)",
+              "principal_amount_m": 5250.0,
+              "coupon_interest_terms": "5.000%-6.200% fixed + FRN",
+              "execution_date_fiscal_period": "Feb 2025",
+              "original_retired_maturity": null,
+              "new_extended_maturity": "2028-2055",
+              "use_of_proceeds_impact": "Repay senior unsecured credit facility + general corporate purposes."
+            },
+            {
+              "transaction_category": "new_issuance",
+              "obligation_series_description": "October 2025 senior notes ($3.25B)",
+              "principal_amount_m": 3250.0,
+              "coupon_interest_terms": "4.300%-5.700% fixed",
+              "execution_date_fiscal_period": "Oct 2025",
+              "original_retired_maturity": null,
+              "new_extended_maturity": "2030-2055",
+              "use_of_proceeds_impact": "Repay commercial paper + GCP."
+            },
+            {
+              "transaction_category": "repayment_at_maturity",
+              "obligation_series_description": "5.375% senior notes",
+              "principal_amount_m": 2600.0,
+              "coupon_interest_terms": "5.375% fixed",
+              "execution_date_fiscal_period": "FY2025",
+              "original_retired_maturity": "2025",
+              "new_extended_maturity": null,
+              "use_of_proceeds_impact": "Repaid at scheduled maturity."
+            },
+            {
+              "transaction_category": "early_redemption",
+              "obligation_series_description": "5.875% senior notes due 2026",
+              "principal_amount_m": 1500.0,
+              "coupon_interest_terms": "5.875% fixed",
+              "execution_date_fiscal_period": "FY2025",
+              "original_retired_maturity": "2026",
+              "new_extended_maturity": null,
+              "use_of_proceeds_impact": "Redeemed early ahead of maturity."
+            }
+          ],
+          "metrics": {
+            "weighted_avg_refinancing_lead_time_months": 11.0,
+            "refinancing_cost_spread_delta_bps": 25.0,
+            "weighted_avg_maturity_extension_years": 7.5,
+            "historical_refinancing_distress_events": 0
+          },
+          "refinancing_capacity_discipline_verdict": "Deep, repeated capital-markets access with proactive pre-maturity refinancing and zero distress events demonstrates strong refinancing capacity and discipline."
+        },
+        "deliverable_3": {
+          "extraction_source": {
+            "narrative": "Capital deployment reconciled from the Consolidated Statements of Cash Flows and MD&A Capital Resources, FY2023-FY2025.",
+            "item_references": [
+              "Item 7 MD&A",
+              "Item 8 Cash Flow Statements"
+            ],
+            "page_references": [
+              "F-7",
+              "54"
+            ]
+          },
+          "capital_deployment_reconciliation": [
+            {
+              "capital_allocation_stream": "Capital expenditures",
+              "specific_use_description": "Facility expansion, beds, technology",
+              "cumulative_amount_3y_m": 14563.0,
+              "primary_funding_source": "Operating cash flow",
+              "leverage_impact": "Self-funded from operating cash flow; leverage-neutral."
+            },
+            {
+              "capital_allocation_stream": "Acquisitions",
+              "specific_use_description": "Bolt-on hospital/ASC acquisitions",
+              "cumulative_amount_3y_m": 1298.0,
+              "primary_funding_source": "Operating cash flow",
+              "leverage_impact": "Self-funded; immaterial effect on net debt."
+            },
+            {
+              "capital_allocation_stream": "Share repurchases",
+              "specific_use_description": "Buybacks under board authorizations",
+              "cumulative_amount_3y_m": 19920.0,
+              "primary_funding_source": "Operating cash flow + debt",
+              "leverage_impact": "Partly debt-funded; added to net debt but leverage kept within policy."
+            },
+            {
+              "capital_allocation_stream": "Dividends",
+              "specific_use_description": "Quarterly common dividends",
+              "cumulative_amount_3y_m": 2030.0,
+              "primary_funding_source": "Operating cash flow",
+              "leverage_impact": "Self-funded from OCF; leverage-neutral."
+            }
+          ],
+          "debt_utilisation_matrix": {
+            "debt_funded_vs_internally_funded_deployment": "CAPEX, M&A and dividends self-funded by $32.6B of 3-year operating cash flow; only part of the $19.9B of buybacks was debt-funded, so most deployment did not add to net debt.",
+            "shareholder_distributions_vs_leverage_balance": "Aggressive buybacks ($19.9B/3y) partly debt-funded, but net debt / EBITDA kept within policy while EBITDA grew."
+          },
+          "debt_utilisation_leverage_verdict": "Capital deployment is predominantly internally funded; the debt-funded portion of distributions added to net debt but leverage remained within a controlled policy range."
+        },
+        "deliverable_4": {
+          "evidence_synthesis_narrative": "Deliverables 1-3 show a predominantly senior-unsecured capital structure guaranteed by the HoldCo, a disciplined and deep refinancing track record, and internally funded growth alongside large but controlled shareholder distributions.",
+          "core_credit_assessment": "HCA presents a strong, well-managed debt structure with proven refinancing access and prudent stewardship; a prospective bank lender ranks pari passu with existing senior unsecured notes absent collateral.",
+          "synthesis_matrix": [
+            {
+              "analytical_scope_pillar": "Debt structure & priority",
+              "core_empirical_evidence": "$46.49B total debt; 97.8% senior unsecured guaranteed; drag ratio 0.022.",
+              "deliverable_verdict": "Satisfactory",
+              "bank_lender_implications": "Unsecured loan is pari passu Tier 2; collateral would lift to Tier 1."
+            },
+            {
+              "analytical_scope_pillar": "Refinancing history",
+              "core_empirical_evidence": "$8.5B issued FY2025; proactive pre-maturity refinancing; 0 distress events.",
+              "deliverable_verdict": "Strong",
+              "bank_lender_implications": "Low refinancing/rollover risk."
+            },
+            {
+              "analytical_scope_pillar": "Financial stewardship",
+              "core_empirical_evidence": "CAPEX self-funded; $19.9B buybacks partly debt-funded; leverage within policy.",
+              "deliverable_verdict": "Satisfactory",
+              "bank_lender_implications": "Monitor distribution appetite vs leverage headroom."
+            },
+            {
+              "analytical_scope_pillar": "Strategy & Capital Allocation (Agent A)",
+              "core_empirical_evidence": "Three hospital acquisitions were completed and their integration remains ongoing. [1 cited]",
+              "deliverable_verdict": "mixed",
+              "bank_lender_implications": "Strategy/capital-allocation observation; leverage and debt-service implications are assessed by the debt specialist (Agent B) and Financial Overview, not here."
+            }
+          ],
+          "executive_credit_summary_box": {
+            "target_entity_and_period": "HCA Healthcare, Inc. - FY2025 (10-K)",
+            "overall_credit_rating_verdict": "satisfactory",
+            "executive_takeaways": [
+              "Predominantly senior unsecured structure guaranteed by the HoldCo.",
+              "Proven, disciplined refinancing access with no distress events.",
+              "Internally funded growth; distributions large but controlled."
+            ],
+            "recommended_loan_placement": "senior_unsecured_tier_2"
+          },
+          "strategy_capital_supplement": {
+            "source_agent": "m4_strategy_capital",
+            "contributes": "strategy / capital-allocation merit findings (acquisition, integration, capex strategy)",
+            "note": "Supplements the debt specialist's conclusion; does NOT draw leverage or debt-service conclusions (those are the debt specialist's and Financial Overview's).",
+            "findings": [
+              {
+                "hypothesis_id": "M4-H001",
+                "agent_id": "m4_strategy_capital",
+                "section": "M4",
+                "claim": "Three hospital acquisitions were completed and their integration remains ongoing.",
+                "claim_type": "fact",
+                "direction": "mixed",
+                "disposition": "supported",
+                "admissibility": "established",
+                "confidence": "medium",
+                "materiality": "high",
+                "credit_mechanism": null,
+                "interpretation": {},
+                "supporting_evidence_ids": [
+                  "ev_capex"
+                ],
+                "contradicting_evidence_ids": [],
+                "evidence_quotes": [
+                  {
+                    "evidence_id": "ev_capex",
+                    "quote": "We completed acquisitions of three hospitals during the year; integration of these facilities is ongoing"
+                  }
+                ],
+                "quoted_values": [],
+                "missing_information": [],
+                "corrects_hypothesis_id": null,
+                "mitigant": null,
+                "component_hypothesis_ids": [],
+                "interaction_kind": null,
+                "validation_notes": []
+              }
+            ]
+          }
+        },
+        "strategy_context": [
+          {
+            "hypothesis_id": "M4-H001",
+            "agent_id": "m4_strategy_capital",
+            "section": "M4",
+            "claim": "Three hospital acquisitions were completed and their integration remains ongoing.",
+            "claim_type": "fact",
+            "direction": "mixed",
+            "disposition": "supported",
+            "admissibility": "established",
+            "confidence": "medium",
+            "materiality": "high",
+            "credit_mechanism": null,
+            "interpretation": {},
+            "supporting_evidence_ids": [
+              "ev_capex"
+            ],
+            "contradicting_evidence_ids": [],
+            "evidence_quotes": [
+              {
+                "evidence_id": "ev_capex",
+                "quote": "We completed acquisitions of three hospitals during the year; integration of these facilities is ongoing"
+              }
+            ],
+            "quoted_values": [],
+            "missing_information": [],
+            "corrects_hypothesis_id": null,
+            "mitigant": null,
+            "component_hypothesis_ids": [],
+            "interaction_kind": null,
+            "validation_notes": []
+          }
+        ],
+        "status": "complete"
+      }
+    }
+  },
+  "management_claims": [],
+  "orchestrator": {
+    "history": [
+      {
+        "round": 0,
+        "agent_run_id": "6e888a18-51e3-4cdc-b6a8-d80a89b7bcfc",
+        "status": "accepted",
+        "issues": [],
+        "claims": 6,
+        "hypotheses_available": 8,
+        "canonicalized_evidence_claims": [],
+        "claim_type_downgrades": [],
+        "dropped_uncited_claims": [],
+        "added_qualifications": []
+      }
+    ],
+    "claims": [
+      {
+        "list": "overall_assessment",
+        "claim_id": "overall",
+        "section": "executive",
+        "claim_type": "inference",
+        "text": "Negotiated reimbursement and stable volumes coexist with operating cost pressures.",
+        "hypotheses": [
+          {
+            "hypothesis_id": "M1S1-H001",
+            "agent_id": "m1_revenue_quality",
+            "disposition": "supported",
+            "admissibility": "established"
+          },
+          {
+            "hypothesis_id": "M1S2-H001",
+            "agent_id": "m1_customer_stickiness",
+            "disposition": "supported",
+            "admissibility": "established"
+          },
+          {
+            "hypothesis_id": "M1S4-H001",
+            "agent_id": "m1_operating_model",
+            "disposition": "supported",
+            "admissibility": "established"
+          }
+        ],
+        "parameter_result_ids": [],
+        "quoted_values": [],
+        "evidence": [
+          {
+            "evidence_id": "ev_payer",
+            "filename": "nfh-10k.htm",
+            "section": "Item 1",
+            "location": 20000,
+            "sec_accession": "0000000001-26-000001"
+          },
+          {
+            "evidence_id": "ev_model",
+            "filename": "nfh-10k.htm",
+            "section": "Item 1",
+            "location": 18000,
+            "sec_accession": "0000000001-26-000001"
+          },
+          {
+            "evidence_id": "ev_labor",
+            "filename": "nfh-10k.htm",
+            "section": "Item 1A",
+            "location": 14000,
+            "sec_accession": "0000000001-26-000001"
+          }
+        ]
+      },
+      {
+        "list": "key_drivers",
+        "claim_id": "point-0",
+        "section": "M1S1",
+        "claim_type": "inference",
+        "text": "Negotiated managed-care rates anchor reimbursement.",
+        "hypotheses": [
+          {
+            "hypothesis_id": "M1S1-H001",
+            "agent_id": "m1_revenue_quality",
+            "disposition": "supported",
+            "admissibility": "established"
+          }
+        ],
+        "parameter_result_ids": [],
+        "quoted_values": [],
+        "evidence": [
+          {
+            "evidence_id": "ev_payer",
+            "filename": "nfh-10k.htm",
+            "section": "Item 1",
+            "location": 20000,
+            "sec_accession": "0000000001-26-000001"
+          }
+        ]
+      },
+      {
+        "list": "key_drivers",
+        "claim_id": "point-1",
+        "section": "M1S2",
+        "claim_type": "inference",
+        "text": "Stable admissions provide a volume foundation.",
+        "hypotheses": [
+          {
+            "hypothesis_id": "M1S2-H001",
+            "agent_id": "m1_customer_stickiness",
+            "disposition": "supported",
+            "admissibility": "established"
+          }
+        ],
+        "parameter_result_ids": [],
+        "quoted_values": [],
+        "evidence": [
+          {
+            "evidence_id": "ev_model",
+            "filename": "nfh-10k.htm",
+            "section": "Item 1",
+            "location": 18000,
+            "sec_accession": "0000000001-26-000001"
+          }
+        ]
+      },
+      {
+        "list": "key_drivers",
+        "claim_id": "point-2",
+        "section": "M1S3",
+        "claim_type": "inference",
+        "text": "Termination rights limit contractual durability.",
+        "hypotheses": [
+          {
+            "hypothesis_id": "M1S3-H001",
+            "agent_id": "m1_pricing_power",
+            "disposition": "qualified",
+            "admissibility": "qualified_narrative"
+          }
+        ],
+        "parameter_result_ids": [],
+        "quoted_values": [],
+        "evidence": [
+          {
+            "evidence_id": "ev_payer",
+            "filename": "nfh-10k.htm",
+            "section": "Item 1",
+            "location": 20000,
+            "sec_accession": "0000000001-26-000001"
+          }
+        ]
+      },
+      {
+        "list": "key_drivers",
+        "claim_id": "point-3",
+        "section": "M1S4",
+        "claim_type": "inference",
+        "text": "Nursing scarcity exposes the business to contract labour costs.",
+        "hypotheses": [
+          {
+            "hypothesis_id": "M1S4-H001",
+            "agent_id": "m1_operating_model",
+            "disposition": "supported",
+            "admissibility": "established"
+          }
+        ],
+        "parameter_result_ids": [],
+        "quoted_values": [],
+        "evidence": [
+          {
+            "evidence_id": "ev_labor",
+            "filename": "nfh-10k.htm",
+            "section": "Item 1A",
+            "location": 14000,
+            "sec_accession": "0000000001-26-000001"
+          }
+        ]
+      },
+      {
+        "list": "key_drivers",
+        "claim_id": "point-4",
+        "section": "M1S5",
+        "claim_type": "inference",
+        "text": "Hospital and ambulatory competition constrain the competitive position.",
+        "hypotheses": [
+          {
+            "hypothesis_id": "M1S5-H001",
+            "agent_id": "m1_competitive_durability",
+            "disposition": "supported",
+            "admissibility": "established"
+          }
+        ],
+        "parameter_result_ids": [],
+        "quoted_values": [],
+        "evidence": [
+          {
+            "evidence_id": "ev_compete",
+            "filename": "nfh-10k.htm",
+            "section": "Item 1",
+            "location": 4000,
+            "sec_accession": "0000000001-26-000001"
+          }
+        ]
+      }
+    ]
+  },
+  "challenger": {
+    "rounds": [
+      {
+        "round": 0,
+        "agent_run_id": "8db98700-b8e6-4c75-9db0-019a7e9572e7",
+        "conclusion_id": "tc_c84b485b42c44919",
+        "model_stated_outcome": "accepted",
+        "summary": "No material defect identified.",
+        "status": "validated",
+        "issues": [],
+        "findings": [],
+        "outcome": "accepted",
+        "decision": {
+          "requires_rerun": false,
+          "rerun_scope": [],
+          "rerun_parameter_ids": [],
+          "deterministic_only": false,
+          "escalated": false
+        }
+      }
+    ],
+    "recorded_findings": []
+  },
+  "rerun": "not_performed",
+  "missing_information": [
+    "Competitor staffing data"
+  ],
+  "conclusions": [
+    {
+      "conclusion_id": "tc_c84b485b42c44919",
+      "orchestrator_run_id": "6e888a18-51e3-4cdc-b6a8-d80a89b7bcfc",
+      "challenge_status": "escalated",
+      "supersedes_id": null,
+      "acceptance_state": "accepted",
+      "payload": {
+        "topic": "business",
+        "analysis_run_id": "ar_5f1d1e213ea4435c",
+        "overall_assessment": {
+          "claim_id": "overall",
+          "category": "assessment",
+          "text": "Negotiated reimbursement and stable volumes coexist with operating cost pressures.",
+          "parameter_result_ids": [],
+          "evidence_ids": [
+            "ev_payer",
+            "ev_model",
+            "ev_labor"
+          ],
+          "materiality": "medium",
+          "uncertainty": "Based on disclosed conditions; effectiveness is not independently established.",
+          "hypothesis_ids": [
+            "M1S1-H001",
+            "M1S2-H001",
+            "M1S4-H001"
+          ],
+          "section": "executive",
+          "claim_type": "inference",
+          "title": null
+        },
+        "strengths": [],
+        "weaknesses": [],
+        "key_drivers": [
+          {
+            "claim_id": "point-0",
+            "category": "driver",
+            "text": "Negotiated managed-care rates anchor reimbursement.",
+            "parameter_result_ids": [],
+            "evidence_ids": [
+              "ev_payer"
+            ],
+            "materiality": "medium",
+            "uncertainty": "Based on disclosed conditions; competitive outcomes remain uncertain.",
+            "hypothesis_ids": [
+              "M1S1-H001"
+            ],
+            "section": "M1S1",
+            "claim_type": "inference",
+            "title": null
+          },
+          {
+            "claim_id": "point-1",
+            "category": "driver",
+            "text": "Stable admissions provide a volume foundation.",
+            "parameter_result_ids": [],
+            "evidence_ids": [
+              "ev_model"
+            ],
+            "materiality": "medium",
+            "uncertainty": "Based on disclosed conditions; competitive outcomes remain uncertain.",
+            "hypothesis_ids": [
+              "M1S2-H001"
+            ],
+            "section": "M1S2",
+            "claim_type": "inference",
+            "title": null
+          },
+          {
+            "claim_id": "point-2",
+            "category": "driver",
+            "text": "Termination rights limit contractual durability.",
+            "parameter_result_ids": [],
+            "evidence_ids": [
+              "ev_payer"
+            ],
+            "materiality": "medium",
+            "uncertainty": "Based on disclosed conditions; competitive outcomes remain uncertain.",
+            "hypothesis_ids": [
+              "M1S3-H001"
+            ],
+            "section": "M1S3",
+            "claim_type": "inference",
+            "title": null
+          },
+          {
+            "claim_id": "point-3",
+            "category": "driver",
+            "text": "Nursing scarcity exposes the business to contract labour costs.",
+            "parameter_result_ids": [],
+            "evidence_ids": [
+              "ev_labor"
+            ],
+            "materiality": "medium",
+            "uncertainty": "Based on disclosed conditions; competitive outcomes remain uncertain.",
+            "hypothesis_ids": [
+              "M1S4-H001"
+            ],
+            "section": "M1S4",
+            "claim_type": "inference",
+            "title": null
+          },
+          {
+            "claim_id": "point-4",
+            "category": "driver",
+            "text": "Hospital and ambulatory competition constrain the competitive position.",
+            "parameter_result_ids": [],
+            "evidence_ids": [
+              "ev_compete"
+            ],
+            "materiality": "medium",
+            "uncertainty": "Based on disclosed conditions; competitive outcomes remain uncertain.",
+            "hypothesis_ids": [
+              "M1S5-H001"
+            ],
+            "section": "M1S5",
+            "claim_type": "inference",
+            "title": null
+          }
+        ],
+        "material_risks": [],
+        "open_questions": [
+          "Competitor staffing evidence unavailable."
+        ],
+        "unresolved_contradictions": [],
+        "score_reference": null,
+        "orchestrator_run_id": "6e888a18-51e3-4cdc-b6a8-d80a89b7bcfc",
+        "challenge_status": "escalated",
+        "supersedes_id": null,
+        "acceptance_state": "accepted"
+      }
+    }
+  ],
+  "final_conclusion": {
+    "conclusion_id": "tc_c84b485b42c44919",
+    "orchestrator_run_id": "6e888a18-51e3-4cdc-b6a8-d80a89b7bcfc",
+    "challenge_status": "escalated",
+    "supersedes_id": null
+  },
+  "competitive_selection": {
+    "completeness": "complete",
+    "coverage_gaps": [],
+    "human_review_required": true,
+    "key_drivers": [
+      {
+        "category": "driver",
+        "claim_id": "point-0",
+        "claim_type": "inference",
+        "counterevidence": [],
+        "dimension": "revenue",
+        "evidence_ids": [
+          "ev_payer"
+        ],
+        "hypothesis_ids": [
+          "M1S1-H001"
+        ],
+        "materiality": "medium",
+        "section": "M1S1",
+        "text": "Negotiated managed-care rates anchor reimbursement.",
+        "uncertainty": "Based on disclosed conditions; competitive outcomes remain uncertain."
+      },
+      {
+        "category": "driver",
+        "claim_id": "point-1",
+        "claim_type": "inference",
+        "counterevidence": [],
+        "dimension": "revenue",
+        "evidence_ids": [
+          "ev_model"
+        ],
+        "hypothesis_ids": [
+          "M1S2-H001"
+        ],
+        "materiality": "medium",
+        "section": "M1S2",
+        "text": "Stable admissions provide a volume foundation.",
+        "uncertainty": "Based on disclosed conditions; competitive outcomes remain uncertain."
+      },
+      {
+        "category": "driver",
+        "claim_id": "point-2",
+        "claim_type": "inference",
+        "counterevidence": [],
+        "dimension": "vulnerability",
+        "evidence_ids": [
+          "ev_payer"
+        ],
+        "hypothesis_ids": [
+          "M1S3-H001"
+        ],
+        "materiality": "medium",
+        "section": "M1S3",
+        "text": "Termination rights limit contractual durability.",
+        "uncertainty": "Based on disclosed conditions; competitive outcomes remain uncertain."
+      },
+      {
+        "category": "driver",
+        "claim_id": "point-3",
+        "claim_type": "inference",
+        "counterevidence": [],
+        "dimension": "cost",
+        "evidence_ids": [
+          "ev_labor"
+        ],
+        "hypothesis_ids": [
+          "M1S4-H001"
+        ],
+        "materiality": "medium",
+        "section": "M1S4",
+        "text": "Nursing scarcity exposes the business to contract labour costs.",
+        "uncertainty": "Based on disclosed conditions; competitive outcomes remain uncertain."
+      },
+      {
+        "category": "driver",
+        "claim_id": "point-4",
+        "claim_type": "inference",
+        "counterevidence": [],
+        "dimension": "vulnerability",
+        "evidence_ids": [
+          "ev_compete"
+        ],
+        "hypothesis_ids": [
+          "M1S5-H001"
+        ],
+        "materiality": "medium",
+        "section": "M1S5",
+        "text": "Hospital and ambulatory competition constrain the competitive position.",
+        "uncertainty": "Based on disclosed conditions; competitive outcomes remain uncertain."
+      }
+    ],
+    "overall_assessment": {
+      "category": "assessment",
+      "claim_id": "overall",
+      "claim_type": "inference",
+      "counterevidence": [],
+      "dimension": "uncertainty",
+      "evidence_ids": [
+        "ev_payer",
+        "ev_model",
+        "ev_labor"
+      ],
+      "hypothesis_ids": [
+        "M1S1-H001",
+        "M1S2-H001",
+        "M1S4-H001"
+      ],
+      "materiality": "medium",
+      "section": "executive",
+      "text": "Negotiated reimbursement and stable volumes coexist with operating cost pressures.",
+      "uncertainty": "Based on disclosed conditions; effectiveness is not independently established."
+    },
+    "residual_uncertainty": [
+      "Competitor staffing evidence unavailable."
+    ],
+    "schema_version": "bo-competitive-1.0",
+    "selections": [
+      {
+        "disposition": "selected",
+        "hypothesis_id": "M1S1-H001",
+        "point_id": "point-0",
+        "reason": "Distinct economic driver"
+      },
+      {
+        "disposition": "selected",
+        "hypothesis_id": "M1S2-H001",
+        "point_id": "point-1",
+        "reason": "Distinct economic driver"
+      },
+      {
+        "disposition": "selected",
+        "hypothesis_id": "M1S3-H001",
+        "point_id": "point-2",
+        "reason": "Distinct economic driver"
+      },
+      {
+        "disposition": "selected",
+        "hypothesis_id": "M1S4-H001",
+        "point_id": "point-3",
+        "reason": "Distinct economic driver"
+      },
+      {
+        "disposition": "selected",
+        "hypothesis_id": "M1S5-H001",
+        "point_id": "point-4",
+        "reason": "Distinct economic driver"
+      },
+      {
+        "disposition": "audit_only",
+        "hypothesis_id": "M1A6-H001",
+        "point_id": null,
+        "reason": "Overlapping operating exposures already represented"
+      }
+    ]
+  },
+  "competitive_selection_conclusion_id": "tc_c84b485b42c44919",
+  "competitive_selection_orchestrator_run_id": "6e888a18-51e3-4cdc-b6a8-d80a89b7bcfc"
+}

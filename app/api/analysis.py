@@ -23,10 +23,15 @@ from jinja2 import Environment, FileSystemLoader
 from app.services.analysis_setup import company_registry, validate_setup, provider_configuration, SetupError
 
 router = APIRouter(tags=["analysis workspace"])
-_env = Environment(loader=FileSystemLoader(str(Path(__file__).parent / "templates")), autoescape=True)
+_env = Environment(loader=FileSystemLoader([str(Path(__file__).parent / "templates"), str(Path(__file__).parents[1] / "services/reporting/templates")]), autoescape=True)
 
+from app.services.bo.reporting import structure_data_uri, source_field_label
+_env.filters['bo_diagram'] = structure_data_uri
+_env.filters['bo_label'] = source_field_label
+from app.services.bo.memo_presentation import configure
+configure(_env)
 
-def _setup_page(*, values, check="", extra_errors=(), notice=None, reports=None, edgar=None, status_code=None):
+def _setup_page(*, values, check="", extra_errors=(), notice=None, reports=None, edgar=None, status_code=None, manage_filings=False):
     sections, validation_mode, company = values["sections"], values["validation_mode"], values["company"]
     companies, selection, errors = [], None, list(extra_errors)
     try:
@@ -47,15 +52,15 @@ def _setup_page(*, values, check="", extra_errors=(), notice=None, reports=None,
         values=values, companies=companies, selection=selection, errors=errors,
         providers=providers, checked=bool(check), execution_enabled=selection is not None and not errors,
         submission_key=uuid.uuid4().hex, notice=notice, reports=reports, edgar=edgar or {},
-        sec_env=bool(get_settings().sec_user_agent)), status_code=status_code)
+        sec_env=bool(get_settings().sec_user_agent), filings_open=manage_filings or bool(reports) or bool(edgar)), status_code=status_code)
 
 
 @router.get("/analysis/new", response_class=HTMLResponse)
 def new_analysis(company: str = "", sections: str = "both", validation_mode: str = "standard",
-                 cutoff: str = "", case_id: str = "", check: str = "", added: str = ""):
+                 cutoff: str = "", case_id: str = "", check: str = "", added: str = "", manage_filings: bool = False):
     values = dict(company=company, sections=sections, validation_mode=validation_mode,
                   cutoff=cutoff, case_id=case_id)
-    return _setup_page(values=values, check=check,
+    return _setup_page(values=values, check=check, manage_filings=manage_filings,
                        notice=f"Added {added} to edgar_filings/ with its bundle.json. It is selected below." if added else None)
 
 
@@ -190,7 +195,7 @@ def start_analysis(company: str = Form(''), sections: str = Form('both'),
             cutoff=selection.cutoff, bo_backend=bo_backend, m3_backend=m3_backend, fo_backend=fo_backend,
             fo_mode='live', output_root=settings.output_dir, data_root=settings.data_dir,
             bo_only=sections == 'bo', fo_only=sections == 'fo', bo_validators=parameters['bo_validators'] == 'on',
-            metadata=metadata, idempotency_key=submission_key, request_hash=fingerprint)
+            metadata=metadata, idempotency_key=submission_key, request_hash=fingerprint, consolidated=True)
     except IdempotencyConflict as exc:
         raise HTTPException(409, str(exc)) from exc
     except JobStatusUnavailable:

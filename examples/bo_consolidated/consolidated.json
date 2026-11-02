@@ -1,0 +1,736 @@
+{
+  "schema_id": "consolidated-business-overview",
+  "schema_version": "1.0",
+  "case_id": "NFH_BO",
+  "analysis_run_id": "ar_5f1d1e213ea4435c",
+  "evidence_snapshot_version": 1,
+  "sources": [
+    {
+      "stage": "bo_memo:ar_5f1d1e213ea4435c",
+      "sha256": "8a73f958984aca8fa62becc91f6b0a4eda60275d6e85c7ba714d457b4e67e392",
+      "case_id": "NFH_BO",
+      "analysis_run_id": "ar_5f1d1e213ea4435c",
+      "evidence_snapshot_version": 1
+    },
+    {
+      "stage": "bo_audit:ar_5f1d1e213ea4435c",
+      "sha256": "d490aa3a920a017bd8ae21f41fecebc66b6978c078b3ceffffaf3447ae90e666",
+      "case_id": "NFH_BO",
+      "analysis_run_id": "ar_5f1d1e213ea4435c",
+      "evidence_snapshot_version": 1
+    }
+  ],
+  "evidence_sources": [
+    {
+      "document_id": "doc_10k",
+      "evidence_id": "ev_payer",
+      "excerpt": "Medicare and Medicaid accounted for 45% of our revenues. Our managed care contracts are generally multi-year agreements that set negotiated rates; the contracts do not guarantee minimum volumes of patients. Either party may terminate an agreement on notice.",
+      "filename": "nfh-10k.htm",
+      "form": "10-K",
+      "heading": "Item 1",
+      "location": 20000,
+      "n": 1,
+      "page": null,
+      "sec_accession": "0000000001-26-000001",
+      "section": "Item 1",
+      "source_url": null
+    },
+    {
+      "document_id": "doc_10k",
+      "evidence_id": "ev_model",
+      "excerpt": "We operate 48 hospitals and 120 outpatient facilities. Our sources of revenue are patient services provided at our facilities. Demand for acute care services is essential and admissions were stable during the year.",
+      "filename": "nfh-10k.htm",
+      "form": "10-K",
+      "heading": "Item 1",
+      "location": 18000,
+      "n": 2,
+      "page": null,
+      "sec_accession": "0000000001-26-000001",
+      "section": "Item 1",
+      "source_url": null
+    },
+    {
+      "document_id": "doc_10k",
+      "evidence_id": "ev_labor",
+      "excerpt": "We face a nursing shortage and rising contract labor costs. We operate a College of Nursing to expand our training pipeline, which we believe will improve recruitment and retention. There is no assurance these initiatives will be successful.",
+      "filename": "nfh-10k.htm",
+      "form": "10-K",
+      "heading": "Item 1A",
+      "location": 14000,
+      "n": 3,
+      "page": null,
+      "sec_accession": "0000000001-26-000001",
+      "section": "Item 1A",
+      "source_url": null
+    },
+    {
+      "document_id": "doc_10k",
+      "evidence_id": "ev_compete",
+      "excerpt": "We compete with other hospitals, including not-for-profit systems, and with ambulatory surgery centers. Competitors may have greater market share in certain markets. Revenue per equivalent admission increased 4.1% due to pricing, payer mix and case mix acuity. In 2025 we operated the largest hospital network by licensed beds in most of our markets.",
+      "filename": "nfh-10k.htm",
+      "form": "10-K",
+      "heading": "Item 1",
+      "location": 4000,
+      "n": 4,
+      "page": null,
+      "sec_accession": "0000000001-26-000001",
+      "section": "Item 1",
+      "source_url": null
+    },
+    {
+      "document_id": "doc_10k",
+      "evidence_id": "ev_reg",
+      "excerpt": "We are subject to extensive regulation. A significant portion of our revenues depends on government programs, and reimbursement rates may be reduced by legislation. We cannot predict the outcome of proposed legislation. We are party to litigation and government investigations.",
+      "filename": "nfh-10k.htm",
+      "form": "10-K",
+      "heading": "Item 1A",
+      "location": 22000,
+      "n": 5,
+      "page": null,
+      "sec_accession": "0000000001-26-000001",
+      "section": "Item 1A",
+      "source_url": null
+    },
+    {
+      "document_id": "doc_10k",
+      "evidence_id": "ev_capex",
+      "excerpt": "Capital expenditures were focused on expansion of existing facilities. We completed acquisitions of three hospitals during the year; integration of these facilities is ongoing.",
+      "filename": "nfh-10k.htm",
+      "form": "10-K",
+      "heading": "Item 7",
+      "location": 2000,
+      "n": 6,
+      "page": null,
+      "sec_accession": "0000000001-26-000001",
+      "section": "Item 7",
+      "source_url": null
+    },
+    {
+      "document_id": "doc_10k",
+      "evidence_id": "ev_debt_maturity",
+      "excerpt": "The senior notes have staggered maturities; the revolving credit facility is undrawn. Refinancing of maturing tranches occurred during the year.",
+      "filename": "nfh-10k.htm",
+      "form": "10-K",
+      "heading": "Item 7",
+      "location": 6000,
+      "n": 7,
+      "page": null,
+      "sec_accession": "0000000001-26-000001",
+      "section": "Item 7",
+      "source_url": null
+    },
+    {
+      "document_id": "doc_10k",
+      "evidence_id": "ev_debt_notes",
+      "excerpt": "Our long-term debt consists of senior unsecured notes with principal of $43,700 million issued by the operating company and guaranteed by the parent. Total indebtedness was $46,492 million at year end.",
+      "filename": "nfh-10k.htm",
+      "form": "10-K",
+      "heading": "Item 8",
+      "location": 8000,
+      "n": 8,
+      "page": null,
+      "sec_accession": "0000000001-26-000001",
+      "section": "Item 8",
+      "source_url": null
+    }
+  ],
+  "sections": [
+    {
+      "title": "Corporate Structure & Debt Obligations",
+      "status": "incomplete",
+      "items": [
+        {
+          "source_stage": "bo_memo:ar_5f1d1e213ea4435c",
+          "field_path": [
+            "module_conclusions",
+            "M4",
+            "m4_analysis",
+            "deliverable_1"
+          ],
+          "content_hash": "d9cec17ba8916653f0abb11f5d441d6710d2a53b304e984f46b0697478a010fa",
+          "content": {
+            "creditor_priority_framework": {
+              "consolidated_total_indebtedness_m": 46492.0,
+              "prospective_loan_secured_placement": "A secured bank loan would rank in Tier 1 ahead of the $43.7B senior unsecured notes, benefiting from direct OpCo collateral.",
+              "prospective_loan_senior_unsecured_placement": "A senior unsecured bank loan would rank pari passu with the existing Tier 2 senior unsecured notes, sharing the HCA Healthcare, Inc. upstream guarantee.",
+              "structural_subordination_drag_ratio": 0.022,
+              "tier_1_direct_opco_secured_m": 1021.0,
+              "tier_2_senior_unsecured_guaranteed_m": 45471.0,
+              "tier_3_unguaranteed_holdco_m": 0.0
+            },
+            "extraction_source": {
+              "item_references": [
+                "Item 7 MD&A",
+                "Item 8 Note 8",
+                "Item 15 Exhibit 4.x"
+              ],
+              "narrative": "Debt population drawn from Item 8 Financial Statements, Note 8 (Long-Term Debt), cross-referenced to Item 7 MD&A Liquidity & Capital Resources and the Item 15 Exhibit Index supplemental indentures (Exhibits 4.44-4.53).",
+              "page_references": [
+                "F-18",
+                "F-19",
+                "57"
+              ]
+            },
+            "non_note_obligations_schedule": [
+              {
+                "available_facility_limit_m": 4000.0,
+                "collateral_security_status": "unsecured",
+                "guarantors_credit_support": "HCA Healthcare, Inc. guarantee",
+                "interest_rate_terms": "4.3% weighted average; 18-day average life",
+                "legal_borrower": "HCA Inc.",
+                "maturity": "Short-term",
+                "obligation_facility": "Commercial paper program",
+                "principal_drawn_m": 2207.0,
+                "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed"
+              },
+              {
+                "available_facility_limit_m": null,
+                "collateral_security_status": "secured",
+                "guarantors_credit_support": "Secured at operating subsidiary level",
+                "interest_rate_terms": "4.6% effective",
+                "legal_borrower": "HCA Inc.",
+                "maturity": "Various",
+                "obligation_facility": "Other senior secured debt (finance leases + other)",
+                "principal_drawn_m": 1021.0,
+                "priority_ranking_tier": "tier_1_direct_opco_secured"
+              },
+              {
+                "available_facility_limit_m": 8000.0,
+                "collateral_security_status": "unsecured",
+                "guarantors_credit_support": "HCA Healthcare, Inc. guarantee",
+                "interest_rate_terms": "SOFR + 1.125%",
+                "legal_borrower": "HCA Inc.",
+                "maturity": "2030",
+                "obligation_facility": "Senior unsecured revolving credit facility (5-year)",
+                "principal_drawn_m": 0.0,
+                "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed"
+              },
+              {
+                "available_facility_limit_m": null,
+                "collateral_security_status": "unsecured",
+                "guarantors_credit_support": "n/a",
+                "interest_rate_terms": "n/a (contra-liability)",
+                "legal_borrower": "HCA Inc.",
+                "maturity": "n/a",
+                "obligation_facility": "Debt issuance costs and discounts",
+                "principal_drawn_m": -436.0,
+                "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed"
+              }
+            ],
+            "reconciling_items": [],
+            "senior_notes_schedule": [
+              {
+                "collateral_security_status": "unsecured",
+                "coupon_interest_rate": "5.000% fixed",
+                "guarantors_credit_support": "Fully and unconditionally guaranteed on an unsecured basis by HCA Healthcare, Inc.",
+                "legal_borrower": "HCA Inc.",
+                "maturity_year": 2028,
+                "principal_amount_m": 700.0,
+                "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed",
+                "senior_note_series": "5.000% Senior Notes"
+              },
+              {
+                "collateral_security_status": "unsecured",
+                "coupon_interest_rate": "5.250% fixed",
+                "guarantors_credit_support": "Fully and unconditionally guaranteed on an unsecured basis by HCA Healthcare, Inc.",
+                "legal_borrower": "HCA Inc.",
+                "maturity_year": 2030,
+                "principal_amount_m": 750.0,
+                "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed",
+                "senior_note_series": "5.250% Senior Notes"
+              },
+              {
+                "collateral_security_status": "unsecured",
+                "coupon_interest_rate": "5.750% fixed",
+                "guarantors_credit_support": "Fully and unconditionally guaranteed on an unsecured basis by HCA Healthcare, Inc.",
+                "legal_borrower": "HCA Inc.",
+                "maturity_year": 2035,
+                "principal_amount_m": 1500.0,
+                "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed",
+                "senior_note_series": "5.750% Senior Notes"
+              },
+              {
+                "collateral_security_status": "unsecured",
+                "coupon_interest_rate": "6.200% fixed",
+                "guarantors_credit_support": "Fully and unconditionally guaranteed on an unsecured basis by HCA Healthcare, Inc.",
+                "legal_borrower": "HCA Inc.",
+                "maturity_year": 2055,
+                "principal_amount_m": 1250.0,
+                "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed",
+                "senior_note_series": "6.200% Senior Notes"
+              },
+              {
+                "collateral_security_status": "unsecured",
+                "coupon_interest_rate": "various fixed, 5.1% effective",
+                "guarantors_credit_support": "Fully and unconditionally guaranteed on an unsecured basis by HCA Healthcare, Inc.",
+                "legal_borrower": "HCA Inc.",
+                "maturity_year": 2064,
+                "principal_amount_m": 39050.0,
+                "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed",
+                "senior_note_series": "Other senior unsecured notes (2026-2064)"
+              },
+              {
+                "collateral_security_status": "unsecured",
+                "coupon_interest_rate": "7.19% weighted average",
+                "guarantors_credit_support": "Fully and unconditionally guaranteed on an unsecured basis by HCA Healthcare, Inc.",
+                "legal_borrower": "HCA Inc.",
+                "maturity_year": 2095,
+                "principal_amount_m": 450.0,
+                "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed",
+                "senior_note_series": "Debentures (maturities through 2095)"
+              }
+            ]
+          },
+          "origin": "deterministic_copy"
+        }
+      ],
+      "synthesis": null,
+      "limitations": [
+        "Missing designated content: module_conclusions.M3.m3_rebuild.structure.artifact",
+        "Educational structure is not a verified legal/obligor assessment. Management observations are bounded continuity rules, not competence/governance ratings."
+      ]
+    },
+    {
+      "title": "Management",
+      "status": "missing",
+      "items": [],
+      "synthesis": null,
+      "limitations": [
+        "Missing designated content: module_conclusions.M3.m3_rebuild.management.artifact",
+        "Educational structure is not a verified legal/obligor assessment. Management observations are bounded continuity rules, not competence/governance ratings."
+      ]
+    },
+    {
+      "title": "Competitive Position",
+      "status": "complete",
+      "items": [],
+      "synthesis": {
+        "schema_version": "bo-competitive-1.0",
+        "overall_assessment": {
+          "claim_id": "overall",
+          "category": "assessment",
+          "text": "Negotiated reimbursement and stable volumes coexist with operating cost pressures.",
+          "parameter_result_ids": [],
+          "evidence_ids": [
+            "ev_payer",
+            "ev_model",
+            "ev_labor"
+          ],
+          "materiality": "medium",
+          "uncertainty": "Based on disclosed conditions; effectiveness is not independently established.",
+          "hypothesis_ids": [
+            "M1S1-H001",
+            "M1S2-H001",
+            "M1S4-H001"
+          ],
+          "section": "executive",
+          "claim_type": "inference",
+          "title": null,
+          "quoted_values": [],
+          "dimension": "uncertainty",
+          "counterevidence": []
+        },
+        "key_drivers": [
+          {
+            "claim_id": "point-0",
+            "category": "driver",
+            "text": "Negotiated managed-care rates anchor reimbursement.",
+            "parameter_result_ids": [],
+            "evidence_ids": [
+              "ev_payer"
+            ],
+            "materiality": "medium",
+            "uncertainty": "Based on disclosed conditions; competitive outcomes remain uncertain.",
+            "hypothesis_ids": [
+              "M1S1-H001"
+            ],
+            "section": "M1S1",
+            "claim_type": "inference",
+            "title": null,
+            "quoted_values": [],
+            "dimension": "revenue",
+            "counterevidence": []
+          },
+          {
+            "claim_id": "point-1",
+            "category": "driver",
+            "text": "Stable admissions provide a volume foundation.",
+            "parameter_result_ids": [],
+            "evidence_ids": [
+              "ev_model"
+            ],
+            "materiality": "medium",
+            "uncertainty": "Based on disclosed conditions; competitive outcomes remain uncertain.",
+            "hypothesis_ids": [
+              "M1S2-H001"
+            ],
+            "section": "M1S2",
+            "claim_type": "inference",
+            "title": null,
+            "quoted_values": [],
+            "dimension": "revenue",
+            "counterevidence": []
+          },
+          {
+            "claim_id": "point-2",
+            "category": "driver",
+            "text": "Termination rights limit contractual durability.",
+            "parameter_result_ids": [],
+            "evidence_ids": [
+              "ev_payer"
+            ],
+            "materiality": "medium",
+            "uncertainty": "Based on disclosed conditions; competitive outcomes remain uncertain.",
+            "hypothesis_ids": [
+              "M1S3-H001"
+            ],
+            "section": "M1S3",
+            "claim_type": "inference",
+            "title": null,
+            "quoted_values": [],
+            "dimension": "vulnerability",
+            "counterevidence": []
+          },
+          {
+            "claim_id": "point-3",
+            "category": "driver",
+            "text": "Nursing scarcity exposes the business to contract labour costs.",
+            "parameter_result_ids": [],
+            "evidence_ids": [
+              "ev_labor"
+            ],
+            "materiality": "medium",
+            "uncertainty": "Based on disclosed conditions; competitive outcomes remain uncertain.",
+            "hypothesis_ids": [
+              "M1S4-H001"
+            ],
+            "section": "M1S4",
+            "claim_type": "inference",
+            "title": null,
+            "quoted_values": [],
+            "dimension": "cost",
+            "counterevidence": []
+          },
+          {
+            "claim_id": "point-4",
+            "category": "driver",
+            "text": "Hospital and ambulatory competition constrain the competitive position.",
+            "parameter_result_ids": [],
+            "evidence_ids": [
+              "ev_compete"
+            ],
+            "materiality": "medium",
+            "uncertainty": "Based on disclosed conditions; competitive outcomes remain uncertain.",
+            "hypothesis_ids": [
+              "M1S5-H001"
+            ],
+            "section": "M1S5",
+            "claim_type": "inference",
+            "title": null,
+            "quoted_values": [],
+            "dimension": "vulnerability",
+            "counterevidence": []
+          }
+        ],
+        "selections": [
+          {
+            "hypothesis_id": "M1S1-H001",
+            "disposition": "selected",
+            "reason": "Distinct economic driver",
+            "point_id": "point-0"
+          },
+          {
+            "hypothesis_id": "M1S2-H001",
+            "disposition": "selected",
+            "reason": "Distinct economic driver",
+            "point_id": "point-1"
+          },
+          {
+            "hypothesis_id": "M1S3-H001",
+            "disposition": "selected",
+            "reason": "Distinct economic driver",
+            "point_id": "point-2"
+          },
+          {
+            "hypothesis_id": "M1S4-H001",
+            "disposition": "selected",
+            "reason": "Distinct economic driver",
+            "point_id": "point-3"
+          },
+          {
+            "hypothesis_id": "M1S5-H001",
+            "disposition": "selected",
+            "reason": "Distinct economic driver",
+            "point_id": "point-4"
+          },
+          {
+            "hypothesis_id": "M1A6-H001",
+            "disposition": "audit_only",
+            "reason": "Overlapping operating exposures already represented",
+            "point_id": null
+          }
+        ],
+        "coverage_gaps": [],
+        "residual_uncertainty": [
+          "Competitor staffing evidence unavailable."
+        ],
+        "completeness": "complete",
+        "human_review_required": true
+      },
+      "limitations": []
+    },
+    {
+      "title": "Refinancing History",
+      "status": "complete",
+      "items": [
+        {
+          "source_stage": "bo_memo:ar_5f1d1e213ea4435c",
+          "field_path": [
+            "module_conclusions",
+            "M4",
+            "m4_analysis",
+            "deliverable_2"
+          ],
+          "content_hash": "a03a42e610dbe311974ef23be1c94e274847e1c7bbd78ade2c5ac1e8cef8c3b7",
+          "content": {
+            "extraction_source": {
+              "item_references": [
+                "Item 7 MD&A",
+                "Item 8 Note 8"
+              ],
+              "narrative": "Refinancing activity reconstructed from Note 8 issuance and repayment disclosures and the MD&A Capital Resources discussion for FY2023-FY2025.",
+              "page_references": [
+                "F-18",
+                "55"
+              ]
+            },
+            "metrics": {
+              "historical_refinancing_distress_events": 0,
+              "refinancing_cost_spread_delta_bps": 25.0,
+              "weighted_avg_maturity_extension_years": 7.5,
+              "weighted_avg_refinancing_lead_time_months": 11.0
+            },
+            "refinancing_capacity_discipline_verdict": "Deep, repeated capital-markets access with proactive pre-maturity refinancing and zero distress events demonstrates strong refinancing capacity and discipline.",
+            "refinancing_log": [
+              {
+                "coupon_interest_terms": "5.000%-6.200% fixed + FRN",
+                "execution_date_fiscal_period": "Feb 2025",
+                "new_extended_maturity": "2028-2055",
+                "obligation_series_description": "February 2025 senior notes ($5.25B)",
+                "original_retired_maturity": null,
+                "principal_amount_m": 5250.0,
+                "transaction_category": "new_issuance",
+                "use_of_proceeds_impact": "Repay senior unsecured credit facility + general corporate purposes."
+              },
+              {
+                "coupon_interest_terms": "4.300%-5.700% fixed",
+                "execution_date_fiscal_period": "Oct 2025",
+                "new_extended_maturity": "2030-2055",
+                "obligation_series_description": "October 2025 senior notes ($3.25B)",
+                "original_retired_maturity": null,
+                "principal_amount_m": 3250.0,
+                "transaction_category": "new_issuance",
+                "use_of_proceeds_impact": "Repay commercial paper + GCP."
+              },
+              {
+                "coupon_interest_terms": "5.375% fixed",
+                "execution_date_fiscal_period": "FY2025",
+                "new_extended_maturity": null,
+                "obligation_series_description": "5.375% senior notes",
+                "original_retired_maturity": "2025",
+                "principal_amount_m": 2600.0,
+                "transaction_category": "repayment_at_maturity",
+                "use_of_proceeds_impact": "Repaid at scheduled maturity."
+              },
+              {
+                "coupon_interest_terms": "5.875% fixed",
+                "execution_date_fiscal_period": "FY2025",
+                "new_extended_maturity": null,
+                "obligation_series_description": "5.875% senior notes due 2026",
+                "original_retired_maturity": "2026",
+                "principal_amount_m": 1500.0,
+                "transaction_category": "early_redemption",
+                "use_of_proceeds_impact": "Redeemed early ahead of maturity."
+              }
+            ]
+          },
+          "origin": "deterministic_copy"
+        },
+        {
+          "source_stage": "bo_memo:ar_5f1d1e213ea4435c",
+          "field_path": [
+            "module_conclusions",
+            "M4",
+            "m4_analysis",
+            "deliverable_4"
+          ],
+          "content_hash": "7093eb7c1b0629e2be3f9a2d5142ffead2a4a96a745ba43d2632bfd5393bbdfb",
+          "content": {
+            "core_credit_assessment": "HCA presents a strong, well-managed debt structure with proven refinancing access and prudent stewardship; a prospective bank lender ranks pari passu with existing senior unsecured notes absent collateral.",
+            "evidence_synthesis_narrative": "Deliverables 1-3 show a predominantly senior-unsecured capital structure guaranteed by the HoldCo, a disciplined and deep refinancing track record, and internally funded growth alongside large but controlled shareholder distributions.",
+            "executive_credit_summary_box": {
+              "executive_takeaways": [
+                "Predominantly senior unsecured structure guaranteed by the HoldCo.",
+                "Proven, disciplined refinancing access with no distress events.",
+                "Internally funded growth; distributions large but controlled."
+              ],
+              "overall_credit_rating_verdict": "satisfactory",
+              "recommended_loan_placement": "senior_unsecured_tier_2",
+              "target_entity_and_period": "HCA Healthcare, Inc. - FY2025 (10-K)"
+            },
+            "strategy_capital_supplement": {
+              "contributes": "strategy / capital-allocation merit findings (acquisition, integration, capex strategy)",
+              "findings": [
+                {
+                  "admissibility": "established",
+                  "agent_id": "m4_strategy_capital",
+                  "claim": "Three hospital acquisitions were completed and their integration remains ongoing.",
+                  "claim_type": "fact",
+                  "component_hypothesis_ids": [],
+                  "confidence": "medium",
+                  "contradicting_evidence_ids": [],
+                  "corrects_hypothesis_id": null,
+                  "credit_mechanism": null,
+                  "direction": "mixed",
+                  "disposition": "supported",
+                  "evidence_quotes": [
+                    {
+                      "evidence_id": "ev_capex",
+                      "quote": "We completed acquisitions of three hospitals during the year; integration of these facilities is ongoing"
+                    }
+                  ],
+                  "hypothesis_id": "M4-H001",
+                  "interaction_kind": null,
+                  "interpretation": {},
+                  "materiality": "high",
+                  "missing_information": [],
+                  "mitigant": null,
+                  "quoted_values": [],
+                  "section": "M4",
+                  "supporting_evidence_ids": [
+                    "ev_capex"
+                  ],
+                  "validation_notes": []
+                }
+              ],
+              "note": "Supplements the debt specialist's conclusion; does NOT draw leverage or debt-service conclusions (those are the debt specialist's and Financial Overview's).",
+              "source_agent": "m4_strategy_capital"
+            },
+            "synthesis_matrix": [
+              {
+                "analytical_scope_pillar": "Debt structure & priority",
+                "bank_lender_implications": "Unsecured loan is pari passu Tier 2; collateral would lift to Tier 1.",
+                "core_empirical_evidence": "$46.49B total debt; 97.8% senior unsecured guaranteed; drag ratio 0.022.",
+                "deliverable_verdict": "Satisfactory"
+              },
+              {
+                "analytical_scope_pillar": "Refinancing history",
+                "bank_lender_implications": "Low refinancing/rollover risk.",
+                "core_empirical_evidence": "$8.5B issued FY2025; proactive pre-maturity refinancing; 0 distress events.",
+                "deliverable_verdict": "Strong"
+              },
+              {
+                "analytical_scope_pillar": "Financial stewardship",
+                "bank_lender_implications": "Monitor distribution appetite vs leverage headroom.",
+                "core_empirical_evidence": "CAPEX self-funded; $19.9B buybacks partly debt-funded; leverage within policy.",
+                "deliverable_verdict": "Satisfactory"
+              },
+              {
+                "analytical_scope_pillar": "Strategy & Capital Allocation (Agent A)",
+                "bank_lender_implications": "Strategy/capital-allocation observation; leverage and debt-service implications are assessed by the debt specialist (Agent B) and Financial Overview, not here.",
+                "core_empirical_evidence": "Three hospital acquisitions were completed and their integration remains ongoing. [1 cited]",
+                "deliverable_verdict": "mixed"
+              }
+            ]
+          },
+          "origin": "deterministic_copy"
+        }
+      ],
+      "synthesis": null,
+      "limitations": []
+    },
+    {
+      "title": "Industry",
+      "status": "incomplete",
+      "items": [
+        {
+          "source_stage": "bo_memo:ar_5f1d1e213ea4435c",
+          "field_path": [
+            "module_conclusions",
+            "M2",
+            "findings"
+          ],
+          "content_hash": "ee0279d50547d8f1c12f1ff876eda31cb17d96050ae8660f0e9051d9d6c58ae7",
+          "content": [
+            {
+              "admissibility": "qualified_narrative",
+              "agent_id": "m2_industry",
+              "claim": "The industry is extensively regulated and exposed to legislative reimbursement reductions.",
+              "claim_type": "fact",
+              "component_hypothesis_ids": [],
+              "confidence": "medium",
+              "contradicting_evidence_ids": [],
+              "corrects_hypothesis_id": null,
+              "credit_mechanism": null,
+              "direction": "negative",
+              "disposition": "qualified",
+              "evidence_quotes": [
+                {
+                  "evidence_id": "ev_reg",
+                  "quote": "We are subject to extensive regulation"
+                }
+              ],
+              "hypothesis_id": "M2-H001",
+              "interaction_kind": null,
+              "interpretation": {},
+              "materiality": "high",
+              "missing_information": [],
+              "mitigant": null,
+              "quoted_values": [],
+              "section": "M2",
+              "supporting_evidence_ids": [
+                "ev_reg"
+              ],
+              "validation_notes": [
+                "generic_risk_disclosure_only: Supported only by risk-factor language about what could happen; it may be reported as a disclosed risk, not as an event that has occurred.",
+                "quote_does_not_cover_claim: The quote is verified, but it shares almost no wording with the claim, so it does not show that the filing states the claim; treated as the specialist's inference."
+              ]
+            }
+          ],
+          "origin": "deterministic_copy"
+        }
+      ],
+      "synthesis": null,
+      "limitations": [
+        "Missing standalone Industry report: this roster records governed industry findings only. All available findings are preserved below; no replacement report has been generated."
+      ]
+    }
+  ],
+  "audit_stage": "bo_audit:ar_5f1d1e213ea4435c",
+  "governance": {
+    "challenge": "accepted",
+    "conclusion_status": "human_review_required",
+    "human_review_status": "pending",
+    "remediation_round_performed": false,
+    "text": "Unresolved material challenge. This is NOT a final Business Overview; mandatory human review."
+  },
+  "challenge": {
+    "agent_run_id": "8db98700-b8e6-4c75-9db0-019a7e9572e7",
+    "conclusion_id": "tc_c84b485b42c44919",
+    "decision": {
+      "deterministic_only": false,
+      "escalated": false,
+      "requires_rerun": false,
+      "rerun_parameter_ids": [],
+      "rerun_scope": []
+    },
+    "findings": [],
+    "issues": [],
+    "model_stated_outcome": "accepted",
+    "outcome": "accepted",
+    "round": 0,
+    "status": "validated",
+    "summary": "No material defect identified."
+  },
+  "execution_mode": "offline_simulation"
+}

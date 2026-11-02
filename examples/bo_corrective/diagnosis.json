@@ -1,0 +1,104 @@
+{
+  "original_fixture": "sparse authored offline simulation, not live inference",
+  "reference_images_available": false,
+  "original_points": [
+    {
+      "claim_id": "point-0",
+      "orchestrator_text": "Negotiated managed-care rates anchor reimbursement.",
+      "artifact_text": "Negotiated managed-care rates anchor reimbursement.",
+      "rendered_without_loss": true,
+      "text_characters": 51,
+      "evidence_ids": [
+        "ev_payer"
+      ]
+    },
+    {
+      "claim_id": "point-1",
+      "orchestrator_text": "Stable admissions provide a volume foundation.",
+      "artifact_text": "Stable admissions provide a volume foundation.",
+      "rendered_without_loss": true,
+      "text_characters": 46,
+      "evidence_ids": [
+        "ev_model"
+      ]
+    },
+    {
+      "claim_id": "point-2",
+      "orchestrator_text": "Termination rights limit contractual durability.",
+      "artifact_text": "Termination rights limit contractual durability.",
+      "rendered_without_loss": true,
+      "text_characters": 48,
+      "evidence_ids": [
+        "ev_payer"
+      ]
+    },
+    {
+      "claim_id": "point-3",
+      "orchestrator_text": "Nursing scarcity exposes the business to contract labour costs.",
+      "artifact_text": "Nursing scarcity exposes the business to contract labour costs.",
+      "rendered_without_loss": true,
+      "text_characters": 63,
+      "evidence_ids": [
+        "ev_labor"
+      ]
+    },
+    {
+      "claim_id": "point-4",
+      "orchestrator_text": "Hospital and ambulatory competition constrain the competitive position.",
+      "artifact_text": "Hospital and ambulatory competition constrain the competitive position.",
+      "rendered_without_loss": true,
+      "text_characters": 71,
+      "evidence_ids": [
+        "ev_compete"
+      ]
+    }
+  ],
+  "original_selections": [
+    {
+      "disposition": "selected",
+      "hypothesis_id": "M1S1-H001",
+      "point_id": "point-0",
+      "reason": "Distinct economic driver"
+    },
+    {
+      "disposition": "selected",
+      "hypothesis_id": "M1S2-H001",
+      "point_id": "point-1",
+      "reason": "Distinct economic driver"
+    },
+    {
+      "disposition": "selected",
+      "hypothesis_id": "M1S3-H001",
+      "point_id": "point-2",
+      "reason": "Distinct economic driver"
+    },
+    {
+      "disposition": "selected",
+      "hypothesis_id": "M1S4-H001",
+      "point_id": "point-3",
+      "reason": "Distinct economic driver"
+    },
+    {
+      "disposition": "selected",
+      "hypothesis_id": "M1S5-H001",
+      "point_id": "point-4",
+      "reason": "Distinct economic driver"
+    },
+    {
+      "disposition": "audit_only",
+      "hypothesis_id": "M1A6-H001",
+      "point_id": null,
+      "reason": "Overlapping operating exposures already represented"
+    }
+  ],
+  "new_contract": "bo-competitive-1.1",
+  "depth_fields": [
+    "company_evidence",
+    "revenue_or_cost_mechanism",
+    "competitive_and_credit_implication"
+  ],
+  "run_ids": {
+    "historical": "ar_a905d862f821416e",
+    "newly-completed": "ar_6192991fd1374eea"
+  }
+}

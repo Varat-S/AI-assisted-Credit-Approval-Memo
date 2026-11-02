@@ -240,11 +240,15 @@ def _money(value) -> str:
 
 def _env() -> Environment:
     env = Environment(
-        loader=FileSystemLoader(str(_TEMPLATES)),
+        loader=FileSystemLoader([str(_TEMPLATES), str(Path(__file__).parents[2] / "api" / "templates")]),
         autoescape=select_autoescape(["html", "j2"]),
         trim_blocks=True, lstrip_blocks=True,
     )
+    from app.services.bo.memo_presentation import configure
+    configure(env)
     env.filters["money"] = _money
+    env.filters["bo_diagram"] = structure_data_uri
+    env.filters["bo_label"] = source_field_label
     return env
 
 
@@ -295,6 +299,10 @@ class BoReportBuilder:
         memo = self._memo(run, mode, sources)
         audit = self._audit(run, mode, sources)
         handoff = self._handoff(run, mode)
+        if run.runner.consolidated:
+            audit["competitive_selection"] = run.competitive_selection if run.conclusion else None
+            audit["competitive_selection_conclusion_id"] = run.conclusion_row_id if run.conclusion else None
+            audit["competitive_selection_orchestrator_run_id"] = run.conclusion.orchestrator_run_id if run.conclusion else None
         record = {
             "analysis_run_id": run.analysis_run_id,
             "conclusion_status": run.conclusion_status,
@@ -322,11 +330,13 @@ class BoReportBuilder:
                 paths[name] = folder / name
                 paths[name].write_text(canonical_json(payload) + "\n",
                                        encoding="utf-8", newline="\n")
-            for name, html in (("business_overview.html", render_memo_html(memo)),
-                               ("audit_report.html", render_audit_html(audit))):
+            html_outputs = [("audit_report.html", render_audit_html(audit))]
+            if not run.runner.consolidated:
+                html_outputs.insert(0, ("business_overview.html", render_memo_html(memo)))
+            for name, html in html_outputs:
                 paths[name] = folder / name
                 paths[name].write_text(html, encoding="utf-8", newline="\n")
-            if produce_pdf:
+            if produce_pdf and not run.runner.consolidated:
                 from app.services.reporting.memo import (
                     _render_pdf_with,
                     detect_pdf_backend,
@@ -338,6 +348,9 @@ class BoReportBuilder:
                     paths["business_overview.pdf"].write_bytes(
                         _render_pdf_with(backend, render_memo_html(memo)))
 
+        if write_outputs and run.runner.consolidated:
+            paths["consolidated_business_overview.json"] = folder / "consolidated_business_overview.json"
+            paths["business_overview.html"] = folder / "business_overview.html"
         self.session.add(AcceptedBusinessOverviewRow(
             handoff_id=handoff["handoff_id"], analysis_run_id=run.analysis_run_id,
             case_id=run.case_id, snapshot_version=run.snapshot_version,
@@ -345,6 +358,21 @@ class BoReportBuilder:
             content_hash=handoff["content_hash"],
             artifacts={k: str(v) for k, v in paths.items()}))
         self.session.flush()
+        if run.runner.consolidated:
+            from app.services.bo.consolidated import assemble
+            consolidated = assemble(self.session, case_id=run.case_id,
+                                    run_id=run.analysis_run_id, version=run.snapshot_version)
+            recorder.record("bo_consolidated:" + run.analysis_run_id, consolidated)
+            if write_outputs:
+                paths["consolidated_business_overview.json"] = folder / "consolidated_business_overview.json"
+                paths["consolidated_business_overview.json"].write_text(canonical_json(consolidated) + "\n", encoding="utf-8")
+                paths["business_overview.html"].write_text(render_consolidated_html(consolidated), encoding="utf-8")
+                if produce_pdf:
+                    from app.services.reporting.memo import _render_pdf_with, detect_pdf_backend
+                    backend = detect_pdf_backend()
+                    if backend is not None:
+                        paths["business_overview.pdf"] = folder / "business_overview.pdf"
+                        paths["business_overview.pdf"].write_bytes(_render_pdf_with(backend, render_consolidated_html(consolidated, expand_evidence=True)))
         return BoRunResult(
             analysis_run_id=run.analysis_run_id, case_id=run.case_id,
             snapshot_version=run.snapshot_version,
@@ -978,3 +1006,27 @@ def handoff_content_hash(payload: dict[str, Any]) -> str:
     """Hash of the analytical content (review fields and the hash excluded)."""
     excluded = {"content_hash", "human_review_status", "reviewer", "reviewed_at"}
     return content_hash({k: v for k, v in payload.items() if k not in excluded})
+
+
+def render_consolidated_html(artifact, *, expand_evidence=False):
+    from app.schemas.bo_consolidated import ConsolidatedBO
+    validated = ConsolidatedBO.model_validate(artifact).model_dump(mode="json")
+    return _env().get_template("bo_consolidated.html.j2").render(bo=validated, expand_evidence=expand_evidence)
+
+
+def structure_data_uri(artifact):
+    """Re-render the preserved, validated M3 contract without external SVG resources."""
+    from app.services.bo.m3_rebuild.structure import validate_structure
+    try:
+        validate_structure(artifact)
+        svg = render_svg(artifact)
+    except (KeyError, TypeError, ValueError):
+        return None
+    return "data:image/svg+xml;base64," + base64.b64encode(svg.encode()).decode()
+
+
+def source_field_label(key):
+    """Display a source key; only the exact numeric-unit suffix denotes $M."""
+    if key.endswith('_m'):
+        return key[:-2].replace('_', ' ').title() + ' ($M)'
+    return key.replace('_', ' ').title()

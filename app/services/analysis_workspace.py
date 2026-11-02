@@ -188,9 +188,14 @@ def load_review(session, job):
     from app.services.fo.review import run_header, review_for, review_view, overrides_for
     bo, fo = selected_rows(session, job)
     out = dict(job=job, bo=bo, fo=fo, memo=None, audit=None, synthesis=None, financial=None,
-               sources=[], recorded_sources=[], reason=None, errors=[], excluded_claim_ids=[],
+               consolidated=None, sources=[], recorded_sources=[], reason=None, errors=[], excluded_claim_ids=[],
                governance=governance(session, job, bo, fo, report_available(session, bo, fo)))
     if bo:
+        from app.services.bo.consolidated import load
+        out['consolidated'] = load(session, bo.case_id, bo.analysis_run_id, bo.snapshot_version)
+        if out['consolidated']:
+            from app.services.bo.workbench import reviewed_memo
+            out['consolidated'] = {**out['consolidated'], 'governance': reviewed_memo(session, bo.analysis_run_id)['status']}
         handoff = read_handoff(session, bo.handoff_id)  # existing typed content-hash integrity guard
         if handoff.analysis_run_id != bo.analysis_run_id or handoff.case_id != bo.case_id or handoff.evidence_snapshot_version != bo.snapshot_version:
             raise WorkspaceRecordError('Handoff identity differs from this selected run.')

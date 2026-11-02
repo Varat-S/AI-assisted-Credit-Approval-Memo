@@ -1,0 +1,558 @@
+{
+  "$defs": {
+    "ClaimCategory": {
+      "description": "Category of a conclusion claim (Remediation 4 / Req 35).",
+      "enum": [
+        "strength",
+        "weakness",
+        "driver",
+        "risk",
+        "assessment",
+        "mitigant",
+        "limitation"
+      ],
+      "title": "ClaimCategory",
+      "type": "string"
+    },
+    "CompetitiveSynthesis": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "enum": [
+            "bo-competitive-1.0",
+            "bo-competitive-1.1"
+          ],
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "overall_assessment": {
+          "$ref": "#/$defs/Point"
+        },
+        "key_drivers": {
+          "items": {
+            "$ref": "#/$defs/Point"
+          },
+          "title": "Key Drivers",
+          "type": "array"
+        },
+        "selections": {
+          "items": {
+            "$ref": "#/$defs/Selection"
+          },
+          "title": "Selections",
+          "type": "array"
+        },
+        "coverage_gaps": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Coverage Gaps",
+          "type": "array"
+        },
+        "residual_uncertainty": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Residual Uncertainty",
+          "type": "array"
+        },
+        "completeness": {
+          "enum": [
+            "complete",
+            "incomplete"
+          ],
+          "title": "Completeness",
+          "type": "string"
+        },
+        "human_review_required": {
+          "title": "Human Review Required",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "schema_version",
+        "overall_assessment",
+        "key_drivers",
+        "selections",
+        "coverage_gaps",
+        "residual_uncertainty",
+        "completeness",
+        "human_review_required"
+      ],
+      "title": "CompetitiveSynthesis",
+      "type": "object"
+    },
+    "CopyItem": {
+      "additionalProperties": false,
+      "properties": {
+        "source_stage": {
+          "title": "Source Stage",
+          "type": "string"
+        },
+        "field_path": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Field Path",
+          "type": "array"
+        },
+        "content_hash": {
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "content": {
+          "title": "Content"
+        },
+        "origin": {
+          "const": "deterministic_copy",
+          "default": "deterministic_copy",
+          "title": "Origin",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_stage",
+        "field_path",
+        "content_hash",
+        "content"
+      ],
+      "title": "CopyItem",
+      "type": "object"
+    },
+    "Materiality": {
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "title": "Materiality",
+      "type": "string"
+    },
+    "Point": {
+      "additionalProperties": false,
+      "properties": {
+        "claim_id": {
+          "title": "Claim Id",
+          "type": "string"
+        },
+        "category": {
+          "$ref": "#/$defs/ClaimCategory"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "parameter_result_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Parameter Result Ids",
+          "type": "array"
+        },
+        "evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "materiality": {
+          "$ref": "#/$defs/Materiality",
+          "default": "medium"
+        },
+        "uncertainty": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Uncertainty"
+        },
+        "hypothesis_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Hypothesis Ids",
+          "type": "array"
+        },
+        "section": {
+          "title": "Section",
+          "type": "string"
+        },
+        "claim_type": {
+          "enum": [
+            "fact",
+            "calculated_fact",
+            "management_claim",
+            "inference",
+            "assumption"
+          ],
+          "title": "Claim Type",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "quoted_values": {
+          "items": {
+            "$ref": "#/$defs/QuotedValue"
+          },
+          "title": "Quoted Values",
+          "type": "array"
+        },
+        "dimension": {
+          "enum": [
+            "revenue",
+            "cost",
+            "advantage",
+            "vulnerability",
+            "mitigant",
+            "uncertainty"
+          ],
+          "title": "Dimension",
+          "type": "string"
+        },
+        "counterevidence": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Counterevidence",
+          "type": "array"
+        },
+        "analysis": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PointAnalysis"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "claim_id",
+        "category",
+        "text",
+        "evidence_ids",
+        "hypothesis_ids",
+        "section",
+        "claim_type",
+        "dimension"
+      ],
+      "title": "Point",
+      "type": "object"
+    },
+    "PointAnalysis": {
+      "additionalProperties": false,
+      "properties": {
+        "company_evidence": {
+          "minLength": 1,
+          "title": "Company Evidence",
+          "type": "string"
+        },
+        "revenue_or_cost_mechanism": {
+          "minLength": 1,
+          "title": "Revenue Or Cost Mechanism",
+          "type": "string"
+        },
+        "competitive_and_credit_implication": {
+          "minLength": 1,
+          "title": "Competitive And Credit Implication",
+          "type": "string"
+        }
+      },
+      "required": [
+        "company_evidence",
+        "revenue_or_cost_mechanism",
+        "competitive_and_credit_implication"
+      ],
+      "title": "PointAnalysis",
+      "type": "object"
+    },
+    "QuotedValue": {
+      "additionalProperties": false,
+      "properties": {
+        "parameter_result_id": {
+          "title": "Parameter Result Id",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "number"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        },
+        "period": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Period"
+        },
+        "denominator": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Denominator"
+        }
+      },
+      "required": [
+        "parameter_result_id",
+        "value"
+      ],
+      "title": "QuotedValue",
+      "type": "object"
+    },
+    "Section": {
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "complete",
+            "incomplete",
+            "missing"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "items": {
+          "items": {
+            "$ref": "#/$defs/CopyItem"
+          },
+          "title": "Items",
+          "type": "array"
+        },
+        "synthesis": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CompetitiveSynthesis"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "limitations": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Limitations",
+          "type": "array"
+        }
+      },
+      "required": [
+        "title",
+        "status"
+      ],
+      "title": "Section",
+      "type": "object"
+    },
+    "Selection": {
+      "additionalProperties": false,
+      "properties": {
+        "hypothesis_id": {
+          "title": "Hypothesis Id",
+          "type": "string"
+        },
+        "disposition": {
+          "enum": [
+            "selected",
+            "incorporated",
+            "audit_only"
+          ],
+          "title": "Disposition",
+          "type": "string"
+        },
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "point_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Point Id"
+        }
+      },
+      "required": [
+        "hypothesis_id",
+        "disposition",
+        "reason",
+        "point_id"
+      ],
+      "title": "Selection",
+      "type": "object"
+    },
+    "Source": {
+      "additionalProperties": false,
+      "properties": {
+        "stage": {
+          "title": "Stage",
+          "type": "string"
+        },
+        "sha256": {
+          "title": "Sha256",
+          "type": "string"
+        },
+        "case_id": {
+          "title": "Case Id",
+          "type": "string"
+        },
+        "analysis_run_id": {
+          "title": "Analysis Run Id",
+          "type": "string"
+        },
+        "evidence_snapshot_version": {
+          "title": "Evidence Snapshot Version",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "stage",
+        "sha256",
+        "case_id",
+        "analysis_run_id",
+        "evidence_snapshot_version"
+      ],
+      "title": "Source",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_id": {
+      "const": "consolidated-business-overview",
+      "title": "Schema Id",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "case_id": {
+      "title": "Case Id",
+      "type": "string"
+    },
+    "analysis_run_id": {
+      "title": "Analysis Run Id",
+      "type": "string"
+    },
+    "evidence_snapshot_version": {
+      "title": "Evidence Snapshot Version",
+      "type": "integer"
+    },
+    "sources": {
+      "items": {
+        "$ref": "#/$defs/Source"
+      },
+      "title": "Sources",
+      "type": "array"
+    },
+    "evidence_sources": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Evidence Sources",
+      "type": "array"
+    },
+    "sections": {
+      "items": {
+        "$ref": "#/$defs/Section"
+      },
+      "title": "Sections",
+      "type": "array"
+    },
+    "audit_stage": {
+      "title": "Audit Stage",
+      "type": "string"
+    },
+    "governance": {
+      "additionalProperties": true,
+      "title": "Governance",
+      "type": "object"
+    },
+    "challenge": {
+      "anyOf": [
+        {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Challenge"
+    },
+    "execution_mode": {
+      "title": "Execution Mode",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_id",
+    "schema_version",
+    "case_id",
+    "analysis_run_id",
+    "evidence_snapshot_version",
+    "sources",
+    "evidence_sources",
+    "sections",
+    "audit_stage",
+    "governance",
+    "challenge",
+    "execution_mode"
+  ],
+  "title": "ConsolidatedBO",
+  "type": "object"
+}

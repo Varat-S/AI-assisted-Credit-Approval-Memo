@@ -1,0 +1,1182 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Credit Memo · Review</title>
+<script>
+  (function () {
+    var saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (e) {}
+    var dark = saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+  })();
+  document.addEventListener('DOMContentLoaded', function () {
+    var root = document.documentElement;
+    var button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'theme-toggle';
+    function label() {
+      var dark = root.dataset.theme === 'dark';
+      button.textContent = dark ? '☀ Light mode' : '☾ Dark mode';
+      button.setAttribute('aria-pressed', String(dark));
+    }
+    button.addEventListener('click', function () {
+      root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+      try { localStorage.setItem('theme', root.dataset.theme); } catch (e) {}
+      label();
+    });
+    // Without a saved choice, keep following the operating system setting.
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (event) {
+      var saved = null;
+      try { saved = localStorage.getItem('theme'); } catch (e) {}
+      if (!saved) { root.dataset.theme = event.matches ? 'dark' : 'light'; label(); }
+    });
+    label();
+    document.body.appendChild(button);
+  });
+</script>
+<style>
+  :root {
+    color-scheme: light;
+    --c-007b77:#007b77;
+    --c-093264:#093264;
+    --c-10b981:#10b981;
+    --c-155cb7:#155cb7;
+    --c-183f43:#183f43;
+    --c-192b3b:#192b3b;
+    --c-1d39460a:#1d39460a;
+    --c-1d3e42:#1d3e42;
+    --c-1e5d60:#1e5d60;
+    --c-205537:#205537;
+    --c-22334a:#22334a;
+    --c-226c67:#226c67;
+    --c-254c50:#254c50;
+    --c-284f53:#284f53;
+    --c-285d5e:#285d5e;
+    --c-294f53:#294f53;
+    --c-2f6b45:#2f6b45;
+    --c-2f6fb0:#2f6fb0;
+    --c-315e62:#315e62;
+    --c-344955:#344955;
+    --c-386963:#386963;
+    --c-395c5b:#395c5b;
+    --c-397477:#397477;
+    --c-397b77:#397b77;
+    --c-3a6949:#3a6949;
+    --c-488c8c:#488c8c;
+    --c-497578:#497578;
+    --c-517273:#517273;
+    --c-518587:#518587;
+    --c-56687e:#56687e;
+    --c-586e71:#586e71;
+    --c-5b6c80:#5b6c80;
+    --c-5c7175:#5c7175;
+    --c-61717d:#61717d;
+    --c-61757b:#61757b;
+    --c-62707b:#62707b;
+    --c-64727b:#64727b;
+    --c-64748b:#64748b;
+    --c-687780:#687780;
+    --c-6a7b7d:#6a7b7d;
+    --c-6e684e:#6e684e;
+    --c-70808b:#70808b;
+    --c-718087:#718087;
+    --c-719596:#719596;
+    --c-72808a:#72808a;
+    --c-74808a:#74808a;
+    --c-775700:#775700;
+    --c-789b99:#789b99;
+    --c-78b58c:#78b58c;
+    --c-7f8999:#7f8999;
+    --c-836328:#836328;
+    --c-849097:#849097;
+    --c-84cc16:#84cc16;
+    --c-8a6d1c:#8a6d1c;
+    --c-8a94a0:#8a94a0;
+    --c-934a42:#934a42;
+    --c-942d29:#942d29;
+    --c-9a3324:#9a3324;
+    --c-9e483e:#9e483e;
+    --c-a2473b:#a2473b;
+    --c-a3adb3:#a3adb3;
+    --c-aacac1:#aacac1;
+    --c-b26e61:#b26e61;
+    --c-b42318:#b42318;
+    --c-b47b72:#b47b72;
+    --c-c69a44:#c69a44;
+    --c-c7d5d4:#c7d5d4;
+    --c-c8d7e9:#c8d7e9;
+    --c-c9d1da:#c9d1da;
+    --c-c9d9d3:#c9d9d3;
+    --c-c9dcd3:#c9dcd3;
+    --c-d49b25:#d49b25;
+    --c-d4aa39:#d4aa39;
+    --c-d58880:#d58880;
+    --c-d7b9b4:#d7b9b4;
+    --c-d8dfdf:#d8dfdf;
+    --c-d8e0df:#d8e0df;
+    --c-d8e2df:#d8e2df;
+    --c-d9dfdf:#d9dfdf;
+    --c-dce2e1:#dce2e1;
+    --c-dce4e3:#dce4e3;
+    --c-dce4ee:#dce4ee;
+    --c-dfe5ec:#dfe5ec;
+    --c-e1cbb7:#e1cbb7;
+    --c-e1e6ed:#e1e6ed;
+    --c-e1eeea:#e1eeea;
+    --c-e1f3e7:#e1f3e7;
+    --c-e2e8e5:#e2e8e5;
+    --c-e3e8ee:#e3e8ee;
+    --c-e4e9e7:#e4e9e7;
+    --c-e5eaea:#e5eaea;
+    --c-e7ebeb:#e7ebeb;
+    --c-e7ecf2:#e7ecf2;
+    --c-e9efed:#e9efed;
+    --c-eab308:#eab308;
+    --c-eaf4f2:#eaf4f2;
+    --c-edf0ef:#edf0ef;
+    --c-edf4ef:#edf4ef;
+    --c-edf4f2:#edf4f2;
+    --c-edf5f1:#edf5f1;
+    --c-eef3f8:#eef3f8;
+    --c-eef3fb:#eef3fb;
+    --c-ef4444:#ef4444;
+    --c-f0f6f4:#f0f6f4;
+    --c-f1f6f4:#f1f6f4;
+    --c-f1f6f5:#f1f6f5;
+    --c-f3f6fa:#f3f6fa;
+    --c-f4f7e9:#f4f7e9;
+    --c-f59e0b:#f59e0b;
+    --c-f5f6f4:#f5f6f4;
+    --c-f5f8f7:#f5f8f7;
+    --c-f8fafd:#f8fafd;
+    --c-f97316:#f97316;
+    --c-faf3e4:#faf3e4;
+    --c-fbefec:#fbefec;
+    --c-fbf7ed:#fbf7ed;
+    --c-fcf3f1:#fcf3f1;
+    --c-fcf8f3:#fcf8f3;
+    --c-fde5e2:#fde5e2;
+    --c-fdf1f0:#fdf1f0;
+    --c-fff3bf:#fff3bf;
+    --c-fff6ee:#fff6ee;
+    --c-fff8e5:#fff8e5;
+    --c-fff9ec:#fff9ec;
+    --c-ffffff:#ffffff;
+  }
+  /* Screen only: printed and PDF output stays light. */
+  @media screen {
+    :root[data-theme=dark] {
+      color-scheme: dark;
+      --c-007b77:#8ce4e1;
+      --c-093264:#96bae6;
+      --c-10b981:#10b981;
+      --c-155cb7:#568fd7;
+      --c-183f43:#aadbe1;
+      --c-192b3b:#b2c9de;
+      --c-1d39460a:#a9cbdb0a;
+      --c-1d3e42:#add6db;
+      --c-1e5d60:#91d9dd;
+      --c-205537:#9cdab7;
+      --c-22334a:#a6bbd6;
+      --c-226c67:#87d9d4;
+      --c-254c50:#a2cfd4;
+      --c-284f53:#9fccd1;
+      --c-285d5e:#95d1d2;
+      --c-294f53:#a0cbd0;
+      --c-2f6b45:#8bcca3;
+      --c-2f6fb0:#4e8fd0;
+      --c-315e62:#93c5c9;
+      --c-344955:#a0b7c5;
+      --c-386963:#8ec3bc;
+      --c-395c5b:#9ac1c0;
+      --c-397477:#82c0c3;
+      --c-397b77:#7ec3bf;
+      --c-3a6949:#8fc19f;
+      --c-488c8c:#71b6b6;
+      --c-497578:#83b1b4;
+      --c-517273:#89abac;
+      --c-518587:#77abad;
+      --c-56687e:#7f92a8;
+      --c-586e71:#8ba2a5;
+      --c-5b6c80:#7e8fa3;
+      --c-5c7175:#889ea2;
+      --c-61717d:#82929e;
+      --c-61757b:#83979d;
+      --c-62707b:#83919d;
+      --c-64727b:#84929b;
+      --c-64748b:#75859c;
+      --c-687780:#808e97;
+      --c-6a7b7d:#829395;
+      --c-6e684e:#aea88d;
+      --c-70808b:#768691;
+      --c-718087:#7a8990;
+      --c-719596:#6c9192;
+      --c-72808a:#77858f;
+      --c-74808a:#78838d;
+      --c-775700:#e5ce8f;
+      --c-789b99:#688c8a;
+      --c-78b58c:#4f9064;
+      --c-7f8999:#6a7585;
+      --c-836328:#d5b374;
+      --c-849097:#6d7980;
+      --c-84cc16:#84cc16;
+      --c-8a6d1c:#ddc070;
+      --c-8a94a0:#656f7c;
+      --c-934a42:#bc726a;
+      --c-942d29:#d56a66;
+      --c-9a3324:#da6f60;
+      --c-9e483e:#c16a60;
+      --c-a2473b:#c4685c;
+      --c-a3adb3:#556167;
+      --c-aacac1:#3f655a;
+      --c-b26e61:#a45d50;
+      --c-b42318:#d76056;
+      --c-b47b72:#95594f;
+      --c-c69a44:#c0933b;
+      --c-c7d5d4:#3d4746;
+      --c-c8d7e9:#2c3847;
+      --c-c9d1da:#383e45;
+      --c-c9d9d3:#394541;
+      --c-c9dcd3:#37453e;
+      --c-d49b25:#d49b25;
+      --c-d4aa39:#d4aa39;
+      --c-d58880:#8e382f;
+      --c-d7b9b4:#55403c;
+      --c-d8dfdf:#343a3a;
+      --c-d8e0df:#333a39;
+      --c-d8e2df:#313a37;
+      --c-d9dfdf:#343939;
+      --c-dce2e1:#313636;
+      --c-dce4e3:#2f3736;
+      --c-dce4ee:#262e38;
+      --c-dfe5ec:#282e35;
+      --c-e1cbb7:#534334;
+      --c-e1e6ed:#272c33;
+      --c-e1eeea:#26342f;
+      --c-e1f3e7:#213527;
+      --c-e2e8e5:#2c322f;
+      --c-e3e8ee:#262b32;
+      --c-e4e9e7:#2b302e;
+      --c-e5eaea:#2a2f2f;
+      --c-e7ebeb:#292e2e;
+      --c-e7ecf2:#22282f;
+      --c-e9efed:#262d2a;
+      --c-eab308:#eab308;
+      --c-eaf4f2:#202d2b;
+      --c-edf0ef:#252928;
+      --c-edf4ef:#202a23;
+      --c-edf4f2:#202a28;
+      --c-edf5f1:#1f2b25;
+      --c-eef3f8:#1b232b;
+      --c-eef3fb:#161f2e;
+      --c-ef4444:#ef4444;
+      --c-f0f6f4:#1e2825;
+      --c-f1f6f4:#1f2724;
+      --c-f1f6f5:#1f2725;
+      --c-f3f6fa:#191f28;
+      --c-f4f7e9:#2b301c;
+      --c-f59e0b:#f59e0b;
+      --c-f5f6f4:#222420;
+      --c-f5f8f7:#1d2422;
+      --c-f8fafd:#141b26;
+      --c-f97316:#f97316;
+      --c-faf3e4:#352c18;
+      --c-fbefec:#2f1b16;
+      --c-fbf7ed:#2f2816;
+      --c-fcf3f1:#2c1915;
+      --c-fcf8f3:#2a2115;
+      --c-fde5e2:#391814;
+      --c-fdf1f0:#2e1513;
+      --c-fff3bf:#504617;
+      --c-fff6ee:#321f0f;
+      --c-fff8e5:#382d10;
+      --c-fff9ec:#34280f;
+      --c-ffffff:#262b31;
+    }
+  }
+  .theme-toggle { position: fixed; right: 18px; bottom: 18px; z-index: 1000; border: 1px solid var(--c-c8d7e9); border-radius: 20px; padding: 7px 14px; background: var(--c-ffffff); color: var(--c-22334a); font-size: .82rem; box-shadow: 0 4px 14px var(--c-1d39460a); }
+  .theme-toggle:hover { border-color: var(--c-719596); }
+  @media print { .theme-toggle { display: none; } }
+</style>
+<style>
+  :root { font-family: system-ui, sans-serif; color: var(--c-22334a); background: var(--c-f3f6fa); }
+  * { box-sizing: border-box; }
+  body { max-width: 1200px; margin: 0 auto; padding: 32px 24px; line-height: 1.55; }
+  h1, h2, h3 { line-height: 1.2; } h1 { margin-bottom: 12px; }
+  a { color: var(--c-155cb7); } a:hover { color: var(--c-093264); }
+  header, main > section, .workbench-counts, nav { background: var(--c-ffffff); border: 1px solid var(--c-dce4ee); border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+  .subtle { color: var(--c-5b6c80); } .notice { background: var(--c-fff8e5); border-left: 4px solid var(--c-d49b25); padding: 14px 18px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 18px; }
+  .actions a { display: inline-block; border: 1px solid var(--c-c8d7e9); border-radius: 6px; padding: 7px 12px; text-decoration: none; }
+  .badge { display: inline-block; background: var(--c-eef3fb); padding: 2px 10px; border-radius: 20px; font-size: .9rem; }
+  dl { display: grid; grid-template-columns: minmax(130px, 180px) 1fr; gap: 6px 16px; } dt { color: var(--c-5b6c80); } dd { margin: 0; overflow-wrap: anywhere; }
+  nav ul { display: flex; flex-wrap: wrap; gap: 10px 22px; list-style: none; padding: 0; }
+  .table-wrap { overflow-x: auto; } table { width: 100%; border-collapse: collapse; font-size: .93rem; }
+  th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--c-e7ecf2); vertical-align: top; } th { color: var(--c-56687e); background: var(--c-f8fafd); }
+  pre { white-space: pre-wrap; overflow-wrap: anywhere; background: var(--c-f8fafd); padding: 16px; max-height: 500px; overflow-y: auto; font-size: .82rem; }
+  details { margin-top: 14px; } summary { cursor: pointer; color: var(--c-155cb7); } section { scroll-margin-top: 20px; }
+  fieldset { border: 1px solid var(--c-dce4ee); border-radius: 8px; margin: 0 0 24px; padding: 20px; } legend { font-weight: 600; padding: 0 8px; }
+  label { display: block; font-weight: 600; margin: 0 0 6px; } input, select, button { font: inherit; }
+  input:not([type=file]), select { width: 100%; padding: 9px 11px; border: 1px solid var(--c-c8d7e9); border-radius: 6px; background: var(--c-ffffff); } input[type=file] { max-width: 100%; }
+  small { color: var(--c-5b6c80); overflow-wrap: anywhere; } .form-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 20px; }
+  button { border: 1px solid var(--c-c8d7e9); border-radius: 6px; padding: 8px 12px; cursor: pointer; background: var(--c-eef3fb); color: var(--c-155cb7); } button:disabled { cursor: default; opacity: .6; } .primary-button { background: var(--c-155cb7); color: var(--c-ffffff); padding: 12px 18px; }
+  .workflow { display: flex; flex-wrap: wrap; gap: 12px 28px; padding-left: 24px; } .workflow .current { font-weight: 700; } .workflow .pending { color: var(--c-7f8999); }
+  .hash { max-width: 230px; overflow-wrap: anywhere; font: .8rem ui-monospace,monospace; } .facts-scroll { max-height: 650px; } .facts-scroll thead { position: sticky; top: 0; background: var(--c-f8fafd); }
+  .filter-row { display: grid; grid-template-columns: 1fr; gap: 8px; margin-bottom: 20px; } [hidden] { display: none !important; }
+  @media (max-width: 650px) { .form-grid { grid-template-columns: 1fr; } fieldset { padding: 14px; } }
+  @media (max-width: 650px) { body { padding: 16px 12px; } header, main > section, nav { padding: 18px; } dl { grid-template-columns: 1fr; } }
+</style>
+<style>
+  :root{color:var(--c-192b3b);background:var(--c-f5f6f4);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+  body{max-width:1120px;padding:42px 28px 30px;line-height:1.55}h1{font-family:Georgia,serif;font-size:2.8rem;font-weight:500;letter-spacing:-.03em;margin:14px 0}h2{font-size:1.18rem}a{color:var(--c-1e5d60)}a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--c-488c8c);outline-offset:4px}
+  .eyebrow{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--c-517273);font-weight:700}.workspace-header{background:transparent;border:0;padding:20px 0 32px;margin:0}.workspace-header p{max-width:650px;color:var(--c-62707b)}.workspace-cards{display:grid;grid-template-columns:1fr 1fr;gap:24px;border:0;padding:0;background:transparent;margin:0}.workspace-card{position:relative;display:block;min-height:245px;padding:32px;border:1px solid var(--c-d8dfdf);border-radius:12px;background:var(--c-ffffff);text-decoration:none;color:var(--c-192b3b);transition:border-color .15s,box-shadow .15s}.workspace-card:hover{color:var(--c-192b3b);border-color:var(--c-719596);box-shadow:0 8px 24px var(--c-1d39460a)}.workspace-card h2{font-size:1.45rem;margin:24px 0 10px}.workspace-card p{max-width:330px;color:var(--c-62707b);margin:0}.card-icon{display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;border-radius:10px;background:var(--c-edf4f2);color:var(--c-285d5e)}.card-arrow{position:absolute;right:30px;top:38px;color:var(--c-497578)}.workspace-footer{margin-top:34px;font-size:.8rem;color:var(--c-74808a)}
+  .workspace-nav{display:flex;align-items:center;justify-content:space-between;padding:0 0 22px;border:0;border-bottom:1px solid var(--c-dce2e1);border-radius:0;background:transparent;margin-bottom:24px;gap:16px}.workspace-nav .brand{color:var(--c-344955);text-decoration:none;font-size:.8rem;letter-spacing:.08em;font-weight:700}.workspace-nav ul{margin:0;gap:22px}.workspace-nav a{text-decoration:none;font-size:.9rem}.workspace-nav a[aria-current=page]{color:var(--c-183f43);font-weight:700;border-bottom:2px solid var(--c-397477);padding-bottom:7px}
+  .setup-header{padding:0;border:0;background:transparent;margin-bottom:28px}.setup-header h1{font-size:2.3rem;margin:8px 0 10px}.setup-header>p{color:var(--c-62707b);margin:0}.stepper{display:flex;list-style:none;padding:18px 22px;margin:26px 0 0;background:var(--c-ffffff);border:1px solid var(--c-dce2e1);border-radius:10px;gap:36px}.stepper li{display:flex;align-items:center;gap:10px;color:var(--c-849097)}.step-number{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;border:1px solid var(--c-d9dfdf);font-size:.8rem}.stepper [aria-current=step]{color:var(--c-254c50);font-weight:700}.stepper [aria-current=step] .step-number{background:var(--c-284f53);color:var(--c-ffffff);border-color:var(--c-284f53)}
+  .setup-layout{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(270px,1fr);gap:24px;align-items:start}.setup-panel,.evidence-panel{background:var(--c-ffffff);border:1px solid var(--c-dce2e1);border-radius:12px;padding:28px}.setup-panel h2,.evidence-panel h2{margin:0 0 20px}.setup-panel fieldset{margin:24px 0 0;padding:0;border:0}.setup-panel legend{padding:0;font-size:.94rem;margin-bottom:10px}.setup-panel select{margin-bottom:0;padding:12px}.choice{display:flex;align-items:flex-start;gap:12px;padding:14px;border:1px solid var(--c-dce2e1);border-radius:8px;margin:0 0 10px;font-weight:400;cursor:pointer}.choice:has(input:checked){border-color:var(--c-518587);background:var(--c-f0f6f4)}.choice input{width:17px;height:17px;padding:0;flex-shrink:0;margin:3px 0 0;accent-color:var(--c-315e62)}.choice strong{display:block;font-size:.91rem}.choice small{display:block;margin-top:3px;line-height:1.5;font-size:.8rem}.setup-panel details{border-top:1px solid var(--c-e7ebeb);padding-top:18px;margin-top:22px}.setup-panel details label{margin-top:15px;font-size:.88rem}.setup-panel .hint{font-size:.8rem;color:var(--c-687780);margin:8px 0}.mode-note{font-size:.82rem;border-left:3px solid var(--c-c69a44);background:var(--c-fbf7ed);padding:12px 14px;margin:12px 0}.setup-actions{display:flex;justify-content:space-between;gap:16px;align-items:center;border-top:1px solid var(--c-e7ebeb);margin-top:24px;padding-top:22px}.primary-button{background:var(--c-294f53);border-color:var(--c-294f53);color:var(--c-ffffff);border-radius:7px;padding:12px 20px}.primary-button:disabled{background:var(--c-dce4e3);color:var(--c-6a7b7d);border-color:var(--c-dce4e3);opacity:1}.secondary-button{background:var(--c-ffffff);border-color:var(--c-c7d5d4);color:var(--c-315e62);padding:11px 16px}.execution-note{font-size:.8rem;color:var(--c-687780);margin:12px 0 0}.evidence-panel .evidence-name{font-family:Georgia,serif;font-size:1.25rem;margin:5px 0 20px}.evidence-panel dl{display:block;margin:0}.evidence-panel dt{font-size:.76rem;color:var(--c-718087);margin-top:17px}.evidence-panel dd{font-size:.88rem;margin-top:4px;overflow-wrap:anywhere}.evidence-tag{display:inline-block;font-size:.72rem;padding:3px 9px;border-radius:20px;color:var(--c-386963);background:var(--c-edf5f1)}.readiness{margin-top:24px;padding-top:18px;border-top:1px solid var(--c-e5eaea);font-size:.8rem;color:var(--c-687780)}.readiness strong{display:block;color:var(--c-395c5b);margin-bottom:4px}.setup-errors{margin-bottom:20px;padding:15px 18px;border:1px solid var(--c-e1cbb7);background:var(--c-fcf8f3);border-radius:8px;font-size:.9rem}.setup-errors ul{margin:6px 0;padding-left:20px}.setup-checked{padding:12px 16px;background:var(--c-edf5f1);border:1px solid var(--c-c9dcd3);border-radius:8px;margin-bottom:20px;font-size:.88rem}.placeholder{padding:32px;background:var(--c-ffffff);border:1px solid var(--c-dce2e1);border-radius:12px}.placeholder p{color:var(--c-62707b);max-width:620px}
+  #add-evidence{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:28px 40px;align-items:start}#add-evidence>h2,#add-evidence>.hint{grid-column:1/-1;margin:0}#add-evidence>h2{margin-bottom:-14px}#add-evidence form{margin:0;min-width:0}#add-evidence fieldset{margin:0}#add-evidence legend{font-weight:600;font-size:1rem;margin-bottom:14px}#add-evidence label:not(.choice){display:block;margin:16px 0 6px;font-size:.88rem;font-weight:600}#add-evidence legend+label{margin-top:0}#add-evidence input:not([type=radio]):not([type=checkbox]){width:100%;box-sizing:border-box;padding:11px 12px}#add-evidence input[type=radio],#add-evidence input[type=checkbox]{width:17px;height:17px;padding:0;margin:0;accent-color:var(--c-315e62)}#add-evidence .choice{margin:14px 0 0}#add-evidence .hint{margin:6px 0 0}#add-evidence .setup-actions{justify-content:flex-start;margin-top:20px;padding-top:0;border-top:0}#add-evidence form[action$="/fetch"]{grid-column:1/-1;order:3;padding-top:24px;border-top:1px solid var(--c-e7ebeb)}#add-evidence .table-wrap{margin-top:4px}#add-evidence table{font-size:.86rem}#add-evidence th,#add-evidence td{padding:9px 12px;vertical-align:middle}#add-evidence td:nth-child(n+3):nth-child(-n+5){white-space:nowrap}#add-evidence th:first-child,#add-evidence td:first-child{width:36px}#add-evidence td input[type=radio]{display:block;margin:0 auto}#add-evidence td label{margin:0!important;font-weight:400!important}
+  @media(max-width:800px){ #add-evidence{grid-template-columns:1fr}}
+  @media(max-width:800px){.setup-layout{grid-template-columns:1fr}.workspace-nav{align-items:flex-start}.workspace-nav .brand{max-width:150px}.workspace-cards{gap:16px}.workspace-card{padding:24px}.card-arrow{right:22px;top:30px}}
+  @media(max-width:560px){body{padding:22px 16px}.workspace-header h1{font-size:2.1rem}.workspace-cards{grid-template-columns:1fr}.workspace-card{min-height:205px}.setup-panel,.evidence-panel{padding:22px}.stepper{gap:18px;padding:14px;font-size:.84rem}.step-number{width:24px;height:24px}.workspace-nav ul{gap:14px}.setup-actions{flex-wrap:wrap}.workspace-nav .brand{font-size:.7rem}}
+  @media(prefers-reduced-motion:reduce){.workspace-card{transition:none}}
+</style><style>
+.memo-header{display:flex;align-items:flex-start;justify-content:space-between;gap:24px}.memo-actions{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 24px}.memo-button{display:inline-flex;align-items:center;box-sizing:border-box;background:var(--c-ffffff);border:1px solid var(--c-c7d5d4);border-radius:7px;padding:11px 16px;text-decoration:none;font-size:.9rem;font-weight:600;color:var(--c-315e62)}.memo-button.primary{background:var(--c-294f53);border-color:var(--c-294f53);color:var(--c-ffffff);padding:12px 20px}.memo-meta{display:flex;flex-wrap:wrap;gap:10px 24px;font-size:.88rem;color:var(--c-62707b)}.memo-meta span{display:inline-block}.memo-status{font-size:.88rem;padding:12px 16px;background:var(--c-edf5f1);border:1px solid var(--c-c9dcd3);border-radius:8px;margin:18px 0}.memo-paper{padding:28px;background:var(--c-ffffff);border:1px solid var(--c-dce2e1);border-radius:12px}.memo-paper h2{font-size:1.18rem;border-top:1px solid var(--c-e4e9e7);padding-top:22px;margin:28px 0 16px}.memo-paper h2:first-child{border:0;padding-top:0;margin-top:0}.memo-paper h3{font-size:1rem;margin:18px 0 8px}.memo-paper p,.memo-paper li{font-size:.9rem;line-height:1.6}.memo-claim{margin:14px 0 20px}.memo-claim p{margin:4px 0}.memo-claim .qualification{color:var(--c-6e684e);font-size:.8rem}.memo-empty{color:var(--c-72808a);font-size:.85rem}.source-list{list-style:none;padding:0}.source-list li{padding:14px 0;border-bottom:1px solid var(--c-edf0ef);overflow-wrap:anywhere}.source-list small{display:block;color:var(--c-687780)}.memo-columns{display:grid;grid-template-columns:1fr 1fr;gap:30px}.memo-table-wrap{overflow-x:auto}.memo-table{width:100%;font-size:.82rem;border-collapse:collapse}.memo-table th,.memo-table td{padding:10px;text-align:left;border-bottom:1px solid var(--c-e2e8e5)}.memo-table th{color:var(--c-5c7175);background:var(--c-f5f8f7)}.record-id{font-size:.73rem;color:var(--c-70808b);overflow-wrap:anywhere}.notice-warning{padding:12px 16px;border-left:3px solid var(--c-c69a44);background:var(--c-fbf7ed);font-size:.85rem}.audit-tabs{display:flex;gap:12px;flex-wrap:wrap;margin:20px 0}.audit-tabs a{font-size:.8rem;text-decoration:none;padding:7px 10px;border:1px solid var(--c-d8e2df);border-radius:6px}.audit-record{padding:16px 0;border-bottom:1px solid var(--c-e2e8e5)}.audit-record pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:480px;overflow-y:auto;background:var(--c-f5f8f7);padding:14px;font-size:.75rem}.audit-record details{margin:12px 0}.audit-record summary{font-size:.82rem}.audit-record dl{display:block;font-size:.82rem}.audit-record dt{color:var(--c-61717d);margin-top:8px}.audit-record dd{margin:3px 0}.audit-record blockquote{border-left:3px solid var(--c-c9d9d3);padding-left:14px;color:var(--c-586e71);font-size:.85rem}.audit-record:target,.source-list li:target,.memo-claim:target{background:var(--c-f4f7e9);scroll-margin-top:20px}.audit-link{font-size:.78rem}.source-cite{font-size:.75rem;white-space:nowrap}@media(max-width:760px){.memo-columns{grid-template-columns:1fr;gap:0}.memo-paper{padding:22px}.memo-header{flex-direction:column;gap:0}.memo-header h1{font-size:1.8rem}}
+</style></head><body><nav class="workspace-nav" aria-label="Main navigation"><a class="brand" href="/">CREDIT ANALYSIS WORKSPACE</a><ul><li><a href="/analysis/new">New Analysis</a></li><li><a href="/credit-memos" aria-current="page">Credit Memos</a></li></ul></nav>
+
+
+
+<style>
+.analysis-header{margin-bottom:22px}.analysis-header h1{margin:6px 0 8px}.analysis-meta{display:flex;flex-wrap:wrap;gap:6px 24px;font-size:.88rem;color:var(--c-62707b)}
+.analysis-tabs{display:flex;flex-wrap:wrap;gap:4px;margin:20px 0 0;border-bottom:1px solid var(--c-d8e0df)}
+.analysis-tabs a{padding:10px 14px;margin-bottom:-1px;border:1px solid transparent;border-radius:7px 7px 0 0;font-size:.88rem;font-weight:600;color:var(--c-315e62);text-decoration:none}
+.analysis-tabs a[href]:hover{background:var(--c-f1f6f5)}
+.analysis-tabs a[aria-current=page]{background:var(--c-ffffff);border-color:var(--c-d8e0df);border-bottom-color:var(--c-ffffff);color:var(--c-192b3b)}
+.analysis-tabs a[aria-disabled=true]{color:var(--c-a3adb3);cursor:default}
+</style>
+<header class="setup-header analysis-header"><span class="eyebrow">Credit Memos · Memo</span>
+<h1>OFFLINE SYNTHETIC FIXTURE</h1>
+<div class="analysis-meta"><span>Reporting period: 2025-12-31</span><span>Business Overview Only</span><span>Standard</span><span data-execution-status>Execution: Completed</span></div>
+<nav class="analysis-tabs" aria-label="Analysis sections"><a data-tab="memo" href="/analysis/offline-consolidated-preview/review" aria-current="page">Memo</a><a data-tab="bo" href="/cases/NFH_BO/bo.html?analysis_run_id=ar_5f1d1e213ea4435c&amp;job=offline-consolidated-preview">Business Overview</a><a data-tab="audit" href="/analysis/offline-consolidated-preview/audit">Audit &amp; Review</a><a data-tab="execution" href="/analysis/offline-consolidated-preview/execution">Execution</a></nav>
+</header>
+<main><p class="notice-warning"><strong>Synthetic / offline record.</strong> Scripted model responses; this is not a live generated credit memo.</p>
+<div class="memo-status">Execution: <strong>Completed</strong> · Credit memo: <strong>Human review required</strong></div>
+
+<article class="memo-paper" aria-label="Selected run credit memo">
+<style>.consolidated-bo{font-size:14px;line-height:1.5;overflow-wrap:anywhere}.consolidated-bo h2{font-size:20px;margin:24px 0 10px}.consolidated-bo h3{font-size:15px}.consolidated-bo .bo-copies{display:grid;gap:24px}.consolidated-bo .bo-copies.structure-debt{grid-template-columns:minmax(0,1fr) minmax(0,1.5fr)}.bo-fields{display:block;margin:6px 0;min-width:0}.bo-fields>div{margin:8px 0;padding-left:10px;border-left:1px solid var(--c-dce2e1,#ddd)}.bo-fields>div{display:grid;grid-template-columns:minmax(0,.35fr) minmax(0,1fr);gap:10px}.bo-fields dt{font-weight:600}.bo-fields dd{margin:0;min-width:0}.bo-fields .bo-fields .bo-fields>div{display:block}.bo-verbatim{white-space:pre-wrap}.bo-provenance{font-size:12px;color:var(--c-687780,#586575)}.consolidated-bo li{margin:8px 0}.bo-notice{padding:10px;background:var(--c-fbf7ed,#fff5dd)}@media(max-width:760px){.bo-fields>div{display:block}.consolidated-bo .bo-copies.structure-debt{grid-template-columns:1fr}}@media print{.consolidated-bo .bo-copies.structure-debt{display:block}.consolidated-bo h2,.consolidated-bo h3{break-after:avoid}.consolidated-bo{font-size:10pt}.bo-fields>div{break-inside:auto}}</style>
+<div class="consolidated-bo">
+<p class="bo-provenance">Consolidated Business Overview v1.0 · ar_5f1d1e213ea4435c · offline_simulation</p>
+<p class="bo-notice">human_review_required · Human review: pending. Unresolved material challenge. This is NOT a final Business Overview; mandatory human review.</p>
+<section id="bo-section-1"><h2>Corporate Structure &amp; Debt Obligations</h2><p class="bo-provenance">Content status: incomplete</p>
+<p class="bo-notice">Missing designated content: module_conclusions.M3.m3_rebuild.structure.artifact</p><p class="bo-notice">Educational structure is not a verified legal/obligor assessment. Management observations are bounded continuity rules, not competence/governance ratings.</p>
+<div class="bo-copies "><div><h3>Debt obligations</h3>
+<dl class="bo-fields"><div><dt>creditor priority framework</dt><dd>
+<dl class="bo-fields"><div><dt>consolidated total indebtedness m</dt><dd>
+<span class="bo-verbatim">46492.0</span>
+</dd></div><div><dt>prospective loan secured placement</dt><dd>
+<span class="bo-verbatim">A secured bank loan would rank in Tier 1 ahead of the $43.7B senior unsecured notes, benefiting from direct OpCo collateral.</span>
+</dd></div><div><dt>prospective loan senior unsecured placement</dt><dd>
+<span class="bo-verbatim">A senior unsecured bank loan would rank pari passu with the existing Tier 2 senior unsecured notes, sharing the HCA Healthcare, Inc. upstream guarantee.</span>
+</dd></div><div><dt>structural subordination drag ratio</dt><dd>
+<span class="bo-verbatim">0.022</span>
+</dd></div><div><dt>tier 1 direct opco secured m</dt><dd>
+<span class="bo-verbatim">1021.0</span>
+</dd></div><div><dt>tier 2 senior unsecured guaranteed m</dt><dd>
+<span class="bo-verbatim">45471.0</span>
+</dd></div><div><dt>tier 3 unguaranteed holdco m</dt><dd>
+<span class="bo-verbatim">0.0</span>
+</dd></div></dl>
+
+</dd></div><div><dt>extraction source</dt><dd>
+<dl class="bo-fields"><div><dt>item references</dt><dd>
+<ol><li>
+<span class="bo-verbatim">Item 7 MD&amp;A</span>
+</li><li>
+<span class="bo-verbatim">Item 8 Note 8</span>
+</li><li>
+<span class="bo-verbatim">Item 15 Exhibit 4.x</span>
+</li></ol>
+
+</dd></div><div><dt>narrative</dt><dd>
+<span class="bo-verbatim">Debt population drawn from Item 8 Financial Statements, Note 8 (Long-Term Debt), cross-referenced to Item 7 MD&amp;A Liquidity &amp; Capital Resources and the Item 15 Exhibit Index supplemental indentures (Exhibits 4.44-4.53).</span>
+</dd></div><div><dt>page references</dt><dd>
+<ol><li>
+<span class="bo-verbatim">F-18</span>
+</li><li>
+<span class="bo-verbatim">F-19</span>
+</li><li>
+<span class="bo-verbatim">57</span>
+</li></ol>
+
+</dd></div></dl>
+
+</dd></div><div><dt>non note obligations schedule</dt><dd>
+<ol><li>
+<dl class="bo-fields"><div><dt>available facility limit m</dt><dd>
+<span class="bo-verbatim">4000.0</span>
+</dd></div><div><dt>collateral security status</dt><dd>
+<span class="bo-verbatim">unsecured</span>
+</dd></div><div><dt>guarantors credit support</dt><dd>
+<span class="bo-verbatim">HCA Healthcare, Inc. guarantee</span>
+</dd></div><div><dt>interest rate terms</dt><dd>
+<span class="bo-verbatim">4.3% weighted average; 18-day average life</span>
+</dd></div><div><dt>legal borrower</dt><dd>
+<span class="bo-verbatim">HCA Inc.</span>
+</dd></div><div><dt>maturity</dt><dd>
+<span class="bo-verbatim">Short-term</span>
+</dd></div><div><dt>obligation facility</dt><dd>
+<span class="bo-verbatim">Commercial paper program</span>
+</dd></div><div><dt>principal drawn m</dt><dd>
+<span class="bo-verbatim">2207.0</span>
+</dd></div><div><dt>priority ranking tier</dt><dd>
+<span class="bo-verbatim">tier_2_senior_unsecured_guaranteed</span>
+</dd></div></dl>
+
+</li><li>
+<dl class="bo-fields"><div><dt>available facility limit m</dt><dd>
+<span>Not recorded</span>
+</dd></div><div><dt>collateral security status</dt><dd>
+<span class="bo-verbatim">secured</span>
+</dd></div><div><dt>guarantors credit support</dt><dd>
+<span class="bo-verbatim">Secured at operating subsidiary level</span>
+</dd></div><div><dt>interest rate terms</dt><dd>
+<span class="bo-verbatim">4.6% effective</span>
+</dd></div><div><dt>legal borrower</dt><dd>
+<span class="bo-verbatim">HCA Inc.</span>
+</dd></div><div><dt>maturity</dt><dd>
+<span class="bo-verbatim">Various</span>
+</dd></div><div><dt>obligation facility</dt><dd>
+<span class="bo-verbatim">Other senior secured debt (finance leases + other)</span>
+</dd></div><div><dt>principal drawn m</dt><dd>
+<span class="bo-verbatim">1021.0</span>
+</dd></div><div><dt>priority ranking tier</dt><dd>
+<span class="bo-verbatim">tier_1_direct_opco_secured</span>
+</dd></div></dl>
+
+</li><li>
+<dl class="bo-fields"><div><dt>available facility limit m</dt><dd>
+<span class="bo-verbatim">8000.0</span>
+</dd></div><div><dt>collateral security status</dt><dd>
+<span class="bo-verbatim">unsecured</span>
+</dd></div><div><dt>guarantors credit support</dt><dd>
+<span class="bo-verbatim">HCA Healthcare, Inc. guarantee</span>
+</dd></div><div><dt>interest rate terms</dt><dd>
+<span class="bo-verbatim">SOFR + 1.125%</span>
+</dd></div><div><dt>legal borrower</dt><dd>
+<span class="bo-verbatim">HCA Inc.</span>
+</dd></div><div><dt>maturity</dt><dd>
+<span class="bo-verbatim">2030</span>
+</dd></div><div><dt>obligation facility</dt><dd>
+<span class="bo-verbatim">Senior unsecured revolving credit facility (5-year)</span>
+</dd></div><div><dt>principal drawn m</dt><dd>
+<span class="bo-verbatim">0.0</span>
+</dd></div><div><dt>priority ranking tier</dt><dd>
+<span class="bo-verbatim">tier_2_senior_unsecured_guaranteed</span>
+</dd></div></dl>
+
+</li><li>
+<dl class="bo-fields"><div><dt>available facility limit m</dt><dd>
+<span>Not recorded</span>
+</dd></div><div><dt>collateral security status</dt><dd>
+<span class="bo-verbatim">unsecured</span>
+</dd></div><div><dt>guarantors credit support</dt><dd>
+<span class="bo-verbatim">n/a</span>
+</dd></div><div><dt>interest rate terms</dt><dd>
+<span class="bo-verbatim">n/a (contra-liability)</span>
+</dd></div><div><dt>legal borrower</dt><dd>
+<span class="bo-verbatim">HCA Inc.</span>
+</dd></div><div><dt>maturity</dt><dd>
+<span class="bo-verbatim">n/a</span>
+</dd></div><div><dt>obligation facility</dt><dd>
+<span class="bo-verbatim">Debt issuance costs and discounts</span>
+</dd></div><div><dt>principal drawn m</dt><dd>
+<span class="bo-verbatim">-436.0</span>
+</dd></div><div><dt>priority ranking tier</dt><dd>
+<span class="bo-verbatim">tier_2_senior_unsecured_guaranteed</span>
+</dd></div></dl>
+
+</li></ol>
+
+</dd></div><div><dt>reconciling items</dt><dd>
+<ol><li>No recorded items.</li></ol>
+
+</dd></div><div><dt>senior notes schedule</dt><dd>
+<ol><li>
+<dl class="bo-fields"><div><dt>collateral security status</dt><dd>
+<span class="bo-verbatim">unsecured</span>
+</dd></div><div><dt>coupon interest rate</dt><dd>
+<span class="bo-verbatim">5.000% fixed</span>
+</dd></div><div><dt>guarantors credit support</dt><dd>
+<span class="bo-verbatim">Fully and unconditionally guaranteed on an unsecured basis by HCA Healthcare, Inc.</span>
+</dd></div><div><dt>legal borrower</dt><dd>
+<span class="bo-verbatim">HCA Inc.</span>
+</dd></div><div><dt>maturity year</dt><dd>
+<span class="bo-verbatim">2028</span>
+</dd></div><div><dt>principal amount m</dt><dd>
+<span class="bo-verbatim">700.0</span>
+</dd></div><div><dt>priority ranking tier</dt><dd>
+<span class="bo-verbatim">tier_2_senior_unsecured_guaranteed</span>
+</dd></div><div><dt>senior note series</dt><dd>
+<span class="bo-verbatim">5.000% Senior Notes</span>
+</dd></div></dl>
+
+</li><li>
+<dl class="bo-fields"><div><dt>collateral security status</dt><dd>
+<span class="bo-verbatim">unsecured</span>
+</dd></div><div><dt>coupon interest rate</dt><dd>
+<span class="bo-verbatim">5.250% fixed</span>
+</dd></div><div><dt>guarantors credit support</dt><dd>
+<span class="bo-verbatim">Fully and unconditionally guaranteed on an unsecured basis by HCA Healthcare, Inc.</span>
+</dd></div><div><dt>legal borrower</dt><dd>
+<span class="bo-verbatim">HCA Inc.</span>
+</dd></div><div><dt>maturity year</dt><dd>
+<span class="bo-verbatim">2030</span>
+</dd></div><div><dt>principal amount m</dt><dd>
+<span class="bo-verbatim">750.0</span>
+</dd></div><div><dt>priority ranking tier</dt><dd>
+<span class="bo-verbatim">tier_2_senior_unsecured_guaranteed</span>
+</dd></div><div><dt>senior note series</dt><dd>
+<span class="bo-verbatim">5.250% Senior Notes</span>
+</dd></div></dl>
+
+</li><li>
+<dl class="bo-fields"><div><dt>collateral security status</dt><dd>
+<span class="bo-verbatim">unsecured</span>
+</dd></div><div><dt>coupon interest rate</dt><dd>
+<span class="bo-verbatim">5.750% fixed</span>
+</dd></div><div><dt>guarantors credit support</dt><dd>
+<span class="bo-verbatim">Fully and unconditionally guaranteed on an unsecured basis by HCA Healthcare, Inc.</span>
+</dd></div><div><dt>legal borrower</dt><dd>
+<span class="bo-verbatim">HCA Inc.</span>
+</dd></div><div><dt>maturity year</dt><dd>
+<span class="bo-verbatim">2035</span>
+</dd></div><div><dt>principal amount m</dt><dd>
+<span class="bo-verbatim">1500.0</span>
+</dd></div><div><dt>priority ranking tier</dt><dd>
+<span class="bo-verbatim">tier_2_senior_unsecured_guaranteed</span>
+</dd></div><div><dt>senior note series</dt><dd>
+<span class="bo-verbatim">5.750% Senior Notes</span>
+</dd></div></dl>
+
+</li><li>
+<dl class="bo-fields"><div><dt>collateral security status</dt><dd>
+<span class="bo-verbatim">unsecured</span>
+</dd></div><div><dt>coupon interest rate</dt><dd>
+<span class="bo-verbatim">6.200% fixed</span>
+</dd></div><div><dt>guarantors credit support</dt><dd>
+<span class="bo-verbatim">Fully and unconditionally guaranteed on an unsecured basis by HCA Healthcare, Inc.</span>
+</dd></div><div><dt>legal borrower</dt><dd>
+<span class="bo-verbatim">HCA Inc.</span>
+</dd></div><div><dt>maturity year</dt><dd>
+<span class="bo-verbatim">2055</span>
+</dd></div><div><dt>principal amount m</dt><dd>
+<span class="bo-verbatim">1250.0</span>
+</dd></div><div><dt>priority ranking tier</dt><dd>
+<span class="bo-verbatim">tier_2_senior_unsecured_guaranteed</span>
+</dd></div><div><dt>senior note series</dt><dd>
+<span class="bo-verbatim">6.200% Senior Notes</span>
+</dd></div></dl>
+
+</li><li>
+<dl class="bo-fields"><div><dt>collateral security status</dt><dd>
+<span class="bo-verbatim">unsecured</span>
+</dd></div><div><dt>coupon interest rate</dt><dd>
+<span class="bo-verbatim">various fixed, 5.1% effective</span>
+</dd></div><div><dt>guarantors credit support</dt><dd>
+<span class="bo-verbatim">Fully and unconditionally guaranteed on an unsecured basis by HCA Healthcare, Inc.</span>
+</dd></div><div><dt>legal borrower</dt><dd>
+<span class="bo-verbatim">HCA Inc.</span>
+</dd></div><div><dt>maturity year</dt><dd>
+<span class="bo-verbatim">2064</span>
+</dd></div><div><dt>principal amount m</dt><dd>
+<span class="bo-verbatim">39050.0</span>
+</dd></div><div><dt>priority ranking tier</dt><dd>
+<span class="bo-verbatim">tier_2_senior_unsecured_guaranteed</span>
+</dd></div><div><dt>senior note series</dt><dd>
+<span class="bo-verbatim">Other senior unsecured notes (2026-2064)</span>
+</dd></div></dl>
+
+</li><li>
+<dl class="bo-fields"><div><dt>collateral security status</dt><dd>
+<span class="bo-verbatim">unsecured</span>
+</dd></div><div><dt>coupon interest rate</dt><dd>
+<span class="bo-verbatim">7.19% weighted average</span>
+</dd></div><div><dt>guarantors credit support</dt><dd>
+<span class="bo-verbatim">Fully and unconditionally guaranteed on an unsecured basis by HCA Healthcare, Inc.</span>
+</dd></div><div><dt>legal borrower</dt><dd>
+<span class="bo-verbatim">HCA Inc.</span>
+</dd></div><div><dt>maturity year</dt><dd>
+<span class="bo-verbatim">2095</span>
+</dd></div><div><dt>principal amount m</dt><dd>
+<span class="bo-verbatim">450.0</span>
+</dd></div><div><dt>priority ranking tier</dt><dd>
+<span class="bo-verbatim">tier_2_senior_unsecured_guaranteed</span>
+</dd></div><div><dt>senior note series</dt><dd>
+<span class="bo-verbatim">Debentures (maturities through 2095)</span>
+</dd></div></dl>
+
+</li></ol>
+
+</dd></div></dl>
+
+<details class="bo-provenance"><summary>Source &amp; copy verification</summary>Copied verbatim · bo_memo:ar_5f1d1e213ea4435c · module_conclusions.M4.m4_analysis.deliverable_1 · d9cec17ba8916653f0abb11f5d441d6710d2a53b304e984f46b0697478a010fa</details></div></div></section><section id="bo-section-2"><h2>Management</h2><p class="bo-provenance">Content status: missing</p>
+<p class="bo-notice">Missing designated content: module_conclusions.M3.m3_rebuild.management.artifact</p><p class="bo-notice">Educational structure is not a verified legal/obligor assessment. Management observations are bounded continuity rules, not competence/governance ratings.</p>
+<div class="bo-copies "></div></section><section id="bo-section-3"><h2>Competitive Position</h2><p class="bo-provenance">Content status: complete</p>
+
+<p>Negotiated reimbursement and stable volumes coexist with operating cost pressures.</p><p>Based on disclosed conditions; effectiveness is not independently established.</p><p class="bo-provenance">Evidence: <a href="#bo-source-ev_payer">ev_payer</a> <a href="#bo-source-ev_model">ev_model</a> <a href="#bo-source-ev_labor">ev_labor</a> </p>
+<ol><li><strong>Revenue</strong><p>Negotiated managed-care rates anchor reimbursement.</p><p>Based on disclosed conditions; competitive outcomes remain uncertain.</p><p class="bo-provenance">Findings: M1S1-H001 · Evidence: <a href="#bo-source-ev_payer">ev_payer</a> </p></li><li><strong>Revenue</strong><p>Stable admissions provide a volume foundation.</p><p>Based on disclosed conditions; competitive outcomes remain uncertain.</p><p class="bo-provenance">Findings: M1S2-H001 · Evidence: <a href="#bo-source-ev_model">ev_model</a> </p></li><li><strong>Vulnerability</strong><p>Termination rights limit contractual durability.</p><p>Based on disclosed conditions; competitive outcomes remain uncertain.</p><p class="bo-provenance">Findings: M1S3-H001 · Evidence: <a href="#bo-source-ev_payer">ev_payer</a> </p></li><li><strong>Cost</strong><p>Nursing scarcity exposes the business to contract labour costs.</p><p>Based on disclosed conditions; competitive outcomes remain uncertain.</p><p class="bo-provenance">Findings: M1S4-H001 · Evidence: <a href="#bo-source-ev_labor">ev_labor</a> </p></li><li><strong>Vulnerability</strong><p>Hospital and ambulatory competition constrain the competitive position.</p><p>Based on disclosed conditions; competitive outcomes remain uncertain.</p><p class="bo-provenance">Findings: M1S5-H001 · Evidence: <a href="#bo-source-ev_compete">ev_compete</a> </p></li></ol>
+<p>Competitor staffing evidence unavailable.</p>
+<div class="bo-copies "></div></section><section id="bo-section-4"><h2>Refinancing History</h2><p class="bo-provenance">Content status: complete</p>
+
+<div class="bo-copies "><div><h3>Refinancing transactions</h3>
+<dl class="bo-fields"><div><dt>extraction source</dt><dd>
+<dl class="bo-fields"><div><dt>item references</dt><dd>
+<ol><li>
+<span class="bo-verbatim">Item 7 MD&amp;A</span>
+</li><li>
+<span class="bo-verbatim">Item 8 Note 8</span>
+</li></ol>
+
+</dd></div><div><dt>narrative</dt><dd>
+<span class="bo-verbatim">Refinancing activity reconstructed from Note 8 issuance and repayment disclosures and the MD&amp;A Capital Resources discussion for FY2023-FY2025.</span>
+</dd></div><div><dt>page references</dt><dd>
+<ol><li>
+<span class="bo-verbatim">F-18</span>
+</li><li>
+<span class="bo-verbatim">55</span>
+</li></ol>
+
+</dd></div></dl>
+
+</dd></div><div><dt>metrics</dt><dd>
+<dl class="bo-fields"><div><dt>historical refinancing distress events</dt><dd>
+<span class="bo-verbatim">0</span>
+</dd></div><div><dt>refinancing cost spread delta bps</dt><dd>
+<span class="bo-verbatim">25.0</span>
+</dd></div><div><dt>weighted avg maturity extension years</dt><dd>
+<span class="bo-verbatim">7.5</span>
+</dd></div><div><dt>weighted avg refinancing lead time months</dt><dd>
+<span class="bo-verbatim">11.0</span>
+</dd></div></dl>
+
+</dd></div><div><dt>refinancing capacity discipline verdict</dt><dd>
+<span class="bo-verbatim">Deep, repeated capital-markets access with proactive pre-maturity refinancing and zero distress events demonstrates strong refinancing capacity and discipline.</span>
+</dd></div><div><dt>refinancing log</dt><dd>
+<ol><li>
+<dl class="bo-fields"><div><dt>coupon interest terms</dt><dd>
+<span class="bo-verbatim">5.000%-6.200% fixed + FRN</span>
+</dd></div><div><dt>execution date fiscal period</dt><dd>
+<span class="bo-verbatim">Feb 2025</span>
+</dd></div><div><dt>new extended maturity</dt><dd>
+<span class="bo-verbatim">2028-2055</span>
+</dd></div><div><dt>obligation series description</dt><dd>
+<span class="bo-verbatim">February 2025 senior notes ($5.25B)</span>
+</dd></div><div><dt>original retired maturity</dt><dd>
+<span>Not recorded</span>
+</dd></div><div><dt>principal amount m</dt><dd>
+<span class="bo-verbatim">5250.0</span>
+</dd></div><div><dt>transaction category</dt><dd>
+<span class="bo-verbatim">new_issuance</span>
+</dd></div><div><dt>use of proceeds impact</dt><dd>
+<span class="bo-verbatim">Repay senior unsecured credit facility + general corporate purposes.</span>
+</dd></div></dl>
+
+</li><li>
+<dl class="bo-fields"><div><dt>coupon interest terms</dt><dd>
+<span class="bo-verbatim">4.300%-5.700% fixed</span>
+</dd></div><div><dt>execution date fiscal period</dt><dd>
+<span class="bo-verbatim">Oct 2025</span>
+</dd></div><div><dt>new extended maturity</dt><dd>
+<span class="bo-verbatim">2030-2055</span>
+</dd></div><div><dt>obligation series description</dt><dd>
+<span class="bo-verbatim">October 2025 senior notes ($3.25B)</span>
+</dd></div><div><dt>original retired maturity</dt><dd>
+<span>Not recorded</span>
+</dd></div><div><dt>principal amount m</dt><dd>
+<span class="bo-verbatim">3250.0</span>
+</dd></div><div><dt>transaction category</dt><dd>
+<span class="bo-verbatim">new_issuance</span>
+</dd></div><div><dt>use of proceeds impact</dt><dd>
+<span class="bo-verbatim">Repay commercial paper + GCP.</span>
+</dd></div></dl>
+
+</li><li>
+<dl class="bo-fields"><div><dt>coupon interest terms</dt><dd>
+<span class="bo-verbatim">5.375% fixed</span>
+</dd></div><div><dt>execution date fiscal period</dt><dd>
+<span class="bo-verbatim">FY2025</span>
+</dd></div><div><dt>new extended maturity</dt><dd>
+<span>Not recorded</span>
+</dd></div><div><dt>obligation series description</dt><dd>
+<span class="bo-verbatim">5.375% senior notes</span>
+</dd></div><div><dt>original retired maturity</dt><dd>
+<span class="bo-verbatim">2025</span>
+</dd></div><div><dt>principal amount m</dt><dd>
+<span class="bo-verbatim">2600.0</span>
+</dd></div><div><dt>transaction category</dt><dd>
+<span class="bo-verbatim">repayment_at_maturity</span>
+</dd></div><div><dt>use of proceeds impact</dt><dd>
+<span class="bo-verbatim">Repaid at scheduled maturity.</span>
+</dd></div></dl>
+
+</li><li>
+<dl class="bo-fields"><div><dt>coupon interest terms</dt><dd>
+<span class="bo-verbatim">5.875% fixed</span>
+</dd></div><div><dt>execution date fiscal period</dt><dd>
+<span class="bo-verbatim">FY2025</span>
+</dd></div><div><dt>new extended maturity</dt><dd>
+<span>Not recorded</span>
+</dd></div><div><dt>obligation series description</dt><dd>
+<span class="bo-verbatim">5.875% senior notes due 2026</span>
+</dd></div><div><dt>original retired maturity</dt><dd>
+<span class="bo-verbatim">2026</span>
+</dd></div><div><dt>principal amount m</dt><dd>
+<span class="bo-verbatim">1500.0</span>
+</dd></div><div><dt>transaction category</dt><dd>
+<span class="bo-verbatim">early_redemption</span>
+</dd></div><div><dt>use of proceeds impact</dt><dd>
+<span class="bo-verbatim">Redeemed early ahead of maturity.</span>
+</dd></div></dl>
+
+</li></ol>
+
+</dd></div></dl>
+
+<details class="bo-provenance"><summary>Source &amp; copy verification</summary>Copied verbatim · bo_memo:ar_5f1d1e213ea4435c · module_conclusions.M4.m4_analysis.deliverable_2 · a03a42e610dbe311974ef23be1c94e274847e1c7bbd78ade2c5ac1e8cef8c3b7</details></div><div><h3>Existing Module 4 conclusion</h3>
+<dl class="bo-fields"><div><dt>core credit assessment</dt><dd>
+<span class="bo-verbatim">HCA presents a strong, well-managed debt structure with proven refinancing access and prudent stewardship; a prospective bank lender ranks pari passu with existing senior unsecured notes absent collateral.</span>
+</dd></div><div><dt>evidence synthesis narrative</dt><dd>
+<span class="bo-verbatim">Deliverables 1-3 show a predominantly senior-unsecured capital structure guaranteed by the HoldCo, a disciplined and deep refinancing track record, and internally funded growth alongside large but controlled shareholder distributions.</span>
+</dd></div><div><dt>executive credit summary box</dt><dd>
+<dl class="bo-fields"><div><dt>executive takeaways</dt><dd>
+<ol><li>
+<span class="bo-verbatim">Predominantly senior unsecured structure guaranteed by the HoldCo.</span>
+</li><li>
+<span class="bo-verbatim">Proven, disciplined refinancing access with no distress events.</span>
+</li><li>
+<span class="bo-verbatim">Internally funded growth; distributions large but controlled.</span>
+</li></ol>
+
+</dd></div><div><dt>overall credit rating verdict</dt><dd>
+<span class="bo-verbatim">satisfactory</span>
+</dd></div><div><dt>recommended loan placement</dt><dd>
+<span class="bo-verbatim">senior_unsecured_tier_2</span>
+</dd></div><div><dt>target entity and period</dt><dd>
+<span class="bo-verbatim">HCA Healthcare, Inc. - FY2025 (10-K)</span>
+</dd></div></dl>
+
+</dd></div><div><dt>strategy capital supplement</dt><dd>
+<dl class="bo-fields"><div><dt>contributes</dt><dd>
+<span class="bo-verbatim">strategy / capital-allocation merit findings (acquisition, integration, capex strategy)</span>
+</dd></div><div><dt>findings</dt><dd>
+<ol><li>
+<dl class="bo-fields"><div><dt>admissibility</dt><dd>
+<span class="bo-verbatim">established</span>
+</dd></div><div><dt>agent id</dt><dd>
+<span class="bo-verbatim">m4_strategy_capital</span>
+</dd></div><div><dt>claim</dt><dd>
+<span class="bo-verbatim">Three hospital acquisitions were completed and their integration remains ongoing.</span>
+</dd></div><div><dt>claim type</dt><dd>
+<span class="bo-verbatim">fact</span>
+</dd></div><div><dt>component hypothesis ids</dt><dd>
+<ol><li>No recorded items.</li></ol>
+
+</dd></div><div><dt>confidence</dt><dd>
+<span class="bo-verbatim">medium</span>
+</dd></div><div><dt>contradicting evidence ids</dt><dd>
+<ol><li>No recorded items.</li></ol>
+
+</dd></div><div><dt>corrects hypothesis id</dt><dd>
+<span>Not recorded</span>
+</dd></div><div><dt>credit mechanism</dt><dd>
+<span>Not recorded</span>
+</dd></div><div><dt>direction</dt><dd>
+<span class="bo-verbatim">mixed</span>
+</dd></div><div><dt>disposition</dt><dd>
+<span class="bo-verbatim">supported</span>
+</dd></div><div><dt>evidence quotes</dt><dd>
+<ol><li>
+<dl class="bo-fields"><div><dt>evidence id</dt><dd>
+<span class="bo-verbatim">ev_capex</span>
+</dd></div><div><dt>quote</dt><dd>
+<span class="bo-verbatim">We completed acquisitions of three hospitals during the year; integration of these facilities is ongoing</span>
+</dd></div></dl>
+
+</li></ol>
+
+</dd></div><div><dt>hypothesis id</dt><dd>
+<span class="bo-verbatim">M4-H001</span>
+</dd></div><div><dt>interaction kind</dt><dd>
+<span>Not recorded</span>
+</dd></div><div><dt>interpretation</dt><dd>
+<dl class="bo-fields"></dl>
+
+</dd></div><div><dt>materiality</dt><dd>
+<span class="bo-verbatim">high</span>
+</dd></div><div><dt>missing information</dt><dd>
+<ol><li>No recorded items.</li></ol>
+
+</dd></div><div><dt>mitigant</dt><dd>
+<span>Not recorded</span>
+</dd></div><div><dt>quoted values</dt><dd>
+<ol><li>No recorded items.</li></ol>
+
+</dd></div><div><dt>section</dt><dd>
+<span class="bo-verbatim">M4</span>
+</dd></div><div><dt>supporting evidence ids</dt><dd>
+<ol><li>
+<span class="bo-verbatim">ev_capex</span>
+</li></ol>
+
+</dd></div><div><dt>validation notes</dt><dd>
+<ol><li>No recorded items.</li></ol>
+
+</dd></div></dl>
+
+</li></ol>
+
+</dd></div><div><dt>note</dt><dd>
+<span class="bo-verbatim">Supplements the debt specialist&#39;s conclusion; does NOT draw leverage or debt-service conclusions (those are the debt specialist&#39;s and Financial Overview&#39;s).</span>
+</dd></div><div><dt>source agent</dt><dd>
+<span class="bo-verbatim">m4_strategy_capital</span>
+</dd></div></dl>
+
+</dd></div><div><dt>synthesis matrix</dt><dd>
+<ol><li>
+<dl class="bo-fields"><div><dt>analytical scope pillar</dt><dd>
+<span class="bo-verbatim">Debt structure &amp; priority</span>
+</dd></div><div><dt>bank lender implications</dt><dd>
+<span class="bo-verbatim">Unsecured loan is pari passu Tier 2; collateral would lift to Tier 1.</span>
+</dd></div><div><dt>core empirical evidence</dt><dd>
+<span class="bo-verbatim">$46.49B total debt; 97.8% senior unsecured guaranteed; drag ratio 0.022.</span>
+</dd></div><div><dt>deliverable verdict</dt><dd>
+<span class="bo-verbatim">Satisfactory</span>
+</dd></div></dl>
+
+</li><li>
+<dl class="bo-fields"><div><dt>analytical scope pillar</dt><dd>
+<span class="bo-verbatim">Refinancing history</span>
+</dd></div><div><dt>bank lender implications</dt><dd>
+<span class="bo-verbatim">Low refinancing/rollover risk.</span>
+</dd></div><div><dt>core empirical evidence</dt><dd>
+<span class="bo-verbatim">$8.5B issued FY2025; proactive pre-maturity refinancing; 0 distress events.</span>
+</dd></div><div><dt>deliverable verdict</dt><dd>
+<span class="bo-verbatim">Strong</span>
+</dd></div></dl>
+
+</li><li>
+<dl class="bo-fields"><div><dt>analytical scope pillar</dt><dd>
+<span class="bo-verbatim">Financial stewardship</span>
+</dd></div><div><dt>bank lender implications</dt><dd>
+<span class="bo-verbatim">Monitor distribution appetite vs leverage headroom.</span>
+</dd></div><div><dt>core empirical evidence</dt><dd>
+<span class="bo-verbatim">CAPEX self-funded; $19.9B buybacks partly debt-funded; leverage within policy.</span>
+</dd></div><div><dt>deliverable verdict</dt><dd>
+<span class="bo-verbatim">Satisfactory</span>
+</dd></div></dl>
+
+</li><li>
+<dl class="bo-fields"><div><dt>analytical scope pillar</dt><dd>
+<span class="bo-verbatim">Strategy &amp; Capital Allocation (Agent A)</span>
+</dd></div><div><dt>bank lender implications</dt><dd>
+<span class="bo-verbatim">Strategy/capital-allocation observation; leverage and debt-service implications are assessed by the debt specialist (Agent B) and Financial Overview, not here.</span>
+</dd></div><div><dt>core empirical evidence</dt><dd>
+<span class="bo-verbatim">Three hospital acquisitions were completed and their integration remains ongoing. [1 cited]</span>
+</dd></div><div><dt>deliverable verdict</dt><dd>
+<span class="bo-verbatim">mixed</span>
+</dd></div></dl>
+
+</li></ol>
+
+</dd></div></dl>
+
+<details class="bo-provenance"><summary>Source &amp; copy verification</summary>Copied verbatim · bo_memo:ar_5f1d1e213ea4435c · module_conclusions.M4.m4_analysis.deliverable_4 · 7093eb7c1b0629e2be3f9a2d5142ffead2a4a96a745ba43d2632bfd5393bbdfb</details></div></div></section><section id="bo-section-5"><h2>Industry</h2><p class="bo-provenance">Content status: incomplete</p>
+<p class="bo-notice">Missing standalone Industry report: this roster records governed industry findings only. All available findings are preserved below; no replacement report has been generated.</p>
+<div class="bo-copies "><div><h3>Recorded industry findings</h3>
+<ol><li>
+<dl class="bo-fields"><div><dt>admissibility</dt><dd>
+<span class="bo-verbatim">qualified_narrative</span>
+</dd></div><div><dt>agent id</dt><dd>
+<span class="bo-verbatim">m2_industry</span>
+</dd></div><div><dt>claim</dt><dd>
+<span class="bo-verbatim">The industry is extensively regulated and exposed to legislative reimbursement reductions.</span>
+</dd></div><div><dt>claim type</dt><dd>
+<span class="bo-verbatim">fact</span>
+</dd></div><div><dt>component hypothesis ids</dt><dd>
+<ol><li>No recorded items.</li></ol>
+
+</dd></div><div><dt>confidence</dt><dd>
+<span class="bo-verbatim">medium</span>
+</dd></div><div><dt>contradicting evidence ids</dt><dd>
+<ol><li>No recorded items.</li></ol>
+
+</dd></div><div><dt>corrects hypothesis id</dt><dd>
+<span>Not recorded</span>
+</dd></div><div><dt>credit mechanism</dt><dd>
+<span>Not recorded</span>
+</dd></div><div><dt>direction</dt><dd>
+<span class="bo-verbatim">negative</span>
+</dd></div><div><dt>disposition</dt><dd>
+<span class="bo-verbatim">qualified</span>
+</dd></div><div><dt>evidence quotes</dt><dd>
+<ol><li>
+<dl class="bo-fields"><div><dt>evidence id</dt><dd>
+<span class="bo-verbatim">ev_reg</span>
+</dd></div><div><dt>quote</dt><dd>
+<span class="bo-verbatim">We are subject to extensive regulation</span>
+</dd></div></dl>
+
+</li></ol>
+
+</dd></div><div><dt>hypothesis id</dt><dd>
+<span class="bo-verbatim">M2-H001</span>
+</dd></div><div><dt>interaction kind</dt><dd>
+<span>Not recorded</span>
+</dd></div><div><dt>interpretation</dt><dd>
+<dl class="bo-fields"></dl>
+
+</dd></div><div><dt>materiality</dt><dd>
+<span class="bo-verbatim">high</span>
+</dd></div><div><dt>missing information</dt><dd>
+<ol><li>No recorded items.</li></ol>
+
+</dd></div><div><dt>mitigant</dt><dd>
+<span>Not recorded</span>
+</dd></div><div><dt>quoted values</dt><dd>
+<ol><li>No recorded items.</li></ol>
+
+</dd></div><div><dt>section</dt><dd>
+<span class="bo-verbatim">M2</span>
+</dd></div><div><dt>supporting evidence ids</dt><dd>
+<ol><li>
+<span class="bo-verbatim">ev_reg</span>
+</li></ol>
+
+</dd></div><div><dt>validation notes</dt><dd>
+<ol><li>
+<span class="bo-verbatim">generic_risk_disclosure_only: Supported only by risk-factor language about what could happen; it may be reported as a disclosed risk, not as an event that has occurred.</span>
+</li><li>
+<span class="bo-verbatim">quote_does_not_cover_claim: The quote is verified, but it shares almost no wording with the claim, so it does not show that the filing states the claim; treated as the specialist&#39;s inference.</span>
+</li></ol>
+
+</dd></div></dl>
+
+</li></ol>
+
+<details class="bo-provenance"><summary>Source &amp; copy verification</summary>Copied verbatim · bo_memo:ar_5f1d1e213ea4435c · module_conclusions.M2.findings · ee0279d50547d8f1c12f1ff876eda31cb17d96050ae8660f0e9051d9d6c58ae7</details></div></div></section>
+<details><summary>Supporting sources</summary><ol><li id="bo-source-ev_payer">
+<dl class="bo-fields"><div><dt>document id</dt><dd>
+<span class="bo-verbatim">doc_10k</span>
+</dd></div><div><dt>evidence id</dt><dd>
+<span class="bo-verbatim">ev_payer</span>
+</dd></div><div><dt>excerpt</dt><dd>
+<span class="bo-verbatim">Medicare and Medicaid accounted for 45% of our revenues. Our managed care contracts are generally multi-year agreements that set negotiated rates; the contracts do not guarantee minimum volumes of patients. Either party may terminate an agreement on notice.</span>
+</dd></div><div><dt>filename</dt><dd>
+<span class="bo-verbatim">nfh-10k.htm</span>
+</dd></div><div><dt>form</dt><dd>
+<span class="bo-verbatim">10-K</span>
+</dd></div><div><dt>heading</dt><dd>
+<span class="bo-verbatim">Item 1</span>
+</dd></div><div><dt>location</dt><dd>
+<span class="bo-verbatim">20000</span>
+</dd></div><div><dt>n</dt><dd>
+<span class="bo-verbatim">1</span>
+</dd></div><div><dt>page</dt><dd>
+<span>Not recorded</span>
+</dd></div><div><dt>sec accession</dt><dd>
+<span class="bo-verbatim">0000000001-26-000001</span>
+</dd></div><div><dt>section</dt><dd>
+<span class="bo-verbatim">Item 1</span>
+</dd></div><div><dt>source url</dt><dd>
+<span>Not recorded</span>
+</dd></div></dl>
+
+</li><li id="bo-source-ev_model">
+<dl class="bo-fields"><div><dt>document id</dt><dd>
+<span class="bo-verbatim">doc_10k</span>
+</dd></div><div><dt>evidence id</dt><dd>
+<span class="bo-verbatim">ev_model</span>
+</dd></div><div><dt>excerpt</dt><dd>
+<span class="bo-verbatim">We operate 48 hospitals and 120 outpatient facilities. Our sources of revenue are patient services provided at our facilities. Demand for acute care services is essential and admissions were stable during the year.</span>
+</dd></div><div><dt>filename</dt><dd>
+<span class="bo-verbatim">nfh-10k.htm</span>
+</dd></div><div><dt>form</dt><dd>
+<span class="bo-verbatim">10-K</span>
+</dd></div><div><dt>heading</dt><dd>
+<span class="bo-verbatim">Item 1</span>
+</dd></div><div><dt>location</dt><dd>
+<span class="bo-verbatim">18000</span>
+</dd></div><div><dt>n</dt><dd>
+<span class="bo-verbatim">2</span>
+</dd></div><div><dt>page</dt><dd>
+<span>Not recorded</span>
+</dd></div><div><dt>sec accession</dt><dd>
+<span class="bo-verbatim">0000000001-26-000001</span>
+</dd></div><div><dt>section</dt><dd>
+<span class="bo-verbatim">Item 1</span>
+</dd></div><div><dt>source url</dt><dd>
+<span>Not recorded</span>
+</dd></div></dl>
+
+</li><li id="bo-source-ev_labor">
+<dl class="bo-fields"><div><dt>document id</dt><dd>
+<span class="bo-verbatim">doc_10k</span>
+</dd></div><div><dt>evidence id</dt><dd>
+<span class="bo-verbatim">ev_labor</span>
+</dd></div><div><dt>excerpt</dt><dd>
+<span class="bo-verbatim">We face a nursing shortage and rising contract labor costs. We operate a College of Nursing to expand our training pipeline, which we believe will improve recruitment and retention. There is no assurance these initiatives will be successful.</span>
+</dd></div><div><dt>filename</dt><dd>
+<span class="bo-verbatim">nfh-10k.htm</span>
+</dd></div><div><dt>form</dt><dd>
+<span class="bo-verbatim">10-K</span>
+</dd></div><div><dt>heading</dt><dd>
+<span class="bo-verbatim">Item 1A</span>
+</dd></div><div><dt>location</dt><dd>
+<span class="bo-verbatim">14000</span>
+</dd></div><div><dt>n</dt><dd>
+<span class="bo-verbatim">3</span>
+</dd></div><div><dt>page</dt><dd>
+<span>Not recorded</span>
+</dd></div><div><dt>sec accession</dt><dd>
+<span class="bo-verbatim">0000000001-26-000001</span>
+</dd></div><div><dt>section</dt><dd>
+<span class="bo-verbatim">Item 1A</span>
+</dd></div><div><dt>source url</dt><dd>
+<span>Not recorded</span>
+</dd></div></dl>
+
+</li><li id="bo-source-ev_compete">
+<dl class="bo-fields"><div><dt>document id</dt><dd>
+<span class="bo-verbatim">doc_10k</span>
+</dd></div><div><dt>evidence id</dt><dd>
+<span class="bo-verbatim">ev_compete</span>
+</dd></div><div><dt>excerpt</dt><dd>
+<span class="bo-verbatim">We compete with other hospitals, including not-for-profit systems, and with ambulatory surgery centers. Competitors may have greater market share in certain markets. Revenue per equivalent admission increased 4.1% due to pricing, payer mix and case mix acuity. In 2025 we operated the largest hospital network by licensed beds in most of our markets.</span>
+</dd></div><div><dt>filename</dt><dd>
+<span class="bo-verbatim">nfh-10k.htm</span>
+</dd></div><div><dt>form</dt><dd>
+<span class="bo-verbatim">10-K</span>
+</dd></div><div><dt>heading</dt><dd>
+<span class="bo-verbatim">Item 1</span>
+</dd></div><div><dt>location</dt><dd>
+<span class="bo-verbatim">4000</span>
+</dd></div><div><dt>n</dt><dd>
+<span class="bo-verbatim">4</span>
+</dd></div><div><dt>page</dt><dd>
+<span>Not recorded</span>
+</dd></div><div><dt>sec accession</dt><dd>
+<span class="bo-verbatim">0000000001-26-000001</span>
+</dd></div><div><dt>section</dt><dd>
+<span class="bo-verbatim">Item 1</span>
+</dd></div><div><dt>source url</dt><dd>
+<span>Not recorded</span>
+</dd></div></dl>
+
+</li><li id="bo-source-ev_reg">
+<dl class="bo-fields"><div><dt>document id</dt><dd>
+<span class="bo-verbatim">doc_10k</span>
+</dd></div><div><dt>evidence id</dt><dd>
+<span class="bo-verbatim">ev_reg</span>
+</dd></div><div><dt>excerpt</dt><dd>
+<span class="bo-verbatim">We are subject to extensive regulation. A significant portion of our revenues depends on government programs, and reimbursement rates may be reduced by legislation. We cannot predict the outcome of proposed legislation. We are party to litigation and government investigations.</span>
+</dd></div><div><dt>filename</dt><dd>
+<span class="bo-verbatim">nfh-10k.htm</span>
+</dd></div><div><dt>form</dt><dd>
+<span class="bo-verbatim">10-K</span>
+</dd></div><div><dt>heading</dt><dd>
+<span class="bo-verbatim">Item 1A</span>
+</dd></div><div><dt>location</dt><dd>
+<span class="bo-verbatim">22000</span>
+</dd></div><div><dt>n</dt><dd>
+<span class="bo-verbatim">5</span>
+</dd></div><div><dt>page</dt><dd>
+<span>Not recorded</span>
+</dd></div><div><dt>sec accession</dt><dd>
+<span class="bo-verbatim">0000000001-26-000001</span>
+</dd></div><div><dt>section</dt><dd>
+<span class="bo-verbatim">Item 1A</span>
+</dd></div><div><dt>source url</dt><dd>
+<span>Not recorded</span>
+</dd></div></dl>
+
+</li><li id="bo-source-ev_capex">
+<dl class="bo-fields"><div><dt>document id</dt><dd>
+<span class="bo-verbatim">doc_10k</span>
+</dd></div><div><dt>evidence id</dt><dd>
+<span class="bo-verbatim">ev_capex</span>
+</dd></div><div><dt>excerpt</dt><dd>
+<span class="bo-verbatim">Capital expenditures were focused on expansion of existing facilities. We completed acquisitions of three hospitals during the year; integration of these facilities is ongoing.</span>
+</dd></div><div><dt>filename</dt><dd>
+<span class="bo-verbatim">nfh-10k.htm</span>
+</dd></div><div><dt>form</dt><dd>
+<span class="bo-verbatim">10-K</span>
+</dd></div><div><dt>heading</dt><dd>
+<span class="bo-verbatim">Item 7</span>
+</dd></div><div><dt>location</dt><dd>
+<span class="bo-verbatim">2000</span>
+</dd></div><div><dt>n</dt><dd>
+<span class="bo-verbatim">6</span>
+</dd></div><div><dt>page</dt><dd>
+<span>Not recorded</span>
+</dd></div><div><dt>sec accession</dt><dd>
+<span class="bo-verbatim">0000000001-26-000001</span>
+</dd></div><div><dt>section</dt><dd>
+<span class="bo-verbatim">Item 7</span>
+</dd></div><div><dt>source url</dt><dd>
+<span>Not recorded</span>
+</dd></div></dl>
+
+</li><li id="bo-source-ev_debt_maturity">
+<dl class="bo-fields"><div><dt>document id</dt><dd>
+<span class="bo-verbatim">doc_10k</span>
+</dd></div><div><dt>evidence id</dt><dd>
+<span class="bo-verbatim">ev_debt_maturity</span>
+</dd></div><div><dt>excerpt</dt><dd>
+<span class="bo-verbatim">The senior notes have staggered maturities; the revolving credit facility is undrawn. Refinancing of maturing tranches occurred during the year.</span>
+</dd></div><div><dt>filename</dt><dd>
+<span class="bo-verbatim">nfh-10k.htm</span>
+</dd></div><div><dt>form</dt><dd>
+<span class="bo-verbatim">10-K</span>
+</dd></div><div><dt>heading</dt><dd>
+<span class="bo-verbatim">Item 7</span>
+</dd></div><div><dt>location</dt><dd>
+<span class="bo-verbatim">6000</span>
+</dd></div><div><dt>n</dt><dd>
+<span class="bo-verbatim">7</span>
+</dd></div><div><dt>page</dt><dd>
+<span>Not recorded</span>
+</dd></div><div><dt>sec accession</dt><dd>
+<span class="bo-verbatim">0000000001-26-000001</span>
+</dd></div><div><dt>section</dt><dd>
+<span class="bo-verbatim">Item 7</span>
+</dd></div><div><dt>source url</dt><dd>
+<span>Not recorded</span>
+</dd></div></dl>
+
+</li><li id="bo-source-ev_debt_notes">
+<dl class="bo-fields"><div><dt>document id</dt><dd>
+<span class="bo-verbatim">doc_10k</span>
+</dd></div><div><dt>evidence id</dt><dd>
+<span class="bo-verbatim">ev_debt_notes</span>
+</dd></div><div><dt>excerpt</dt><dd>
+<span class="bo-verbatim">Our long-term debt consists of senior unsecured notes with principal of $43,700 million issued by the operating company and guaranteed by the parent. Total indebtedness was $46,492 million at year end.</span>
+</dd></div><div><dt>filename</dt><dd>
+<span class="bo-verbatim">nfh-10k.htm</span>
+</dd></div><div><dt>form</dt><dd>
+<span class="bo-verbatim">10-K</span>
+</dd></div><div><dt>heading</dt><dd>
+<span class="bo-verbatim">Item 8</span>
+</dd></div><div><dt>location</dt><dd>
+<span class="bo-verbatim">8000</span>
+</dd></div><div><dt>n</dt><dd>
+<span class="bo-verbatim">8</span>
+</dd></div><div><dt>page</dt><dd>
+<span>Not recorded</span>
+</dd></div><div><dt>sec accession</dt><dd>
+<span class="bo-verbatim">0000000001-26-000001</span>
+</dd></div><div><dt>section</dt><dd>
+<span class="bo-verbatim">Item 8</span>
+</dd></div><div><dt>source url</dt><dd>
+<span>Not recorded</span>
+</dd></div></dl>
+
+</li></ol></details>
+<p class="bo-provenance">Full specialist output, validation and presentation decisions: bo_audit:ar_5f1d1e213ea4435c</p></div>
+
+
+</article><p class="record-id">Selected run: offline-consolidated-preview</p></main></body></html>

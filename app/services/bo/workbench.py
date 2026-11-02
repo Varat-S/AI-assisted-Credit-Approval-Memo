@@ -140,6 +140,12 @@ def bo_artifact(session: Session, analysis_run_id: str, kind: str) -> dict[str, 
     row = _handoff_row(session, analysis_run_id)
     if kind == "handoff":
         return dict(row.payload)
+    if kind == "consolidated":
+        from app.services.bo.consolidated import load
+        payload = load(session, row.case_id, analysis_run_id, row.snapshot_version)
+        if payload is None:
+            raise BoRunNotFoundError("No consolidated artifact for this historical run.")
+        return payload
     if kind not in ("memo", "audit"):
         raise BoRunNotFoundError(f"Unknown Business Overview artifact {kind!r}.")
     name = f"bo_{kind}:{analysis_run_id}"

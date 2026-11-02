@@ -151,7 +151,7 @@ def run_bo_fo(*, database: Path, folder: str, bo_backend, fo_backend, fo_mode: s
               produce_pdf: bool = False, m3_backend=None,
               rms_request: rms.RmsRequest | None = None, on_progress=None, on_work=None,
               lock_wait: float = LOCK_WAIT_SECONDS, bo_only: bool = False, fo_only: bool = False,
-              stop: threading.Event | None = None, bo_validators: bool = True, on_stage=None) -> dict:
+              stop: threading.Event | None = None, bo_validators: bool = True, on_stage=None, consolidated: bool = False) -> dict:
     """Run both sections at once; returns ``{"case_id", "folder", "cutoff", "bo": {...}, "fo": {...},
     "rms": {...}}``.
 
@@ -194,7 +194,7 @@ def run_bo_fo(*, database: Path, folder: str, bo_backend, fo_backend, fo_mode: s
             with factory() as session:
                 result = BusinessOverviewRunner(
                     session, backend=bo_backend, data_root=data_root, output_root=output_root,
-                    bo_roster=BO_ROSTER, enable_m4_debt_specialist=True,
+                    bo_roster=BO_ROSTER, enable_m4_debt_specialist=True, consolidated=consolidated,
                     m3_backend=m3_backend, m3_reviewer_backend=m3_backend,
                     check_stop=checker("bo"), on_work=lambda d, t: tally("bo", d, t),
                     enforce_validators=bo_validators,

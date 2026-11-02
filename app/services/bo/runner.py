@@ -236,6 +236,7 @@ class BusinessOverviewRunner:
         transaction_borrower_entity_id: str | None = None,
         investigation_mode: InvestigationMode = InvestigationMode.SINGLE_PASS,
         enable_m4_debt_specialist: bool = False,
+        consolidated: bool = False,
         m3_manifest: str | Path | None = None,
         m3_structure=None, m3_filing=None, m3_company=None, m3_filing_period=None,
         m3_extraction=None, m3_extractor=None, m3_backend=None, m3_reviewer_backend=None,
@@ -265,6 +266,9 @@ class BusinessOverviewRunner:
         # case-specific coverage tests supplied with the case.
         self.sector = sector
         self.coverage_checks = list(coverage_checks or [])
+        if consolidated and bo_roster != "v3":
+            raise ValueError("Consolidated Business Overview requires roster v3")
+        self.consolidated = consolidated
         self.session = session
         if bo_roster not in {"v2", "v3"}:
             raise ValueError("bo_roster must be 'v2' or 'v3'.")
@@ -457,6 +461,17 @@ class _BoRun:
             self.sections = BO_SECTIONS
             check_mapper = list
             prompt_entries = bo_prompt_catalogue()
+        if runner.consolidated:
+            from app.prompts.bo_consolidated import PROMPT_NAME, SCHEMA, TEMPLATE
+            prompt_entries.append(dict(name=PROMPT_NAME, template=TEMPLATE,
+                                       response_schema=SCHEMA, role="orchestrate",
+                                       label="Competitive Position 1.0"))
+            from app.prompts.bo_prompts import _CHALLENGER_TEMPLATE
+            from app.prompts.bo_consolidated import CHALLENGE_INSTRUCTION
+            prompt_entries.append(dict(name="bo_competitive_challenger_v1",
+                template=_CHALLENGER_TEMPLATE + "\n" + CHALLENGE_INSTRUCTION,
+                response_schema=BO_CHALLENGE_JSON_SCHEMA, role="challenge",
+                label="Competitive Position independent challenger 1.0"))
         self.registry = default_registry(self.roster_version)
         # Module 3 is not a roster agent: its routed input packet and handoff
         # block are built by ``_build_m3_packet``.
@@ -536,6 +551,7 @@ class _BoRun:
         self.reconciliation = Reconciliation()
         self.conclusion = None
         self.conclusion_row_id: str | None = None
+        self.competitive_selection = None
         self.orchestrator_output: dict | None = None
         self.orchestrator_history: list[dict] = []
         self.orchestrator_validation_feedback: list[str] = []
@@ -583,6 +599,22 @@ class _BoRun:
                         {BO_ORCHESTRATOR_ID}, force=True)
             self.rerun_reason = None
             self.orchestrator_validation_feedback = []
+        if (self.runner.consolidated and self.competitive_selection
+                and len(self.competitive_selection["key_drivers"]) < 5
+                and self.runner.max_rerun_rounds > 0):
+            # Bounded selection repair uses only already admitted, validated findings.
+            # The existing retrieval/coverage passes have already searched the admitted inputs.
+            saved = (self.conclusion, self.conclusion_row_id, self.orchestrator_output,
+                     self.competitive_selection, copy.deepcopy(self.agents[BO_ORCHESTRATOR_ID]))
+            self.orchestrator_validation_feedback = [
+                "Five-point shortfall: " + g for g in self.competitive_selection["coverage_gaps"]]
+            self.rerun_reason = "competitive_shortfall_repair"
+            self._stage("competitive_shortfall_repair", {BO_ORCHESTRATOR_ID}, force=True)
+            self.rerun_reason = None
+            self.orchestrator_validation_feedback = []
+            if self.agents[BO_ORCHESTRATOR_ID].status != "validated":
+                (self.conclusion, self.conclusion_row_id, self.orchestrator_output,
+                 self.competitive_selection, self.agents[BO_ORCHESTRATOR_ID]) = saved
         self._challenge_phase()
         self._finalize()
 
@@ -959,12 +991,18 @@ class _BoRun:
 
     def _task(self, agent, inputs, evidence_ids, schema, parents=()) -> PreparedTask:
         prior = self.agents[agent.agent_id].run_ids
+        prompt_name = agent.prompt
+        if self.runner.consolidated and agent.agent_id == BO_ORCHESTRATOR_ID:
+            from app.prompts.bo_consolidated import PROMPT_NAME
+            prompt_name = PROMPT_NAME
+        if self.runner.consolidated and agent.agent_id == BO_CHALLENGER_ID:
+            prompt_name = "bo_competitive_challenger_v1"
         return PreparedTask(
             task=AgentTask(
                 agent_id=agent.agent_id, analysis_run_id=self.analysis_run_id,
                 topic=agent.topic, task_type=agent.task_type,
                 dependencies=list(agent.dependencies),
-                prompt_name=agent.prompt, response_schema_ref=agent.prompt,
+                prompt_name=prompt_name, response_schema_ref=prompt_name,
                 model_tier=agent.model_tier, case_id=self.case_id,
                 snapshot_version=self.snapshot_version,
                 packet_ref=content_hash(inputs),
@@ -1276,6 +1314,13 @@ class _BoRun:
                     "listed issue. Do not change or invent source findings."),
                 "issues": list(self.orchestrator_validation_feedback),
             }
+        if self.runner.consolidated:
+            m1 = set(modules["M1"]["agent_ids"])
+            extras["hypotheses"] = [hypothesis_view(h) for h in usable if h.agent_id in m1]
+            extras["hypotheses"] = [hypothesis_view(h) for a in sorted(m1) for h in self.hypotheses.get(a, [])]
+            extras["coverage"] = {a:c for a,c in self._coverage().items() if a in m1}
+            extras.pop("module_conclusions", None)
+            extras.pop("cross_module_instruction", None)
         orchestrator_input = build_business_orchestrator_input(
             analysis_run_id=self.analysis_run_id,
             parameters=self._business_parameters(),
@@ -1285,8 +1330,11 @@ class _BoRun:
         evidence_ids = {e for h in usable for e in h.evidence_ids()}
         parents = [self.agents[a].run_ids[-1] for a in self.narrow_agent_ids
                    if self.agents[a].run_ids]
-        return self._task(agent, orchestrator_input.as_prompt_inputs(), evidence_ids,
-                          BO_ORCHESTRATOR_JSON_SCHEMA, parents)
+        schema = BO_ORCHESTRATOR_JSON_SCHEMA
+        if self.runner.consolidated:
+            from app.prompts.bo_consolidated import SCHEMA
+            schema = SCHEMA
+        return self._task(agent, orchestrator_input.as_prompt_inputs(), evidence_ids, schema, parents)
 
     def _build_challenger(self, agent):
         if self.conclusion is None or self.orchestrator_output is None:
@@ -1320,6 +1368,10 @@ class _BoRun:
             "coverage": self._coverage(),
         }
         evidence_ids = {e for h in by_id.values() for e in h.evidence_ids()}
+        if self.runner.consolidated:
+            from app.prompts.bo_consolidated import CHALLENGE_INSTRUCTION
+            inputs["consolidated_review_instruction"] = CHALLENGE_INSTRUCTION
+            inputs["selection_audit"] = self.competitive_selection
         return self._task(agent, inputs, evidence_ids, BO_CHALLENGE_JSON_SCHEMA,
                           [self.agents[BO_ORCHESTRATOR_ID].run_ids[-1]])
 
@@ -1734,6 +1786,25 @@ class _BoRun:
         self.reconciliation = reconcile(usable, rejected)
 
     def _on_orchestrator(self, agent, parsed, run_id) -> None:
+        selection = None
+        if self.runner.consolidated:
+            from app.services.bo.consolidated import selection_issues, legacy_claims
+            m1 = set(self.module_conclusions["M1"]["agent_ids"])
+            candidates = {h.hypothesis_id:h for a in m1 for h in self.hypotheses.get(a, [])}
+            issues = selection_issues(parsed, candidates, self.reconciliation)
+            if self.module_conclusions["M1"]["status"] != "complete" and not parsed["coverage_gaps"]:
+                issues.append("Incomplete specialist coverage must be disclosed in coverage_gaps")
+            if self.rerun_reason == "competitive_shortfall_repair" and self.competitive_selection:
+                prior = {h for p in self.competitive_selection["key_drivers"] for h in p["hypothesis_ids"]}
+                current = {h for p in parsed["key_drivers"] for h in p["hypothesis_ids"]}
+                if not prior <= current:
+                    issues.append("Shortfall repair must retain supported insights from its prior draft")
+            if issues:
+                self._reject(agent.agent_id, run_id, issues)
+                self.conclusion, self.orchestrator_output = None, None
+                return
+            selection = copy.deepcopy(parsed)
+            parsed = legacy_claims(parsed)
         by_id = {h.hypothesis_id: h for h in self._usable()}
         all_by_id = {h.hypothesis_id: h for a in self.narrow_agent_ids
                      for h in self.hypotheses.get(a, [])}
@@ -1741,11 +1812,11 @@ class _BoRun:
             *(r.parameter_result_id for r in self.indicators.results),
             *(p.parameter_result_id for p in self._business_parameters()),
         }
-        dropped = drop_uncited_claims(parsed)
+        dropped = [] if self.runner.consolidated else drop_uncited_claims(parsed)
         included = (include_all_validated_findings(parsed, all_by_id)
-                    if self.roster_version == "v3" else [])
-        downgrades = downgrade_overstated_claim_types(parsed, all_by_id)
-        qualified = fill_missing_qualifications(parsed, all_by_id)
+                    if self.roster_version == "v3" and not self.runner.consolidated else [])
+        downgrades = [] if self.runner.consolidated else downgrade_overstated_claim_types(parsed, all_by_id)
+        qualified = [] if self.runner.consolidated else fill_missing_qualifications(parsed, all_by_id)
         # Adjustments describe THIS answer; an earlier rejected one's do not carry.
         self.agents[agent.agent_id].adjustments = [*dropped, *included, *downgrades, *qualified]
         module_values, module_quotes = governed_module_figures(self.module_conclusions)
@@ -1844,6 +1915,7 @@ class _BoRun:
             conclusion, case_id=self.case_id, snapshot_version=self.snapshot_version)
         self.conclusion, self.conclusion_row_id = conclusion, row.id
         self.orchestrator_output = parsed
+        self.competitive_selection = selection
         self.agents[agent.agent_id].status = "validated"
         self.agents[agent.agent_id].issues = []
 
@@ -2011,6 +2083,10 @@ class _BoRun:
         if (self.roster_version == "v3"
                 and any(module["status"] != "complete"
                         for module in self.module_conclusions.values())):
+            self.conclusion_status = "human_review_required"
+        if (self.conclusion is not None and self.runner.consolidated and (not self.competitive_selection
+                or self.competitive_selection["completeness"] != "complete"
+                or len(self.competitive_selection["key_drivers"]) < 5)):
             self.conclusion_status = "human_review_required"
         if not self.enforce_validators:
             # An ungoverned draft is never accepted without a reviewer.
