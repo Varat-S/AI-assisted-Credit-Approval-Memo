@@ -234,6 +234,25 @@ def test_missing_synthesis_and_unknown_job_never_choose_other_run(memo_workspace
     assert client.get('/analysis/hca-active/review',follow_redirects=False).headers['location']=='/analysis/hca-active/execution'
 
 
+def test_completed_memo_downloads_as_pdf_of_the_same_run(memo_workspace):
+    from app.services.reporting.memo import detect_pdf_backend
+    client,jobs,_=memo_workspace
+    page=html.fromstring(client.get('/analysis/hca-first/review').text)
+    assert page.xpath('//a[text()="Download PDF"]/@href')==['/analysis/hca-first/memo.pdf']
+    assert not html.fromstring(client.get('/analysis/hca-failed/review').text).xpath('//a[text()="Download PDF"]')
+    assert client.get('/analysis/hca-failed/memo.pdf').status_code==409
+    assert client.get('/analysis/not-a-job/memo.pdf').status_code==404
+    jobs[0]['case_id']='WRONG_CASE'
+    assert client.get('/analysis/hca-first/memo.pdf').status_code==409
+    jobs[0]['case_id']='HCA_2024'
+    if detect_pdf_backend() is None:
+        pytest.skip('No PDF backend installed.')
+    response=client.get('/analysis/hca-first/memo.pdf')
+    assert response.status_code==200,response.text
+    assert response.headers['content-type']=='application/pdf' and response.content.startswith(b'%PDF')
+    assert response.headers['content-disposition']=='attachment; filename="HCA_2024_hca-first_credit_memo.pdf"'
+
+
 def test_cross_case_or_conflicting_refs_fail_closed(memo_workspace):
     client,jobs,session=memo_workspace
     jobs[0]['case_id']='WRONG_CASE'

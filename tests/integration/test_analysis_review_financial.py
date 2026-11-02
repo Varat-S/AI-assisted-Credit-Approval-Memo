@@ -29,6 +29,14 @@ def test_review_financial_payload_and_exact_run_integrity(db_session,nvda_as_hos
         assert expected['executive']['headline'] in text
         assert 'Financial Overview' in text and 'Debt service coverage ratio (DSCR)' in text
         assert f'/fo/runs/{result.run_id}/memo.html' in response.text
+        tiles=[(t.findtext('span'),t.findtext('strong')) for t in html.fromstring(response.text).xpath('//div[@class="memo-scores"]/div')]
+        composite=expected['executive']['composite']
+        assert tiles==[('Composite risk score',f"{composite['text']} / 10"),('Indicative rating',composite['rating']),
+                       ('Risk level',composite['label'].capitalize())]
+        assert 'not an agency rating' in text
+        # A combined analysis shows RMS; none is assessed for these runs yet.
+        assert "No Risk Mitigation & Structuring assessment of this analysis's runs is recorded" in text
+        assert 'href="/analysis/combined/rms"' in response.text
         row.case_id='OTHER';db_session.flush()
         assert client.get('/analysis/combined/review').status_code==409
         row.case_id='HCA_2024';row.payload={**row.payload,'unexpected':'tamper'};db_session.flush()

@@ -1,0 +1,48 @@
+{# The Memo page's RMS section: the latest assessment of this analysis's runs, explained in words.
+   Needs `rms` (credit_view(...)['rms']), `analysis`, and the usd / sc credit_macros. #}
+{% set verdict_names = {'approve': 'Approve', 'approve_with_conditions': 'Approve with conditions',
+  'approve_with_conditions_secured': 'Approve with conditions, secured', 'counter_offer': 'Counter-offer',
+  'refer': 'Refer', 'decline': 'Decline', 'capacity_only': 'Debt capacity report'} %}
+{% set rms_tab = '/analysis/' ~ analysis.job.job_id|urlencode ~ '/rms' %}
+<h2>Risk Mitigation &amp; Structuring</h2>
+{% set r, rec = rms.latest, rms.record %}
+{% if not r %}<p class="memo-empty">No Risk Mitigation &amp; Structuring assessment of this analysis's runs is recorded. Enter the requested loan on the <a href="{{ rms_tab }}">Risk Mitigation &amp; Structuring tab</a>, or leave it blank there for a debt capacity report.</p>
+{% else %}
+{% set g, c = rec.grade, r.capacity %}
+<div class="memo-scores rms-{{ 'approve' if r.verdict.startswith('approve') else r.verdict }}">
+<div><span>Verdict</span><strong>{{ verdict_names.get(r.verdict, r.verdict|replace('_', ' ')|capitalize) }}</strong></div>
+<div><span>{{ 'Approved amount' if r.approved_amount_m is not none else 'Requested' }}</span><strong>{% if r.approved_amount_m is not none %}{{ usd(r.approved_amount_m) }}{% elif r.requested_amount_m is not none %}{{ usd(r.requested_amount_m) }}{% else %}None{% endif %}</strong></div>
+<div><span>Derived debt capacity</span><strong>{{ usd(r.derived_capacity_m) }}</strong></div>
+<div><span>Adjusted grade</span><strong>{% if g %}{{ sc(g.score) }} ({{ g.rating }}){% else %}—{% endif %}</strong></div>
+</div>
+
+{# 1. What the verdict means #}
+<p>{% if r.verdict == 'capacity_only' %}No loan amount was requested, so RMS gives no verdict. It sizes how much debt the borrower can support instead: <strong>{{ usd(r.derived_capacity_m) }}</strong>.
+{% elif r.verdict == 'counter_offer' %}RMS cannot support the {{ usd(r.requested_amount_m) }} requested, and offers <strong>{{ usd(r.approved_amount_m) }}</strong> instead, the most the borrower's debt capacity supports.
+{% elif r.verdict.startswith('approve') %}RMS supports the {{ usd(r.requested_amount_m) }} requested{% if r.verdict == 'approve_with_conditions' %}, subject to the conditions in the structure below{% elif r.verdict == 'approve_with_conditions_secured' %}, on a secured basis and subject to the conditions in the structure below{% endif %}.
+{% elif r.verdict == 'refer' %}RMS does not decide this request. It is referred to a credit officer because of the gates listed below.
+{% else %}RMS declines the {{ usd(r.requested_amount_m) }} requested.{% endif %}</p>
+
+{# 2. How it was reached: grade, capacity, utilisation #}
+<h3>How the verdict was reached</h3>
+{% if g %}<p><strong>Grade.</strong> RMS starts from the Financial Overview composite of {{ sc(g.fo_composite_score) }} ({{ g.fo_credit_rating }}){% for n in g.notches %}{% if n.notch %}, adjusted {{ '{:+g}'.format(n.notch) }} for the {{ n.reason }}{% else %}, left unchanged by the {{ n.reason }}{% endif %}{% endfor %}{% if g.severity_floor and g.severity_floor.applied %}, then floored at 7 because of severe scores on {{ g.severity_floor.measures|join(', ') }}{% endif %}. That gives an adjusted grade of {{ sc(g.score) }} ({{ g.rating }}), in the <strong>{{ g.level }}</strong> risk level, which sets the leverage and coverage the loan is sized at.</p>
+{% else %}<p><strong>Grade.</strong> Not graded: the Financial Overview has no composite score to start from.</p>{% endif %}
+{% if c %}{% set binding = c.tests|selectattr('binding')|first %}
+<p><strong>Debt capacity.</strong> Capacity is the smallest of four tests, leverage and debt service coverage, each in a base and a downside case. The binding test is {{ binding.label if binding else 'not recorded' }}, at {{ usd(c.base_capacity_m) }}. {% if c.haircut %}A {{ '{:.0%}'.format(c.haircut) }} haircut for Business Overview risks{% if c.haircuts %} ({{ c.haircuts|join('; ') }}){% endif %} brings it to {{ usd(c.derived_capacity_m) }}.{% else %}No Business Overview haircut applies, so the derived capacity is {{ usd(c.derived_capacity_m) }}.{% endif %}</p>
+{% endif %}
+{% if r.requested_amount_m is not none %}<p><strong>Utilisation.</strong> {% if r.utilisation is not none %}The request uses {{ '{:.0%}'.format(r.utilisation) }} of the derived capacity, {{ 'comfortably within it' if r.utilisation < 0.75 else 'close to its limit' if r.utilisation <= 1 else 'above it' if r.utilisation <= 1.25 else 'well above it' }}.{% else %}There is no positive debt capacity to measure the request against.{% endif %}{% if not r.gates and g %} At a {{ g.level }} risk level, that utilisation leads to <strong>{{ {'approve': 'an approval', 'approve_with_conditions': 'an approval with conditions', 'approve_with_conditions_secured': 'a secured approval with conditions', 'counter_offer': 'a counter-offer', 'refer': 'a referral', 'decline': 'a decline'}.get(r.verdict, r.verdict|replace('_', ' ')) }}</strong> under the RMS policy matrix.{% endif %}</p>{% endif %}
+
+{# 3. What stops or qualifies it #}
+{% if r.gates %}<p><strong>{{ {'capacity_only': 'What would stop a loan', 'refer': 'Why it is referred', 'decline': 'Why it is declined'}.get(r.verdict, 'Gates holding') }}.</strong> {{ 'These gates are recorded, but decide nothing in a capacity report:' if r.verdict == 'capacity_only' else 'These gates override the grade and capacity:' }}</p><ul>{% for gate in r.gates %}<li>{{ gate }}</li>{% endfor %}</ul>{% endif %}
+{% if r.warnings %}<p><strong>Waived gates.</strong> These gates would have held, but were waived because the Business Overview reviewer accepted the handoff. They remain warnings:</p><ul>{% for w in r.warnings %}<li>{{ w }}</li>{% endfor %}</ul>{% endif %}
+{% if r.fo_decisions %}<p><strong>Financial Overview decisions applied.</strong> {{ r.fo_decisions|join('; ') }}.</p>{% endif %}
+
+{# 4. The structure, briefly #}
+{% if rec.terms %}{% set t = rec.terms %}<h3>{{ 'Indicative structure' if t.provisional else 'Proposed structure' }}</h3>
+<p>{{ usd(t.amount_m) }} {{ t.rank|replace('_', ' ') }}, {{ t.tenor_years }} years at {{ '{:.2%}'.format(t.interest_rate) }}{% if rec.pricing and rec.pricing.basis != 'requested' %} ({{ rec.pricing.base_rate.name }} + {{ rec.pricing.credit_spread.bps }}bp credit spread + business premium){% endif %}, {{ t.amortisation.type|replace('_', ' ') }} amortisation, pro forma leverage {{ t.pro_forma_leverage }}x, with {{ t.financial_covenants|length }} financial covenant{{ '' if t.financial_covenants|length == 1 else 's' }} and {{ rec.mitigants|length }} mitigant{{ '' if rec.mitigants|length == 1 else 's' }}.{% if t.provisional %} It is provisional: {{ 'it is sized at the derived capacity, with no loan requested' if r.verdict == 'capacity_only' else 'the case is referred' }}.{% endif %}</p>{% endif %}
+
+{# 5. Freshness and status #}
+{% if rms.stale %}<p class="notice-warning"><strong>Out of date.</strong> This assessment no longer matches its runs: {{ rms.stale|join('; ') }}. Re-assess it on the <a href="{{ rms_tab }}">Risk Mitigation &amp; Structuring tab</a>.</p>
+{% else %}<p class="technical-note">Assessed {{ (rec.assessed_at or '')[:16]|replace('T', ' ') }} UTC, from the current Business Overview review and Financial Overview decisions. A later decision on either tab re-assesses it.</p>{% endif %}
+<p class="technical-note">RMS is decision support, not a credit approval: every assessment needs human review. Full grade, capacity tests, covenants and mitigants are on the <a href="{{ rms_tab }}">Risk Mitigation &amp; Structuring tab</a>.</p>
+{% endif %}

@@ -10,7 +10,7 @@ from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from sqlalchemy.orm import Session
 from app.api.deps import get_session
 from app.services import analysis_workspace
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, Response
 from app.core.config import get_settings
 from app.services import bo_fo
 from app.services.acquisition import shared_filing
@@ -238,10 +238,40 @@ def review_analysis(job_id: str, session: Session = Depends(get_session)):
     job, view = _selected_workspace(session, job_id)
     if job.get('execution_status') in {'pending','running'}:
         return RedirectResponse(f'/analysis/{quote(job_id, safe="")}/execution', status_code=303)
+    return HTMLResponse(_render_review(session, job, view), headers={'Cache-Control':'no-store'})
+
+
+def _render_review(session, job, view, *, pdf=False):
+    """The Memo tab's HTML; ``pdf`` drops the site navigation and adds page rules for printing."""
     from app.services.analysis_audit import public_record
     display = {**view, **{key:public_record(view[key]) for key in ('memo','synthesis','financial','sources','reason')}}
-    return HTMLResponse(_env.get_template('analysis_review.html.j2').render(job=job, view=display, analysis=analysis_workspace.analysis_tabs(job, 'memo')),
-                        headers={'Cache-Control':'no-store'})
+    credit = _credit_view(session, job)  # _selected_workspace has verified the run references
+    return _env.get_template('analysis_review.html.j2').render(
+        job=job, view=display, rms=credit['rms'] if credit else None, pdf=pdf,
+        analysis=analysis_workspace.analysis_tabs(job, 'memo'))
+
+
+@router.get('/analysis/{job_id}/memo.pdf')
+def review_pdf(job_id: str, session: Session = Depends(get_session)):
+    """The completed memo as a downloadable PDF, rendered from the Memo tab's template."""
+    from app.api.workbench import _with_pdf_font
+    from app.services.reporting.memo import PdfBackendUnavailableError, _render_pdf_with, detect_pdf_backend
+    job, view = _selected_workspace(session, job_id)
+    if job.get('execution_status') != 'completed':
+        raise HTTPException(409, 'The PDF is available once the analysis has completed.')
+    backend = detect_pdf_backend()
+    if backend is None:
+        raise HTTPException(501, 'No PDF backend is installed; run `pip install xhtml2pdf` and restart.')
+    html = _render_review(session, job, view, pdf=True)
+    if backend != 'weasyprint':  # WeasyPrint resolves the page's own fonts
+        html = _with_pdf_font(html)
+    try:
+        pdf = _render_pdf_with(backend, html)
+    except PdfBackendUnavailableError as exc:
+        raise HTTPException(501, str(exc)) from exc
+    name = re.sub(r'[^A-Za-z0-9._-]+', '_', f"{job.get('case_id') or 'analysis'}_{job_id}")
+    return Response(content=pdf, media_type='application/pdf', headers={
+        'Content-Disposition': f'attachment; filename="{name}_credit_memo.pdf"', 'Cache-Control': 'no-store'})
 
 
 @router.get('/analysis/{job_id}/rms', response_class=HTMLResponse)
@@ -249,22 +279,29 @@ def rms_analysis(job_id: str, notice: str | None = None, session: Session = Depe
     return rms_page(session, job_id, notice=notice)
 
 
-def rms_page(session, job_id, *, notice=None, error=None, status_code=200):
-    """RMS for exactly this analysis's BO and FO runs; never the case's latest of either."""
+def _credit_view(session, job):
+    """The credit view (BO, FO and RMS) of exactly this analysis's two runs, never the case's latest of either;
+    None when the analysis hasn't both."""
     from app.services.rms.case_view import credit_view
+    ids = analysis_workspace.run_references(job)
+    if job.get('bo_only') or job.get('fo_only') or not (ids['bo'] and ids['fo']):
+        return None
+    view = credit_view(session, job.get('case_id'), output_root=get_settings().output_dir,
+                       fo_run_id=ids['fo'], bo_run_id=ids['bo'])
+    return view if view['fo'] and view['bo'] else None
+
+
+def rms_page(session, job_id, *, notice=None, error=None, status_code=200):
     job = bo_fo.jobs.get(job_id)
     if job is None:
         raise HTTPException(404, 'Unknown analysis.')
     try:
-        ids = analysis_workspace.run_references(job)
+        view = _credit_view(session, job)
     except analysis_workspace.WorkspaceRecordError as exc:
         raise HTTPException(409, 'The selected run could not be verified. Its records require attention.') from exc
-    if job.get('bo_only') or job.get('fo_only') or not (ids['bo'] and ids['fo']):
-        raise HTTPException(404, 'Risk Mitigation & Structuring needs both a Business and a Financial Overview run.')
-    view = credit_view(session, job.get('case_id'), output_root=get_settings().output_dir,
-                       fo_run_id=ids['fo'], bo_run_id=ids['bo'])
-    if not view['fo'] or not view['bo']:
-        raise HTTPException(404, 'A report for the selected run is unavailable.')
+    if view is None:
+        raise HTTPException(404, "Risk Mitigation & Structuring needs this analysis's Business and Financial "
+                                 "Overview runs.")
     return HTMLResponse(_env.get_template('analysis_rms.html.j2').render(
         job=job, view=view, notice=notice, error=error, analysis=analysis_workspace.analysis_tabs(job, 'rms')),
         status_code=status_code, headers={'Cache-Control':'no-store'})

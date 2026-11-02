@@ -251,3 +251,44 @@ def test_an_analysis_rms_tab_shows_and_reassesses_exactly_its_runs(client, monke
     assert f"<code>{BO_RUN}</code> (accepted)" in page and "Out of date:" not in page
     # RMS needs both modules; a single-module analysis has no RMS tab.
     assert client.get("/analysis/bo-only-job/rms").status_code == 404
+
+
+def test_the_memo_page_explains_the_rms_verdict_and_follows_fo_decisions(client):
+    from lxml import html
+    from app.api import analysis, deps
+
+    job = {"job_id": "hca-job", "case_id": CASE, "metadata": {}, "bo_validators": True,
+           "execution_status": "completed", "result": {"bo": {"summary": {"analysis_run_id": BO_RUN}},
+                                                       "fo": {"summary": {"run_id": FO_RUN}}}}
+    section = analysis._env.from_string(
+        "{% from 'credit_macros.html.j2' import usd, sc with context %}{% include 'analysis_memo_rms.html.j2' %}")
+
+    def memo_section():
+        with deps._session_factory()() as session:
+            rms = analysis._credit_view(session, job)["rms"]
+        return " ".join(html.fromstring(section.render(
+            rms=rms, analysis=analysis.analysis_workspace.analysis_tabs(job, "memo"))).text_content().split())
+
+    assert "No Risk Mitigation & Structuring assessment of this analysis's runs is recorded" in memo_section()
+    post(client, f"/cases/{CASE}/credit/assess",
+         {"fo_run": FO_RUN, "bo_run": BO_RUN, "requested_amount_m": "2000", "tenor_years": "5"})
+    text = memo_section()
+    assert "VerdictRefer" in text and "It is referred to a credit officer because of the gates listed below" in text
+    assert "Why it is referred. These gates override the grade and capacity:" in text and "RMS-G02" in text
+    assert "RMS starts from the Financial Overview composite of" in text and "Capacity is the smallest of four tests" in text
+    assert "Indicative structure" in text and "It is provisional: the case is referred" in text
+    assert "every assessment needs human review" in text and "Out of date" not in text
+    # An FO override re-assesses RMS, and the memo page explains the new verdict.
+    post(client, f"/cases/{CASE}/credit/fo/{FO_RUN}/override",
+         {"measure": "liquidity", "decision": "override", "score": "8", "reviewer": "A. Analyst",
+          "reason": "Breach cured after the year-end", "bo_run": BO_RUN})
+    text = memo_section()
+    assert "VerdictApprove" in text and "RMS supports the US$2,000.0M requested" in text
+    assert "The request uses 51% of the derived capacity" in text
+    assert "At a moderate risk level, that utilisation leads to an approval under the RMS policy matrix" in text
+    assert "left unchanged by the M4 credit verdict satisfactory" in text
+    assert "Financial Overview decisions applied." in text and "Proposed structure" in text
+    # A capacity report (no amount requested) says what it is.
+    post(client, f"/cases/{CASE}/credit/assess", {"fo_run": FO_RUN, "bo_run": BO_RUN, "requested_amount_m": ""})
+    text = memo_section()
+    assert "VerdictDebt capacity report" in text and "RequestedNone" in text and "No loan amount was requested, so RMS gives no verdict" in text
