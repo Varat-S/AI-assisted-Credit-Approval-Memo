@@ -46,6 +46,7 @@ from app.services.fo.review import (
 )
 from app.services.fo.runner import FinancialOverviewRunner, FoRunError
 from app.services.rms.runner import reassess_after_fo_review
+from app.services.analysis_workspace import analysis_for
 from app.services.fo.workbench import FoRunNotFoundError, fo_artifact, fo_run, fo_runs, fo_view
 
 router = APIRouter(tags=["financial_overview"])
@@ -57,7 +58,7 @@ _env = Environment(
 
 
 def _page(session, *, view=None, runs=None, error=None, selected_folder=None, case_id=None, selected_model=None,
-          stopped=None, failed=None, credit=None, status_code=200):
+          stopped=None, failed=None, credit=None, analysis=None, status_code=200):
     agent_ok, agent_reason = precheck.agent_available()
     models, models_note = fo_models.available_models() if agent_ok else ([], None)
     return HTMLResponse(
@@ -65,7 +66,7 @@ def _page(session, *, view=None, runs=None, error=None, selected_folder=None, ca
             runs=fo_runs(session) if runs is None else runs, filings=loader.list_filings(), view=view,
             error=error, stopped=stopped, failed=failed, selected_folder=selected_folder, case_id=case_id,
             agent_ok=agent_ok, agent_reason=agent_reason, models=models, models_note=models_note,
-            selected_model=selected_model or fo_models.configured_model(), credit=credit,
+            selected_model=selected_model or fo_models.configured_model(), credit=credit, analysis=analysis,
             run_token=secrets.token_urlsafe(16)),  # identifies the next run, so its Stop button can reach it
         status_code=status_code)
 
@@ -151,9 +152,11 @@ def financial_overview_workbench(
     run_id: str | None = Query(default=None),
     credit: bool = Query(default=False),
     bo_run: str | None = Query(default=None),
+    job: str | None = Query(default=None),
     session: Session = Depends(get_session),
 ) -> HTMLResponse:
-    """``?credit=1&bo_run=`` (set by the credit view's link): show the way back, and return there after a decision."""
+    """``?credit=1&bo_run=`` (set by the credit view's link): show the way back, and return there after a decision.
+    ``?job=`` (set by an analysis's tabs): show that analysis's header and tabs."""
     runs = fo_runs(session, case_id)
     selected = run_id or (runs[0]["run_id"] if runs else None)
     view = None
@@ -163,7 +166,8 @@ def financial_overview_workbench(
         saved = Path(get_settings().output_dir) / "fo" / case_id / selected
         view["output_folder"] = str(saved.resolve()) if saved.is_dir() else None
     return _page(session, view=view, runs=runs,
-                 credit=credit_context(case_id, selected, bo_run) if credit else None)
+                 credit=credit_context(case_id, selected, bo_run) if credit else None,
+                 analysis=analysis_for(job, case_id, selected, 'fo'))
 
 
 def _reassess_rms(session: Session, run_id: str) -> None:

@@ -1,0 +1,3 @@
+{% macro usd(v) %}{% if v is none %}—{% else %}US${{ '{:,.1f}'.format(v) }}M{% endif %}{% endmacro %}
+{% macro st(v) %}<span class="{{ 'ok' if v in ['approve', 'approve_with_conditions', 'approve_with_conditions_secured', 'accepted', 'completed', 'pass', 'compliant', 'routine', 'complete', 'validated'] else 'bad' if v in ['decline', 'rejected', 'fail', 'breach', 'failed', 'stopped'] else 'warn' }}">{{ (v or '—')|replace('_', ' ') }}</span>{% endmacro %}
+{% macro sc(v) %}{% if v is none %}—{% else %}{{ '{:g}'.format(v) }}{% endif %}{% endmacro %}

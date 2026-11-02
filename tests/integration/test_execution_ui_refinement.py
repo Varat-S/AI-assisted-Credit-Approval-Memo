@@ -28,16 +28,17 @@ def job(*,bo_only=False,states=None,section='running',execution='running',stop=F
 
 def presentation(tmp_path,value,function="businessProgress"):
     if not Path(JS_ENGINE).is_file():pytest.skip('JavaScript runtime required for frontend state tests')
-    code=(TEMPLATES/'analysis_execution_progress.js.j2').read_text()
+    code=(TEMPLATES/'analysis_execution_progress.js.j2').read_text(encoding='utf-8')
     script=tmp_path/'presentation.js'
     script.write_text(code+'\nvar output=JSON.stringify('+function+'('+json.dumps(value)+'));\n'
-                      +("print(output);" if Path(JS_ENGINE).name=='jsc' else 'console.log(output);'))
-    completed=subprocess.run([JS_ENGINE,str(script)],capture_output=True,text=True,check=True)
+                      +("print(output);" if Path(JS_ENGINE).name=='jsc' else 'console.log(output);'),encoding='utf-8')
+    completed=subprocess.run([JS_ENGINE,str(script)],capture_output=True,text=True,encoding='utf-8',check=True)
     return json.loads(completed.stdout)
 
 
 def page(value):
-    return html.fromstring(analysis._env.get_template('analysis_execution.html.j2').render(job=value))
+    return html.fromstring(analysis._env.get_template('analysis_execution.html.j2').render(
+        job=value, analysis=analysis.analysis_workspace.analysis_tabs({'job_id':'job-1',**value}, 'execution')))
 
 
 def test_summary_has_only_requested_fields_and_consistent_buttons():
@@ -70,6 +71,14 @@ def test_two_matching_bars_per_section_with_accessible_labels():
     assert len(fo.xpath('.//div[@class="bo-progress-row"]'))==2
     assert len(bo.xpath('.//div[@class="bo-progress-row"]'))==2
     assert len(document.xpath('//progress'))==4
+
+
+def test_fo_only_scope_hides_business_overview_progress():
+    value=job();value['fo_only']=True
+    document=page(value)
+    assert document.xpath('//dd/text()')[1]=='Financial Overview Only'
+    assert document.xpath('//*[@id="fo-stages"]')
+    assert document.xpath('//section[@aria-labelledby="bo-title"]/@hidden')
 
 
 def test_bo_only_scope_and_exploratory_label():
@@ -199,6 +208,64 @@ def test_financial_recovery_stopped_marker_displays_interrupted(tmp_path):
 
 def test_financial_stop_request_does_not_fabricate_checkpoint_acknowledgement(tmp_path):
     assert presentation(tmp_path,job(stop=True),'financialProgress')=={'preparation':'running','reporting':'pending'}
+
+
+def test_business_bars_fill_from_finished_parts_and_name_the_current_step(tmp_path):
+    value=job(states={'foundation':'pending','primary_specialists':'pending'})
+    value['sections']['bo']['step']='starting'
+    view=presentation(tmp_path,value,'businessDetail')
+    assert view=={'preparation':0,'findings':0,'activity':'Current step: Preparing the evidence package'}
+    value['events']=[{'section':'bo','stage':'foundation','status':'running'},
+                     {'section':'bo','stage':'management_analysis_and_validator7','status':'running'}]
+    view=presentation(tmp_path,value,'businessDetail')
+    assert view['preparation'] is None and view['activity']=='Current step: Management analysis & validation'
+    value['events']+=[{'section':'bo','stage':'management_analysis_and_validator7','status':'completed'}]
+    view=presentation(tmp_path,value,'businessDetail')
+    assert view['preparation']==50 and view['activity']=='Current step: Preparing evidence'
+    value['events']+=[{'section':'bo','stage':'foundation','status':'completed'},
+                      {'section':'bo','stage':'primary_specialists','status':'completed'},
+                      {'section':'bo','stage':'resilience','status':'running'}]
+    view=presentation(tmp_path,value,'businessDetail')
+    assert view=={'preparation':100,'findings':25,'activity':'Current step: Resilience assessment'}
+
+
+@pytest.mark.parametrize('stage', ['orchestrator','rerun_challenger','memo_preparation'])
+def test_business_step_text_keeps_final_stages_together(tmp_path,stage):
+    value=job(states={'primary_specialists':'completed','reconciliation':'completed'})
+    value['events']=[{'section':'bo','stage':stage,'status':'running'}]
+    view=presentation(tmp_path,value,'businessDetail')
+    assert view['findings']==100 and view['activity']=='Current step: Finalising credit assessment'
+
+
+def test_business_step_text_clears_when_the_run_ends(tmp_path):
+    view=presentation(tmp_path,job(states={'primary_specialists':'failed'},section='failed',execution='failed'),'businessDetail')
+    assert view['activity']=='' and view['findings']==0
+
+
+def test_financial_bar_follows_the_runner_step_count(tmp_path):
+    value=job()
+    value['sections']['fo']={'status':'running','step':'the going-concern pre-check','work':{'done':0,'total':28}}
+    assert presentation(tmp_path,value,'financialDetail')=={
+        'preparation':None,'reporting':0,'activity':'Current step: The going-concern pre-check (step 1 of 28)'}
+    value['sections']['fo'].update(step='the DSCR T2 check',work={'done':9,'total':28})
+    assert presentation(tmp_path,value,'financialDetail')=={
+        'preparation':33,'reporting':0,'activity':'Current step: The DSCR T2 check (step 10 of 28)'}
+    value['stages']['fo:workflow']['status']='completed'
+    value['stages']['fo:reporting']['status']='running'
+    value['sections']['fo'].update(step='recording the run and writing its files',work={'done':27,'total':28})
+    view=presentation(tmp_path,value,'financialDetail')
+    assert view['preparation']==100 and view['reporting'] is None
+    assert view['activity']=='Current step: Recording the run and writing its files (step 28 of 28)'
+    value['stages']['fo:reporting']['status']='completed'
+    value['sections']['fo']['status']='completed'
+    assert presentation(tmp_path,value,'financialDetail')['activity']=='All Financial Overview steps are complete.'
+
+
+def test_financial_failure_keeps_the_progress_it_reached(tmp_path):
+    value=job(execution='failed')
+    value['stages']['fo:workflow']['status']='failed'
+    value['sections']['fo']={'status':'failed','work':{'done':14,'total':28}}
+    assert presentation(tmp_path,value,'financialDetail')=={'preparation':52,'reporting':0,'activity':''}
 
 
 def test_financial_missing_events_remain_pending_and_bo_only_omits_bars(tmp_path):

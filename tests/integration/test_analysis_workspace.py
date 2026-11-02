@@ -84,6 +84,32 @@ def test_new_analysis_hca_only_and_defaults(workspace):
     assert 'Run Analysis starts paid AI processing' in page.text_content()
 
 
+def test_every_filing_folder_is_a_company_choice(workspace, evidence):
+    """A folder with only bundle.json and company.json is listed and validated from its own bundle."""
+    folder = evidence.parent / 'UHS 10-K FY2024'
+    primary = filing_file(filename='uhs-test.htm').model_copy(update={'cik':'352915'})
+    schema = filing_file(filename='uhs-test.xsd', role='schema', content=b'<schema/>').model_copy(update={'cik':'352915'})
+    write_bundle(SecFilingBundle(cik='352915', ticker='UHS', accession=primary.accession, form='10-K',
+                                 report_date=date(2024,12,31), filing_date=primary.filing_date,
+                                 primary_document=primary.filename, files=[primary,schema]), folder)
+    manifest = json.loads((folder/'bundle.json').read_text())
+    for entry in manifest['files']:
+        (folder/entry['path']).rename(folder/entry['filename'])
+        entry['path'] = entry['filename']
+    (folder/'bundle.json').write_text(json.dumps(manifest))
+    (folder/'company.json').write_text(json.dumps({'cik':352915,'ticker':'UHS','name':'Universal Health Services'}))
+    page = html.fromstring(workspace.get('/analysis/new').text)
+    assert page.xpath('//select[@name="company"]/option/@value') == ['hca','uhs-10-k-fy2024']
+    assert page.xpath('//select[@name="company"]/option/text()')[1] == 'Universal Health Services (UHS) · FY2024'
+    selection = analysis_setup.validate_setup(company='uhs-10-k-fy2024')
+    assert selection.backend_parameters()['folder'] == 'UHS 10-K FY2024'
+    assert selection.cutoff == max(f.available_at for f in [primary, schema])
+    response = workspace.get('/analysis/new', params={'company':'uhs-10-k-fy2024','check':'1'})
+    assert response.status_code == 200 and 'uhs-test.htm' in response.text
+    (folder/'company.json').write_text(json.dumps({'cik':1,'ticker':'UHS'}))
+    assert workspace.get('/analysis/new', params={'company':'uhs-10-k-fy2024','check':'1'}).status_code == 400
+
+
 def test_source_metadata_and_correct_backend_map(workspace):
     page = workspace.get('/analysis/new').text
     for value in ['31 December 2024','10 January 2025','31 Mar 2025, 23:59:59','HCA 10-K FY2024','0000000001-25-000001']:

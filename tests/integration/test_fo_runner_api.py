@@ -666,8 +666,8 @@ def test_invalid_case_id_and_folder_are_refused(db_session):
 def test_browser_run_list_run_form_workbench_and_artifacts(client, tmp_path):
     page = client.get("/fo")
     assert page.status_code == 200
-    assert FOLDER in page.text and "No Financial Overview run has been recorded" in page.text
-    assert "Keyword rules only" not in page.text and "Pre-check Agent model" in page.text
+    assert "No Financial Overview run has been recorded" in page.text
+    assert "Run a Financial Overview" not in page.text  # runs start from New Analysis, not this page
 
     posted = client.post("/fo/run", data={"folder": FOLDER, "case_id": "NVDA_WEB"}, follow_redirects=False)
     assert posted.status_code == 303
@@ -700,8 +700,6 @@ def test_browser_without_a_provider_refuses_to_run(client, monkeypatch):
 
     monkeypatch.setattr(precheck, "agent_available", lambda: (False, "No live LLM provider is configured."))
     monkeypatch.setattr(precheck, "live_backend", not_configured)
-    page = client.get("/fo").text
-    assert "Pre-check Agent not configured" in page and "disabled>Run" in page
     refused = client.post("/fo/run", data={"folder": FOLDER})
     assert refused.status_code == 400 and "Pre-check Agent is required and not available" in refused.text
     assert "No Financial Overview run has been recorded" in client.get("/fo").text
@@ -711,10 +709,6 @@ TEST_MODELS = ["gemini-3.1-flash-lite", "gemini-3.5-flash", "gemini-3.1-pro-prev
 
 
 def test_the_analyst_picks_the_agent_model_before_running(client, monkeypatch, db_session):
-    page = client.get("/fo").text
-    assert '<select id="model" name="model">' in page
-    assert 'id="fo-progress" role="status" aria-live="polite" hidden' in page  # shown when Run is clicked
-    assert all(f'<option value="{m}"' in page for m in TEST_MODELS) and "tts" not in page
     picked = []
 
     def on_model(model=None):
@@ -748,9 +742,7 @@ def test_a_run_stopped_between_steps_records_nothing(db_session):
 
 
 def test_the_stop_button_stops_a_browser_run(client, db_session):
-    page = client.get("/fo").text
-    assert 'name="run_token"' in page and 'id="fo-stop-button"' in page
-    token = page.split('id="fo-run-token" value="')[1].split('"')[0]
+    token = "tok-stop-1"
     assert client.post("/fo/run/cancel", data={"run_token": token}).json() == {"stopping": True}
     stopped = client.post("/fo/run", data={"folder": FOLDER, "case_id": "NVDA_STOP_WEB", "run_token": token})
     assert stopped.status_code == 200 and "Run stopped." in stopped.text
@@ -758,7 +750,7 @@ def test_the_stop_button_stops_a_browser_run(client, db_session):
     assert db_session.query(FinancialOverviewRunRow).count() == 0
     assert client.post("/fo/run/cancel", data={"run_token": "bad"}).status_code == 400
     # The token is cleared after its run: a new run with a new token goes through.
-    fresh = client.get("/fo").text.split('id="fo-run-token" value="')[1].split('"')[0]
+    fresh = "tok-stop-2"
     assert fresh != token
     done = client.post("/fo/run", data={"folder": FOLDER, "case_id": "NVDA_GO", "run_token": fresh},
                        follow_redirects=False)
@@ -793,13 +785,12 @@ def test_the_run_reports_its_steps_and_a_failure_names_its_step(client, db_sessi
         raise KeyError("ebit")
 
     monkeypatch.setattr(fo_runner, "icr_t1_trigger", broken)
-    token = client.get("/fo").text.split('id="fo-run-token" value="')[1].split('"')[0]
+    token = "tok-fail-1"
     failed = client.post("/fo/run", data={"folder": FOLDER, "case_id": "NVDA_FAIL", "run_token": token})
     assert failed.status_code == 500
     assert "Run failed during step" in failed.text and "the ICR trigger T1 check" in failed.text
     assert "Unexpected error (KeyError)" in failed.text and "Could not read this filing" not in failed.text
     assert "Steps completed before it" in failed.text
-    assert 'id="fo-progress-step"' in client.get("/fo").text
 
 
 def test_only_text_analysis_models_can_be_picked(monkeypatch):
@@ -854,7 +845,6 @@ def test_browser_run_errors_render_a_page_not_a_500(client, tmp_path, monkeypatc
     unreadable = client.post("/fo/run", data={"folder": "Not a filing"})
     assert unreadable.status_code == 400 and "No Inline XBRL" in unreadable.text
     monkeypatch.setattr(loader, "FILINGS_ROOT", tmp_path / "missing")
-    assert "No filing folders found" in client.get("/fo").text
 
 
 def test_browser_agent_run_escalates_and_the_analyst_stops_it(client, auditor_doubt, monkeypatch):

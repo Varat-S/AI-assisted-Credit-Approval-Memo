@@ -57,7 +57,7 @@ def submit(client, **values):
     return client.post('/analysis/start', data={'submission_key':uuid.uuid4().hex, **values}, follow_redirects=False)
 
 
-@pytest.mark.parametrize('sections', ['both','bo'])
+@pytest.mark.parametrize('sections', ['both','bo','fo'])
 @pytest.mark.parametrize('mode', ['standard','exploratory'])
 def test_submission_mappings_and_persistent_metadata(execution_env, sections, mode):
     client,jobs,release,started,calls=execution_env
@@ -67,6 +67,7 @@ def test_submission_mappings_and_persistent_metadata(execution_env, sections, mo
     assert started.wait(2)
     kwargs=calls[0]
     assert kwargs['bo_only'] == (sections=='bo')
+    assert kwargs['fo_only'] == (sections=='fo')
     assert kwargs['bo_validators'] == (mode=='standard')
     assert kwargs['folder']=='HCA 10-K FY2024'
     assert kwargs['cutoff'].isoformat()=='2025-03-31T23:59:59+00:00'

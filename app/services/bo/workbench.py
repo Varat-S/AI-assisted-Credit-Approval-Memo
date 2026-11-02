@@ -151,6 +151,27 @@ def bo_artifact(session: Session, analysis_run_id: str, kind: str) -> dict[str, 
     raise BoRunNotFoundError(f"No recorded {kind} for run {analysis_run_id!r}.")
 
 
+def with_review(memo: dict[str, Any], handoff: AcceptedBusinessOverviewRow) -> dict[str, Any]:
+    """The memo as it reads after the handoff's human review. The archived memo was frozen while review was
+    pending and stays as recorded; a later decision is shown over it, never written into it."""
+    from app.services.bo.reporting import REJECTED_STATUS_TEXT, REVIEWED_STATUS_TEXT
+
+    decision = handoff.human_review_status
+    if decision not in ("accepted", "rejected"):
+        return memo
+    status = memo["status"]
+    text = (REJECTED_STATUS_TEXT if decision == "rejected" else
+            REVIEWED_STATUS_TEXT.get(status["conclusion_status"], status["text"]))
+    return {**memo, "status": {**status, "human_review_status": decision, "text": text,
+                               "reviewer": handoff.payload.get("reviewer"),
+                               "reviewed_at": handoff.payload.get("reviewed_at")}}
+
+
+def reviewed_memo(session: Session, analysis_run_id: str) -> dict[str, Any]:
+    """The verified memo with its handoff's current human review applied (see ``with_review``)."""
+    return with_review(bo_artifact(session, analysis_run_id, "memo"), _handoff_row(session, analysis_run_id))
+
+
 def _m3_agents(module: dict[str, Any] | None) -> list[dict[str, Any]]:
     """Module 3's two components run outside the agent DAG; list them with their recorded outcome."""
     if not is_m3_block(module):
@@ -211,7 +232,7 @@ def _agent_order(agent: dict[str, Any]) -> tuple[int, int]:
 def bo_view(session: Session, analysis_run_id: str) -> dict[str, Any]:
     """The inspection view for one run."""
     handoff = _handoff_row(session, analysis_run_id)
-    memo = bo_artifact(session, analysis_run_id, "memo")
+    memo = with_review(bo_artifact(session, analysis_run_id, "memo"), handoff)
     audit = bo_artifact(session, analysis_run_id, "audit")
     current = [h for h in audit["hypotheses"]["records"]
                if h["acceptance_state"] == "accepted"]

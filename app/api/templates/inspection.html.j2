@@ -6,7 +6,7 @@
 <p><strong>{{ preview.case_id }}</strong> · Evidence version {{ preview.evidence_version }} · As of {{ evidence.as_of_date }} · Cutoff {{ evidence.evidence_cutoff_timestamp }}</p>
 <ol class="workflow"><li>Uploaded</li><li>Cutoff checked</li><li>Parsed and mapped</li><li>Metrics calculated</li><li class="current">Evidence review</li><li class="pending">LLM pending</li></ol>
 <p class="notice">Processing has stopped at this review point. LLM calls: <strong>{{ preview.llm_calls }}</strong>. Parsed facts and candidate passages retain their evidence quality and review requirements.</p>
-<div class="actions"><a href="/inspect">Upload another file</a><a href="/">All cases</a><a href="/inspect/{{ preview.case_id }}/{{ preview.evidence_version }}/payload.json">Full preview JSON</a><a href="/inspect/{{ preview.case_id }}/{{ preview.evidence_version }}/llm-input.json">Next LLM input JSON</a><a href="/cases/{{ preview.case_id }}/workbench.html">Case workbench</a></div>
+<div class="actions"><a href="/inspect">Upload another file</a><a href="/credit-memos">All cases</a><a href="/inspect/{{ preview.case_id }}/{{ preview.evidence_version }}/payload.json">Full preview JSON</a><a href="/inspect/{{ preview.case_id }}/{{ preview.evidence_version }}/llm-input.json">Next LLM input JSON</a><a href="/cases/{{ preview.case_id }}/workbench.html">Case workbench</a></div>
 </header>
 <nav><ul><li><a href="#outputs">Saved outputs / JSON</a></li><li><a href="#sources">Sources and cutoff</a></li><li><a href="#facts">Facts</a></li><li><a href="#metrics">Available metrics</a></li><li><a href="#narrative">Text / narrative</a></li><li><a href="#sec">SEC diagnostics</a></li><li><a href="#issues">Review issues</a></li><li><a href="#llm">LLM boundary</a></li></ul></nav>
 <main>

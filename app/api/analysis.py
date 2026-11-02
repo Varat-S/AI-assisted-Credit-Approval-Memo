@@ -2,15 +2,21 @@
 from pathlib import Path
 import hashlib
 import json
+import re
 import uuid
+from datetime import date
 from urllib.parse import quote
-from fastapi import APIRouter, Depends, Form, HTTPException
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from sqlalchemy.orm import Session
 from app.api.deps import get_session
 from app.services import analysis_workspace
 from fastapi.responses import HTMLResponse, RedirectResponse
 from app.core.config import get_settings
 from app.services import bo_fo
+from app.services.acquisition import shared_filing
+from app.services.acquisition.sec_edgar import EdgarError, SecEdgarClient
+from app.services.audit.log import AuditLog
+from app.services.extraction.sec.xml import MAX_FILE_BYTES
 from app.services.fo import precheck
 from app.services.analysis_jobs import IdempotencyConflict, JobStatusUnavailable
 from jinja2 import Environment, FileSystemLoader
@@ -20,28 +26,117 @@ router = APIRouter(tags=["analysis workspace"])
 _env = Environment(loader=FileSystemLoader(str(Path(__file__).parent / "templates")), autoescape=True)
 
 
-@router.get("/analysis/new", response_class=HTMLResponse)
-def new_analysis(company: str = "hca", sections: str = "both", validation_mode: str = "standard",
-                 cutoff: str = "", case_id: str = "", check: str = ""):
-    values = dict(company=company, sections=sections, validation_mode=validation_mode,
-                  cutoff=cutoff, case_id=case_id)
-    companies, selection, errors = [], None, []
+def _setup_page(*, values, check="", extra_errors=(), notice=None, reports=None, edgar=None, status_code=None):
+    sections, validation_mode, company = values["sections"], values["validation_mode"], values["company"]
+    companies, selection, errors = [], None, list(extra_errors)
     try:
         companies = company_registry()
+        values["company"] = company = company or companies[0]["id"]
         selection = validate_setup(**values)
     except SetupError as exc:
         errors.append(str(exc))
-    providers = provider_configuration(sections if sections in {"bo", "both"} else "both")
+    providers = provider_configuration(sections if sections in {"bo", "both", "fo"} else "both")
     if not providers["bo_configured"]:
         errors.append("Business Overview provider settings are unavailable. Configure the AI provider before starting an analysis.")
-    if sections == "both" and not providers["fo_configured"]:
+    if sections in {"both", "fo"} and not providers["fo_configured"]:
         errors.append("Financial Overview provider settings are unavailable. Configure them before starting a combined analysis.")
-    invalid_choice = company not in {c["id"] for c in companies} or sections not in {"bo", "both"} or validation_mode not in {"standard", "exploratory"}
+    invalid_choice = company not in {c["id"] for c in companies} or sections not in {"bo", "both", "fo"} or validation_mode not in {"standard", "exploratory"}
+    if status_code is None:
+        status_code = 400 if invalid_choice or (check and errors) else 200
     return HTMLResponse(_env.get_template("analysis_setup.html.j2").render(
         values=values, companies=companies, selection=selection, errors=errors,
         providers=providers, checked=bool(check), execution_enabled=selection is not None and not errors,
-        submission_key=uuid.uuid4().hex),
-        status_code=400 if invalid_choice or (check and errors) else 200)
+        submission_key=uuid.uuid4().hex, notice=notice, reports=reports, edgar=edgar or {},
+        sec_env=bool(get_settings().sec_user_agent)), status_code=status_code)
+
+
+@router.get("/analysis/new", response_class=HTMLResponse)
+def new_analysis(company: str = "", sections: str = "both", validation_mode: str = "standard",
+                 cutoff: str = "", case_id: str = "", check: str = "", added: str = ""):
+    values = dict(company=company, sections=sections, validation_mode=validation_mode,
+                  cutoff=cutoff, case_id=case_id)
+    return _setup_page(values=values, check=check,
+                       notice=f"Added {added} to edgar_filings/ with its bundle.json. It is selected below." if added else None)
+
+
+def _added_company_id(folder_name):
+    return re.sub(r"[^a-z0-9]+", "-", folder_name.lower()).strip("-")
+
+
+def _contact(user_agent):
+    """The SEC contact typed into the form, else SEC_USER_AGENT from .env."""
+    return user_agent.strip() or get_settings().sec_user_agent or ""
+
+
+def _edgar_client(session, user_agent):
+    return SecEdgarClient(_contact(user_agent), audit=AuditLog(session))
+
+
+_NO_SEC_CONTACT = "Enter your email (e.g. you@example.com) so SEC EDGAR can identify the request."
+
+
+def _edgar_failure(message, edgar, status_code=400, reports=None):
+    values = dict(company="", sections="both", validation_mode="standard", cutoff="", case_id="")
+    return _setup_page(values=values, extra_errors=[message], edgar=edgar, status_code=status_code)
+
+
+@router.get("/analysis/new/reports", response_class=HTMLResponse)
+def list_edgar_reports(ticker: str = "", amendments: str = "", user_agent: str = "", session: Session = Depends(get_session)):
+    """Step 1 of a download: the ticker's 10-Ks on SEC EDGAR, newest first."""
+    edgar = {"ticker": ticker, "amendments": amendments, "user_agent": user_agent}
+    if not _contact(user_agent):
+        return _edgar_failure(_NO_SEC_CONTACT, edgar)
+    try:
+        company, reports = shared_filing.annual_reports(
+            _edgar_client(session, user_agent), ticker.strip(), include_amendments=bool(amendments))
+    except (EdgarError, ValueError) as exc:
+        return _edgar_failure(f"Could not list {ticker.strip().upper()}'s 10-Ks: {exc}", edgar)
+    if not reports:
+        return _edgar_failure(f"SEC EDGAR lists no 10-K for {company['name']} ({company['ticker']}).", edgar, 404)
+    values = dict(company="", sections="both", validation_mode="standard", cutoff="", case_id="")
+    return _setup_page(values=values, reports=reports, edgar={**edgar, "company": company})
+
+
+@router.post("/analysis/new/fetch")
+def fetch_edgar_filing(ticker: str = Form(...), accession: str = Form(...), with_proxy: str = Form(""),
+                       user_agent: str = Form(""), session: Session = Depends(get_session)):
+    """Step 2: download the chosen 10-K into edgar_filings/ with its bundle.json and company.json."""
+    if not _contact(user_agent):
+        return _edgar_failure(_NO_SEC_CONTACT, {"ticker": ticker, "user_agent": user_agent})
+    try:
+        filing = shared_filing.fetch_filing(
+            _edgar_client(session, user_agent), ticker.strip(), accession=accession.strip(), with_proxy=bool(with_proxy))
+    except (shared_filing.SharedFilingError, EdgarError, ValueError) as exc:
+        return _edgar_failure(f"Download failed: {exc}", {"ticker": ticker, "user_agent": user_agent})
+    return RedirectResponse(f"/analysis/new?company={quote(_added_company_id(filing.name))}&added={quote(filing.name)}",
+                            status_code=303)
+
+
+@router.post("/analysis/new/import")
+async def import_edgar_filing(files: list[UploadFile] = File(...), accession: str = Form(""),
+                              filing_date: str = Form(""), ticker: str = Form(""), user_agent: str = Form(""),
+                              session: Session = Depends(get_session)):
+    """Upload a 10-K's files (or a .zip) into edgar_filings/."""
+    edgar = {"accession": accession, "filing_date": filing_date, "import_ticker": ticker, "user_agent": user_agent}
+    uploads: dict[str, bytes] = {}
+    for upload in files:
+        name = Path(upload.filename or "").name
+        if not name:
+            continue
+        data = await upload.read(MAX_FILE_BYTES * 4 + 1)  # a .zip may hold several files
+        if name in uploads:
+            return _edgar_failure(f"{name!r} was selected twice.", edgar)
+        uploads[name] = data
+    try:
+        parsed_date = date.fromisoformat(filing_date) if filing_date.strip() else None
+        client = _edgar_client(session, user_agent) if _contact(user_agent) else None
+        filing = shared_filing.import_filing(
+            uploads, accession=accession.strip() or None, filing_date=parsed_date,
+            ticker=ticker.strip() or None, client=client)
+    except (shared_filing.SharedFilingError, EdgarError, ValueError) as exc:
+        return _edgar_failure(f"Import failed: {exc}", edgar)
+    return RedirectResponse(f"/analysis/new?company={quote(_added_company_id(filing.name))}&added={quote(filing.name)}",
+                            status_code=303)
 
 
 @router.get("/credit-memos", response_class=HTMLResponse)
@@ -56,9 +151,9 @@ def credit_memos(search: str = "", status: str = "", mode: str = "", session: Se
 
 def execution_backends(sections):
     """Local provider/SDK/credential discovery only. Never generates a response."""
-    bo = bo_fo.bo_live_backend()
-    m3 = bo_fo.m3_live_backend()
-    fo = precheck.live_backend() if sections == 'both' else None
+    bo = bo_fo.bo_live_backend() if sections != 'fo' else None
+    m3 = bo_fo.m3_live_backend() if sections != 'fo' else None
+    fo = precheck.live_backend() if sections in {'both', 'fo'} else None
     # Vertex's SDK discovers ADC here; this does not issue a generation request.
     from app.services.llm.providers_vertex import VertexProviderBackend
     for backend in (bo, m3, fo):
@@ -71,7 +166,7 @@ def execution_backends(sections):
 
 
 @router.post('/analysis/start')
-def start_analysis(company: str = Form('hca'), sections: str = Form('both'),
+def start_analysis(company: str = Form(''), sections: str = Form('both'),
                    validation_mode: str = Form('standard'), cutoff: str = Form(''),
                    case_id: str = Form(''), submission_key: str = Form(...)):
     try:
@@ -94,7 +189,7 @@ def start_analysis(company: str = Form('hca'), sections: str = Form('both'),
             database=database, folder=parameters['folder'], case_id=settled['case_id'],
             cutoff=selection.cutoff, bo_backend=bo_backend, m3_backend=m3_backend, fo_backend=fo_backend,
             fo_mode='live', output_root=settings.output_dir, data_root=settings.data_dir,
-            bo_only=sections == 'bo', bo_validators=parameters['bo_validators'] == 'on',
+            bo_only=sections == 'bo', fo_only=sections == 'fo', bo_validators=parameters['bo_validators'] == 'on',
             metadata=metadata, idempotency_key=submission_key, request_hash=fingerprint)
     except IdempotencyConflict as exc:
         raise HTTPException(409, str(exc)) from exc
@@ -110,7 +205,7 @@ def execution(job_id: str):
     job = bo_fo.jobs.get(job_id)
     if job is None:
         raise HTTPException(404, 'Unknown analysis.')
-    return HTMLResponse(_env.get_template('analysis_execution.html.j2').render(job=job),
+    return HTMLResponse(_env.get_template('analysis_execution.html.j2').render(job=job, analysis=analysis_workspace.analysis_tabs(job, 'execution')),
                         headers={'Cache-Control':'no-store'})
 
 
@@ -145,8 +240,34 @@ def review_analysis(job_id: str, session: Session = Depends(get_session)):
         return RedirectResponse(f'/analysis/{quote(job_id, safe="")}/execution', status_code=303)
     from app.services.analysis_audit import public_record
     display = {**view, **{key:public_record(view[key]) for key in ('memo','synthesis','financial','sources','reason')}}
-    return HTMLResponse(_env.get_template('analysis_review.html.j2').render(job=job, view=display),
+    return HTMLResponse(_env.get_template('analysis_review.html.j2').render(job=job, view=display, analysis=analysis_workspace.analysis_tabs(job, 'memo')),
                         headers={'Cache-Control':'no-store'})
+
+
+@router.get('/analysis/{job_id}/rms', response_class=HTMLResponse)
+def rms_analysis(job_id: str, notice: str | None = None, session: Session = Depends(get_session)):
+    return rms_page(session, job_id, notice=notice)
+
+
+def rms_page(session, job_id, *, notice=None, error=None, status_code=200):
+    """RMS for exactly this analysis's BO and FO runs; never the case's latest of either."""
+    from app.services.rms.case_view import credit_view
+    job = bo_fo.jobs.get(job_id)
+    if job is None:
+        raise HTTPException(404, 'Unknown analysis.')
+    try:
+        ids = analysis_workspace.run_references(job)
+    except analysis_workspace.WorkspaceRecordError as exc:
+        raise HTTPException(409, 'The selected run could not be verified. Its records require attention.') from exc
+    if job.get('bo_only') or job.get('fo_only') or not (ids['bo'] and ids['fo']):
+        raise HTTPException(404, 'Risk Mitigation & Structuring needs both a Business and a Financial Overview run.')
+    view = credit_view(session, job.get('case_id'), output_root=get_settings().output_dir,
+                       fo_run_id=ids['fo'], bo_run_id=ids['bo'])
+    if not view['fo'] or not view['bo']:
+        raise HTTPException(404, 'A report for the selected run is unavailable.')
+    return HTMLResponse(_env.get_template('analysis_rms.html.j2').render(
+        job=job, view=view, notice=notice, error=error, analysis=analysis_workspace.analysis_tabs(job, 'rms')),
+        status_code=status_code, headers={'Cache-Control':'no-store'})
 
 
 @router.get('/analysis/{job_id}/audit', response_class=HTMLResponse)
@@ -161,5 +282,6 @@ def audit_analysis(job_id: str, session: Session = Depends(get_session)):
     # Display copies only. ORM references are used solely for exact existing review links.
     display = {**view, 'financial':public_record(view['financial']), 'reason':public_record(view['reason'])}
     return HTMLResponse(_env.get_template('analysis_audit.html.j2').render(
-        job=job, view=display, audit=audit, anchor=analysis_workspace.anchor),
+        job=job, view=display, audit=audit, anchor=analysis_workspace.anchor,
+        analysis=analysis_workspace.analysis_tabs(job, 'audit')),
         headers={'Cache-Control':'no-store'})

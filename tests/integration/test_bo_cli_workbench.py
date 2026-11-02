@@ -291,3 +291,33 @@ def test_workspace_reads_actual_scripted_bo_artifacts_without_latest_fallback(cl
     audit=http.get('/analysis/scripted-workspace/audit')
     assert audit.status_code==200,audit.text
     assert 'BO2-H001' in audit.text and 'Cross-Module Synthesizer' in audit.text
+
+
+def test_accepting_from_the_analysis_tab_returns_there_and_the_memo_shows_the_decision(client,monkeypatch):
+    from app.services import bo_fo
+    http,summary=client
+    run_id=summary['analysis_run_id']
+    job={'job_id':'scripted-workspace','case_id':'POC_BO','metadata':{'company':'OFFLINE POC'},
+         'bo_only':True,'bo_validators':True,'execution_status':'completed','folder':'fixture',
+         'result':{'bo':{'summary':{'analysis_run_id':run_id}}}}
+    class Records:
+        def get(self,ident):return job if ident=='scripted-workspace' else None
+    monkeypatch.setattr(bo_fo,'jobs',Records())
+    tab=f'/cases/POC_BO/bo.html?analysis_run_id={run_id}&job=scripted-workspace'
+    assert 'name="job" value="scripted-workspace"' in http.get(tab).text
+    before=http.get(f'/cases/POC_BO/bo/runs/{run_id}/memo.html').text
+    assert 'Human review: pending.' in before and 'Human review is still required' in before
+    done=http.post(f'/cases/POC_BO/bo/runs/{run_id}/review',follow_redirects=False,data={
+        'reviewer':'analyst.a','reason':'Reviewed.','decision':'accept','job':'scripted-workspace'})
+    assert done.status_code==303
+    assert done.headers['location']==f'/cases/POC_BO/bo.html?analysis_run_id={run_id}&job=scripted-workspace#review'
+    memo=http.get(f'/cases/POC_BO/bo/runs/{run_id}/memo.html').text
+    assert 'Human review: accepted by analyst.a on' in memo and 'Approved by human review.' in memo
+    assert 'Human review is still required' not in memo and 'Human review: pending' not in memo
+    assert 'Approved by human review.' in http.get(tab).text  # the workbench's conclusion line
+    assert 'Approved · Business Overview' in http.get('/analysis/scripted-workspace/review').text
+    # The archived memo stays as frozen; the decision is shown over it, not written into it.
+    assert http.get(f'/cases/POC_BO/bo/runs/{run_id}/memo.json').json()['status']['human_review_status']=='pending'
+    again=http.post(f'/cases/POC_BO/bo/runs/{run_id}/review',data={
+        'reviewer':'b','reason':'x','decision':'reject','job':'scripted-workspace'})
+    assert again.status_code==409 and 'already accepted' in again.text and 'class="analysis-tabs"' in again.text

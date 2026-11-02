@@ -150,7 +150,7 @@ def run_bo_fo(*, database: Path, folder: str, bo_backend, fo_backend, fo_mode: s
               output_root, data_root=None, case_id: str | None = None, cutoff: datetime | None = None,
               produce_pdf: bool = False, m3_backend=None,
               rms_request: rms.RmsRequest | None = None, on_progress=None, on_work=None,
-              lock_wait: float = LOCK_WAIT_SECONDS, bo_only: bool = False,
+              lock_wait: float = LOCK_WAIT_SECONDS, bo_only: bool = False, fo_only: bool = False,
               stop: threading.Event | None = None, bo_validators: bool = True, on_stage=None) -> dict:
     """Run both sections at once; returns ``{"case_id", "folder", "cutoff", "bo": {...}, "fo": {...},
     "rms": {...}}``.
@@ -160,7 +160,7 @@ def run_bo_fo(*, database: Path, folder: str, bo_backend, fo_backend, fo_mode: s
     with its ``summary``, ``error`` or ``reason``. ``on_progress(section, message)`` is called from the worker
     threads as they advance, and for ``rms`` once both have finished; ``on_work(section, done, total)`` with the
     units of work each section has done and plans (``total`` can grow while a section runs). ``bo_only`` runs the BO by itself: the FO
-    (and so RMS) is ``skipped`` and ``fo_backend`` is not used. Setting ``stop`` ends each unfinished section
+    (and so RMS) is ``skipped`` and ``fo_backend`` is not used. ``fo_only`` runs the FO by itself: the BO (and so RMS) is ``skipped`` and ``bo_backend`` is not used. Setting ``stop`` ends each unfinished section
     ``stopped`` at its next step. ``bo_validators=False`` runs the BO validators in advisory mode (an ungoverned
     draft, always left for human review; RMS notes it).
     """
@@ -238,8 +238,12 @@ def run_bo_fo(*, database: Path, folder: str, bo_backend, fo_backend, fo_mode: s
     outcome = {"case_id": case_id, "folder": folder, "cutoff": settled["cutoff"].isoformat()}
     if bo_only:
         outcome["fo"] = {"status": "skipped", "reason": "Business Overview only run."}
+    if fo_only:
+        outcome["bo"] = {"status": "skipped", "reason": "Financial Overview only run."}
     with ThreadPoolExecutor(max_workers=2, thread_name_prefix="bo-fo") as pool:
-        futures = {pool.submit(bo): "bo"}
+        futures = {}
+        if not fo_only:
+            futures[pool.submit(bo)] = "bo"
         if not bo_only:
             futures[pool.submit(fo)] = "fo"
         for future in as_completed(futures):
@@ -260,7 +264,7 @@ def run_bo_fo(*, database: Path, folder: str, bo_backend, fo_backend, fo_mode: s
                 say(section, "failed")
     if stop is not None and stop.is_set():
         outcome["rms"] = {"status": "skipped", "reason": "The run was stopped."}
-        if not bo_only:
+        if not bo_only and not fo_only:
             say("rms", "skipped")
     else:
         outcome["rms"] = run_rms(outcome, rms_request, output_root, say)
@@ -274,6 +278,9 @@ def run_rms(outcome: dict, request: rms.RmsRequest | None, output_root, say) -> 
     if outcome["fo"]["status"] == "skipped":
         say("rms", "skipped")
         return {"status": "skipped", "reason": "Needs both sections; this run was Business Overview only."}
+    if outcome["bo"]["status"] == "skipped":
+        say("rms", "skipped")
+        return {"status": "skipped", "reason": "Needs both sections; this run was Financial Overview only."}
     unfinished = [s.upper() for s in ("bo", "fo") if outcome[s]["status"] != "completed"]
     if unfinished:
         say("rms", "skipped")
@@ -434,16 +441,17 @@ class Jobs:
             publish_terminal, finish_record, persistence_health, JobStorageUnavailable, storage_failure)
         store = self._store(kwargs['database']) if kwargs.get('database') or self._store_path else None
         job_id = uuid.uuid4().hex
-        bo_only = kwargs.get('bo_only', False)
+        bo_only, fo_only = kwargs.get('bo_only', False), kwargs.get('fo_only', False)
         job = dict(job_id=job_id, status='running', execution_status='pending', created_at=now(),
                    started_at=None, finished_at=None, folder=kwargs['folder'], case_id=kwargs.get('case_id'),
-                   bo_only=bo_only, bo_validators=kwargs.get('bo_validators', True), stop_requested=False,
+                   bo_only=bo_only, fo_only=fo_only, bo_validators=kwargs.get('bo_validators', True), stop_requested=False,
                    result=None, error=None, stages={}, events=[], memo_status='draft', worker_tracking='thread-v1',
                    metadata=metadata or {}, cutoff=kwargs.get('cutoff').isoformat() if kwargs.get('cutoff') else None)
-        job['sections'] = {section: dict(status='skipped' if bo_only and section != 'bo' else 'waiting',
-                                        step='not selected' if bo_only and section != 'bo' else 'starting', steps=[], work=None)
+        skipped = lambda section: bo_only and section != 'bo' or fo_only and section != 'fo'
+        job['sections'] = {section: dict(status='skipped' if skipped(section) else 'waiting',
+                                        step='not selected' if skipped(section) else 'starting', steps=[], work=None)
                            for section in ('bo', 'fo', 'rms')}
-        for name in ('foundation', 'primary_specialists', 'reconciliation', 'orchestrator', 'challenger', 'memo_preparation'):
+        for name in () if fo_only else ('foundation', 'primary_specialists', 'reconciliation', 'orchestrator', 'challenger', 'memo_preparation'):
             job['stages']['bo:' + name] = dict(section='bo', label={'primary_specialists':'Specialist analysis & validation','foundation':'Evidence preparation & management analysis','reconciliation':'Validation & reconciliation','orchestrator':'Cross-module synthesis & validation','challenger':'Independent challenge'}.get(name,name.replace('_',' ').title()), status='pending', order={'foundation':10,'primary_specialists':20,'reconciliation':50,'orchestrator':60,'challenger':70,'memo_preparation':90}[name])
         if not bo_only:
             job['stages']['fo:workflow'] = dict(section='fo', label='Financial preparation, analysis and validation', status='pending', order=0)

@@ -1,14 +1,34 @@
 /* Presentation only. All states come from recorded runner events, never time estimates. */
-function businessProgress(job) {
-  const entries = Object.entries(job.stages || {}).filter(([key, state]) => state.section === 'bo');
-  const events = (job.events || []).filter(event => event.section === 'bo');
-  function latest(matches) {
-    const recorded = events.filter(event => matches(event.stage));
-    if (recorded.length) return recorded[recorded.length - 1].status;
-    const states = entries.filter(([key]) => matches(key.replace(/^bo:/, '')))
-      .sort((a, b) => (a[1].updated_at || '').localeCompare(b[1].updated_at || ''));
-    return states.length ? states[states.length - 1][1].status : null;
+function recordedStatus(job, section, matches) {
+  const recorded = (job.events || []).filter(event => event.section === section && matches(event.stage));
+  if (recorded.length) return recorded[recorded.length - 1].status;
+  const states = Object.entries(job.stages || {})
+    .filter(([key, state]) => state.section === section && matches(key.slice(section.length + 1)))
+    .sort((a, b) => (a[1].updated_at || '').localeCompare(b[1].updated_at || ''));
+  return states.length ? states[states.length - 1][1].status : null;
+}
+
+/* A brief reason for the first recorded BO stage failure: the stage and the agent it rejected.
+   A failure before any stage ran (e.g. a case conflict) is recorded only as the section's step. */
+function businessFailureReason(job) {
+  const event = (job.events || []).find(event => event.section === 'bo' && event.status === 'failed');
+  if (!event) {
+    const section = (job.sections || {}).bo || {};
+    return section.status === 'failed' && section.step ?
+      section.step.replace(/^[A-Za-z_][\w.]*(Error|Exception): /, '') : '';
   }
+  const label = {orchestrator: 'Synthesis', orchestrator_validation_repair: 'Synthesis repair attempt',
+                 challenger: 'Challenge', memo_preparation: 'Writing the Business Overview'}[event.stage] ||
+    businessStepLabel(event.stage);
+  const failed = (event.detail || {}).failed || {};
+  const agent = Object.entries((event.detail || {}).agents || {})
+    .find(([id, state]) => ['rejected', 'failed'].includes(state.status) || failed[id]);
+  return agent ? `${label} failed: ${agent[0].replaceAll('_', ' ')} output was ${agent[1].status || 'failed'}`
+               : `${label} failed`;
+}
+
+function businessProgress(job) {
+  const latest = matches => recordedStatus(job, 'bo', matches);
   const evidence = [latest(name => name === 'foundation'), latest(name => name === 'follow_up_retrieval')];
   const specialists = [
     latest(name => name.includes('primary_specialists')),
@@ -45,7 +65,8 @@ function businessProgress(job) {
   let status = 'running';
   if (failed) {
     status = 'failed';
-    message = 'Business Overview could not be completed. See Execution Details.';
+    const reason = businessFailureReason(job);
+    message = 'Business Overview could not be completed. ' + (reason || 'See Execution Details.');
   } else if (complete) {
     status = 'completed';
     message = 'Business Overview complete. Human review remains required.';
@@ -97,4 +118,96 @@ function financialProgress(job) {
     return status;
   }
   return {preparation: state('workflow'), reporting: state('reporting')};
+}
+
+/* Bar fill: the share of a bar's recorded parts that have finished. null keeps a running bar
+   indeterminate while none of its parts has finished yet. */
+function progressFill(state, parts) {
+  if (state === 'completed') return 100;
+  if (state === 'pending' || !parts.length) return 0;
+  const done = parts.filter(status => ['completed', 'skipped'].includes(status)).length;
+  return done || state !== 'running' ? Math.round(100 * done / parts.length) : null;
+}
+
+/* The most recently started stage that has no end event yet (nested stages end before their parent). */
+function openStage(job, section) {
+  const events = (job.events || []).filter(event => event.section === section);
+  if (!events.length) {
+    const running = Object.entries(job.stages || {})
+      .filter(([, state]) => state.section === section && state.status === 'running')
+      .sort((a, b) => (a[1].order || 0) - (b[1].order || 0));
+    return running.length ? running[running.length - 1][0].slice(section.length + 1) : null;
+  }
+  const open = new Map();
+  events.forEach(event => {
+    open.delete(event.stage);
+    if (event.status === 'running') open.set(event.stage, true);
+  });
+  const names = [...open.keys()];
+  return names.length ? names[names.length - 1] : events[events.length - 1].stage;
+}
+
+function businessStepLabel(name) {
+  // Synthesis, challenge and memo stages are presented together, as in the BO message.
+  if (/orchestrator|challeng|memo_preparation/.test(name)) return 'Finalising credit assessment';
+  const base = name.replace(/^rerun_/, '');
+  const labels = {
+    foundation: 'Preparing evidence',
+    management_analysis_and_validator7: 'Management analysis & validation',
+    primary_specialists: 'Specialist analysis & validation',
+    follow_up_retrieval: 'Retrieving follow-up evidence',
+    coverage_follow_up: 'Coverage follow-up',
+    debt_specialist_and_validation: 'Debt structure analysis & validation',
+    reconciliation: 'Validation & reconciliation'
+  };
+  const label = labels[base] || (base.includes('resilience') ? 'Resilience assessment' :
+    base.replaceAll('_', ' ').replace(/^\w/, c => c.toUpperCase()));
+  return base === name ? label : 'Remediation: ' + label.replace(/^\w/, c => c.toLowerCase());
+}
+
+function businessDetail(job, view = businessProgress(job)) {
+  const status = matches => recordedStatus(job, 'bo', matches);
+  const optional = name => { const recorded = status(stage => stage === name); return recorded ? [recorded] : []; };
+  const preparation = progressFill(view.preparation, [
+    status(name => name === 'management_analysis_and_validator7'),
+    status(name => name === 'foundation'),
+    ...optional('follow_up_retrieval')]);
+  const findings = progressFill(view.findings, [
+    status(name => name.includes('primary_specialists')),
+    status(name => name.includes('resilience')),
+    status(name => name === 'debt_specialist_and_validation'),
+    status(name => name === 'reconciliation'),
+    ...optional('coverage_follow_up')]);
+  const section = (job.sections || {}).bo || {};
+  let activity = '';
+  if (view.complete) {
+    activity = 'All Business Overview steps are complete.';
+  } else if (['pending', 'running'].includes(job.execution_status) &&
+             !['completed', 'failed', 'stopped', 'skipped'].includes(section.status) &&
+             !['failed', 'stopped'].includes(view.status)) {
+    const stage = openStage(job, 'bo');
+    activity = 'Current step: ' + (stage ? businessStepLabel(stage) : 'Preparing the evidence package');
+  }
+  return {preparation, findings, activity};
+}
+
+function financialDetail(job, view = financialProgress(job)) {
+  const section = (job.sections || {}).fo || {};
+  const work = section.work || {};
+  // The runner's last counted step is reporting; every earlier step belongs to the first bar.
+  const steps = work.total > 1 ? work.total - 1 : 0;
+  const preparation = steps && work.done && !['completed', 'pending'].includes(view.preparation) ?
+    Math.round(100 * Math.min(work.done, steps) / steps) :
+    progressFill(view.preparation, [view.preparation]);
+  const reporting = progressFill(view.reporting, [view.reporting]);
+  let activity = '';
+  if (section.status === 'completed' && view.reporting === 'completed') {
+    activity = 'All Financial Overview steps are complete.';
+  } else if (['pending', 'running'].includes(job.execution_status) &&
+             !['completed', 'failed', 'stopped', 'skipped', 'interrupted'].includes(section.status)) {
+    const step = section.step && section.step !== 'starting' ? section.step : 'preparing the filing';
+    const count = work.total && work.done < work.total ? ` (step ${work.done + 1} of ${work.total})` : '';
+    activity = 'Current step: ' + step.replace(/^\w/, c => c.toUpperCase()) + count;
+  }
+  return {preparation, reporting, activity};
 }

@@ -374,3 +374,32 @@ def test_missing_archived_reports_show_incomplete_without_fallback(memo_workspac
     assert 'No validated Business Credit Assessment is available for this run.' in response.text
     assert 'Synthesized assessment hca-first' not in response.text
     assert client.get('/analysis/missing-archive/audit').status_code==200
+
+
+
+def test_every_page_of_an_analysis_shares_one_tab_bar(memo_workspace):
+    client,_,_=memo_workspace
+    expected={'memo':'/analysis/hca-first/review',
+              'bo':'/cases/HCA_2024/bo.html?analysis_run_id=bo-hca-first&job=hca-first',
+              'audit':'/analysis/hca-first/audit','execution':'/analysis/hca-first/execution'}
+    for url,current in [('/analysis/hca-first/review','memo'),('/analysis/hca-first/audit','audit'),
+                        ('/analysis/hca-first/execution','execution')]:
+        page=html.fromstring(client.get(url).text)
+        tabs={a.get('data-tab'):a.get('href') for a in page.xpath('//nav[@class="analysis-tabs"]/a')}
+        assert tabs==expected,url  # BO-only analysis: no Financial Overview tab
+        assert page.xpath('//nav[@class="analysis-tabs"]/a[@aria-current="page"]/@data-tab')==[current]
+
+
+def test_workbench_shows_analysis_tabs_only_for_the_run_the_analysis_owns(memo_workspace):
+    from app.api.workbench import _env
+    from app.services.analysis_workspace import analysis_for
+    assert analysis_for('hca-first','HCA_2024','bo-hca-first','bo')['current']=='bo'
+    for args in [(None,'HCA_2024','bo-hca-first'),('hca-first','HCA_2024','bo-hca-second'),
+                 ('hca-first','OTHER','bo-hca-first'),('missing','HCA_2024','bo-hca-first')]:
+        assert analysis_for(*args,'bo') is None,args
+    page=html.fromstring(_env.get_template('bo_workbench.html.j2').render(
+        runs=[],view=None,analysis=analysis_for('hca-first','HCA_2024','bo-hca-first','bo')))
+    assert page.xpath('//nav[@class="analysis-tabs"]/a[@aria-current="page"]/@data-tab')==['bo']
+    assert not page.xpath('//h1[text()="Business Overview workbench"]')
+    plain=html.fromstring(_env.get_template('bo_workbench.html.j2').render(runs=[],view=None,analysis=None))
+    assert plain.xpath('//h1[text()="Business Overview workbench"]') and not plain.xpath('//nav[@class="analysis-tabs"]')

@@ -343,6 +343,16 @@ def test_the_bo_runs_by_itself(shared, tmp_path):
     assert _count(db, "financial_overview_runs") == 0 and _count(db, "agentic_analysis_runs") == 1
 
 
+def test_the_fo_runs_by_itself(shared, tmp_path):
+    db = _database(tmp_path)
+    out = bo_fo.run_bo_fo(database=db, folder=shared, bo_backend=None, fo_backend=agent(), fo_mode="scripted",
+                          output_root=tmp_path / "out", rms_request=RmsRequest(500), fo_only=True)
+    assert out["fo"]["status"] == "completed", out
+    assert out["bo"] == {"status": "skipped", "reason": "Financial Overview only run."}
+    assert out["rms"] == {"status": "skipped", "reason": "Needs both sections; this run was Financial Overview only."}
+    assert _count(db, "financial_overview_runs") == 1 and _count(db, "agentic_analysis_runs") == 0
+
+
 def test_bo_validators_off_marks_an_ungoverned_draft_and_rms_notes_it(shared, tmp_path):
     db = _database(tmp_path)
     out = bo_fo.run_bo_fo(database=db, folder=shared, bo_backend=None, fo_backend=agent(), fo_mode="scripted",

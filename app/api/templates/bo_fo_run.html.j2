@@ -2,13 +2,13 @@
 <html lang="en">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Run BO and FO</title>{% include 'browser_style.html.j2' %}
 <style>
-  .ok { color: #2f6b45; font-weight: bold; } .bad { color: #9a3324; font-weight: bold; } .warn { color: #8a6d1c; font-weight: bold; }
+  .ok { color: var(--c-2f6b45); font-weight: bold; } .bad { color: var(--c-9a3324); font-weight: bold; } .warn { color: var(--c-8a6d1c); font-weight: bold; }
   .sections { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .section-card { border: 1px solid #c9d1da; border-radius: 8px; padding: 14px 16px; background: #f8fafd; }
-  .track { position: relative; height: 8px; border-radius: 4px; background: #e3e8ee; overflow: hidden; margin: 8px 0; }
-  .track .bar { position: absolute; top: 0; left: -40%; width: 40%; height: 100%; border-radius: 4px; background: #2f6fb0; animation: slide 1.4s ease-in-out infinite; }
-  .track.done .bar { animation: none; left: 0; width: 100%; background: #2f6b45; } .track.failed .bar { animation: none; left: 0; width: 100%; background: #9a3324; }
-  .track.stopped .bar { animation: none; left: 0; width: 100%; background: #8a94a0; }
+  .section-card { border: 1px solid var(--c-c9d1da); border-radius: 8px; padding: 14px 16px; background: var(--c-f8fafd); }
+  .track { position: relative; height: 8px; border-radius: 4px; background: var(--c-e3e8ee); overflow: hidden; margin: 8px 0; }
+  .track .bar { position: absolute; top: 0; left: -40%; width: 40%; height: 100%; border-radius: 4px; background: var(--c-2f6fb0); animation: slide 1.4s ease-in-out infinite; }
+  .track.done .bar { animation: none; left: 0; width: 100%; background: var(--c-2f6b45); } .track.failed .bar { animation: none; left: 0; width: 100%; background: var(--c-9a3324); }
+  .track.stopped .bar { animation: none; left: 0; width: 100%; background: var(--c-8a94a0); }
   .track.measured .bar { animation: none; left: 0; opacity: 1; transition: width .4s ease; }
   @keyframes slide { from { left: -40%; } to { left: 100%; } }
   @media (prefers-reduced-motion: reduce) { .track .bar { animation: none; left: 0; width: 100%; opacity: .5; } .track.measured .bar { opacity: 1; transition: none; } }
@@ -20,7 +20,7 @@
 {% macro st(v) %}<span class="{{ 'ok' if v in ['completed', 'finished'] else 'bad' if v in ['failed'] else 'warn' }}">{{ (v or '—')|replace('_', ' ') }}</span>{% endmacro %}
 <header><span class="badge">Business Overview + Financial Overview</span><h1>Run BO and FO together</h1>
 <p class="subtle">Get a 10-K in once, by downloading it from SEC EDGAR or uploading its files, and both sections read the same folder in <code>edgar_filings/</code>: the Business Overview reads its <code>bundle.json</code> (file roles, hashes and availability), and the Financial Overview reads its Inline XBRL. Both then run at the same time under one case id, or the Business Overview can be run by itself.</p>
-<div class="actions"><a href="/">All cases</a><a href="/bo">Business Overview runs</a><a href="/fo">Financial Overview runs</a></div></header>
+<div class="actions"><a href="/credit-memos">All cases</a><a href="/bo">Business Overview runs</a><a href="/fo">Financial Overview runs</a></div></header>
 <main>
 {% if error %}<section><p class="notice" role="alert"><strong>{{ error }}</strong></p></section>{% endif %}
 

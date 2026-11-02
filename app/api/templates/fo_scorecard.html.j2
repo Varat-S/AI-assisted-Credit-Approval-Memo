@@ -1,36 +1,36 @@
 {# Financial Overview scorecard: the composite then one card per measure. Expects `view` from fo.reporting.overview_view. #}
 <style>
-  .risk { display: inline-block; min-width: 2.6rem; text-align: center; border-radius: 6px; padding: 1px 8px; font-weight: 700; color: #fff; }
-  .risk.very-low { background: #10B981; } .risk.low { background: #84CC16; } .risk.moderate { background: #EAB308; }
-  .risk.elevated { background: #F59E0B; } .risk.high { background: #F97316; } .risk.very-high { background: #EF4444; }
-  .risk.none { background: #c9d1da; color: #22334a; }
+  .risk { display: inline-block; min-width: 2.6rem; text-align: center; border-radius: 6px; padding: 1px 8px; font-weight: 700; color: #fff; } /* fixed: sits on the fixed status colours below */
+  .risk.very-low { background: var(--c-10b981); } .risk.low { background: var(--c-84cc16); } .risk.moderate { background: var(--c-eab308); }
+  .risk.elevated { background: var(--c-f59e0b); } .risk.high { background: var(--c-f97316); } .risk.very-high { background: var(--c-ef4444); }
+  .risk.none { background: var(--c-c9d1da); color: var(--c-22334a); }
   .fo-headline { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 18px; }
-  .fo-big { font-size: 2.2rem; font-weight: 700; } .fo-rating { font-size: 1.6rem; font-weight: 700; color: #22334a; }
+  .fo-big { font-size: 2.2rem; font-weight: 700; } .fo-rating { font-size: 1.6rem; font-weight: 700; color: var(--c-22334a); }
   .fo-card h3 { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; }
   td.num, th.num { text-align: right; white-space: nowrap; }
-  tr.result td { background: #f8fafd; font-weight: 600; }
-  .fo-formula { font-family: ui-monospace, monospace; font-size: .88rem; background: #f8fafd; padding: 8px 12px; border-radius: 6px; }
-  .fo-gate { border-left: 4px solid #EF4444; background: #fdf1f0; padding: 10px 14px; border-radius: 6px; }
-  .fo-gate.continued { border-color: #F97316; background: #fff6ee; } .fo-gate.watch { border-color: #F59E0B; background: #fff9ec; }
-  .fo-quote { border-left: 3px solid #c9d1da; margin: 6px 0; padding: 4px 12px; font-style: italic; }
+  tr.result td { background: var(--c-f8fafd); font-weight: 600; }
+  .fo-formula { font-family: ui-monospace, monospace; font-size: .88rem; background: var(--c-f8fafd); padding: 8px 12px; border-radius: 6px; }
+  .fo-gate { border-left: 4px solid var(--c-ef4444); background: var(--c-fdf1f0); padding: 10px 14px; border-radius: 6px; }
+  .fo-gate.continued { border-color: var(--c-f97316); background: var(--c-fff6ee); } .fo-gate.watch { border-color: var(--c-f59e0b); background: var(--c-fff9ec); }
+  .fo-quote { border-left: 3px solid var(--c-c9d1da); margin: 6px 0; padding: 4px 12px; font-style: italic; }
   .fo-superseded { opacity: .72; }
-  .ok { color: #2f6b45; font-weight: bold; } .bad { color: #9a3324; font-weight: bold; } .warn { color: #8a6d1c; font-weight: bold; }
+  .ok { color: var(--c-2f6b45); font-weight: bold; } .bad { color: var(--c-9a3324); font-weight: bold; } .warn { color: var(--c-8a6d1c); font-weight: bold; }
   .fo-agents-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; margin-top: 0; }
   .fo-agents-tools button { font-size: .85rem; padding: 4px 10px; }
-  .fo-agent { border-top: 1px solid #e7ecf2; scroll-margin-top: 20px; }
+  .fo-agent { border-top: 1px solid var(--c-e7ecf2); scroll-margin-top: 20px; }
   .fo-agent > details.fo-agent-box { margin: 0; }
   .fo-agent summary { display: flex; align-items: center; gap: 6px 12px; padding: 9px 2px; color: inherit; list-style: none; }
   .fo-agent summary::-webkit-details-marker { display: none; }
-  .fo-agent summary::before { content: "▸"; color: #155cb7; transition: transform .15s; }
+  .fo-agent summary::before { content: "▸"; color: var(--c-155cb7); transition: transform .15s; }
   .fo-agent details[open] > summary::before { transform: rotate(90deg); }
-  .fo-agent summary:hover { background: #f8fafd; }
+  .fo-agent summary:hover { background: var(--c-f8fafd); }
   .fo-agent-title { font-weight: 600; flex: 0 0 28rem; }
   .fo-agent summary .risk { flex: 0 0 auto; font-size: .82rem; }
-  .fo-agent-reason { flex: 1; min-width: 0; color: #5b6c80; font-size: .92rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .fo-agent-reason { flex: 1; min-width: 0; color: var(--c-5b6c80); font-size: .92rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .fo-agent details[open] > summary { flex-wrap: wrap; }
   .fo-agent details[open] > summary .fo-agent-reason { white-space: normal; flex-basis: 100%; order: 10; padding-left: 22px; }
   .fo-agent-body { padding: 4px 4px 18px 22px; }
-  .fo-attn { flex: 0 0 auto; color: #9a3324; background: #fdf1f0; border: 1px solid #EF4444; border-radius: 6px; padding: 1px 8px; font-size: .82rem; font-weight: 700; }
+  .fo-attn { flex: 0 0 auto; color: var(--c-9a3324); background: var(--c-fdf1f0); border: 1px solid var(--c-ef4444); border-radius: 6px; padding: 1px 8px; font-size: .82rem; font-weight: 700; }
   .fo-decision { margin: 6px 0 16px; } .fo-decision h3 { margin-top: 0; }
   .fo-agent-body h3 { font-size: 1.05rem; margin-top: 18px; }
   @media (max-width: 800px) { .fo-agent summary { flex-wrap: wrap; } .fo-agent-title { flex-basis: auto; } .fo-agent-reason { flex-basis: 100%; } }
@@ -221,7 +221,7 @@
 {% else %}<p class="subtle">{{ cv.agent_not_used }}</p>{% endif %}
 <details><summary>Outcomes and passages read ({{ cv.passages|length }} paragraph(s) with search hits)</summary>
 <div class="table-wrap"><table><thead><tr><th>Outcome</th><th>When (first match)</th><th>Effect</th></tr></thead><tbody>
-{% for o in cv.outcomes %}<tr{% if o.current %} style="background:#eef3f8;font-weight:600"{% endif %}><td>({{ o.letter }})</td><td>{{ o.when }}</td><td>{{ o.effect }}</td></tr>{% endfor %}
+{% for o in cv.outcomes %}<tr{% if o.current %} style="background:var(--c-eef3f8);font-weight:600"{% endif %}><td>({{ o.letter }})</td><td>{{ o.when }}</td><td>{{ o.effect }}</td></tr>{% endfor %}
 </tbody></table></div>
 {% if cv.passages %}<ul>{% for p in cv.passages %}<li><code>{{ p.passage_id }}</code> <span class="subtle">{{ 'F-pages' if p.item == 'F' else ('Item ' ~ p.item if p.item else 'document') }} · {{ p.section_label }}{% if p.also_in %} (also in {{ p.also_in|join(', ') }}){% endif %} · hits: {{ p.hits|join(', ') }}</span> {{ p.text }}</li>{% endfor %}</ul>{% else %}<p class="subtle">No paragraph hit the search.</p>{% endif %}
 {% if cv.rules.findings %}<h4>Keyword rules</h4><ul>{% for f in cv.rules.findings %}<li><code>{{ f.passage_id }}</code> {{ f.classification|replace('_', ' ') }}{% if f.waiver_months is not none %} ({{ '%.0f'|format(f.waiver_months) }} months){% endif %}: <span class="subtle">{{ f.quote }}</span></li>{% endfor %}</ul>{% endif %}

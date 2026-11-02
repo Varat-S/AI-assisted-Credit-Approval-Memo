@@ -30,9 +30,24 @@ def store_path(database):
 def owner_alive(pid, session):
     if pid == os.getpid():
         return session == PROCESS_SESSION
+    if pid <= 0:
+        return False
+    if os.name == 'nt':
+        # os.kill(pid, 0) terminates the process on Windows; query it instead.
+        import ctypes
+        kernel32 = ctypes.windll.kernel32
+        kernel32.OpenProcess.restype = ctypes.c_void_p
+        handle = kernel32.OpenProcess(0x1000, False, pid)  # PROCESS_QUERY_LIMITED_INFORMATION
+        if not handle:
+            # Access denied means the process exists; anything else means it is gone.
+            return ctypes.get_last_error() == 5 or kernel32.GetLastError() == 5
+        try:
+            code = ctypes.c_ulong()
+            alive = kernel32.GetExitCodeProcess(ctypes.c_void_p(handle), ctypes.byref(code)) and code.value == 259  # STILL_ACTIVE
+        finally:
+            kernel32.CloseHandle(ctypes.c_void_p(handle))
+        return bool(alive)
     try:
-        if pid <= 0:
-            return False
         os.kill(pid, 0)
         return True
     except ProcessLookupError:

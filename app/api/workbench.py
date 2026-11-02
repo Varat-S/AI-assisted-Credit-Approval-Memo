@@ -21,9 +21,10 @@ deterministic completeness evaluator for the critical-missing-sources count.
 from __future__ import annotations
 
 from pathlib import Path
+from urllib.parse import quote, urlencode
 
 from fastapi import APIRouter, Depends, Form, HTTPException, Query, Request
-from fastapi.responses import HTMLResponse, Response
+from fastapi.responses import HTMLResponse, RedirectResponse, Response
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from sqlalchemy.orm import Session
 from sqlalchemy import select
@@ -263,14 +264,17 @@ def get_bo_workbench_html(
     analysis_run_id: str | None = Query(default=None),
     credit: bool = Query(default=False),
     fo_run: str | None = Query(default=None),
+    job: str | None = Query(default=None),
     session: Session = Depends(get_session),
 ) -> HTMLResponse:
     """``?credit=1&fo_run=`` (set by the credit view's link): show the way back, and return there after the
-    review decision."""
-    return _bo_page(session, case_id, analysis_run_id, credit=credit, fo_run=fo_run)
+    review decision. ``?job=`` (set by an analysis's tabs): show that analysis's header and tabs."""
+    return _bo_page(session, case_id, analysis_run_id, credit=credit, fo_run=fo_run, job=job)
 
 
-def _bo_page(session, case_id, analysis_run_id, *, credit=False, fo_run=None, error=None, status_code=200):
+def _bo_page(session, case_id, analysis_run_id, *, credit=False, fo_run=None, job=None, error=None,
+             status_code=200):
+    from app.services.analysis_workspace import analysis_for
     from app.api.credit import credit_context
     from app.services.bo.workbench import bo_runs
 
@@ -280,7 +284,8 @@ def _bo_page(session, case_id, analysis_run_id, *, credit=False, fo_run=None, er
     return HTMLResponse(
         _env.get_template("bo_workbench.html.j2").render(
             runs=runs, view=view, error=error,
-            credit=credit_context(case_id, fo_run, selected) if credit else None),
+            credit=credit_context(case_id, fo_run, selected) if credit else None,
+            analysis=analysis_for(job, case_id, selected, 'bo')),
         status_code=status_code)
 
 
@@ -302,12 +307,13 @@ def get_bo_artifact_html(
     session: Session = Depends(get_session),
 ) -> HTMLResponse:
     from app.services.bo.reporting import render_audit_html, render_memo_html
-    from app.services.bo.workbench import bo_artifact
+    from app.services.bo.workbench import bo_artifact, reviewed_memo
 
     if kind not in ("memo", "audit"):
         raise HTTPException(status_code=404, detail="Unknown Business Overview page.")
     _bo_run_for_case(session, case_id, analysis_run_id)
-    payload = _bo_call(bo_artifact, session, analysis_run_id, kind)
+    payload = (_bo_call(reviewed_memo, session, analysis_run_id) if kind == "memo"
+               else _bo_call(bo_artifact, session, analysis_run_id, kind))
     render = render_memo_html if kind == "memo" else render_audit_html
     return HTMLResponse(render(payload))
 
@@ -342,7 +348,7 @@ def get_bo_artifact_pdf(
 ) -> Response:
     """The memo/audit page as a downloadable PDF, rendered from the same HTML."""
     from app.services.bo.reporting import render_audit_html, render_memo_html
-    from app.services.bo.workbench import bo_artifact
+    from app.services.bo.workbench import bo_artifact, reviewed_memo
     from app.services.reporting.memo import (
         PdfBackendUnavailableError,
         _render_pdf_with,
@@ -352,7 +358,8 @@ def get_bo_artifact_pdf(
     if kind not in ("memo", "audit"):
         raise HTTPException(status_code=404, detail="Unknown Business Overview page.")
     _bo_run_for_case(session, case_id, analysis_run_id)
-    payload = _bo_call(bo_artifact, session, analysis_run_id, kind)
+    payload = (_bo_call(reviewed_memo, session, analysis_run_id) if kind == "memo"
+               else _bo_call(bo_artifact, session, analysis_run_id, kind))
     render = render_memo_html if kind == "memo" else render_audit_html
     backend = detect_pdf_backend()
     if backend is None:
@@ -383,10 +390,12 @@ def review_bo_run(
     acknowledge_unresolved: bool = Form(default=False),
     credit: str = Form(default=""),
     fo_run: str = Form(default=""),
+    job: str = Form(default=""),
     session: Session = Depends(get_session),
 ):
     """The reviewer's decision on the handoff. Returns the recorded decision as JSON; from the credit view
-    (``credit``), goes back there instead, with RMS re-assessed for its run pair."""
+    (``credit``), goes back there instead, with RMS re-assessed for its run pair; from an analysis's tab
+    (``job``), goes back to that tab."""
     from app.api.credit import back_to_credit, reassess_for_credit
     from app.services.bo.handoff import HandoffError, review_handoff
 
@@ -400,12 +409,17 @@ def review_bo_run(
         if credit:
             return _bo_page(session, case_id, analysis_run_id, credit=True, fo_run=fo_run or None,
                             error=str(exc), status_code=409)
+        if job:
+            return _bo_page(session, case_id, analysis_run_id, job=job, error=str(exc), status_code=409)
         raise HTTPException(status_code=409, detail=str(exc)) from exc
     if credit:
         notice = (reassess_for_credit(session, case_id, fo_run, analysis_run_id) if fo_run
                   else "Decision recorded.")
         return back_to_credit(case_id, fo_run, analysis_run_id, notice)
     _reassess_rms(session, analysis_run_id)
+    if job:
+        query = urlencode({"analysis_run_id": analysis_run_id, "job": job})
+        return RedirectResponse(f"/cases/{quote(case_id, safe='')}/bo.html?{query}#review", status_code=303)
     return result
 
 

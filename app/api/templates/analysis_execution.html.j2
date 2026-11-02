@@ -2,31 +2,31 @@
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Analysis · Execution</title>
 {% include 'workspace_style.html.j2' %}
 <style>
-.execution-header{margin-bottom:20px}.execution-header h1{font-size:2rem;margin:6px 0}.execution-summary{padding:22px 26px;margin-bottom:18px}.run-meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;margin:0}.run-meta dt{font-size:.75rem;color:#687780;margin:0 0 5px}.run-meta dd{margin:0;font-size:.94rem;font-weight:600}.execution-actions{display:flex;align-items:center;gap:10px;border-top:1px solid #e7ebeb;margin-top:20px;padding-top:16px}.execution-actions form{margin:0 0 0 auto}.execution-actions .execution-button{display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;min-height:42px;margin:0;border:1px solid #c7d5d4;border-radius:7px;background:#fff;color:#315e62;padding:10px 16px;font:600 .82rem/1.3 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;text-decoration:none;white-space:nowrap;cursor:pointer;transition:background .15s,border-color .15s}.execution-actions .execution-button:hover{background:#f1f6f4;border-color:#789b99}.execution-actions .execution-button:focus-visible{outline:3px solid #488c8c;outline-offset:3px}.execution-actions .execution-button.accent{background:#294f53;border-color:#294f53;color:#fff}.execution-actions .execution-button.accent:hover{background:#1d3e42;border-color:#1d3e42}.execution-actions .execution-button.destructive{border-color:#d7b9b4;color:#934a42}.execution-actions .execution-button.destructive:hover{background:#fcf3f1;border-color:#b47b72}.execution-actions .execution-button:disabled{cursor:default;opacity:.6}.execution-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}.execution-grid.bo-only{grid-template-columns:1fr}.execution-grid h2{font-size:21px}.stage{display:flex;justify-content:space-between;gap:16px;padding:14px 0;border-bottom:1px solid #e1e6ed}.stage small{display:block;color:#64748b}.badge{font-size:14px;font-weight:600}.badge.running{color:#007b77}.badge.failed{color:#b42318}.bo-progress-row{margin-top:22px}.bo-progress-heading{display:flex;justify-content:space-between;align-items:center;gap:16px;font-size:.88rem;margin-bottom:9px}.bo-progress-heading label{margin:0;font-weight:500}.bo-progress-heading .progress-state{font-size:.75rem;color:#687780}.bo-progress-row progress{display:block;width:100%;height:8px;border:0;border-radius:8px;overflow:hidden;background:#e9efed;accent-color:#397b77}.bo-progress-row progress::-webkit-progress-bar{background:#e9efed;border-radius:8px}.bo-progress-row progress::-webkit-progress-value{background:#397b77;border-radius:8px}.bo-progress-row progress:not([value])::-webkit-progress-bar{background:repeating-linear-gradient(110deg,#e1eeea 0,#e1eeea 10px,#aacac1 10px,#aacac1 20px)}.bo-progress-row progress::-moz-progress-bar{background:#397b77;border-radius:8px}.bo-progress-row[data-status=failed] progress{accent-color:#b26e61}.bo-progress-row[data-status=failed] progress::-webkit-progress-value{background:#b26e61}.bo-progress-row[data-status=failed] .progress-state{color:#a2473b}.bo-progress-row[data-status=stopped] progress,.bo-progress-row[data-status=interrupted] progress{opacity:.5}.bo-message{font-size:.8rem;color:#61757b;margin:18px 0 0}.bo-message[data-status=failed]{color:#a2473b}.bo-message:empty{display:none}.execution-notice{font-size:.83rem;color:#a2473b;margin:12px 0}.execution-notice:empty{display:none}.report-panel{margin-top:18px}.review-link{display:inline-flex;align-items:center;background:#294f53;color:white;border:1px solid #294f53;border-radius:7px;padding:9px 15px;font-size:.82rem;font-weight:600;text-decoration:none}.report-panel h2{margin-bottom:12px}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px}.technical-note{font-size:.8rem;color:#687780}
+.execution-header{margin-bottom:20px}.execution-header h1{font-size:2rem;margin:6px 0}.execution-summary{padding:22px 26px;margin-bottom:18px}.run-meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;margin:0}.run-meta dt{font-size:.75rem;color:var(--c-687780);margin:0 0 5px}.run-meta dd{margin:0;font-size:.94rem;font-weight:600}.execution-actions{display:flex;align-items:center;gap:10px;border-top:1px solid var(--c-e7ebeb);margin-top:20px;padding-top:16px}.execution-actions form{margin:0 0 0 auto}.execution-actions .execution-button{display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;min-height:42px;margin:0;border:1px solid var(--c-c7d5d4);border-radius:7px;background:var(--c-ffffff);color:var(--c-315e62);padding:10px 16px;font:600 .82rem/1.3 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;text-decoration:none;white-space:nowrap;cursor:pointer;transition:background .15s,border-color .15s}.execution-actions .execution-button:hover{background:var(--c-f1f6f4);border-color:var(--c-789b99)}.execution-actions .execution-button:focus-visible{outline:3px solid var(--c-488c8c);outline-offset:3px}.execution-actions .execution-button.accent{background:var(--c-294f53);border-color:var(--c-294f53);color:var(--c-ffffff)}.execution-actions .execution-button.accent:hover{background:var(--c-1d3e42);border-color:var(--c-1d3e42)}.execution-actions .execution-button.destructive{border-color:var(--c-d7b9b4);color:var(--c-934a42)}.execution-actions .execution-button.destructive:hover{background:var(--c-fcf3f1);border-color:var(--c-b47b72)}.execution-actions .execution-button:disabled{cursor:default;opacity:.6}.execution-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}.execution-grid.bo-only{grid-template-columns:1fr}.execution-grid h2{font-size:21px}.stage{display:flex;justify-content:space-between;gap:16px;padding:14px 0;border-bottom:1px solid var(--c-e1e6ed)}.stage small{display:block;color:var(--c-64748b)}.badge{font-size:14px;font-weight:600}.badge.running{color:var(--c-007b77)}.badge.failed{color:var(--c-b42318)}.bo-progress-row{margin-top:22px}.bo-progress-heading{display:flex;justify-content:space-between;align-items:center;gap:16px;font-size:.88rem;margin-bottom:9px}.bo-progress-heading label{margin:0;font-weight:500}.bo-progress-heading .progress-state{font-size:.75rem;color:var(--c-687780)}.bo-progress-row progress{display:block;width:100%;height:8px;border:0;border-radius:8px;overflow:hidden;background:var(--c-e9efed);accent-color:var(--c-397b77)}.bo-progress-row progress::-webkit-progress-bar{background:var(--c-e9efed);border-radius:8px}.bo-progress-row progress::-webkit-progress-value{background:var(--c-397b77);border-radius:8px}.bo-progress-row progress:not([value])::-webkit-progress-bar{background:repeating-linear-gradient(110deg,var(--c-e1eeea) 0,var(--c-e1eeea) 10px,var(--c-aacac1) 10px,var(--c-aacac1) 20px)}.bo-progress-row progress::-moz-progress-bar{background:var(--c-397b77);border-radius:8px}.bo-progress-row[data-status=failed] progress{accent-color:var(--c-b26e61)}.bo-progress-row[data-status=failed] progress::-webkit-progress-value{background:var(--c-b26e61)}.bo-progress-row[data-status=failed] .progress-state{color:var(--c-a2473b)}.bo-progress-row[data-status=stopped] progress,.bo-progress-row[data-status=interrupted] progress{opacity:.5}.progress-activity{font-size:.75rem;color:var(--c-687780);margin:14px 0 0}.progress-activity:empty{display:none}.bo-message{font-size:.8rem;color:var(--c-61757b);margin:18px 0 0}.bo-message[data-status=failed]{color:var(--c-a2473b)}.bo-message:empty{display:none}.execution-notice{font-size:.83rem;color:var(--c-a2473b);margin:12px 0}.execution-notice:empty{display:none}.report-panel{margin-top:18px}.review-link{display:inline-flex;align-items:center;background:var(--c-294f53);color:var(--c-ffffff);border:1px solid var(--c-294f53);border-radius:7px;padding:9px 15px;font-size:.82rem;font-weight:600;text-decoration:none}.report-panel h2{margin-bottom:12px}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px}.technical-note{font-size:.8rem;color:var(--c-687780)}
 @media(max-width:760px){.execution-grid{grid-template-columns:1fr}.run-meta{grid-template-columns:1fr;gap:16px}.execution-actions{flex-wrap:wrap}.execution-actions form{margin-left:0}.execution-summary{padding:22px}}
 @media(prefers-reduced-motion:reduce){.execution-actions .execution-button{transition:none}}
 </style></head><body>
 {% set active='new' %}{% include 'analysis_nav.html.j2' %}
-<header class="setup-header execution-header"><span class="eyebrow">New Analysis · Execution</span><h1>Analysis execution</h1></header>
+{% include 'analysis_tabs.html.j2' %}
 <main>
 {% if job.metadata.test_state %}<div class="mode-note"><strong>MOCKED TEST STATE — no live model calls.</strong> {{ job.metadata.test_state }}</div>{% endif %}
 <section class="setup-panel execution-summary" aria-label="Analysis summary">
-<dl class="run-meta"><div><dt>Company</dt><dd>{{ job.metadata.company or job.folder }}</dd></div><div><dt>Analysis Scope</dt><dd>{{ 'Business Overview Only' if job.bo_only else 'Business + Financial Overview' }}</dd></div><div><dt>Validation Mode</dt><dd>{{ 'Standard' if job.bo_validators else 'Exploratory' }}</dd></div></dl>
+<dl class="run-meta"><div><dt>Company</dt><dd>{{ job.metadata.company or job.folder }}</dd></div><div><dt>Analysis Scope</dt><dd>{{ 'Business Overview Only' if job.bo_only else 'Financial Overview Only' if job.fo_only else 'Business + Financial Overview' }}</dd></div><div><dt>Validation Mode</dt><dd>{{ 'Standard' if job.bo_validators else 'Exploratory' }}</dd></div></dl>
 <div class="execution-actions"><a class="execution-button" href="/">Back to Workspace</a><a class="execution-button accent" href="/credit-memos">Credit Memos</a><form method="post" action="/analysis/{{ job.job_id }}/stop" id="stop-form"{% if job.execution_status not in ['pending','running'] %} hidden{% endif %}><button class="execution-button destructive" type="submit" id="stop-button"{% if job.stop_requested %} disabled{% endif %}>{{ 'Stopping…' if job.stop_requested else 'Stop Analysis' }}</button></form></div>
 </section>
 <p id="failure-note" class="execution-notice" role="alert"></p><p id="poll-error" class="technical-note" role="status"></p>
-<div class="execution-grid{% if job.bo_only %} bo-only{% endif %}">
-<section class="setup-panel" aria-labelledby="bo-title"><h2 id="bo-title">Business Overview</h2>
+<div class="execution-grid{% if job.bo_only or job.fo_only %} bo-only{% endif %}">
+<section class="setup-panel" aria-labelledby="bo-title"{% if job.fo_only %} hidden{% endif %}><h2 id="bo-title">Business Overview</h2>
 <div id="bo-stages">
 <div class="bo-progress-row" id="preparation-row"><div class="bo-progress-heading"><label for="preparation-progress">1. Evidence Preparation</label><span class="progress-state" id="preparation-state"></span></div><progress id="preparation-progress" max="100" value="0" aria-describedby="preparation-state"></progress></div>
 <div class="bo-progress-row" id="findings-row"><div class="bo-progress-heading"><label for="findings-progress">2. Specialist Findings</label><span class="progress-state" id="findings-state"></span></div><progress id="findings-progress" max="100" value="0" aria-describedby="findings-state"></progress></div>
-</div><p id="bo-message" class="bo-message" role="status" aria-live="polite"></p>
+</div><p id="bo-activity" class="progress-activity" aria-live="polite"></p><p id="bo-message" class="bo-message" role="status" aria-live="polite"></p>
 </section>
 {% if not job.bo_only %}<section class="setup-panel" aria-labelledby="fo-title"><h2 id="fo-title">Financial Overview</h2>
 <div id="fo-stages">
 <div class="bo-progress-row" id="financial-preparation-row"><div class="bo-progress-heading"><label for="financial-preparation-progress">1. Financial Preparation, Analysis &amp; Validation</label><span class="progress-state" id="financial-preparation-state"></span></div><progress id="financial-preparation-progress" max="100" value="0" aria-describedby="financial-preparation-state"></progress></div>
 <div class="bo-progress-row" id="financial-reporting-row"><div class="bo-progress-heading"><label for="financial-reporting-progress">2. Financial Reporting</label><span class="progress-state" id="financial-reporting-state"></span></div><progress id="financial-reporting-progress" max="100" value="0" aria-describedby="financial-reporting-state"></progress></div>
-</div></section>{% endif %}
+</div><p id="fo-activity" class="progress-activity" aria-live="polite"></p></section>{% endif %}
 </div>
 <section class="setup-panel report-panel"><h2>Available reports</h2><div id="reports"></div><details><summary>Execution Details</summary><p class="technical-note">Recorded run metadata, stage attempts, errors and estimated API usage. In-flight calls may not yet be included.</p><pre id="execution-details"></pre></details></section>
 </main>
@@ -36,37 +36,42 @@
   const active=['pending','running'];
   const initial={{ job|tojson }};
   const title=s=>(s||'').replaceAll('_',' ').replace(/\b\w/g,c=>c.toUpperCase());
-  function renderProgress(key,state){
+  function renderProgress(key,state,value){
     const bar=document.getElementById(key+'-progress');
+    const text=title(state)+(state==='running'&&value!==null?' · '+value+'%':'');
     document.getElementById(key+'-row').dataset.status=state;
-    document.getElementById(key+'-state').textContent=title(state);
-    bar.setAttribute('aria-valuetext',title(state));
-    if(state==='running')bar.removeAttribute('value');else bar.value=state==='completed'?100:0;
+    document.getElementById(key+'-state').textContent=text;
+    bar.setAttribute('aria-valuetext',text);
+    if(value===null)bar.removeAttribute('value');else bar.value=value;
   }
   function render(job){
-    const view=businessProgress(job);
+    const view=businessProgress(job),detail=businessDetail(job,view);
     const stopping=job.stop_requested && active.includes(job.execution_status);
     document.getElementById('stop-form').hidden=!active.includes(job.execution_status);
     const stop=document.getElementById('stop-button');stop.disabled=!!job.stop_requested;stop.textContent=stopping?'Stopping…':'Stop Analysis';
-    ['preparation','findings'].forEach(key=>renderProgress(key,view[key]));
+    ['preparation','findings'].forEach(key=>renderProgress(key,view[key],detail[key]));
+    document.getElementById('bo-activity').textContent=detail.activity;
     const message=document.getElementById('bo-message');message.textContent=view.message;message.dataset.status=view.status;
     document.getElementById('failure-note').textContent=job.error && view.status!=='failed'?'Analysis encountered a problem. See Execution Details.':'';
     if(document.getElementById('fo-stages')){
-      const financial=financialProgress(job);
-      renderProgress('financial-preparation',financial.preparation);
-      renderProgress('financial-reporting',financial.reporting);
+      const financial=financialProgress(job),filled=financialDetail(job,financial);
+      renderProgress('financial-preparation',financial.preparation,filled.preparation);
+      renderProgress('financial-reporting',financial.reporting,filled.reporting);
+      document.getElementById('fo-activity').textContent=filled.activity;
     }
     const reports=document.getElementById('reports');reports.replaceChildren();let count=0;
+    const enableTab=(key,href)=>{const tab=document.querySelector('.analysis-tabs [data-tab="'+key+'"]');if(tab){tab.href=href;tab.removeAttribute('aria-disabled');tab.removeAttribute('title');}};
+    const status=document.querySelector('[data-execution-status]');if(status)status.textContent='Execution: '+title(job.execution_status);
     ['bo','fo'].forEach(section=>{
       const result=job.result&&job.result[section],summary=result&&result.summary;
       if(!summary || (section==='bo' && !view.complete))return;
       const run=summary.analysis_run_id||summary.run_id;if(!run)return;
       const link=document.createElement('a');link.textContent=section==='bo'?'Open existing Business Overview report':'Open existing Financial Overview report';
-      link.href='/cases/'+encodeURIComponent(job.case_id)+(section==='bo'?'/bo.html?analysis_run_id=':'/fo.html?run_id=')+encodeURIComponent(run);
+      link.href='/cases/'+encodeURIComponent(job.case_id)+(section==='bo'?'/bo.html?analysis_run_id=':'/fo.html?run_id=')+encodeURIComponent(run)+'&job='+encodeURIComponent(job.job_id);enableTab(section,link.href);
       const p=document.createElement('p');p.append(link);reports.append(p);count++;
     });
     const hasRecordedReport=['bo','fo'].some(section=>{const summary=job.result&&job.result[section]&&job.result[section].summary;return summary&&(summary.analysis_run_id||summary.run_id);});
-    if(['completed','failed','stopped','interrupted'].includes(job.execution_status)&&hasRecordedReport){const open=document.createElement('a');open.className='review-link';open.href='/analysis/'+encodeURIComponent(job.job_id)+'/review';open.textContent=job.execution_status==='completed'?'Review credit memo':'Review recorded partial results';reports.prepend(open);count++;}
+    if(['completed','failed','stopped','interrupted'].includes(job.execution_status)&&hasRecordedReport){const open=document.createElement('a');open.className='review-link';open.href='/analysis/'+encodeURIComponent(job.job_id)+'/review';open.textContent=job.execution_status==='completed'?'Review credit memo':'Review recorded partial results';reports.prepend(open);count++;enableTab('memo',open.href);enableTab('audit','/analysis/'+encodeURIComponent(job.job_id)+'/audit');if(['bo','fo'].every(section=>{const summary=job.result&&job.result[section]&&job.result[section].summary;return summary&&(summary.analysis_run_id||summary.run_id);}))enableTab('rms','/analysis/'+encodeURIComponent(job.job_id)+'/rms');}
     if(!count)reports.textContent=active.includes(job.execution_status)?'Reports will appear when ready.':'No completed report is available. See Execution Details.';
     document.getElementById('execution-details').textContent=JSON.stringify(job,null,2);
   }

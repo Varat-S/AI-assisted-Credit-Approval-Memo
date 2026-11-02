@@ -270,6 +270,14 @@ def governed_module_figures(
     return values, texts
 
 
+def _relied_evidence(h: HypothesisRecord) -> set[str]:
+    """Evidence a hypothesis relies on, including passages behind its verified
+    quotes: a specialist can quote a passage it left out of its supporting IDs,
+    and the orchestrator citing that quote is not citing unadmitted evidence."""
+    quoted = {q.get("evidence_id") for q in h.evidence_quotes}
+    return {*h.evidence_ids(), *(e for e in quoted if e)}
+
+
 def validate_orchestrator_output(
     parsed: dict[str, Any],
     *,
@@ -290,7 +298,7 @@ def validate_orchestrator_output(
     """
     known = indicators.known_values()
     run_values = [*known.values(), *governed_values]
-    admitted = {e for h in hypotheses.values() for e in h.evidence_ids()}
+    admitted = {e for h in hypotheses.values() for e in _relied_evidence(h)}
     outcome = DeterministicValidator(
         admitted_evidence_ids=admitted, known_parameters=known,
     ).validate(parsed, schema=BO_ORCHESTRATOR_JSON_SCHEMA)
@@ -326,7 +334,7 @@ def validate_orchestrator_output(
             issues.append(
                 f"no_validated_basis: claim {cid!r} rests on no validated hypothesis.")
         # A mitigant's outcome evidence is evidence its hypothesis relies on.
-        allowed_evidence = {e for h in used for e in h.evidence_ids()}
+        allowed_evidence = {e for h in used for e in _relied_evidence(h)}
         allowed_evidence |= {e for h in used if h.mitigant
                              for e in h.mitigant.outcome_evidence_ids}
         for eid in claim.get("evidence_ids") or []:

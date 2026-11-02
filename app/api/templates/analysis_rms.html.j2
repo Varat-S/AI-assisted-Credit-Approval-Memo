@@ -1,0 +1,12 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Credit Memo · Risk Mitigation &amp; Structuring</title>{% include 'workspace_style.html.j2' %}{% include 'credit_style.html.j2' %}</head><body>{% set active='memos' %}{% include 'analysis_nav.html.j2' %}
+{% from 'credit_macros.html.j2' import usd, st, sc with context %}
+{% set fo, bo, rms = view.fo, view.bo, view.rms %}{% set r = rms.latest %}{% set rec = rms.record %}
+{% set fo_run, bo_run = fo.run_id, bo.analysis_run_id %}
+{% include 'analysis_tabs.html.j2' %}
+<main>
+{% if error %}<p class="notice" role="alert"><strong>{{ error }}</strong></p>{% endif %}
+{% if notice %}<p class="notice" role="status">{{ notice }}</p>{% endif %}
+<p class="technical-note">Assessed from this analysis's runs: Business Overview <code>{{ bo_run }}</code> ({{ bo.human_review_status }}) and Financial Overview <code>{{ fo_run }}</code>. A decision on the Business Overview or Financial Overview tab re-assesses it with the last requested loan.</p>
+{% include 'rms_verdict.html.j2' %}
+{% include 'rms_detail.html.j2' %}
+</main></body></html>

@@ -211,3 +211,43 @@ def test_a_blank_amount_gives_a_debt_capacity_report(client):
     assert "None" not in page.split('name="requested_amount_m"')[1][:40]  # the re-assess fields stay blank
     [record] = records(client.output_root, CASE)
     assert record["verdict"] == "capacity_only" and record["request"]["requested_amount_m"] is None
+
+
+def test_an_analysis_rms_tab_shows_and_reassesses_exactly_its_runs(client, monkeypatch):
+    from lxml import html
+    from app.services import bo_fo
+
+    job = {"job_id": "hca-job", "case_id": CASE, "metadata": {"company": "HCA Healthcare, Inc."},
+           "bo_validators": True, "execution_status": "completed", "folder": "fixture",
+           "result": {"bo": {"summary": {"analysis_run_id": BO_RUN}}, "fo": {"summary": {"run_id": FO_RUN}}}}
+    single = {**job, "job_id": "bo-only-job", "bo_only": True}
+
+    class Records:
+        def get(self, ident):
+            return {"hca-job": job, "bo-only-job": single}.get(ident)
+    monkeypatch.setattr(bo_fo, "jobs", Records())
+    page = client.get("/analysis/hca-job/rms").text
+    tabs = html.fromstring(page).xpath('//nav[@class="analysis-tabs"]/a')
+    assert [a.get("data-tab") for a in tabs] == ["memo", "bo", "fo", "rms", "audit", "execution"]
+    assert html.fromstring(page).xpath('//nav[@class="analysis-tabs"]/a[@aria-current="page"]/@data-tab') == ["rms"]
+    assert "No assessment of these runs yet" in page and 'name="job" value="hca-job"' in page
+    # Assessing from the tab comes back to it.
+    response = client.post(f"/cases/{CASE}/credit/assess", follow_redirects=False, data={
+        "fo_run": FO_RUN, "bo_run": BO_RUN, "requested_amount_m": "2000", "tenor_years": "5", "job": "hca-job"})
+    assert response.status_code == 303 and response.headers["location"].startswith("/analysis/hca-job/rms?notice=")
+    page = client.get(response.headers["location"]).text
+    assert "Assessed: refer." in page and "RMS-G02" in page and "Debt capacity:" in page
+    # Accepting the BO re-assesses it (through the BO review route's hook; the seeded handoff has no memo for
+    # the workbench to show), and the tab shows the new assessment.
+    from app.api import deps, workbench
+    from app.services.bo.handoff import review_handoff
+
+    with deps._session_factory()() as session:
+        review_handoff(session, "boh-hca", reviewer="B. Reviewer", reason="Checked", decision="accept")
+        workbench._reassess_rms(session, BO_RUN)
+        session.commit()
+    assert [r["sources"]["bo_review_status"] for r in records(client.output_root, CASE)] == ["pending", "accepted"]
+    page = client.get("/analysis/hca-job/rms").text
+    assert f"<code>{BO_RUN}</code> (accepted)" in page and "Out of date:" not in page
+    # RMS needs both modules; a single-module analysis has no RMS tab.
+    assert client.get("/analysis/bo-only-job/rms").status_code == 404

@@ -113,6 +113,7 @@ def credit_assess(
     tenor_years: str = Form(default=""),
     interest_rate: str = Form(default=""),
     collateral_value_m: str = Form(default=""),
+    job: str = Form(default=""),  # set by an analysis's RMS tab: go back there
     session: Session = Depends(get_session),
 ):
     bo_run = bo_run or None
@@ -125,8 +126,14 @@ def credit_assess(
         summary = assess_case(session, case_id, output_root=get_settings().output_dir, request=request,
                               fo_run_id=fo_run, bo_run_id=bo_run)
     except (ValueError, RmsRunError) as exc:  # RmsRunError is a ValueError too
+        if job:
+            from app.api.analysis import rms_page
+            return rms_page(session, job, error=f"Not assessed: {exc}", status_code=400)
         return _page(session, case_id, fo_run=fo_run, bo_run=bo_run, error=f"Not assessed: {exc}", status_code=400)
-    return _back(case_id, fo_run, bo_run, f"Assessed: {summary['verdict'].replace('_', ' ')}.")
+    notice = f"Assessed: {summary['verdict'].replace('_', ' ')}."
+    if job:
+        return RedirectResponse(f"/analysis/{quote(job, safe='')}/rms?{urlencode({'notice': notice})}", status_code=303)
+    return _back(case_id, fo_run, bo_run, notice)
 
 
 @router.post("/cases/{case_id}/credit/fo/{run_id}/override")

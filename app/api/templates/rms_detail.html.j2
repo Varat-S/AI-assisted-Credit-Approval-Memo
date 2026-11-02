@@ -1,0 +1,42 @@
+{# Shared by the credit view and an analysis's RMS tab. Needs view, rms, r, rec, fo, fo_run, bo_run and the credit_macros. #}
+{% if rec %}
+<section id="rms"><h2>Risk Mitigation &amp; Structuring</h2>
+<div class="panels">
+<div class="card"><h3>Grade</h3>
+{% if rec.grade %}<p>FO composite {{ sc(rec.grade.fo_composite_score) }} ({{ rec.grade.fo_credit_rating }}){% for n in rec.grade.notches %} · {{ n.reason }} {{ '{:+g}'.format(n.notch) }}{% endfor %}{% if rec.grade.severity_floor.applied %} · floored at 7 ({{ rec.grade.severity_floor.measures|join(', ') }}){% endif %} → <strong>{{ sc(rec.grade.score) }} ({{ rec.grade.rating }}, {{ rec.grade.level }})</strong></p>{% else %}<p>No grade: no FO composite.</p>{% endif %}
+{% if r.capacity %}{% set c = r.capacity %}{% set i = c.inputs_m %}
+<h3>Debt capacity: {{ usd(c.derived_capacity_m) }}</h3>
+<p class="subtle">EBITDAR {{ usd(i.ebitdar) }} · lease-adjusted debt {{ usd(i.adj_debt) }} (net {{ usd(i.adj_net_debt) }}) · CFADS {{ usd(i.cfads) }} · existing debt service {{ usd(i.existing_debt_service) }} ({{ c.existing_debt_service_basis }}) · sized at grade level {{ c.level }}</p>
+<div class="table-wrap"><table class="rms-capacity"><tbody>
+{% for t in c.tests %}<tr><td>{{ t.label }}{% if t.binding %} <strong>(binding)</strong>{% endif %}</td><td class="num">{{ usd(t.capacity_m) }}</td></tr>{% endfor %}
+<tr><td>Base capacity: the smallest test</td><td class="num">{{ usd(c.base_capacity_m) }}</td></tr>
+<tr><td>BO haircut {{ '{:.0%}'.format(c.haircut) }}: {{ c.haircuts|join('; ') if c.haircuts else 'none' }}</td><td class="num">{% if c.base_capacity_m is not none %}-{{ usd(c.base_capacity_m - c.derived_capacity_m) }}{% endif %}</td></tr>
+<tr><td><strong>Derived debt capacity</strong></td><td class="num"><strong>{{ usd(c.derived_capacity_m) }}</strong></td></tr>
+</tbody></table></div>{% endif %}
+</div>
+<div class="card"><h3>Structure{% if rec.terms and rec.terms.provisional %} <small class="warn">(provisional: the case is referred)</small>{% endif %}</h3>
+{% if rec.terms %}{% set t = rec.terms %}
+<dl class="facts">
+<dt>Amount</dt><dd>{{ usd(t.amount_m) }}</dd>
+<dt>Rank</dt><dd>{{ t.rank|replace('_', ' ') }}</dd>
+<dt>Tenor</dt><dd>{{ t.tenor_years }} years at {{ '{:.2%}'.format(t.interest_rate) }}</dd>
+{% if rec.pricing %}{% set p = rec.pricing %}<dt>Pricing</dt><dd>{% if p.basis == 'requested' %}requested rate{% else %}{{ p.base_rate.name }} {{ '{:.2%}'.format(p.base_rate.rate) }} (as of {{ p.base_rate.as_of }}) + {{ p.credit_spread.bps }}bp credit spread (FO {{ p.credit_spread.fo_credit_rating }}) {{ '+' if p.business_premium.bps >= 0 else '-' }} {{ p.business_premium.bps|abs }}bp business premium (M4 {{ p.business_premium.m4_verdict or 'verdict unavailable: priced as ' ~ p.business_premium.priced_as }}){% endif %}</dd>{% endif %}
+<dt>Amortisation</dt><dd>{{ t.amortisation.type|replace('_', ' ') }}{% if t.amortisation.amortised_share %}, {{ '{:.0%}'.format(t.amortisation.amortised_share) }} amortised{% endif %}{% if t.amortisation.excess_cash_sweep %}, {{ '{:.0%}'.format(t.amortisation.excess_cash_sweep) }} excess cash sweep{% endif %}</dd>
+<dt>Pro forma leverage</dt><dd>{{ t.pro_forma_leverage }}x</dd>
+<dt>Covenants</dt><dd>{% for k in t.financial_covenants %}{{ k.covenant|replace('_', ' ') }} {% if k.max is defined %}≤ {{ k.max }}x{% else %}≥ {{ k.min }}x{% endif %} ({{ k.test }}){% if not loop.last %}<br>{% endif %}{% endfor %}</dd>
+<dt>Guarantees</dt><dd>{{ t.guarantees }}</dd>
+</dl>{% else %}<p>No structure drafted for this verdict.</p>{% endif %}
+{% if rec.feasibility %}{% set f = rec.feasibility %}<p>Structuring engine: {% if f.feasible %}<span class="ok">feasible</span>{% elif f.failures %}<span class="bad">fails {{ f.failures|join(', ') }}</span>{% else %}<span class="warn">{{ f.unavailable|join(', ') }} untested (a condition before drawdown)</span>{% endif %}</p>{% endif %}
+</div>
+</div>
+{% if rec.mitigants %}<h3>Mitigants ({{ rec.mitigants|length }})</h3>
+<div class="table-wrap"><table><thead><tr><th>Rule</th><th>Kind</th><th>Why</th><th>Protection</th></tr></thead><tbody>
+{% for m in rec.mitigants %}<tr><td><code>{{ m.rule_id }}</code></td><td>{{ m.category|replace('_', ' ') }}</td><td>{{ m.trigger }}{% if m.heuristic %} <small class="subtle">(keyword match)</small>{% endif %}</td><td>{{ m.mitigant }}</td></tr>{% endfor %}
+</tbody></table></div>{% endif %}
+{% if rec.limitations %}<details><summary>Limitations ({{ rec.limitations|length }})</summary><ul>{% for l in rec.limitations %}<li>{{ l }}</li>{% endfor %}</ul></details>{% endif %}
+<h3>Assessment history</h3>
+<div class="table-wrap"><table><thead><tr><th>Assessed</th><th>Verdict</th><th>Requested</th><th>Approved</th><th>BO handoff</th><th>FO decisions applied</th></tr></thead><tbody>
+{% for h in rms.history %}<tr><td>{{ (h.assessed_at or '')[:19]|replace('T', ' ') }} <small class="subtle"><code>{{ h.run_id }}</code></small></td><td>{{ st(h.verdict) }}</td><td class="num">{{ usd(h.requested_amount_m) }}</td><td class="num">{{ usd(h.approved_amount_m) }}</td><td>{{ h.bo_review_status or '—' }}</td><td>{{ h.fo_decisions|join('; ') if h.fo_decisions else '—' }}</td></tr>{% endfor %}
+</tbody></table></div>
+</section>
+{% endif %}

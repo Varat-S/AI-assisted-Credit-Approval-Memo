@@ -39,6 +39,45 @@ def selected_rows(session, job):
     return bo, fo
 
 
+ANALYSIS_TABS = (('memo', 'Memo'), ('bo', 'Business Overview'), ('fo', 'Financial Overview'),
+                 ('rms', 'Risk Mitigation & Structuring'), ('audit', 'Audit & Review'), ('execution', 'Execution'))
+
+
+def analysis_tabs(job, current):
+    """Header tabs shared by every page of one analysis. A tab whose report is not recorded yet has no href;
+    a module outside the analysis scope has no tab, nor RMS, which needs both."""
+    try:
+        ids = run_references(job)
+    except WorkspaceRecordError:
+        ids = {'bo': None, 'fo': None}
+    job_id, case = quote(job['job_id'], safe=''), quote(job.get('case_id') or '', safe='')
+    reviewable = job.get('execution_status') in EXECUTION_STATES[2:] and any(ids.values())
+    hrefs = {
+        'memo': f'/analysis/{job_id}/review' if reviewable else None,
+        'bo': f'/cases/{case}/bo.html?analysis_run_id={quote(ids["bo"], safe="")}&job={job_id}' if ids['bo'] else None,
+        'fo': f'/cases/{case}/fo.html?run_id={quote(ids["fo"], safe="")}&job={job_id}' if ids['fo'] else None,
+        'rms': f'/analysis/{job_id}/rms' if reviewable and ids['bo'] and ids['fo'] else None,
+        'audit': f'/analysis/{job_id}/audit' if reviewable else None,
+        'execution': f'/analysis/{job_id}/execution',
+    }
+    skipped = {'fo', 'rms'} if job.get('bo_only') else {'bo', 'rms'} if job.get('fo_only') else set()
+    return {'job': job, 'current': current, 'tabs': [
+        {'key': key, 'label': label, 'href': hrefs[key]} for key, label in ANALYSIS_TABS if key not in skipped]}
+
+
+def analysis_for(job_id, case_id, run_id, current):
+    """The analysis a workbench was opened from (``?job=``), or None when it does not own that run."""
+    from app.services import bo_fo
+    job = bo_fo.jobs.get(job_id) if job_id else None
+    if job is None or job.get('case_id') != case_id:
+        return None
+    try:
+        ids = run_references(job)
+    except WorkspaceRecordError:
+        return None
+    return analysis_tabs(job, current) if ids.get(current) == run_id else None
+
+
 def report_available(session, bo, fo):
     from app.services.bo.workbench import bo_artifact, BoRunNotFoundError
     memo = None
@@ -67,6 +106,8 @@ def governance(session, job, bo, fo, available):
         return 'Human review required · exploratory'
     if bo and bo.payload.get('business_topic_conclusion_id') is None:
         return 'Unavailable or incomplete'
+    if bo and bo.human_review_status == 'rejected':
+        return 'Rejected · Business Overview'
     if bo and bo.human_review_status == 'accepted' and job.get('bo_only'):
         return 'Approved · Business Overview'
     # Combined approval must be explicitly bound to BOTH selected runs, never just the case.
@@ -79,6 +120,8 @@ def governance(session, job, bo, fo, available):
                     payload.get('accepted_analysis_run_id') == bo.analysis_run_id and
                     (payload.get('financial_analysis') or {}).get('run_id') == fo.run_id):
                 return 'Approved'
+    if bo and bo.human_review_status == 'accepted':
+        return 'Human review required · Business Overview accepted'
     return 'Human review required'
 
 

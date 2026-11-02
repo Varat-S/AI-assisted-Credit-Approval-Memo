@@ -1,27 +1,29 @@
 <!doctype html>
 <html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Business Overview workbench</title>{% include 'browser_style.html.j2' %}
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Business Overview workbench</title>{% include 'workspace_style.html.j2' %}
 <style>
-  .ok { color: #2f6b45; font-weight: bold; } .bad { color: #9a3324; font-weight: bold; } .warn { color: #8a6d1c; font-weight: bold; }
+  header h1 { font-size: 2.3rem; margin: 8px 0 10px; } nav ul { padding: 0; }
+  .ok { color: var(--c-2f6b45); font-weight: bold; } .bad { color: var(--c-9a3324); font-weight: bold; } .warn { color: var(--c-8a6d1c); font-weight: bold; }
   .epistemic { display: inline-block; padding: .15rem .45rem; border-radius: .3rem; font-size: .78rem; font-weight: 700; letter-spacing: .02em; }
-  .epistemic.fact { color: #205537; background: #e1f3e7; border: 1px solid #78b58c; }
-  .epistemic.inference { color: #775700; background: #fff3bf; border: 1px solid #d4aa39; }
-  .epistemic.assumption { color: #942d29; background: #fde5e2; border: 1px solid #d58880; }
-  iframe { width: 100%; height: 720px; border: 1px solid #c9d1da; background: #fff; }
+  .epistemic.fact { color: var(--c-205537); background: var(--c-e1f3e7); border: 1px solid var(--c-78b58c); }
+  .epistemic.inference { color: var(--c-775700); background: var(--c-fff3bf); border: 1px solid var(--c-d4aa39); }
+  .epistemic.assumption { color: var(--c-942d29); background: var(--c-fde5e2); border: 1px solid var(--c-d58880); }
+  iframe { width: 100%; height: 720px; border: 1px solid var(--c-c9d1da); background: var(--c-ffffff); }
   form.review input[type=text] { width: 22rem; max-width: 100%; }
 </style></head>
 <body>
+{% set active='memos' %}{% include 'analysis_nav.html.j2' %}
 {% macro st(v) %}<span class="{{ 'ok' if v in ['validated', 'accepted', 'completed', 'supported'] else 'bad' if v in ['rejected', 'failed', 'unavailable', 'human_review_required', 'blocked'] else 'warn' }}">{{ v|replace('_', ' ') }}</span>{% endmacro %}
-<header><span class="badge">Business Overview only</span><h1>Business Overview workbench</h1>
+{% if analysis %}{% include 'analysis_tabs.html.j2' %}{% else %}<header><span class="badge">Business Overview only</span><h1>Business Overview workbench</h1>
 <p class="subtle">Read-only inspection of recorded Business Overview runs. Approval is a separate, explicit reviewer action.</p>
-<div class="actions"><a href="/">All cases</a><a href="/bo">All Business Overview runs</a></div></header>
+<div class="actions"><a href="/credit-memos">All cases</a></div></header>{% endif %}
 <main>
-{% if credit %}<div class="notice" id="credit-back" style="position:sticky;top:0;z-index:5;border-left-color:#2f6fb0;background:#eef3fb"><a href="{{ credit.url }}"><strong>&larr; Back to the credit view (BO + FO + RMS)</strong></a> <span class="subtle">A decision you make here takes you back there, with RMS re-assessed.</span></div>{% endif %}
+{% if credit %}<div class="notice" id="credit-back" style="position:sticky;top:0;z-index:5;border-left-color:var(--c-2f6fb0);background:var(--c-eef3fb)"><a href="{{ credit.url }}"><strong>&larr; Back to the credit view (BO + FO + RMS)</strong></a> <span class="subtle">A decision you make here takes you back there, with RMS re-assessed.</span></div>{% endif %}
 {% if error %}<section><p class="notice" role="alert"><strong>{{ error }}</strong></p></section>{% endif %}
 <section><h2>Case and run selection</h2>
 {% if runs %}
 <div class="table-wrap"><table><thead><tr><th>Case</th><th>Run</th><th>Started</th><th>Mode</th><th>Conclusion</th><th>Human review</th><th>Open</th></tr></thead><tbody>
-{% for r in runs %}<tr{% if view and r.analysis_run_id == view.analysis_run_id %} style="background:#eef3f8"{% endif %}><td>{{ r.case_id }}</td><td><code>{{ r.analysis_run_id }}</code></td><td>{{ r.started_at }}</td><td>{{ r.execution_mode|replace('_', ' ') }}</td><td>{{ st(r.conclusion_status) }}</td><td>{{ st(r.human_review_status) }}</td><td><a href="/cases/{{ r.case_id }}/bo.html?analysis_run_id={{ r.analysis_run_id }}">Inspect</a></td></tr>{% endfor %}
+{% for r in runs %}<tr{% if view and r.analysis_run_id == view.analysis_run_id %} style="background:var(--c-eef3f8)"{% endif %}><td>{{ r.case_id }}</td><td><code>{{ r.analysis_run_id }}</code></td><td>{{ r.started_at }}</td><td>{{ r.execution_mode|replace('_', ' ') }}</td><td>{{ st(r.conclusion_status) }}</td><td>{{ st(r.human_review_status) }}</td><td><a href="/cases/{{ r.case_id }}/bo.html?analysis_run_id={{ r.analysis_run_id }}">Inspect</a></td></tr>{% endfor %}
 </tbody></table></div>
 {% else %}<p>No Business Overview run has been recorded. Use <code>python -m app.cli run-bo-case</code>.</p>{% endif %}
 </section>
@@ -77,7 +79,7 @@
 <p>Handoff <code>{{ view.handoff.handoff_id }}</code>: {{ st(view.handoff.human_review_status) }}{% if view.handoff.reviewer %} by {{ view.handoff.reviewer }} at {{ view.handoff.reviewed_at }}{% endif %}.</p>
 {% if view.handoff.human_review_status == 'pending' %}
 <form class="review" method="post" action="{{ base }}/review">
-{% if credit %}<input type="hidden" name="credit" value="1"><input type="hidden" name="fo_run" value="{{ credit.fo_run }}">{% endif %}
+{% if credit %}<input type="hidden" name="credit" value="1"><input type="hidden" name="fo_run" value="{{ credit.fo_run }}">{% endif %}{% if analysis %}<input type="hidden" name="job" value="{{ analysis.job.job_id }}">{% endif %}
 <p><label>Reviewer <input type="text" name="reviewer" required></label></p>
 <p><label>Reason <input type="text" name="reason" required></label></p>
 {% if view.handoff.unresolved_challenges %}<p><label><input type="checkbox" name="acknowledge_unresolved" value="true"> I acknowledge the unresolved challenger findings listed above; they remain recorded on the handoff.</label></p>{% endif %}

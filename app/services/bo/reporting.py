@@ -69,6 +69,15 @@ STATUS_TEXT = {
     "unavailable": "No validated Business conclusion was produced. See the audit "
                    "report for the reason.",
 }
+# The memo is frozen while human review is pending; these replace its status text once the handoff is decided.
+REVIEWED_STATUS_TEXT = {
+    "accepted": "Challenged without material finding. Approved by human review.",
+    "accepted_with_qualification": "Accepted subject to the qualifications listed under Outstanding Questions. "
+                                   "Approved by human review.",
+    "human_review_required": "Unresolved material challenge, acknowledged by the reviewer, who approved this "
+                             "Business Overview. The challenge stays recorded.",
+}
+REJECTED_STATUS_TEXT = "Rejected by human review. This is NOT an approved Business Overview."
 MODE_TEXT = {
     "offline_simulation": "OFFLINE SIMULATION: agent responses came from a scripted "
                           "fake backend, not a live model. This demonstrates the "
