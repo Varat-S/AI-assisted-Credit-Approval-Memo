@@ -1,0 +1,71 @@
+{
+  "identity": {
+    "analysis_run_id": "ar_30fa71dcfe4d4e91",
+    "as_of_date": "2025-12-31",
+    "case_id": "NFH_BO",
+    "conclusion_id": "tc_76aa400aafde41fd",
+    "evidence_cutoff_timestamp": "2026-03-01T00:00:00+00:00",
+    "evidence_snapshot_hash": "0deddce06532bf20294d4092d89a78da034da2e434395c049335da2c5c76188b",
+    "evidence_snapshot_version": 1,
+    "orchestrator_run_id": "b84bc47a-f38a-45e5-af77-b70c2a8fba08",
+    "reporting_company": "Northfield Health Systems"
+  },
+  "content_hash": "c85a809e9d19188fe13906dab0aedd8c1cba367e395eb2627e80f84b7e00f132",
+  "notice": "Fresh fictional persisted offline run; Industry unavailable. No live inference.",
+  "source_refs": [
+    {
+      "artifact_id": "structure",
+      "binding": "same_run_verified",
+      "content_hash": "595980b83e236714073a755c549c21c2e28aef1dcb221b4caf71d6b8e7cceee6",
+      "hash_kind": "canonical_stage",
+      "sha256": "9124e7607ef418f2ac8fc70c68d8738859018c36003973a8d00a2b08a06d949f",
+      "source_path": "/module_conclusions/M3/m3_rebuild/structure/artifact",
+      "stage_name": "bo_audit:ar_30fa71dcfe4d4e91"
+    },
+    {
+      "artifact_id": "debt",
+      "binding": "same_run_verified",
+      "content_hash": "6854da9c5843ad87a99faf51e0209c864b66e677af4888f7b94106ccd13c3a40",
+      "hash_kind": "canonical_stage",
+      "sha256": "9124e7607ef418f2ac8fc70c68d8738859018c36003973a8d00a2b08a06d949f",
+      "source_path": "/module_conclusions/M4/m4_analysis/deliverable_1",
+      "stage_name": "bo_audit:ar_30fa71dcfe4d4e91"
+    },
+    {
+      "artifact_id": "management",
+      "binding": "same_run_verified",
+      "content_hash": "0c73bebc46b3db9efe299c87efea807dacb19f2131f831549ba6e9a3f7308623",
+      "hash_kind": "canonical_stage",
+      "sha256": "9124e7607ef418f2ac8fc70c68d8738859018c36003973a8d00a2b08a06d949f",
+      "source_path": "/module_conclusions/M3/m3_rebuild/management/artifact",
+      "stage_name": "bo_audit:ar_30fa71dcfe4d4e91"
+    },
+    {
+      "artifact_id": "competitive_positioning",
+      "binding": "same_run_verified",
+      "content_hash": "0b155f9c7a3b7149f35501e36ce3511073b0ebfb9bb1e1e72e9893901c83a578",
+      "hash_kind": "canonical_stage",
+      "sha256": "9124e7607ef418f2ac8fc70c68d8738859018c36003973a8d00a2b08a06d949f",
+      "source_path": "/conclusions/0/payload",
+      "stage_name": "bo_audit:ar_30fa71dcfe4d4e91"
+    },
+    {
+      "artifact_id": "editorial_selection",
+      "binding": "same_run_verified",
+      "content_hash": "8dd93c6edc1ed48806f96291bb5d19f03e83e16e20db313a7d34b10f24fdc3de",
+      "hash_kind": "canonical_stage",
+      "sha256": "9124e7607ef418f2ac8fc70c68d8738859018c36003973a8d00a2b08a06d949f",
+      "source_path": "/orchestrator/editorial_selection",
+      "stage_name": "bo_audit:ar_30fa71dcfe4d4e91"
+    },
+    {
+      "artifact_id": "independent_challenge",
+      "binding": "same_run_verified",
+      "content_hash": "4b4f5b1b6cb80a610cb668b7b51a4572d9737c1e7dc92a041ac4310d76137745",
+      "hash_kind": "canonical_stage",
+      "sha256": "9124e7607ef418f2ac8fc70c68d8738859018c36003973a8d00a2b08a06d949f",
+      "source_path": "/challenger/rounds/0",
+      "stage_name": "bo_audit:ar_30fa71dcfe4d4e91"
+    }
+  ]
+}

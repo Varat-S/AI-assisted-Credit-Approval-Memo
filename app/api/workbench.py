@@ -296,6 +296,12 @@ def get_bo_artifact_json(
 ) -> dict:
     from app.services.bo.workbench import bo_artifact
 
+    if kind == 'memo':
+        from app.services.bo.four_section_view import load_view
+        view = _bo_call(load_view, session, analysis_run_id, case_id)
+        if view is not None:
+            # JSON export retains the exact canonical artifact (no display overlay).
+            return _bo_call(bo_artifact, session, analysis_run_id, 'four_section')
     _bo_run_for_case(session, case_id, analysis_run_id)
     return _bo_call(bo_artifact, session, analysis_run_id, kind)
 
@@ -311,6 +317,11 @@ def get_bo_artifact_html(
 
     if kind not in ("memo", "audit"):
         raise HTTPException(status_code=404, detail="Unknown Business Overview page.")
+    if kind == 'memo':
+        from app.services.bo.four_section_view import load_view, render_page
+        view = _bo_call(load_view, session, analysis_run_id, case_id)
+        if view is not None:
+            return HTMLResponse(render_page(view), headers={'Cache-Control': 'no-store'})
     _bo_run_for_case(session, case_id, analysis_run_id)
     payload = (_bo_call(reviewed_memo, session, analysis_run_id) if kind == "memo"
                else _bo_call(bo_artifact, session, analysis_run_id, kind))
@@ -357,17 +368,22 @@ def get_bo_artifact_pdf(
 
     if kind not in ("memo", "audit"):
         raise HTTPException(status_code=404, detail="Unknown Business Overview page.")
-    _bo_run_for_case(session, case_id, analysis_run_id)
-    payload = (_bo_call(reviewed_memo, session, analysis_run_id) if kind == "memo"
-               else _bo_call(bo_artifact, session, analysis_run_id, kind))
-    render = render_memo_html if kind == "memo" else render_audit_html
+    from app.services.bo.four_section_view import load_view, render_page
+    view = _bo_call(load_view, session, analysis_run_id, case_id) if kind == 'memo' else None
+    if view is not None:
+        html = render_page(view, pdf=True)
+    else:
+        _bo_run_for_case(session, case_id, analysis_run_id)
+        payload = (_bo_call(reviewed_memo, session, analysis_run_id) if kind == "memo"
+                   else _bo_call(bo_artifact, session, analysis_run_id, kind))
+        render = render_memo_html if kind == "memo" else render_audit_html
+        html = render(payload)
     backend = detect_pdf_backend()
     if backend is None:
         raise HTTPException(
             status_code=501,
             detail="No PDF backend is installed; run `pip install xhtml2pdf` and restart.")
     try:
-        html = render(payload)
         if backend != "weasyprint":  # WeasyPrint resolves the page's own fonts
             html = _with_pdf_font(html)
         pdf = _render_pdf_with(backend, html)

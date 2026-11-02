@@ -23,6 +23,13 @@ def wait_for(jobs, ident, status):
 
 @pytest.fixture
 def execution_env(workspace, monkeypatch, tmp_path):
+    from app.models.base import create_engine_and_session, init_db
+    from app.core.config import get_settings
+    database = tmp_path / 'execution-main.sqlite'
+    engine, _ = create_engine_and_session('sqlite:///' + str(database))
+    init_db(engine)
+    engine.dispose()
+    monkeypatch.setattr(get_settings(), 'database_url', 'sqlite:///' + str(database))
     jobs = bo_fo.Jobs(tmp_path/'jobs.sqlite')
     monkeypatch.setattr(bo_fo, 'jobs', jobs)
     monkeypatch.setattr(bo_fo, 'plan', lambda folder, case_id, cutoff: {'case_id':case_id or 'HCA_2024','cutoff':cutoff})

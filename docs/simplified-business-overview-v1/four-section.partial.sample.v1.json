@@ -1,0 +1,353 @@
+{
+  "document": "business_overview_four_section_memo",
+  "schema_version": "bo-four-section-memo-1.0.0",
+  "design_basis": {
+    "assembler_version": "bo-four-section-assembler-1.0.0",
+    "selection_policy_version": "bo-editorial-selection-1.0.0"
+  },
+  "example_only": true,
+  "identity": {
+    "case_id": "NFH_BO",
+    "analysis_run_id": "ar_67978f22cf34499d",
+    "evidence_snapshot_version": 1,
+    "evidence_snapshot_hash": "8a521b2e01c6b33f5f6157733cef6bb9e3984bab59140bec718dec129b39bfb6",
+    "reporting_company": "Northfield Health Systems",
+    "as_of_date": "2025-12-31",
+    "evidence_cutoff_timestamp": "2026-03-01T00:00:00+00:00",
+    "conclusion_id": "tc_e410e33d9f774878",
+    "orchestrator_run_id": "7166deef-01b8-42f4-b568-4236da0e01cb"
+  },
+  "governance": {
+    "conclusion_status": "human_review_required",
+    "execution_mode": "offline_simulation",
+    "human_review_status": "pending",
+    "validators_enforced": true,
+    "memo_completeness": "incomplete",
+    "independent_challenge_status": "accepted",
+    "visible_warnings": [
+      "Offline/scripted execution; this is not evidence of live model analytical quality.",
+      "structure: Corporate onboarding JSON unavailable",
+      "debt: Missing recorded source field 'm4_debt_assessment'; no fallback was used.",
+      "management: Selected company Form 10-K unavailable",
+      "Competitor staffing data are unavailable.",
+      "Competitor staffing data",
+      "M2-H001: preserve qualified_narrative qualification/attribution."
+    ]
+  },
+  "sources": [
+    {
+      "artifact_id": "competitive_positioning",
+      "stage_name": "bo_audit:ar_67978f22cf34499d",
+      "source_path": "/conclusions/0/payload",
+      "sha256": "a0aac3f47fa799c25b8ceef15bbfda4e35fb06677f0de321fee9dfb03a3fd6d5",
+      "content_hash": "50723fe5a5b62791475c7642e6db25adbb8d4a8afb403b74c56217c81d9c5794",
+      "hash_kind": "canonical_stage",
+      "binding": "same_run_verified"
+    },
+    {
+      "artifact_id": "editorial_selection",
+      "stage_name": "bo_audit:ar_67978f22cf34499d",
+      "source_path": "/orchestrator/editorial_selection",
+      "sha256": "a0aac3f47fa799c25b8ceef15bbfda4e35fb06677f0de321fee9dfb03a3fd6d5",
+      "content_hash": "593566517c08aa8d6e763ad18ae97ba0fe8241eeb7d59d0d627c47cbeb2086ad",
+      "hash_kind": "canonical_stage",
+      "binding": "same_run_verified"
+    },
+    {
+      "artifact_id": "independent_challenge",
+      "stage_name": "bo_audit:ar_67978f22cf34499d",
+      "source_path": "/challenger/rounds/0",
+      "sha256": "a0aac3f47fa799c25b8ceef15bbfda4e35fb06677f0de321fee9dfb03a3fd6d5",
+      "content_hash": "06e91eb7290628ab708696f7e93454acaf20d3f2367249a9315cccf8d0934df3",
+      "hash_kind": "canonical_stage",
+      "binding": "same_run_verified"
+    },
+    {
+      "artifact_id": "industry",
+      "stage_name": "bo_audit:ar_67978f22cf34499d",
+      "source_path": "/module_conclusions/M2/findings",
+      "sha256": "a0aac3f47fa799c25b8ceef15bbfda4e35fb06677f0de321fee9dfb03a3fd6d5",
+      "content_hash": "ee0279d50547d8f1c12f1ff876eda31cb17d96050ae8660f0e9051d9d6c58ae7",
+      "hash_kind": "canonical_stage",
+      "binding": "same_run_verified"
+    }
+  ],
+  "sections": [
+    {
+      "id": "corporate_structure_debt_obligations",
+      "title": "Corporate Structure & Debt Obligations",
+      "status": "unavailable",
+      "layout": "structure_left_debt_right",
+      "structure": {
+        "status": "unavailable",
+        "recorded_status": "not_attempted",
+        "validation_status": "not_attempted",
+        "source_ref": null,
+        "content": null,
+        "visible_warnings": [
+          "structure: Corporate onboarding JSON unavailable"
+        ]
+      },
+      "debt_obligations": {
+        "status": "unavailable",
+        "recorded_status": null,
+        "validation_status": null,
+        "source_ref": null,
+        "content": null,
+        "visible_warnings": [
+          "debt: Missing recorded source field 'm4_debt_assessment'; no fallback was used."
+        ]
+      },
+      "visible_warnings": [
+        "structure: Corporate onboarding JSON unavailable",
+        "debt: Missing recorded source field 'm4_debt_assessment'; no fallback was used."
+      ]
+    },
+    {
+      "id": "management",
+      "title": "Management",
+      "status": "unavailable",
+      "recorded_status": "not_attempted",
+      "validation_status": "not_attempted",
+      "source_ref": null,
+      "content": null,
+      "visible_warnings": [
+        "management: Selected company Form 10-K unavailable"
+      ]
+    },
+    {
+      "id": "competitive_positioning",
+      "title": "Competitive Positioning",
+      "status": "complete",
+      "recorded_status": "human_review_required",
+      "validation_status": "accepted",
+      "source_ref": "competitive_positioning",
+      "content": {
+        "acceptance_state": "accepted",
+        "analysis_run_id": "ar_67978f22cf34499d",
+        "challenge_status": "escalated",
+        "key_drivers": [
+          {
+            "category": "driver",
+            "claim_id": "cp-contracts",
+            "claim_type": "fact",
+            "evidence_ids": [
+              "ev_payer"
+            ],
+            "hypothesis_ids": [
+              "M1S1-H001",
+              "M1S1-H002"
+            ],
+            "materiality": "medium",
+            "parameter_result_ids": [],
+            "section": "M1S1",
+            "text": "Multi-year managed-care agreements set negotiated rates.",
+            "title": null,
+            "uncertainty": null
+          }
+        ],
+        "material_risks": [
+          {
+            "category": "risk",
+            "claim_id": "cp-workforce-interaction",
+            "claim_type": "inference",
+            "evidence_ids": [
+              "ev_labor",
+              "ev_compete"
+            ],
+            "hypothesis_ids": [
+              "M1A6-H001",
+              "M1S4-H001",
+              "M1S5-H001"
+            ],
+            "materiality": "medium",
+            "parameter_result_ids": [],
+            "section": "M1A6",
+            "text": "Competition for scarce clinical staff can raise costs and constrain service capacity.",
+            "title": null,
+            "uncertainty": "Qualified interaction: competitor staffing data are unavailable."
+          }
+        ],
+        "open_questions": [
+          "Competitor staffing data are unavailable."
+        ],
+        "orchestrator_run_id": "7166deef-01b8-42f4-b568-4236da0e01cb",
+        "overall_assessment": {
+          "category": "assessment",
+          "claim_id": "cp-lead",
+          "claim_type": "fact",
+          "evidence_ids": [
+            "ev_payer"
+          ],
+          "hypothesis_ids": [
+            "M1S1-H001",
+            "M1S3-H001"
+          ],
+          "materiality": "medium",
+          "parameter_result_ids": [],
+          "section": "executive",
+          "text": "Managed-care contracts set negotiated rates and can be terminated on notice.",
+          "title": null,
+          "uncertainty": "Contract terms do not guarantee patient volumes; renewal outcomes are not established."
+        },
+        "score_reference": null,
+        "strengths": [],
+        "supersedes_id": null,
+        "topic": "business",
+        "unresolved_contradictions": [],
+        "weaknesses": []
+      },
+      "visible_warnings": [
+        "Competitor staffing data are unavailable.",
+        "Competitor staffing data"
+      ],
+      "editorial_selection": {
+        "conclusion_id": "tc_e410e33d9f774878",
+        "follow_up": [
+          "Review competitor staffing data when admitted."
+        ],
+        "interaction_basis": [
+          {
+            "agent6_hypothesis_ids": [
+              "M1A6-H001"
+            ],
+            "claim_id": "cp-workforce-interaction"
+          }
+        ],
+        "merged_duplicates": [],
+        "orchestrator_run_id": "7166deef-01b8-42f4-b568-4236da0e01cb",
+        "policy_version": "bo-editorial-selection-1.0.0",
+        "quoted_values": {
+          "cp-contracts": [],
+          "cp-lead": [],
+          "cp-workforce-interaction": []
+        },
+        "schema_version": "bo-competitive-positioning-output-1.0.0",
+        "selection_decisions": [
+          {
+            "claim_ids": [
+              "cp-lead",
+              "cp-contracts"
+            ],
+            "decision": "selected",
+            "hypothesis_id": "M1S1-H001",
+            "reason": "Negotiated revenue terms anchor the contract discussion."
+          },
+          {
+            "claim_ids": [
+              "cp-contracts"
+            ],
+            "decision": "merged",
+            "hypothesis_id": "M1S1-H002",
+            "reason": "Multi-year duration and negotiated rates fit one contract-terms paragraph."
+          },
+          {
+            "claim_ids": [],
+            "decision": "omitted",
+            "hypothesis_id": "M1S2-H001",
+            "reason": "Stable historical admissions add little to the selected contract and workforce exposures; no volume guarantee is inferred."
+          },
+          {
+            "claim_ids": [
+              "cp-lead"
+            ],
+            "decision": "selected",
+            "hypothesis_id": "M1S3-H001",
+            "reason": "Termination rights qualify the credit reading of negotiated rates."
+          },
+          {
+            "claim_ids": [],
+            "decision": "omitted",
+            "hypothesis_id": "M1S4-H001",
+            "reason": "Retained as component lineage for the selected Agent 6 interaction; a separate paragraph would repeat that operating exposure."
+          },
+          {
+            "claim_ids": [],
+            "decision": "omitted",
+            "hypothesis_id": "M1S5-H001",
+            "reason": "Retained as component lineage for the selected Agent 6 interaction; no standalone competitive advantage is inferred."
+          },
+          {
+            "claim_ids": [
+              "cp-workforce-interaction"
+            ],
+            "decision": "selected",
+            "hypothesis_id": "M1A6-H001",
+            "reason": "The validated interaction explains how staff competition may transmit into costs and service capacity."
+          }
+        ]
+      },
+      "selection_source_ref": "editorial_selection",
+      "challenge_source_ref": "independent_challenge"
+    },
+    {
+      "id": "industry",
+      "title": "Industry",
+      "status": "complete",
+      "recorded_status": "complete",
+      "validation_status": "recorded",
+      "source_ref": "industry",
+      "content": {
+        "findings": [
+          {
+            "admissibility": "qualified_narrative",
+            "agent_id": "m2_industry",
+            "claim": "The industry is extensively regulated and exposed to legislative reimbursement reductions.",
+            "claim_type": "fact",
+            "component_hypothesis_ids": [],
+            "confidence": "medium",
+            "contradicting_evidence_ids": [],
+            "corrects_hypothesis_id": null,
+            "credit_mechanism": null,
+            "direction": "negative",
+            "disposition": "qualified",
+            "evidence_quotes": [
+              {
+                "evidence_id": "ev_reg",
+                "quote": "We are subject to extensive regulation"
+              }
+            ],
+            "hypothesis_id": "M2-H001",
+            "interaction_kind": null,
+            "interpretation": {},
+            "materiality": "high",
+            "missing_information": [],
+            "mitigant": null,
+            "quoted_values": [],
+            "section": "M2",
+            "supporting_evidence_ids": [
+              "ev_reg"
+            ],
+            "validation_notes": [
+              "generic_risk_disclosure_only: Supported only by risk-factor language about what could happen; it may be reported as a disclosed risk, not as an event that has occurred.",
+              "quote_does_not_cover_claim: The quote is verified, but it shares almost no wording with the claim, so it does not show that the filing states the claim; treated as the specialist's inference."
+            ]
+          }
+        ]
+      },
+      "visible_warnings": [
+        "M2-H001: preserve qualified_narrative qualification/attribution."
+      ]
+    }
+  ],
+  "evidence_ui": {
+    "pattern": "native_details",
+    "initially_expanded": false,
+    "hide_inline_source_citations": true,
+    "detail_fields": [
+      "source_citations",
+      "evidence_quotes",
+      "calculation_traces",
+      "validation_records"
+    ],
+    "always_visible": [
+      "material_qualifications",
+      "simulation_or_unverified_structure_notice",
+      "completeness_warnings",
+      "unresolved_material_challenges",
+      "all_obligation_rows_and_business_columns"
+    ],
+    "static_pdf_evidence": "appendix"
+  },
+  "content_hash": "4792b8e2b8ee4763d13030a81480635e63091809f14dfd8427dd43adc1bc4581"
+}

@@ -446,6 +446,30 @@ def _index_bo_module_artifacts(
 def _index_bo_run(run_dir: Path, root: Path, case_id: str) -> list[ArtifactEntry]:
     run_id = run_dir.name
     entries: list[ArtifactEntry] = []
+    from app.schemas.bo_four_section import FILENAME
+    if (run_dir / FILENAME).is_file():
+        from app.services.bo.four_section import verify_memo
+        from app.services.pipeline.artifacts import ArtifactIntegrityError
+        entry = _entry_for_file(
+            run_dir / FILENAME, root, artifact_id=f'bo.four_section.{run_id}',
+            artifact_type=ArtifactType.MEMO, case_id=case_id, run_id=run_id,
+            producer_module='BO', producer_agent='deterministic_four_section_assembler',
+            depends_on=[f'bo.audit.{run_id}'])
+        try:
+            assembled = _load_json(run_dir / FILENAME)
+            verify_memo(assembled)
+            if assembled['identity']['case_id'] != case_id or assembled['identity']['analysis_run_id'] != run_id:
+                raise ArtifactIntegrityError('Four-section disk identity differs from its directory.')
+            entry.status = (ExecutionStatus.QUALIFIED if assembled['governance']['memo_completeness'] == 'complete'
+                            else ExecutionStatus.INCOMPLETE)
+            entry.status_reason = 'Recorded assembly; human review pending. Disk inventory is not frozen-chain verification.'
+            entry.validation_status = 'schema_and_content_hash_checked'
+            entry.human_review_status = HumanReviewStatus.PENDING
+            entry.source_evidence_snapshot = f"{case_id}@v{assembled['identity']['evidence_snapshot_version']}"
+        except (ArtifactIntegrityError, KeyError, TypeError):
+            entry.status = ExecutionStatus.ERROR
+            entry.status_reason = 'Four-section schema, identity or content hash failed.'
+        entries.append(entry)
     entries.append(_entry_for_file(
         run_dir / "business_overview.json", root,
         artifact_id=f"bo.memo.{run_id}", artifact_type=ArtifactType.MEMO,

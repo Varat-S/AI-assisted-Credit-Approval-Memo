@@ -1,0 +1,529 @@
+{
+  "pages": 62,
+  "page_size_points": [
+    841.91998,
+    594.95996
+  ],
+  "first_page_has_structure_and_debt_summary": true,
+  "complete_schedules_start_page": 2,
+  "appendix_start_page": 7,
+  "all_instrument_field_checks": [
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 0,
+      "field": "collateral_security_status",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 0,
+      "field": "coupon_interest_rate",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 0,
+      "field": "guarantors_credit_support",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 0,
+      "field": "legal_borrower",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 0,
+      "field": "maturity_year",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 0,
+      "field": "principal_amount_m",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 0,
+      "field": "priority_ranking_tier",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 0,
+      "field": "senior_note_series",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 1,
+      "field": "collateral_security_status",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 1,
+      "field": "coupon_interest_rate",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 1,
+      "field": "guarantors_credit_support",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 1,
+      "field": "legal_borrower",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 1,
+      "field": "maturity_year",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 1,
+      "field": "principal_amount_m",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 1,
+      "field": "priority_ranking_tier",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 1,
+      "field": "senior_note_series",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 2,
+      "field": "collateral_security_status",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 2,
+      "field": "coupon_interest_rate",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 2,
+      "field": "guarantors_credit_support",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 2,
+      "field": "legal_borrower",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 2,
+      "field": "maturity_year",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 2,
+      "field": "principal_amount_m",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 2,
+      "field": "priority_ranking_tier",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 2,
+      "field": "senior_note_series",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 3,
+      "field": "collateral_security_status",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 3,
+      "field": "coupon_interest_rate",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 3,
+      "field": "guarantors_credit_support",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 3,
+      "field": "legal_borrower",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 3,
+      "field": "maturity_year",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 3,
+      "field": "principal_amount_m",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 3,
+      "field": "priority_ranking_tier",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 3,
+      "field": "senior_note_series",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 4,
+      "field": "collateral_security_status",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 4,
+      "field": "coupon_interest_rate",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 4,
+      "field": "guarantors_credit_support",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 4,
+      "field": "legal_borrower",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 4,
+      "field": "maturity_year",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 4,
+      "field": "principal_amount_m",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 4,
+      "field": "priority_ranking_tier",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 4,
+      "field": "senior_note_series",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 5,
+      "field": "collateral_security_status",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 5,
+      "field": "coupon_interest_rate",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 5,
+      "field": "guarantors_credit_support",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 5,
+      "field": "legal_borrower",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 5,
+      "field": "maturity_year",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 5,
+      "field": "principal_amount_m",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 5,
+      "field": "priority_ranking_tier",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "senior_notes_schedule",
+      "row": 5,
+      "field": "senior_note_series",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "non_note_obligations_schedule",
+      "row": 0,
+      "field": "available_facility_limit_m",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "non_note_obligations_schedule",
+      "row": 0,
+      "field": "collateral_security_status",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "non_note_obligations_schedule",
+      "row": 0,
+      "field": "guarantors_credit_support",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "non_note_obligations_schedule",
+      "row": 0,
+      "field": "interest_rate_terms",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "non_note_obligations_schedule",
+      "row": 0,
+      "field": "legal_borrower",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "non_note_obligations_schedule",
+      "row": 0,
+      "field": "maturity",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "non_note_obligations_schedule",
+      "row": 0,
+      "field": "obligation_facility",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "non_note_obligations_schedule",
+      "row": 0,
+      "field": "principal_drawn_m",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "non_note_obligations_schedule",
+      "row": 0,
+      "field": "priority_ranking_tier",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "non_note_obligations_schedule",
+      "row": 1,
+      "field": "available_facility_limit_m",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "non_note_obligations_schedule",
+      "row": 1,
+      "field": "collateral_security_status",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "non_note_obligations_schedule",
+      "row": 1,
+      "field": "guarantors_credit_support",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "non_note_obligations_schedule",
+      "row": 1,
+      "field": "interest_rate_terms",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "non_note_obligations_schedule",
+      "row": 1,
+      "field": "legal_borrower",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "non_note_obligations_schedule",
+      "row": 1,
+      "field": "maturity",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "non_note_obligations_schedule",
+      "row": 1,
+      "field": "obligation_facility",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "non_note_obligations_schedule",
+      "row": 1,
+      "field": "principal_drawn_m",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "non_note_obligations_schedule",
+      "row": 1,
+      "field": "priority_ranking_tier",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "non_note_obligations_schedule",
+      "row": 2,
+      "field": "available_facility_limit_m",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "non_note_obligations_schedule",
+      "row": 2,
+      "field": "collateral_security_status",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "non_note_obligations_schedule",
+      "row": 2,
+      "field": "guarantors_credit_support",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "non_note_obligations_schedule",
+      "row": 2,
+      "field": "interest_rate_terms",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "non_note_obligations_schedule",
+      "row": 2,
+      "field": "legal_borrower",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "non_note_obligations_schedule",
+      "row": 2,
+      "field": "maturity",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "non_note_obligations_schedule",
+      "row": 2,
+      "field": "obligation_facility",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "non_note_obligations_schedule",
+      "row": 2,
+      "field": "principal_drawn_m",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "non_note_obligations_schedule",
+      "row": 2,
+      "field": "priority_ranking_tier",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "non_note_obligations_schedule",
+      "row": 3,
+      "field": "available_facility_limit_m",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "non_note_obligations_schedule",
+      "row": 3,
+      "field": "collateral_security_status",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "non_note_obligations_schedule",
+      "row": 3,
+      "field": "guarantors_credit_support",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "non_note_obligations_schedule",
+      "row": 3,
+      "field": "interest_rate_terms",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "non_note_obligations_schedule",
+      "row": 3,
+      "field": "legal_borrower",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "non_note_obligations_schedule",
+      "row": 3,
+      "field": "maturity",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "non_note_obligations_schedule",
+      "row": 3,
+      "field": "obligation_facility",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "non_note_obligations_schedule",
+      "row": 3,
+      "field": "principal_drawn_m",
+      "present_in_analytical_body": true
+    },
+    {
+      "schedule": "non_note_obligations_schedule",
+      "row": 3,
+      "field": "priority_ranking_tier",
+      "present_in_analytical_body": true
+    }
+  ],
+  "creditor_priority_fields_present": [
+    "consolidated_total_indebtedness_m",
+    "prospective_loan_secured_placement",
+    "prospective_loan_senior_unsecured_placement",
+    "structural_subordination_drag_ratio",
+    "tier_1_direct_opco_secured_m",
+    "tier_2_senior_unsecured_guaranteed_m",
+    "tier_3_unguaranteed_holdco_m"
+  ],
+  "horizontal_text_outside_page": [],
+  "source_json_sha256": "62bab98bdeda28f3e1e27f400f1bd3472e7e40bc97655bb69c00aea58bb7e447",
+  "memo_content_hash": "c85a809e9d19188fe13906dab0aedd8c1cba367e395eb2627e80f84b7e00f132",
+  "note": "Local Chrome rendering of the actual print template; optional application PDF backends remain unavailable."
+}

@@ -1,0 +1,940 @@
+{
+  "notice": "Read-only offline projection proof; no models, new runs, review decisions or historical writes.",
+  "runs": [
+    {
+      "analysis_run_id": "ar_e58358f9a55f4a72",
+      "validators_enforced": true,
+      "original_attempt_issues": [
+        5,
+        4
+      ],
+      "eligible_findings": 25,
+      "selected_findings": 4,
+      "validation_issues": [],
+      "source_text_and_reference_equality": true,
+      "conclusion_provenance": "PASS",
+      "frozen_stages_unchanged": true,
+      "source_audit_sha256": "2c7fe5ac31af706fd7d8489c370d9593525dcea5e4c35b7b3237844b58477efe",
+      "selection_plan": {
+        "schema_version": "bo-source-selection-output-1.0.0",
+        "policy_version": "bo-source-selection-1.0.0",
+        "selections": [
+          {
+            "hypothesis_id": "M1S1-H002",
+            "placement": "lead",
+            "reason": "Offline proof: existing source lead or Agent 6 insight."
+          },
+          {
+            "hypothesis_id": "M1A6-H001",
+            "placement": "risk",
+            "reason": "Offline proof: existing source lead or Agent 6 insight."
+          },
+          {
+            "hypothesis_id": "M1A6-H002",
+            "placement": "driver",
+            "reason": "Offline proof: existing source lead or Agent 6 insight."
+          },
+          {
+            "hypothesis_id": "M1A6-H003",
+            "placement": "risk",
+            "reason": "Offline proof: existing source lead or Agent 6 insight."
+          }
+        ],
+        "omissions": [
+          {
+            "hypothesis_id": "M1S5-H001",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S5-H002",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S5-H003",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S5-H004",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S3-H002",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S3-H003",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S3-H004",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S3-H005",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S3-H006",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S4-H001",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S4-H002",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S4-H003",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S4-H004",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S4-H005",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S2-H002",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S2-H003",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S2-H004",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S2-H005",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S2-H006",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S1-H003",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S1-H005",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          }
+        ]
+      },
+      "projected_output": {
+        "schema_version": "bo-source-copy-projection-1.0.0",
+        "policy_version": "bo-source-selection-1.0.0",
+        "overall_assessment": {
+          "claim_id": "selected:M1S1-H002",
+          "category": "assessment",
+          "text": "Managed care contracts are typically negotiated for terms between one and three years and have generally yielded contracted annual increases to payment rates, supporting pricing power, though bargaining leverage faces potential constraints from payer consolidation, tiered networks, and price transparency requirements.",
+          "title": null,
+          "section": "executive",
+          "claim_type": "fact",
+          "hypothesis_ids": [
+            "M1S1-H002"
+          ],
+          "parameter_result_ids": [],
+          "evidence_ids": [
+            "3ee4c621f786faff4739a3ad278ac0ff872ffebfe8530e37a02ce43f55881548",
+            "51cdbfe1f5a2d90ec9a69c9e5386412deea82701f30bf106baf3c3fa1876e3d3",
+            "8b05e327da1cd7482f8fb8ef02457d51712bbf6e4672b58da5c23a183d1505c2"
+          ],
+          "materiality": "high",
+          "uncertainty": null,
+          "quoted_values": []
+        },
+        "strengths": [],
+        "weaknesses": [],
+        "key_drivers": [
+          {
+            "claim_id": "selected:M1A6-H002",
+            "category": "driver",
+            "text": "Enterprise scale and centralized shared services platforms provide operational mitigants that contain unit labor and supply costs, defending operating margins against broader healthcare inflation.",
+            "title": null,
+            "section": "M1A6",
+            "claim_type": "inference",
+            "hypothesis_ids": [
+              "M1A6-H002",
+              "M1S4-H001",
+              "M1S4-H002",
+              "M1S4-H004",
+              "M1S4-H005",
+              "M1S5-H001"
+            ],
+            "parameter_result_ids": [
+              "pr_0fa2b60806e3476f",
+              "pr_861765a657ad446d",
+              "pr_c23773b484264cf4",
+              "pr_c91fd99f207f4b0e"
+            ],
+            "evidence_ids": [
+              "4288086c940c1f0d64fdd9bd2cfddce840679f689d3b4e4a1103eb3a97b5ab26",
+              "740c4b7e4d517735502cc9572f9c79ec5a6c7268c78bed40276d204106d93348"
+            ],
+            "materiality": "high",
+            "uncertainty": "Qualified source finding. Vendor-specific concentration data and multi-year supply contract terms. Management-attributed source finding.",
+            "quoted_values": [
+              {
+                "denominator": "consolidated_revenue",
+                "parameter_result_id": "pr_0fa2b60806e3476f",
+                "period": "2024-12-31",
+                "unit": "ratio",
+                "value": 0.441483
+              },
+              {
+                "denominator": "consolidated_revenue",
+                "parameter_result_id": "pr_861765a657ad446d",
+                "period": "FY2023",
+                "unit": "ratio",
+                "value": 0.45387
+              },
+              {
+                "denominator": "consolidated_revenue",
+                "parameter_result_id": "pr_c23773b484264cf4",
+                "period": "2024-12-31",
+                "unit": "ratio",
+                "value": 0.152331
+              },
+              {
+                "denominator": "consolidated_revenue",
+                "parameter_result_id": "pr_c91fd99f207f4b0e",
+                "period": "FY2023",
+                "unit": "ratio",
+                "value": 0.152413
+              }
+            ]
+          }
+        ],
+        "material_risks": [
+          {
+            "claim_id": "selected:M1A6-H001",
+            "category": "risk",
+            "text": "Outpatient surgical procedure softness coexists with double-digit surges in uninsured emergency room visits and rising uncompensated care costs, creating an adverse mix shift where volume growth does not translate proportionally into operating earnings.",
+            "title": null,
+            "section": "M1A6",
+            "claim_type": "inference",
+            "hypothesis_ids": [
+              "M1A6-H001",
+              "M1S2-H005",
+              "M1S3-H002",
+              "M1S5-H002"
+            ],
+            "parameter_result_ids": [],
+            "evidence_ids": [
+              "3ee4c621f786faff4739a3ad278ac0ff872ffebfe8530e37a02ce43f55881548",
+              "ea25ce728efecf44fde366cca5db984eac699cc9a2b03f067740588c7fcd5ae3",
+              "f4807be1fb6d14ce096e46131aecd3ff2dbe22fe69b24655571a4c2d0827c859"
+            ],
+            "materiality": "high",
+            "uncertainty": "Qualified source finding. Granular contribution margin variance between outpatient surgical cases and emergency room visits. Specific percentage of admissions or revenue currently derived from narrow or tiered network products.",
+            "quoted_values": []
+          },
+          {
+            "claim_id": "selected:M1A6-H003",
+            "category": "risk",
+            "text": "Fixed one- to three-year commercial reimbursement contract terms without volume commitments create an operational lag where pricing cannot immediately adjust to intermediate surges in operating costs or regulatory fee increases.",
+            "title": null,
+            "section": "M1A6",
+            "claim_type": "inference",
+            "hypothesis_ids": [
+              "M1A6-H003",
+              "M1S1-H002",
+              "M1S1-H003",
+              "M1S2-H004",
+              "M1S4-H003"
+            ],
+            "parameter_result_ids": [],
+            "evidence_ids": [
+              "3ee4c621f786faff4739a3ad278ac0ff872ffebfe8530e37a02ce43f55881548",
+              "766b69ff3c8c22f87969119cf3a81bc10a5f344ccff4f9582414e8ffaed13b82",
+              "8eb610893b980356906d82d731b8f574c33709a05d52bd03c1777c3daa9a4507"
+            ],
+            "materiality": "medium",
+            "uncertainty": "Qualified source finding. Proportion of managed care contracts up for renewal within the next 12 months.",
+            "quoted_values": []
+          }
+        ],
+        "selection_decisions": [
+          {
+            "hypothesis_id": "M1S5-H001",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S5-H002",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S5-H003",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S5-H004",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S3-H002",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S3-H003",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S3-H004",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S3-H005",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S3-H006",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S4-H001",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S4-H002",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S4-H003",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S4-H004",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S4-H005",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S2-H002",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S2-H003",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S2-H004",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S2-H005",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S2-H006",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S1-H002",
+            "decision": "selected",
+            "claim_ids": [
+              "selected:M1S1-H002",
+              "selected:M1A6-H003"
+            ],
+            "reason": "Offline proof: existing source lead or Agent 6 insight."
+          },
+          {
+            "hypothesis_id": "M1S1-H003",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S1-H005",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1A6-H001",
+            "decision": "selected",
+            "claim_ids": [
+              "selected:M1A6-H001"
+            ],
+            "reason": "Offline proof: existing source lead or Agent 6 insight."
+          },
+          {
+            "hypothesis_id": "M1A6-H002",
+            "decision": "selected",
+            "claim_ids": [
+              "selected:M1A6-H002"
+            ],
+            "reason": "Offline proof: existing source lead or Agent 6 insight."
+          },
+          {
+            "hypothesis_id": "M1A6-H003",
+            "decision": "selected",
+            "claim_ids": [
+              "selected:M1A6-H003"
+            ],
+            "reason": "Offline proof: existing source lead or Agent 6 insight."
+          }
+        ],
+        "interaction_basis": [
+          {
+            "claim_id": "selected:M1A6-H001",
+            "agent6_hypothesis_ids": [
+              "M1A6-H001"
+            ]
+          },
+          {
+            "claim_id": "selected:M1A6-H002",
+            "agent6_hypothesis_ids": [
+              "M1A6-H002"
+            ]
+          },
+          {
+            "claim_id": "selected:M1A6-H003",
+            "agent6_hypothesis_ids": [
+              "M1A6-H003"
+            ]
+          }
+        ],
+        "merged_duplicates": [],
+        "open_questions": [],
+        "unresolved_contradictions": [],
+        "follow_up": []
+      }
+    },
+    {
+      "analysis_run_id": "ar_919c5f5c8483497b",
+      "validators_enforced": false,
+      "original_attempt_issues": [
+        17,
+        12
+      ],
+      "eligible_findings": 29,
+      "selected_findings": 3,
+      "validation_issues": [],
+      "source_text_and_reference_equality": true,
+      "conclusion_provenance": "PASS",
+      "frozen_stages_unchanged": true,
+      "source_audit_sha256": "e73ac2644a369f1c99bbd3d41f1fcfc253740b2f0d1f811bfa73fe5d26c34cf8",
+      "selection_plan": {
+        "schema_version": "bo-source-selection-output-1.0.0",
+        "policy_version": "bo-source-selection-1.0.0",
+        "selections": [
+          {
+            "hypothesis_id": "M1S1-H001",
+            "placement": "lead",
+            "reason": "Offline proof: existing source lead or Agent 6 insight."
+          },
+          {
+            "hypothesis_id": "M1A6-H002",
+            "placement": "driver",
+            "reason": "Offline proof: existing source lead or Agent 6 insight."
+          },
+          {
+            "hypothesis_id": "M1A6-H003",
+            "placement": "risk",
+            "reason": "Offline proof: existing source lead or Agent 6 insight."
+          }
+        ],
+        "omissions": [
+          {
+            "hypothesis_id": "M1S5-H001",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S5-H002",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S5-H003",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S5-H004",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S5-H005",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S2-H001",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S2-H002",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S2-H003",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S2-H004",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S2-H005",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S2-H006",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S4-H001",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S4-H002",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S4-H003",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S4-H004",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S4-H005",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S3-H001",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S3-H002",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S3-H003",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S3-H004",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S3-H005",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S1-H002",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S1-H003",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S1-H004",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S1-H005",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S1-H006",
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          }
+        ]
+      },
+      "projected_output": {
+        "schema_version": "bo-source-copy-projection-1.0.0",
+        "policy_version": "bo-source-selection-1.0.0",
+        "overall_assessment": {
+          "claim_id": "selected:M1S1-H001",
+          "category": "assessment",
+          "text": "For the year ended December 31, 2024, managed care and other insurers represented 49.5% ($34,954 million) of consolidated revenues ($70,603 million), while government-funded categories comprised Medicare at 15.3% ($10,780 million), Managed Medicare at 17.0% ($11,987 million), Medicaid at 6.6% ($4,678 million), and Managed Medicaid at 5.6% ($3,980 million).",
+          "title": null,
+          "section": "executive",
+          "claim_type": "fact",
+          "hypothesis_ids": [
+            "M1S1-H001"
+          ],
+          "parameter_result_ids": [
+            "pr_f0302a844b6f424e",
+            "pr_78865823dedb46e5",
+            "pr_123154ecf4694356",
+            "pr_113bc67be5774ed8",
+            "pr_1b2a57be75234c39"
+          ],
+          "evidence_ids": [
+            "ea25ce728efecf44fde366cca5db984eac699cc9a2b03f067740588c7fcd5ae3"
+          ],
+          "materiality": "high",
+          "uncertainty": null,
+          "quoted_values": [
+            {
+              "denominator": "consolidated_revenue",
+              "parameter_result_id": "pr_f0302a844b6f424e",
+              "period": "2024-12-31",
+              "unit": "ratio",
+              "value": 0.495078
+            },
+            {
+              "denominator": "consolidated_revenue",
+              "parameter_result_id": "pr_78865823dedb46e5",
+              "period": "2024-12-31",
+              "unit": "ratio",
+              "value": 0.16978
+            },
+            {
+              "denominator": "consolidated_revenue",
+              "parameter_result_id": "pr_123154ecf4694356",
+              "period": "2024-12-31",
+              "unit": "ratio",
+              "value": 0.152685
+            },
+            {
+              "denominator": "consolidated_revenue",
+              "parameter_result_id": "pr_113bc67be5774ed8",
+              "period": "2024-12-31",
+              "unit": "ratio",
+              "value": 0.066258
+            },
+            {
+              "denominator": "consolidated_revenue",
+              "parameter_result_id": "pr_1b2a57be75234c39",
+              "period": "2024-12-31",
+              "unit": "ratio",
+              "value": 0.056372
+            }
+          ]
+        },
+        "strengths": [],
+        "weaknesses": [],
+        "key_drivers": [
+          {
+            "claim_id": "selected:M1A6-H002",
+            "category": "driver",
+            "text": "Enterprise-scale procurement platforms, centralized support services, and internal workforce development initiatives jointly provide demonstrated operating cost absorption, neutralizing medical supply inflation and reducing premium contract labor.",
+            "title": null,
+            "section": "M1A6",
+            "claim_type": "inference",
+            "hypothesis_ids": [
+              "M1A6-H002",
+              "M1S4-H001",
+              "M1S4-H002",
+              "M1S4-H004",
+              "M1S5-H001"
+            ],
+            "parameter_result_ids": [
+              "pr_bd18268847a442df",
+              "pr_dfc6e3f3506d4ba8",
+              "pr_a1c0fc57dd08494a"
+            ],
+            "evidence_ids": [
+              "4288086c940c1f0d64fdd9bd2cfddce840679f689d3b4e4a1103eb3a97b5ab26",
+              "740c4b7e4d517735502cc9572f9c79ec5a6c7268c78bed40276d204106d93348",
+              "9af48b23c1575446a38f8cb7352ee3f01b13cd1097e786d9ca4bb9ed20f4e848"
+            ],
+            "materiality": "high",
+            "uncertainty": "Qualified source finding. Management-attributed source finding.",
+            "quoted_values": [
+              {
+                "denominator": "consolidated_revenue",
+                "parameter_result_id": "pr_bd18268847a442df",
+                "period": "2024-12-31",
+                "unit": "ratio",
+                "value": 0.441483
+              },
+              {
+                "denominator": "consolidated_revenue",
+                "parameter_result_id": "pr_dfc6e3f3506d4ba8",
+                "period": "FY2023",
+                "unit": "ratio",
+                "value": 0.45387
+              },
+              {
+                "denominator": "consolidated_revenue",
+                "parameter_result_id": "pr_a1c0fc57dd08494a",
+                "period": "2024-12-31",
+                "unit": "ratio",
+                "value": 0.152331
+              }
+            ]
+          }
+        ],
+        "material_risks": [
+          {
+            "claim_id": "selected:M1A6-H003",
+            "category": "risk",
+            "text": "Regulatory barriers and capital entry hurdles insulate acute inpatient hospital facilities from greenfield competition, but mandatory price transparency and payer network tiering accelerate the migration of high-margin surgical volumes toward lower-barrier ambulatory surgery centers.",
+            "title": null,
+            "section": "M1A6",
+            "claim_type": "inference",
+            "hypothesis_ids": [
+              "M1A6-H003",
+              "M1S2-H001",
+              "M1S3-H004",
+              "M1S5-H003",
+              "M1S5-H005"
+            ],
+            "parameter_result_ids": [],
+            "evidence_ids": [
+              "1833a2ca97650fcb62258d8eae06ecec81734e3eb594ac2dbe5daa940eb96247",
+              "4288086c940c1f0d64fdd9bd2cfddce840679f689d3b4e4a1103eb3a97b5ab26",
+              "448b730801c194c0a8f473545f3ec2dfeffc344fe0c7fcd58bd0144ee7b03a32",
+              "76c0d325228b693bc50cebd6601ca7bce38bf70135bf7dbc1f3b173fd1d5bf63",
+              "8b05e327da1cd7482f8fb8ef02457d51712bbf6e4672b58da5c23a183d1505c2"
+            ],
+            "materiality": "high",
+            "uncertainty": "Qualified source finding. Surgical margin contribution breakdown between inpatient hospital suites and freestanding ambulatory surgery centers. Measured volume shifts or price elasticity data for shoppable services.",
+            "quoted_values": []
+          }
+        ],
+        "selection_decisions": [
+          {
+            "hypothesis_id": "M1S5-H001",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S5-H002",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S5-H003",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S5-H004",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S5-H005",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S2-H001",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S2-H002",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S2-H003",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S2-H004",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S2-H005",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S2-H006",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S4-H001",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S4-H002",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S4-H003",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S4-H004",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S4-H005",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S3-H001",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S3-H002",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S3-H003",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S3-H004",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S3-H005",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S1-H001",
+            "decision": "selected",
+            "claim_ids": [
+              "selected:M1S1-H001"
+            ],
+            "reason": "Offline proof: existing source lead or Agent 6 insight."
+          },
+          {
+            "hypothesis_id": "M1S1-H002",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S1-H003",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S1-H004",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S1-H005",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1S1-H006",
+            "decision": "omitted",
+            "claim_ids": [],
+            "reason": "Offline proof: component lineage or other unselected primary finding."
+          },
+          {
+            "hypothesis_id": "M1A6-H002",
+            "decision": "selected",
+            "claim_ids": [
+              "selected:M1A6-H002"
+            ],
+            "reason": "Offline proof: existing source lead or Agent 6 insight."
+          },
+          {
+            "hypothesis_id": "M1A6-H003",
+            "decision": "selected",
+            "claim_ids": [
+              "selected:M1A6-H003"
+            ],
+            "reason": "Offline proof: existing source lead or Agent 6 insight."
+          }
+        ],
+        "interaction_basis": [
+          {
+            "claim_id": "selected:M1A6-H002",
+            "agent6_hypothesis_ids": [
+              "M1A6-H002"
+            ]
+          },
+          {
+            "claim_id": "selected:M1A6-H003",
+            "agent6_hypothesis_ids": [
+              "M1A6-H003"
+            ]
+          }
+        ],
+        "merged_duplicates": [],
+        "open_questions": [],
+        "unresolved_contradictions": [],
+        "follow_up": []
+      }
+    }
+  ]
+}

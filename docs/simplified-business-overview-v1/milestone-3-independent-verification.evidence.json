@@ -1,0 +1,306 @@
+{
+  "notice": "Fresh fictional scripted offline runs; actual validators, frozen stages, handoff bindings and strict readers. No application patches. Corrected cross-run criterion permits explicitly asserted identity/governance differences; within-run full equality is unchanged.",
+  "command": "BO_INDEPENDENT_PROOFS=/private/tmp/bo-independent-proofs-corrected PYTHONDONTWRITEBYTECODE=1 ../alan-branch-test/.venv/bin/python -m pytest -x -vv --tb=short tests/integration/test_bo_four_section_independent.py",
+  "result": "5 passed in 4.49s",
+  "proofs": {
+    "proof1": {
+      "identity": {
+        "case_id": "NFH_BO",
+        "analysis_run_id": "ar_cc15842c33194156",
+        "evidence_snapshot_version": 1,
+        "evidence_snapshot_hash": "0deddce06532bf20294d4092d89a78da034da2e434395c049335da2c5c76188b",
+        "reporting_company": "Northfield Health Systems",
+        "as_of_date": "2025-12-31",
+        "evidence_cutoff_timestamp": "2026-03-01T00:00:00+00:00",
+        "conclusion_id": "tc_6de7a313ca2c4545",
+        "orchestrator_run_id": "0eaceaed-4a0e-440f-a6e8-080dac4291c7"
+      },
+      "audit_stage_sha256": "eb806fcfde27e5d46ebd513e3f6e6c671c3fa38aeba98555a6b24fe167999386",
+      "snapshot_sha256": "0deddce06532bf20294d4092d89a78da034da2e434395c049335da2c5c76188b",
+      "provenance_sha256": "c2d4dd74321142d17fb6d05bcf42c4c8749589dbf84fb1a6899afebbde960845",
+      "memo_content_hash": "4714dbd611e2b7788cbad74657bde0cf5faaebcecedd5fb024652da35bdd5e1b",
+      "checks": [
+        {
+          "source_pointer": "/module_conclusions/M3/m3_rebuild/structure/artifact",
+          "output_pointer": "/sections/0/structure/content",
+          "source_hash": "dd1a2f0df24c2c365eb5680b85483e6a8987923bed4308a665dadec299400e6d",
+          "assembled_hash": "dd1a2f0df24c2c365eb5680b85483e6a8987923bed4308a665dadec299400e6d",
+          "deep_equal": true
+        },
+        {
+          "source_pointer": "/module_conclusions/M3/m3_rebuild/management/artifact",
+          "output_pointer": "/sections/1/content",
+          "source_hash": "1c3abcc710af209b3007218bdfc77d191e17129dd6474c927fb6145b164ccefc",
+          "assembled_hash": "1c3abcc710af209b3007218bdfc77d191e17129dd6474c927fb6145b164ccefc",
+          "deep_equal": true
+        },
+        {
+          "source_pointer": "/module_conclusions/M4/m4_analysis/deliverable_1",
+          "output_pointer": "/sections/0/debt_obligations/content",
+          "source_hash": "6854da9c5843ad87a99faf51e0209c864b66e677af4888f7b94106ccd13c3a40",
+          "assembled_hash": "6854da9c5843ad87a99faf51e0209c864b66e677af4888f7b94106ccd13c3a40",
+          "deep_equal": true
+        },
+        {
+          "source_pointer": "/conclusions/0/payload",
+          "output_pointer": "/sections/2/content",
+          "source_hash": "5220fe043811cab8ee3883a3a478f559e43e37cfe4f3ebf0b8af59b9c1d87043",
+          "assembled_hash": "5220fe043811cab8ee3883a3a478f559e43e37cfe4f3ebf0b8af59b9c1d87043",
+          "deep_equal": true
+        },
+        {
+          "source_pointer": "/orchestrator/editorial_selection",
+          "output_pointer": "/sections/2/editorial_selection",
+          "source_hash": "8a6d7f920dea7dffa40006fb0da9b53e3975c9ff91015b409b02a01d637d04be",
+          "assembled_hash": "8a6d7f920dea7dffa40006fb0da9b53e3975c9ff91015b409b02a01d637d04be",
+          "deep_equal": true
+        },
+        {
+          "source_pointer": "/module_conclusions/M2/findings",
+          "output_pointer": "/sections/3/content/findings",
+          "source_hash": "ee0279d50547d8f1c12f1ff876eda31cb17d96050ae8660f0e9051d9d6c58ae7",
+          "assembled_hash": "ee0279d50547d8f1c12f1ff876eda31cb17d96050ae8660f0e9051d9d6c58ae7",
+          "deep_equal": true
+        }
+      ],
+      "stage_sha256": "21a4220b9399d17b3bc84a03aec0ac000b25e6254868baae110037e421e069c0",
+      "before_and_after_persistence": "PASS"
+    },
+    "proof2": {
+      "identity": {
+        "analysis_run_id": "ar_c85e6e9f1e0e441a",
+        "as_of_date": "2025-12-31",
+        "case_id": "NFH_BO",
+        "conclusion_id": "tc_6e58dbfda319424c",
+        "evidence_cutoff_timestamp": "2026-03-01T00:00:00+00:00",
+        "evidence_snapshot_hash": "0deddce06532bf20294d4092d89a78da034da2e434395c049335da2c5c76188b",
+        "evidence_snapshot_version": 1,
+        "orchestrator_run_id": "b5f2432c-5793-4368-b0a7-03814c64ab75",
+        "reporting_company": "Northfield Health Systems"
+      },
+      "audit_stage_sha256": "17831951226b0e5c0c496b7744eff8fc7531afad4617f392a5ca7a6b03d5495f",
+      "snapshot_sha256": "0deddce06532bf20294d4092d89a78da034da2e434395c049335da2c5c76188b",
+      "provenance_sha256": "377fa0ef1db13d01a981f34f23e9a0b9186992b267036d273c4c3e31e2b58d9f",
+      "memo_content_hash": "89841fbaf2b6dc9b7f13128122a17a70ec17a2bba465ff60c5c2d6bb0d1aebd9",
+      "checks": [
+        {
+          "source_pointer": "/module_conclusions/M3/m3_rebuild/structure/artifact",
+          "output_pointer": "/sections/0/structure/content",
+          "source_hash": "6835a808ff5c438d7d0ea2887d9f1b7e4d9e593185ce7148c0a860c6854d47ba",
+          "assembled_hash": "6835a808ff5c438d7d0ea2887d9f1b7e4d9e593185ce7148c0a860c6854d47ba",
+          "deep_equal": true
+        },
+        {
+          "source_pointer": "/module_conclusions/M3/m3_rebuild/management/artifact",
+          "output_pointer": "/sections/1/content",
+          "source_hash": "5b78b124228ac44814335f24c36ae0ca9c2153d8d4eb0efa97fc86dd78ef2fa2",
+          "assembled_hash": "5b78b124228ac44814335f24c36ae0ca9c2153d8d4eb0efa97fc86dd78ef2fa2",
+          "deep_equal": true
+        },
+        {
+          "source_pointer": "/module_conclusions/M4/m4_analysis/deliverable_1",
+          "output_pointer": "/sections/0/debt_obligations/content",
+          "source_hash": "6854da9c5843ad87a99faf51e0209c864b66e677af4888f7b94106ccd13c3a40",
+          "assembled_hash": "6854da9c5843ad87a99faf51e0209c864b66e677af4888f7b94106ccd13c3a40",
+          "deep_equal": true
+        },
+        {
+          "source_pointer": "/conclusions/0/payload",
+          "output_pointer": "/sections/2/content",
+          "source_hash": "9397d6dbf387007c14cb544a5912ee90be15f34b35a362e0a8376ad778cc51ce",
+          "assembled_hash": "9397d6dbf387007c14cb544a5912ee90be15f34b35a362e0a8376ad778cc51ce",
+          "deep_equal": true
+        },
+        {
+          "source_pointer": "/orchestrator/editorial_selection",
+          "output_pointer": "/sections/2/editorial_selection",
+          "source_hash": "2c167b0fda28025c459b2e4d32be634e55832a563882e936c9afad3bd20b5f9b",
+          "assembled_hash": "2c167b0fda28025c459b2e4d32be634e55832a563882e936c9afad3bd20b5f9b",
+          "deep_equal": true
+        }
+      ],
+      "full_run_proof": {
+        "identity": {
+          "analysis_run_id": "ar_4bf81b6a90294cfa",
+          "as_of_date": "2025-12-31",
+          "case_id": "NFH_BO",
+          "conclusion_id": "tc_5fe031a251f24071",
+          "evidence_cutoff_timestamp": "2026-03-01T00:00:00+00:00",
+          "evidence_snapshot_hash": "0deddce06532bf20294d4092d89a78da034da2e434395c049335da2c5c76188b",
+          "evidence_snapshot_version": 1,
+          "orchestrator_run_id": "046b4540-5d10-44f3-b705-deac81004ac5",
+          "reporting_company": "Northfield Health Systems"
+        },
+        "audit_stage_sha256": "de01b2c0e7597ab735891a8090f87367628a2852325b472717299d90f5c0afd1",
+        "snapshot_sha256": "0deddce06532bf20294d4092d89a78da034da2e434395c049335da2c5c76188b",
+        "provenance_sha256": "ecef3364424af6c95846402f63f2dbb27a1b4e1ca5d7a7e1e0cc52e795d0e2b6",
+        "memo_content_hash": "b0de7decb174f895d007edd2a75128c12da6068bb5d6dfc6cfe0f23485d135be",
+        "checks": [
+          {
+            "source_pointer": "/module_conclusions/M3/m3_rebuild/structure/artifact",
+            "output_pointer": "/sections/0/structure/content",
+            "source_hash": "52b9587d26af82ef8843ddacfd532c81c0ae802d73490ac690cd82177addf7ce",
+            "assembled_hash": "52b9587d26af82ef8843ddacfd532c81c0ae802d73490ac690cd82177addf7ce",
+            "deep_equal": true
+          },
+          {
+            "source_pointer": "/module_conclusions/M3/m3_rebuild/management/artifact",
+            "output_pointer": "/sections/1/content",
+            "source_hash": "c6346ceaa79590cce2c5d8833521fd5b9a4a42a149e843e77fb158768d9cf08a",
+            "assembled_hash": "c6346ceaa79590cce2c5d8833521fd5b9a4a42a149e843e77fb158768d9cf08a",
+            "deep_equal": true
+          },
+          {
+            "source_pointer": "/module_conclusions/M4/m4_analysis/deliverable_1",
+            "output_pointer": "/sections/0/debt_obligations/content",
+            "source_hash": "6854da9c5843ad87a99faf51e0209c864b66e677af4888f7b94106ccd13c3a40",
+            "assembled_hash": "6854da9c5843ad87a99faf51e0209c864b66e677af4888f7b94106ccd13c3a40",
+            "deep_equal": true
+          },
+          {
+            "source_pointer": "/conclusions/0/payload",
+            "output_pointer": "/sections/2/content",
+            "source_hash": "4c5f18b2fc0b2ba8564b7d0ccc95826015a98a8da72dcd5f64fae43fce3913e7",
+            "assembled_hash": "4c5f18b2fc0b2ba8564b7d0ccc95826015a98a8da72dcd5f64fae43fce3913e7",
+            "deep_equal": true
+          },
+          {
+            "source_pointer": "/orchestrator/editorial_selection",
+            "output_pointer": "/sections/2/editorial_selection",
+            "source_hash": "39dd7a16cda2fdcf1bbd25b475f8de624ae1ac88970b1c783da0a9632cd5f39a",
+            "assembled_hash": "39dd7a16cda2fdcf1bbd25b475f8de624ae1ac88970b1c783da0a9632cd5f39a",
+            "deep_equal": true
+          },
+          {
+            "source_pointer": "/module_conclusions/M2/findings",
+            "output_pointer": "/sections/3/content/findings",
+            "source_hash": "ee0279d50547d8f1c12f1ff876eda31cb17d96050ae8660f0e9051d9d6c58ae7",
+            "assembled_hash": "ee0279d50547d8f1c12f1ff876eda31cb17d96050ae8660f0e9051d9d6c58ae7",
+            "deep_equal": true
+          }
+        ]
+      },
+      "industry": {
+        "id": "industry",
+        "title": "Industry",
+        "status": "unavailable",
+        "recorded_status": "incomplete",
+        "validation_status": "recorded",
+        "source_ref": null,
+        "content": null,
+        "visible_warnings": [
+          "industry: No governed M2 industry findings are available."
+        ]
+      },
+      "full_run_id": "ar_4bf81b6a90294cfa",
+      "human_review_status": "pending",
+      "memo_completeness": "incomplete",
+      "producer_only_unavailability": "PASS",
+      "substantive_content_unchanged": true,
+      "governance": {
+        "full": {
+          "conclusion_status": "accepted",
+          "execution_mode": "offline_simulation",
+          "human_review_status": "pending",
+          "independent_challenge_status": "accepted",
+          "memo_completeness": "complete",
+          "validators_enforced": true,
+          "visible_warnings": [
+            "Offline/scripted execution; this is not evidence of live model analytical quality.",
+            "Educational structure is not a verified legal/obligor assessment. Management observations are bounded continuity rules, not competence/governance ratings.",
+            "THIS NORTHFIELD HEALTH SYSTEMS ORGANISATION CHART IS A SIMULATED EDUCATIONAL EXAMPLE. Listed legal entities, ownership percentages, borrower designation and guarantor assignments are authoritative educational case assumptions and must not be described as verified actual corporate structure.",
+            "Debt population is preserved as supplied; recorded validation does not establish completeness beyond source scope.",
+            "Educational structure is not a verified legal/obligor assessment. Management observations are bounded continuity rules, not competence/governance ratings.",
+            "Offline fixture; qualitative model performance not tested.",
+            "Validator 7 used a saved/offline reviewer response; this execution does not verify live reviewer model performance.",
+            "Competitor staffing data are unavailable.",
+            "Competitor staffing data",
+            "M2-H001: preserve qualified_narrative qualification/attribution."
+          ]
+        },
+        "partial": {
+          "conclusion_status": "human_review_required",
+          "execution_mode": "offline_simulation",
+          "human_review_status": "pending",
+          "validators_enforced": true,
+          "memo_completeness": "incomplete",
+          "independent_challenge_status": "accepted",
+          "visible_warnings": [
+            "Offline/scripted execution; this is not evidence of live model analytical quality.",
+            "Educational structure is not a verified legal/obligor assessment. Management observations are bounded continuity rules, not competence/governance ratings.",
+            "THIS NORTHFIELD HEALTH SYSTEMS ORGANISATION CHART IS A SIMULATED EDUCATIONAL EXAMPLE. Listed legal entities, ownership percentages, borrower designation and guarantor assignments are authoritative educational case assumptions and must not be described as verified actual corporate structure.",
+            "Debt population is preserved as supplied; recorded validation does not establish completeness beyond source scope.",
+            "Educational structure is not a verified legal/obligor assessment. Management observations are bounded continuity rules, not competence/governance ratings.",
+            "Offline fixture; qualitative model performance not tested.",
+            "Validator 7 used a saved/offline reviewer response; this execution does not verify live reviewer model performance.",
+            "Competitor staffing data are unavailable.",
+            "Competitor staffing data",
+            "industry: No governed M2 industry findings are available."
+          ]
+        }
+      },
+      "challenge_status": {
+        "full": "clean",
+        "partial": "escalated"
+      }
+    },
+    "proof3a": {
+      "run_a": "ar_a99928a462554c3d",
+      "run_b": "ar_819fa7b232494055",
+      "foreign_debt_binding": {
+        "content_hash": "6854da9c5843ad87a99faf51e0209c864b66e677af4888f7b94106ccd13c3a40",
+        "identity": {
+          "analysis_run_id": "ar_819fa7b232494055",
+          "as_of_date": "2025-12-31",
+          "case_id": "NFH_BO",
+          "evidence_cutoff_timestamp": "2026-03-01T00:00:00+00:00",
+          "evidence_snapshot_hash": "0deddce06532bf20294d4092d89a78da034da2e434395c049335da2c5c76188b",
+          "evidence_snapshot_version": 1,
+          "reporting_company": "Northfield Health Systems"
+        },
+        "source_path": "/module_conclusions/M4/m4_analysis/deliverable_1"
+      },
+      "rejected_debt": {
+        "status": "unavailable",
+        "recorded_status": "validated",
+        "validation_status": "passed",
+        "source_ref": null,
+        "content": null,
+        "visible_warnings": [
+          "debt: debt: component identity differs from the selected root."
+        ]
+      },
+      "memo_completeness": "incomplete"
+    },
+    "proof3b": {
+      "run_id": "ar_697c87d959964ea9",
+      "errors": [
+        "Recorded artifact integrity check failed: bo_audit:ar_697c87d959964ea9",
+        "Recorded artifact integrity check failed: bo_audit:ar_697c87d959964ea9",
+        "Recorded artifact integrity check failed: bo_audit:ar_697c87d959964ea9"
+      ],
+      "new_file_published": false,
+      "existing_memo_overwritten": false
+    },
+    "proof3c": {
+      "run_id": "ar_07b362b59b754f4e",
+      "modified_error": "Provided assembly inputs differ from the authoritative frozen stages.",
+      "detached_error": "Selected BO run does not exist.",
+      "existing_stage_sha256": "06243385fd450d780c6f2db84b423c95eb6f9a055ccc3db1a93fccade2b5c9bc",
+      "no_overwrite": true,
+      "no_detached_stage_created": true
+    }
+  },
+  "preservation": {
+    "checked_existing_files": 626,
+    "changed_before_report_update": [
+      "tests/integration/test_bo_four_section_independent.py"
+    ],
+    "application_changes": []
+  },
+  "previous_attempt": {
+    "result": "Proof 1 passed; Proof 2 failed an overly strict cross-run criterion; Proof 3 not executed.",
+    "full_run_id": "ar_3116753978af413b",
+    "partial_run_id": "ar_a5e0ecdce8f94b15"
+  }
+}

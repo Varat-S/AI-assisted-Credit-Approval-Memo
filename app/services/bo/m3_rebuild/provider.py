@@ -139,13 +139,17 @@ class SharedManagementSpecialist:
         return result.raw.raw_response
 
     def record_validation(self, artifact):
+        from .contracts import validate_management
+        validate_management(artifact)
         from app.models.orm import AgentRunRow
         from app.services.audit.log import EventType, ActorType
         validation={'evidence':artifact['completion_status'],'checks':artifact['validation']}
         (self.directory/'management_validation.json').write_text(json.dumps(validation,indent=2),encoding='utf-8')
         row=self.session.get(AgentRunRow,self.agent_run_id)
         if row is not None:
-            row.validation_status='valid' if artifact['completion_status']=='complete' else 'rejected'
+            # This status validates the filtered artifact, not every raw model claim.
+            # Completeness is recorded separately; unsupported claims remain excluded.
+            row.validation_status='valid' if artifact['completion_status'] in {'complete', 'partial'} else 'rejected'
             row.validation_detail='Claim-level evidence and Validator 7 outcomes; supported claims survive partial completion'
         AuditLog(self.session).record(EventType.AGENT_OUTPUT_VALIDATED,
             case_id=self.packet.case_id,actor_type=ActorType.SYSTEM,actor_id='m3_validator_7',

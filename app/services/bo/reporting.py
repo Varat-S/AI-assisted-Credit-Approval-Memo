@@ -129,6 +129,8 @@ def _further_findings(findings, used, cite, citable) -> list[dict[str, Any]]:
 def _m1_sections_with_further_findings(memo: dict[str, Any]) -> dict[str, Any]:
     """Memos recorded before M1 sections listed their further findings: derive them at render
     time from the recorded M1 conclusion, citing the memo's existing source numbers."""
+    if memo.get("business_orchestrator_contract"):
+        return memo  # selective workflow: rendering cannot resurrect omissions
     m1 = (memo.get("module_conclusions") or {}).get("M1")
     sections = memo.get("sections") or []
     if not m1 or all("further_findings" in s for s in sections if s.get("code", "").startswith("M1")):
@@ -307,12 +309,41 @@ class BoReportBuilder:
             # v3 roster). Recorded so the summary/registry report the real value.
             "m4_debt_specialist_enabled": bool(getattr(run, "enable_m4_debt", False)),
             "validators_enforced": run.enforce_validators,
+            **({"business_orchestrator_contract": run.business_orchestrator_contract}
+               if run.business_orchestrator_contract else {}),
         }
         recorder = StageRecorder(self.session, run.case_id, run.snapshot_version)
+        if run.business_orchestrator_contract:
+            # Freeze the actual selected snapshot also for run_prepared(),
+            # which does not necessarily pass through prepare_case().
+            recorder.record('canonical_evidence', run.evidence.model_dump(mode='json'))
         recorder.record(f"bo_memo:{run.analysis_run_id}", memo)
-        recorder.record(f"bo_audit:{run.analysis_run_id}", audit)
+        audit_stage = recorder.record(f"bo_audit:{run.analysis_run_id}", audit)
+        four_section = None
+        four_section_path = None
+        if run.business_orchestrator_contract:
+            from app.schemas.bo_four_section import FILENAME, SCHEMA_VERSION
+            from app.services.bo.four_section import (
+                assemble, capture_provenance, load_saved_inputs, persist, provenance_stage,
+            )
+            provenance = capture_provenance(run, audit, audit_stage.sha256)
+            recorder.record(provenance_stage(run.analysis_run_id), provenance)
+            saved = load_saved_inputs(self.session, run.analysis_run_id, handoff_payload=handoff)
+            four_section = assemble(saved)
+            if write_outputs:
+                folder = self.output_root / 'bo' / run.case_id / run.analysis_run_id
+                folder.mkdir(parents=True, exist_ok=True)
+                four_section_path = folder / FILENAME
+            assembled_stage = persist(self.session, saved, four_section, path=four_section_path)
+            handoff['canonical_references']['four_section_memo'] = {
+                'stage': assembled_stage.name, 'schema_version': SCHEMA_VERSION,
+                'sha256': assembled_stage.sha256, 'content_hash': four_section['content_hash'],
+            }
+            handoff['content_hash'] = handoff_content_hash(handoff)
 
         paths: dict[str, Path] = {}
+        if four_section_path is not None:
+            paths[FILENAME] = four_section_path
         if write_outputs:
             folder = self.output_root / "bo" / run.case_id / run.analysis_run_id
             folder.mkdir(parents=True, exist_ok=True)
@@ -350,7 +381,7 @@ class BoReportBuilder:
             snapshot_version=run.snapshot_version,
             conclusion_status=run.conclusion_status, execution_mode=mode,
             record=record, memo=memo, audit=audit, handoff=handoff,
-            output_paths=paths)
+            output_paths=paths, four_section_memo=four_section)
 
     # -- shared ---------------------------------------------------------------
 
@@ -512,7 +543,7 @@ class BoReportBuilder:
             for section in sections:
                 if m1 is None or not section["code"].startswith("M1"):
                     continue
-                section["further_findings"] = _further_findings(
+                section["further_findings"] = [] if run.business_orchestrator_contract else _further_findings(
                     [f for f in m1["findings"] if f.get("section") == section["code"]],
                     used_in_claims, cite, sources.__contains__)
                 if section["further_findings"]:
@@ -552,6 +583,10 @@ class BoReportBuilder:
             for a in run.narrow_agent_ids for g in run.retrieval[a].gaps]
         used = {h for _, c, _ in claims for h in c["hypothesis_ids"]}
         missing = sorted({m for hid in used for m in by_id[hid].missing_information})
+        if run.business_orchestrator_contract:
+            missing = sorted({m for h in by_id.values() for m in h.missing_information})
+            limitations.extend(item["detail"] for item in (run.editorial_input or {}).get("data_limitations", [])
+                               if item.get("detail"))
         uncertainties = list(dict.fromkeys(
             [*(parsed.get("unresolved_contradictions") or []),
              *(c["uncertainty"] for _, c, _ in claims
@@ -560,6 +595,8 @@ class BoReportBuilder:
         return {
             "document": "business_overview_memo",
             "version": MEMO_VERSION,
+            **({"business_orchestrator_contract": run.business_orchestrator_contract}
+               if run.business_orchestrator_contract else {}),
             "case": self._case(run),
             "run": self._run_block(run, mode),
             "status": {
@@ -585,7 +622,9 @@ class BoReportBuilder:
             "cross_module_risk_interactions": [
                 c for name, c, _ in claims
                 if name in ("material_risks", "key_drivers")
-                and len(c.get("hypothesis_ids") or []) > 1],
+                and (c["claim_id"] in {b["claim_id"] for b in parsed.get("interaction_basis", [])}
+                     if run.business_orchestrator_contract else
+                     len(c.get("hypothesis_ids") or []) > 1)],
             "strengths_vulnerabilities": {"strengths": strengths,
                                           "weaknesses": weaknesses},
             "presentation": {
@@ -846,10 +885,18 @@ class BoReportBuilder:
             "orchestrator": {
                 "history": run.orchestrator_history or "not_executed",
                 "claims": provenance,
+                **({"input_contract": (run.editorial_input or {}).get("schema_version"),
+                    "editorial_selection": run.editorial_selection}
+                   if run.business_orchestrator_contract else {}),
             },
             "challenger": {
                 "rounds": run.challenge_rounds or "not_executed",
                 "recorded_findings": findings,
+                **({"status": "disabled_by_workflow", "policy_version": "bo-source-selection-1.1.0",
+                    "conclusion_id": run.conclusion_row_id,
+                    "editorial_selection_hash": content_hash(run.editorial_selection),
+                    "independent_business_challenge_enabled": run.independent_challenge_enabled}
+                   if not run.independent_challenge_enabled else {}),
             },
             "rerun": run.remediation or "not_performed",
             "missing_information": missing,
@@ -907,7 +954,34 @@ class BoReportBuilder:
         compound_hypothesis_ids = {
             hypothesis.hypothesis_id for hypothesis in by_id.values()
             if len(hypothesis.component_hypothesis_ids) > 1
+            and (not run.business_orchestrator_contract or
+                 (hypothesis.agent_id == run.resilience_agent_id and hypothesis.usable
+                  and hypothesis.interaction_kind == "compound_risk"))
         }
+        # Selection is presentation, not a deletion of governed downstream data.
+        # These are exact source findings, NOT a second analytical conclusion;
+        # they never enter the orchestrator narrative or memo claim lists.
+        source_strengths, source_vulnerabilities, source_compound = [], [], []
+        if run.business_orchestrator_contract:
+            covered_risks = {hid for name, c in claims if name in ("weaknesses", "material_risks")
+                             for hid in c.get("hypothesis_ids", [])}
+            for hid, h in sorted(by_id.items()):
+                if not h.usable:
+                    continue
+                item = {"claim_id": "source:" + hid, "title": h.claim, "text": h.claim,
+                        "section": h.section, "materiality": h.materiality.value,
+                        "hypothesis_ids": [hid], "evidence_ids": sorted(h.evidence_ids()),
+                        "claim_type": h.claim_type.value, "direction": h.direction.value,
+                        "admissibility": h.admissibility.value,
+                        "missing_information": list(h.missing_information),
+                        "source_finding_only": True}
+                if h.direction.value == "positive":
+                    source_strengths.append(item)
+                if h.direction.value == "negative" and hid not in covered_risks:
+                    source_vulnerabilities.append(item)
+                if hid in compound_hypothesis_ids and not any(
+                        hid in c.get("hypothesis_ids", []) for _, c in claims):
+                    source_compound.append(item)
         handoff = AcceptedBusinessOverview(
             handoff_id=f"bo_{uuid.uuid4().hex[:16]}",
             analysis_run_id=run.analysis_run_id,
@@ -924,14 +998,15 @@ class BoReportBuilder:
             if run.conclusion is not None else None,
             conclusion_status=run.conclusion_status,
             accepted_finding_ids=sorted(
-                {h for _, c in claims for h in c.get("hypothesis_ids") or []
-                 if h in by_id}),
-            material_risk_ids=[c.get("claim_id") for name, c in claims
-                               if name == "material_risks"],
-            business_strengths=[brief(c) for name, c in claims if name == "strengths"],
+                {hid for hid, h in by_id.items() if h.usable}
+                if run.business_orchestrator_contract else
+                {h for _, c in claims for h in c.get("hypothesis_ids") or [] if h in by_id}),
+            material_risk_ids=[c.get("claim_id") for name, c in claims if name == "material_risks"]
+                              + [c["claim_id"] for c in source_vulnerabilities if c["materiality"] in {"high", "medium"}],
+            business_strengths=[brief(c) for name, c in claims if name == "strengths"] + source_strengths,
             operational_vulnerabilities=[
                 brief(c) for name, c in claims
-                if name in ("weaknesses", "material_risks")],
+                if name in ("weaknesses", "material_risks")] + source_vulnerabilities,
             validated_mitigants=[
                 mitigant_brief(h) for h in mitigants
                 if h.mitigant.effectiveness.value == "demonstrated"],
@@ -944,9 +1019,10 @@ class BoReportBuilder:
             compound_business_risks=[
                 brief(c) for name, c in claims
                 if name in ("material_risks", "key_drivers")
-                and (len(c.get("hypothesis_ids") or []) > 1
-                     or bool(set(c.get("hypothesis_ids") or [])
-                             & compound_hypothesis_ids))],
+                and (bool(set(c.get("hypothesis_ids") or []) & compound_hypothesis_ids)
+                     if run.business_orchestrator_contract else
+                     (len(c.get("hypothesis_ids") or []) > 1
+                      or bool(set(c.get("hypothesis_ids") or []) & compound_hypothesis_ids)))] + source_compound,
             fo_handoffs=[
                 {**handoff, "hypothesis_id": hypothesis.hypothesis_id}
                 for hypothesis in by_id.values()
@@ -959,6 +1035,10 @@ class BoReportBuilder:
                 "evidence_snapshot_version": run.snapshot_version,
                 "topic_conclusion_id": run.conclusion_row_id,
                 "audit_stage": f"bo_audit:{run.analysis_run_id}",
+                **({"business_orchestrator_contract": run.business_orchestrator_contract,
+                    "editorial_selection_hash": content_hash(run.editorial_selection),
+                    "independent_business_challenge_enabled": run.independent_challenge_enabled}
+                   if run.business_orchestrator_contract else {}),
             },
             execution_mode=mode,
             validators_enforced=run.enforce_validators,

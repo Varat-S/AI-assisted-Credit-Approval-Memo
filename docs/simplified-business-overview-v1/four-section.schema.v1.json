@@ -1,0 +1,575 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "document": {
+      "const": "business_overview_four_section_memo"
+    },
+    "schema_version": {
+      "const": "bo-four-section-memo-1.0.0"
+    },
+    "design_basis": {
+      "type": "object",
+      "properties": {
+        "assembler_version": {
+          "const": "bo-four-section-assembler-1.0.0"
+        },
+        "selection_policy_version": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "assembler_version",
+        "selection_policy_version"
+      ],
+      "additionalProperties": false
+    },
+    "example_only": {
+      "type": "boolean"
+    },
+    "identity": {
+      "type": "object",
+      "properties": {
+        "case_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "analysis_run_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence_snapshot_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "evidence_snapshot_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "reporting_company": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "as_of_date": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "evidence_cutoff_timestamp": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "conclusion_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "orchestrator_run_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "case_id",
+        "analysis_run_id",
+        "evidence_snapshot_version",
+        "evidence_snapshot_hash",
+        "reporting_company",
+        "as_of_date",
+        "evidence_cutoff_timestamp",
+        "conclusion_id",
+        "orchestrator_run_id"
+      ],
+      "additionalProperties": false
+    },
+    "governance": {
+      "type": "object",
+      "properties": {
+        "memo_completeness": {
+          "enum": [
+            "complete",
+            "incomplete"
+          ]
+        },
+        "conclusion_status": {
+          "type": "string"
+        },
+        "validators_enforced": {
+          "type": "boolean"
+        },
+        "independent_challenge_status": {
+          "type": "string"
+        },
+        "human_review_status": {
+          "const": "pending"
+        },
+        "execution_mode": {
+          "type": "string"
+        },
+        "visible_warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "memo_completeness",
+        "conclusion_status",
+        "validators_enforced",
+        "independent_challenge_status",
+        "human_review_status",
+        "execution_mode",
+        "visible_warnings"
+      ],
+      "additionalProperties": false
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "artifact_id": {
+            "type": "string"
+          },
+          "stage_name": {
+            "type": "string"
+          },
+          "source_path": {
+            "type": "string"
+          },
+          "sha256": {
+            "type": "string"
+          },
+          "content_hash": {
+            "type": "string"
+          },
+          "hash_kind": {
+            "const": "canonical_stage"
+          },
+          "binding": {
+            "const": "same_run_verified"
+          }
+        },
+        "required": [
+          "artifact_id",
+          "stage_name",
+          "source_path",
+          "sha256",
+          "content_hash",
+          "hash_kind",
+          "binding"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "sections": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "const": "corporate_structure_debt_obligations"
+            },
+            "title": {
+              "const": "Corporate Structure & Debt Obligations"
+            },
+            "status": {
+              "enum": [
+                "complete",
+                "partial",
+                "unavailable"
+              ]
+            },
+            "visible_warnings": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "layout": {
+              "const": "structure_left_debt_right"
+            },
+            "structure": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "enum": [
+                    "complete",
+                    "partial",
+                    "unavailable"
+                  ]
+                },
+                "recorded_status": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "validation_status": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "source_ref": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "content": {
+                  "type": [
+                    "object",
+                    "null"
+                  ]
+                },
+                "visible_warnings": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": [
+                "status",
+                "recorded_status",
+                "validation_status",
+                "source_ref",
+                "content",
+                "visible_warnings"
+              ],
+              "additionalProperties": false
+            },
+            "debt_obligations": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "enum": [
+                    "complete",
+                    "partial",
+                    "unavailable"
+                  ]
+                },
+                "recorded_status": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "validation_status": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "source_ref": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "content": {
+                  "type": [
+                    "object",
+                    "null"
+                  ]
+                },
+                "visible_warnings": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": [
+                "status",
+                "recorded_status",
+                "validation_status",
+                "source_ref",
+                "content",
+                "visible_warnings"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "id",
+            "title",
+            "status",
+            "visible_warnings",
+            "layout",
+            "structure",
+            "debt_obligations"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "const": "management"
+            },
+            "title": {
+              "const": "Management"
+            },
+            "status": {
+              "enum": [
+                "complete",
+                "partial",
+                "unavailable"
+              ]
+            },
+            "visible_warnings": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "recorded_status": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "validation_status": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "source_ref": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "content": {
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "id",
+            "title",
+            "status",
+            "visible_warnings",
+            "recorded_status",
+            "validation_status",
+            "source_ref",
+            "content"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "const": "competitive_positioning"
+            },
+            "title": {
+              "const": "Competitive Positioning"
+            },
+            "status": {
+              "enum": [
+                "complete",
+                "partial",
+                "unavailable"
+              ]
+            },
+            "visible_warnings": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "recorded_status": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "validation_status": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "source_ref": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "content": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "editorial_selection": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "selection_source_ref": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "challenge_source_ref": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "id",
+            "title",
+            "status",
+            "visible_warnings",
+            "recorded_status",
+            "validation_status",
+            "source_ref",
+            "content",
+            "editorial_selection",
+            "selection_source_ref",
+            "challenge_source_ref"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "const": "industry"
+            },
+            "title": {
+              "const": "Industry"
+            },
+            "status": {
+              "enum": [
+                "complete",
+                "partial",
+                "unavailable"
+              ]
+            },
+            "visible_warnings": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "recorded_status": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "validation_status": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "source_ref": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "content": {
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "id",
+            "title",
+            "status",
+            "visible_warnings",
+            "recorded_status",
+            "validation_status",
+            "source_ref",
+            "content"
+          ],
+          "additionalProperties": false
+        }
+      ],
+      "items": false,
+      "minItems": 4,
+      "maxItems": 4
+    },
+    "evidence_ui": {
+      "type": "object",
+      "properties": {
+        "pattern": {
+          "const": "native_details"
+        },
+        "initially_expanded": {
+          "const": false
+        },
+        "hide_inline_source_citations": {
+          "const": true
+        },
+        "detail_fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "always_visible": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "static_pdf_evidence": {
+          "const": "appendix"
+        }
+      },
+      "required": [
+        "pattern",
+        "initially_expanded",
+        "hide_inline_source_citations",
+        "detail_fields",
+        "always_visible",
+        "static_pdf_evidence"
+      ],
+      "additionalProperties": false
+    },
+    "content_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  },
+  "required": [
+    "document",
+    "schema_version",
+    "design_basis",
+    "example_only",
+    "identity",
+    "governance",
+    "sources",
+    "sections",
+    "evidence_ui",
+    "content_hash"
+  ],
+  "additionalProperties": false
+}

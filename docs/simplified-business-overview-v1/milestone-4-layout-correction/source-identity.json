@@ -1,0 +1,18 @@
+{
+  "source": "../milestone-4-preview/memo.v1.json",
+  "sha256": "62bab98bdeda28f3e1e27f400f1bd3472e7e40bc97655bb69c00aea58bb7e447",
+  "identity": {
+    "analysis_run_id": "ar_30fa71dcfe4d4e91",
+    "as_of_date": "2025-12-31",
+    "case_id": "NFH_BO",
+    "conclusion_id": "tc_76aa400aafde41fd",
+    "evidence_cutoff_timestamp": "2026-03-01T00:00:00+00:00",
+    "evidence_snapshot_hash": "0deddce06532bf20294d4092d89a78da034da2e434395c049335da2c5c76188b",
+    "evidence_snapshot_version": 1,
+    "orchestrator_run_id": "b84bc47a-f38a-45e5-af77-b70c2a8fba08",
+    "reporting_company": "Northfield Health Systems"
+  },
+  "content_hash": "c85a809e9d19188fe13906dab0aedd8c1cba367e395eb2627e80f84b7e00f132",
+  "current_review_status": "pending",
+  "notice": "Presentation-only replay of the prior verified offline JSON and evidence; no new analysis, assembly, source acquisition or database backfill."
+}

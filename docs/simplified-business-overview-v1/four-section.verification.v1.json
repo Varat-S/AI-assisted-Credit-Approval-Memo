@@ -1,0 +1,82 @@
+{
+  "populated": {
+    "analysis_run_id": "ar_d7474a9523d74e93",
+    "memo_content_hash": "03c99acb58c85ab7134927aa29e1069e653a5eb02ddfbf536e47290b79c9afc0",
+    "memo_completeness": "complete",
+    "copy_checks": [
+      {
+        "component": "structure",
+        "source_path": "/module_conclusions/M3/m3_rebuild/structure/artifact",
+        "source_stage_sha256": "2934292ea62d08529d8c5ec2324cb211d10880b5a3d67233ecca6fdebd4363d2",
+        "canonical_deep_equal": true,
+        "source_content_hash": "bf1304373c622738abed7b12d24ca2b74d75908ad82ea184a18724cbad7fb69f",
+        "copied_content_hash": "bf1304373c622738abed7b12d24ca2b74d75908ad82ea184a18724cbad7fb69f"
+      },
+      {
+        "component": "debt",
+        "source_path": "/module_conclusions/M4/m4_analysis/deliverable_1",
+        "source_stage_sha256": "2934292ea62d08529d8c5ec2324cb211d10880b5a3d67233ecca6fdebd4363d2",
+        "canonical_deep_equal": true,
+        "source_content_hash": "6854da9c5843ad87a99faf51e0209c864b66e677af4888f7b94106ccd13c3a40",
+        "copied_content_hash": "6854da9c5843ad87a99faf51e0209c864b66e677af4888f7b94106ccd13c3a40"
+      },
+      {
+        "component": "management",
+        "source_path": "/module_conclusions/M3/m3_rebuild/management/artifact",
+        "source_stage_sha256": "2934292ea62d08529d8c5ec2324cb211d10880b5a3d67233ecca6fdebd4363d2",
+        "canonical_deep_equal": true,
+        "source_content_hash": "5687d717a1a5bf008edd654a9038bd5e645fa4538c59b7193d1bf35828d12e0c",
+        "copied_content_hash": "5687d717a1a5bf008edd654a9038bd5e645fa4538c59b7193d1bf35828d12e0c"
+      },
+      {
+        "component": "competitive_positioning",
+        "source_path": "/conclusions/0/payload",
+        "source_stage_sha256": "2934292ea62d08529d8c5ec2324cb211d10880b5a3d67233ecca6fdebd4363d2",
+        "canonical_deep_equal": true,
+        "source_content_hash": "b743e0f6ea59188cb4cdf1d114850aafef2c1562c93a33e360851c7ea000c6bf",
+        "copied_content_hash": "b743e0f6ea59188cb4cdf1d114850aafef2c1562c93a33e360851c7ea000c6bf"
+      },
+      {
+        "component": "industry",
+        "source_path": "/module_conclusions/M2/findings",
+        "source_stage_sha256": "2934292ea62d08529d8c5ec2324cb211d10880b5a3d67233ecca6fdebd4363d2",
+        "canonical_deep_equal": true,
+        "source_content_hash": "ee0279d50547d8f1c12f1ff876eda31cb17d96050ae8660f0e9051d9d6c58ae7",
+        "copied_content_hash": "ee0279d50547d8f1c12f1ff876eda31cb17d96050ae8660f0e9051d9d6c58ae7"
+      }
+    ],
+    "repeat_assembly_identical": true,
+    "all_four_sections_present": true,
+    "human_review_status": "pending",
+    "live_calls": 0,
+    "sec_requests": 0
+  },
+  "partial": {
+    "analysis_run_id": "ar_67978f22cf34499d",
+    "memo_content_hash": "4792b8e2b8ee4763d13030a81480635e63091809f14dfd8427dd43adc1bc4581",
+    "memo_completeness": "incomplete",
+    "copy_checks": [
+      {
+        "component": "competitive_positioning",
+        "source_path": "/conclusions/0/payload",
+        "source_stage_sha256": "a0aac3f47fa799c25b8ceef15bbfda4e35fb06677f0de321fee9dfb03a3fd6d5",
+        "canonical_deep_equal": true,
+        "source_content_hash": "50723fe5a5b62791475c7642e6db25adbb8d4a8afb403b74c56217c81d9c5794",
+        "copied_content_hash": "50723fe5a5b62791475c7642e6db25adbb8d4a8afb403b74c56217c81d9c5794"
+      },
+      {
+        "component": "industry",
+        "source_path": "/module_conclusions/M2/findings",
+        "source_stage_sha256": "a0aac3f47fa799c25b8ceef15bbfda4e35fb06677f0de321fee9dfb03a3fd6d5",
+        "canonical_deep_equal": true,
+        "source_content_hash": "ee0279d50547d8f1c12f1ff876eda31cb17d96050ae8660f0e9051d9d6c58ae7",
+        "copied_content_hash": "ee0279d50547d8f1c12f1ff876eda31cb17d96050ae8660f0e9051d9d6c58ae7"
+      }
+    ],
+    "repeat_assembly_identical": true,
+    "all_four_sections_present": true,
+    "human_review_status": "pending",
+    "live_calls": 0,
+    "sec_requests": 0
+  }
+}

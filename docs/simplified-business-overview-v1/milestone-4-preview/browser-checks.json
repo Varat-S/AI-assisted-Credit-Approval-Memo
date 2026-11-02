@@ -1,0 +1,20 @@
+{
+  "desktop": {
+    "width": 1440,
+    "bodyWidth": 1120,
+    "sections": 4,
+    "grid": "370.562px 611.422px",
+    "detailsOpen": 0,
+    "tableWidth": 1080,
+    "tableViewport": 611
+  },
+  "mobile": {
+    "width": 390,
+    "bodyWidth": 390,
+    "grid": "312px",
+    "structureTop": 276.734375,
+    "debtTop": 1104.1875,
+    "detailsOpen": 0
+  },
+  "nativeDisclosureExpanded": true
+}

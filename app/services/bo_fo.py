@@ -40,6 +40,10 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from app.models.base import Base, create_engine_and_session, init_db
+from app.prompts.source_selection import (
+    OUTPUT_VERSION as BROWSER_BO_CONTRACT,
+    POLICY_VERSION as BROWSER_SELECTION_POLICY,
+)
 from app.services import rms
 from app.services.rms import runner as rms_runner
 from app.services.acquisition import shared_filing
@@ -151,7 +155,8 @@ def run_bo_fo(*, database: Path, folder: str, bo_backend, fo_backend, fo_mode: s
               produce_pdf: bool = False, m3_backend=None,
               rms_request: rms.RmsRequest | None = None, on_progress=None, on_work=None,
               lock_wait: float = LOCK_WAIT_SECONDS, bo_only: bool = False, fo_only: bool = False,
-              stop: threading.Event | None = None, bo_validators: bool = True, on_stage=None) -> dict:
+              stop: threading.Event | None = None, bo_validators: bool = True, on_stage=None,
+              business_orchestrator_contract: str | None = None) -> dict:
     """Run both sections at once; returns ``{"case_id", "folder", "cutoff", "bo": {...}, "fo": {...},
     "rms": {...}}``.
 
@@ -167,6 +172,15 @@ def run_bo_fo(*, database: Path, folder: str, bo_backend, fo_backend, fo_mode: s
     database = Path(database).resolve()
     data_root = Path(data_root) if data_root is not None else database.parent
     settled = plan(folder, case_id, cutoff)
+    from app.services.analysis_preflight import check_database
+    check_database(database)
+    if business_orchestrator_contract not in {None, BROWSER_BO_CONTRACT, 'bo-competitive-positioning-output-1.0.0'}:
+        raise BoFoError('Unsupported Business Overview orchestrator contract.')
+    if not fo_only and not any(f.role == 'schema' for f in settled['bundle'].files):
+        raise BoFoError('The selected Business Overview source bundle has no required schema file.')
+    primary = next(f for f in settled['bundle'].files if f.filename == settled['bundle'].primary_document)
+    if settled['cutoff'] < primary.available_at:
+        raise BoFoError('The evidence cutoff excludes the selected annual report.')
     case_id = settled["case_id"]
     say = on_progress or (lambda section, message: None)
     tally = on_work or (lambda section, done, total: None)
@@ -195,6 +209,7 @@ def run_bo_fo(*, database: Path, folder: str, bo_backend, fo_backend, fo_mode: s
                 result = BusinessOverviewRunner(
                     session, backend=bo_backend, data_root=data_root, output_root=output_root,
                     bo_roster=BO_ROSTER, enable_m4_debt_specialist=True,
+                    business_orchestrator_contract=business_orchestrator_contract,
                     m3_backend=m3_backend, m3_reviewer_backend=m3_backend,
                     check_stop=checker("bo"), on_work=lambda d, t: tally("bo", d, t),
                     enforce_validators=bo_validators,
@@ -334,6 +349,12 @@ def bo_summary(result, *, validators: bool = True) -> dict:
         "conclusion_status": result.conclusion_status,
         "human_review_status": "pending",
         "has_synthesis": bool((result.handoff or {}).get("business_topic_conclusion_id")),
+        "business_orchestrator_contract": ((result.handoff or {}).get('canonical_references') or {}).get('business_orchestrator_contract'),
+        "editorial_selection_policy": ({BROWSER_BO_CONTRACT: BROWSER_SELECTION_POLICY,
+            'bo-competitive-positioning-output-1.0.0': 'bo-editorial-selection-1.0.0'}.get(
+            ((result.handoff or {}).get('canonical_references') or {}).get('business_orchestrator_contract'))),
+        "evidence_snapshot_version": result.snapshot_version,
+        "four_section_memo": ((result.handoff or {}).get('canonical_references') or {}).get('four_section_memo'),
         "handoff_id": (result.handoff or {}).get("handoff_id"),
         "outputs": sorted({str(Path(p).parent) for p in result.output_paths.values()}),
         "handoff_path": str(result.output_paths["handoff.json"]) if "handoff.json" in result.output_paths else None,
@@ -447,12 +468,19 @@ class Jobs:
                    bo_only=bo_only, fo_only=fo_only, bo_validators=kwargs.get('bo_validators', True), stop_requested=False,
                    result=None, error=None, stages={}, events=[], memo_status='draft', worker_tracking='thread-v1',
                    metadata=metadata or {}, cutoff=kwargs.get('cutoff').isoformat() if kwargs.get('cutoff') else None)
+        selective = kwargs.get('business_orchestrator_contract') == BROWSER_BO_CONTRACT
+        writer_label = ('Competitive Positioning selection & validation' if selective else
+                        'Competitive Positioning writing & validation' if kwargs.get('business_orchestrator_contract') else
+                        'Cross-module synthesis & validation')
+        if selective and not fo_only:
+            job['business_overview_workflow'] = {'bo_roster': BO_ROSTER,
+                'business_orchestrator_contract': BROWSER_BO_CONTRACT, 'editorial_selection_policy': BROWSER_SELECTION_POLICY}
         skipped = lambda section: bo_only and section != 'bo' or fo_only and section != 'fo'
         job['sections'] = {section: dict(status='skipped' if skipped(section) else 'waiting',
                                         step='not selected' if skipped(section) else 'starting', steps=[], work=None)
                            for section in ('bo', 'fo', 'rms')}
-        for name in () if fo_only else ('foundation', 'primary_specialists', 'reconciliation', 'orchestrator', 'challenger', 'memo_preparation'):
-            job['stages']['bo:' + name] = dict(section='bo', label={'primary_specialists':'Specialist analysis & validation','foundation':'Evidence preparation & management analysis','reconciliation':'Validation & reconciliation','orchestrator':'Cross-module synthesis & validation','challenger':'Independent challenge'}.get(name,name.replace('_',' ').title()), status='pending', order={'foundation':10,'primary_specialists':20,'reconciliation':50,'orchestrator':60,'challenger':70,'memo_preparation':90}[name])
+        for name in () if fo_only else ('foundation', 'primary_specialists', 'reconciliation', 'orchestrator', *(() if selective else ('challenger',)), 'memo_preparation'):
+            job['stages']['bo:' + name] = dict(section='bo', label={'primary_specialists':'Specialist analysis & validation','foundation':'Evidence preparation & management analysis','reconciliation':'Validation & reconciliation','orchestrator':writer_label,'challenger':'Independent challenge'}.get(name,name.replace('_',' ').title()), status='pending', order={'foundation':10,'primary_specialists':20,'reconciliation':50,'orchestrator':60,'challenger':70,'memo_preparation':90}[name])
         if not bo_only:
             job['stages']['fo:workflow'] = dict(section='fo', label='Financial preparation, analysis and validation', status='pending', order=0)
             job['stages']['fo:reporting'] = dict(section='fo', label='Financial reporting', status='pending', order=1000)
@@ -503,7 +531,7 @@ class Jobs:
                           dict(section=section, label=name.replace('_',' ').title(), status='pending'))
                 if 'order' not in state:
                     state['order'] = (100 if name == 'recorded_output' else 15 if name == 'management_analysis_and_validator7' else 45 if 'debt' in name else 60 if 'orchestrator' in name else 70 if 'challeng' in name else 35) if section == 'bo' else len(job['stages'])
-                labels = {'primary_specialists':'Specialist analysis & validation', 'reconciliation':'Validation & reconciliation', 'orchestrator':'Cross-module synthesis & validation', 'challenger':'Independent challenge', 'foundation':'Evidence preparation & management analysis', 'memo_preparation':'Memo preparation'}
+                labels = {'primary_specialists':'Specialist analysis & validation', 'reconciliation':'Validation & reconciliation', 'orchestrator':writer_label, 'challenger':'Independent challenge', 'foundation':'Evidence preparation & management analysis', 'memo_preparation':'Memo preparation'}
                 state['label'] = labels.get(name, state['label'])
                 state.update(status=status, detail=detail, updated_at=now())
                 if status == 'running':

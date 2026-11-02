@@ -1,0 +1,712 @@
+{
+  "job": {
+    "job_id": "250c775e95af45d9b19a8a8f0c22cc33",
+    "status": "finished",
+    "execution_status": "completed",
+    "created_at": "2026-11-02T16:49:25.024871+00:00",
+    "started_at": "2026-11-02T16:49:25.026133+00:00",
+    "finished_at": "2026-11-02T16:49:25.697469+00:00",
+    "folder": "NFH 10-K FY2025",
+    "case_id": "NFH_BROWSER",
+    "bo_only": true,
+    "fo_only": false,
+    "bo_validators": true,
+    "stop_requested": false,
+    "result": {
+      "bo": {
+        "status": "completed",
+        "summary": {
+          "case_id": "NFH_BROWSER",
+          "analysis_run_id": "ar_b1e9fa0175e643f6",
+          "scope": "business_overview_only",
+          "execution_mode": "offline_simulation",
+          "bo_roster": "v3",
+          "validators_enforced": true,
+          "conclusion_status": "human_review_required",
+          "human_review_status": "pending",
+          "has_synthesis": true,
+          "business_orchestrator_contract": "bo-competitive-positioning-output-1.0.0",
+          "editorial_selection_policy": "bo-editorial-selection-1.0.0",
+          "evidence_snapshot_version": 1,
+          "four_section_memo": {
+            "stage": "bo_four_section_memo:ar_b1e9fa0175e643f6",
+            "schema_version": "bo-four-section-memo-1.0.0",
+            "sha256": "a83283d3283661ca25fd8d7be2b41c5d0d204035a67dfd0a94a51c99fb6c905a",
+            "content_hash": "1346b2f0cd20c04bbd8b6414e3ce902b96c97f48aaa4eaa1b871a76fd3cd6174"
+          },
+          "handoff_id": "bo_08496c561e544776",
+          "outputs": [
+            "/private/var/folders/7t/tnf0mwt17038pq708xnqvfb40000gq/T/pytest-of-Daniel/pytest-137/test_actual_new_analysis_pipel0/out/bo/NFH_BROWSER/ar_b1e9fa0175e643f6"
+          ],
+          "handoff_path": "/private/var/folders/7t/tnf0mwt17038pq708xnqvfb40000gq/T/pytest-of-Daniel/pytest-137/test_actual_new_analysis_pipel0/out/bo/NFH_BROWSER/ar_b1e9fa0175e643f6/handoff.json"
+        }
+      },
+      "fo": {
+        "status": "skipped",
+        "reason": "Business Overview only run."
+      },
+      "rms": {
+        "status": "skipped",
+        "reason": "Needs both sections; this run was Business Overview only."
+      },
+      "case_id": "NFH_BROWSER",
+      "folder": "NFH 10-K FY2025",
+      "cutoff": "2026-02-21T05:00:00+00:00"
+    },
+    "error": null,
+    "stages": {
+      "bo:foundation": {
+        "section": "bo",
+        "label": "Evidence preparation & management analysis",
+        "status": "completed",
+        "order": 10,
+        "detail": {
+          "module3": {
+            "structure": {
+              "status": "complete",
+              "validation_status": "passed",
+              "error": null
+            },
+            "management": {
+              "status": "complete",
+              "validation_status": "passed",
+              "error": null
+            }
+          }
+        },
+        "updated_at": "2026-11-02T16:49:25.241857+00:00",
+        "started_at": "2026-11-02T16:49:25.173225+00:00",
+        "finished_at": "2026-11-02T16:49:25.241859+00:00"
+      },
+      "bo:primary_specialists": {
+        "section": "bo",
+        "label": "Specialist analysis & validation",
+        "status": "completed",
+        "order": 20,
+        "detail": {
+          "round": 0,
+          "agents": {
+            "m2_industry": {
+              "status": "validated",
+              "detail": null,
+              "issues": []
+            },
+            "m4_strategy_capital": {
+              "status": "validated",
+              "detail": null,
+              "issues": []
+            },
+            "m1_operating_model": {
+              "status": "validated",
+              "detail": null,
+              "issues": []
+            },
+            "m1_revenue_quality": {
+              "status": "validated",
+              "detail": null,
+              "issues": []
+            },
+            "m1_competitive_durability": {
+              "status": "validated",
+              "detail": null,
+              "issues": []
+            },
+            "m1_customer_stickiness": {
+              "status": "validated",
+              "detail": null,
+              "issues": []
+            },
+            "m1_pricing_power": {
+              "status": "validated",
+              "detail": null,
+              "issues": []
+            }
+          },
+          "failed": {},
+          "skipped": {}
+        },
+        "updated_at": "2026-11-02T16:49:25.465838+00:00",
+        "started_at": "2026-11-02T16:49:25.243743+00:00",
+        "finished_at": "2026-11-02T16:49:25.465843+00:00"
+      },
+      "bo:reconciliation": {
+        "section": "bo",
+        "label": "Validation & reconciliation",
+        "status": "completed",
+        "order": 50,
+        "detail": null,
+        "updated_at": "2026-11-02T16:49:25.529885+00:00",
+        "started_at": "2026-11-02T16:49:25.528234+00:00",
+        "finished_at": "2026-11-02T16:49:25.529887+00:00"
+      },
+      "bo:orchestrator": {
+        "section": "bo",
+        "label": "Competitive Positioning writing & validation",
+        "status": "completed",
+        "order": 60,
+        "detail": {
+          "round": 0,
+          "agents": {
+            "business_orchestrator": {
+              "status": "validated",
+              "detail": null,
+              "issues": []
+            }
+          },
+          "failed": {},
+          "skipped": {}
+        },
+        "updated_at": "2026-11-02T16:49:25.571011+00:00",
+        "started_at": "2026-11-02T16:49:25.533141+00:00",
+        "finished_at": "2026-11-02T16:49:25.571015+00:00"
+      },
+      "bo:challenger": {
+        "section": "bo",
+        "label": "Independent challenge",
+        "status": "completed",
+        "order": 70,
+        "detail": {
+          "round": 0,
+          "agents": {
+            "business_challenge": {
+              "status": "validated",
+              "detail": null,
+              "issues": []
+            }
+          },
+          "failed": {},
+          "skipped": {}
+        },
+        "updated_at": "2026-11-02T16:49:25.586709+00:00",
+        "started_at": "2026-11-02T16:49:25.573890+00:00",
+        "finished_at": "2026-11-02T16:49:25.586713+00:00"
+      },
+      "bo:memo_preparation": {
+        "section": "bo",
+        "label": "Memo preparation",
+        "status": "completed",
+        "order": 90,
+        "detail": null,
+        "updated_at": "2026-11-02T16:49:25.687247+00:00",
+        "started_at": "2026-11-02T16:49:25.592788+00:00",
+        "finished_at": "2026-11-02T16:49:25.687251+00:00"
+      },
+      "bo:management_analysis_and_validator7": {
+        "section": "bo",
+        "label": "Management Analysis And Validator7",
+        "status": "completed",
+        "order": 15,
+        "detail": {
+          "module3": {
+            "structure": {
+              "status": "complete",
+              "validation_status": "passed",
+              "error": null
+            },
+            "management": {
+              "status": "complete",
+              "validation_status": "passed",
+              "error": null
+            }
+          }
+        },
+        "updated_at": "2026-11-02T16:49:25.240320+00:00",
+        "started_at": "2026-11-02T16:49:25.195835+00:00",
+        "finished_at": "2026-11-02T16:49:25.240322+00:00"
+      },
+      "bo:resilience": {
+        "section": "bo",
+        "label": "Resilience",
+        "status": "completed",
+        "order": 35,
+        "detail": {
+          "round": 0,
+          "agents": {
+            "m1_resilience_integration": {
+              "status": "validated",
+              "detail": null,
+              "issues": []
+            }
+          },
+          "failed": {},
+          "skipped": {}
+        },
+        "updated_at": "2026-11-02T16:49:25.497157+00:00",
+        "started_at": "2026-11-02T16:49:25.472002+00:00",
+        "finished_at": "2026-11-02T16:49:25.497162+00:00"
+      },
+      "bo:debt_specialist_and_validation": {
+        "section": "bo",
+        "label": "Debt Specialist And Validation",
+        "status": "completed",
+        "order": 45,
+        "detail": {
+          "status": "validated",
+          "validated": true,
+          "reason": null,
+          "validator_issues": []
+        },
+        "updated_at": "2026-11-02T16:49:25.526633+00:00",
+        "started_at": "2026-11-02T16:49:25.499776+00:00",
+        "finished_at": "2026-11-02T16:49:25.526637+00:00"
+      },
+      "bo:recorded_output": {
+        "section": "bo",
+        "label": "Recorded Output",
+        "status": "completed",
+        "order": 100,
+        "detail": {
+          "case_id": "NFH_BROWSER",
+          "analysis_run_id": "ar_b1e9fa0175e643f6",
+          "scope": "business_overview_only",
+          "execution_mode": "offline_simulation",
+          "bo_roster": "v3",
+          "validators_enforced": true,
+          "conclusion_status": "human_review_required",
+          "human_review_status": "pending",
+          "has_synthesis": true,
+          "business_orchestrator_contract": "bo-competitive-positioning-output-1.0.0",
+          "editorial_selection_policy": "bo-editorial-selection-1.0.0",
+          "evidence_snapshot_version": 1,
+          "four_section_memo": {
+            "stage": "bo_four_section_memo:ar_b1e9fa0175e643f6",
+            "schema_version": "bo-four-section-memo-1.0.0",
+            "sha256": "a83283d3283661ca25fd8d7be2b41c5d0d204035a67dfd0a94a51c99fb6c905a",
+            "content_hash": "1346b2f0cd20c04bbd8b6414e3ce902b96c97f48aaa4eaa1b871a76fd3cd6174"
+          },
+          "handoff_id": "bo_08496c561e544776",
+          "outputs": [
+            "/private/var/folders/7t/tnf0mwt17038pq708xnqvfb40000gq/T/pytest-of-Daniel/pytest-137/test_actual_new_analysis_pipel0/out/bo/NFH_BROWSER/ar_b1e9fa0175e643f6"
+          ],
+          "handoff_path": "/private/var/folders/7t/tnf0mwt17038pq708xnqvfb40000gq/T/pytest-of-Daniel/pytest-137/test_actual_new_analysis_pipel0/out/bo/NFH_BROWSER/ar_b1e9fa0175e643f6/handoff.json"
+        },
+        "updated_at": "2026-11-02T16:49:25.694465+00:00",
+        "finished_at": "2026-11-02T16:49:25.694470+00:00"
+      }
+    },
+    "events": [
+      {
+        "section": "bo",
+        "stage": "foundation",
+        "status": "running",
+        "detail": null,
+        "at": "2026-11-02T16:49:25.173227+00:00"
+      },
+      {
+        "section": "bo",
+        "stage": "management_analysis_and_validator7",
+        "status": "running",
+        "detail": null,
+        "at": "2026-11-02T16:49:25.195837+00:00"
+      },
+      {
+        "section": "bo",
+        "stage": "management_analysis_and_validator7",
+        "status": "completed",
+        "detail": {
+          "module3": {
+            "structure": {
+              "status": "complete",
+              "validation_status": "passed",
+              "error": null
+            },
+            "management": {
+              "status": "complete",
+              "validation_status": "passed",
+              "error": null
+            }
+          }
+        },
+        "at": "2026-11-02T16:49:25.240323+00:00"
+      },
+      {
+        "section": "bo",
+        "stage": "foundation",
+        "status": "completed",
+        "detail": {
+          "module3": {
+            "structure": {
+              "status": "complete",
+              "validation_status": "passed",
+              "error": null
+            },
+            "management": {
+              "status": "complete",
+              "validation_status": "passed",
+              "error": null
+            }
+          }
+        },
+        "at": "2026-11-02T16:49:25.241860+00:00"
+      },
+      {
+        "section": "bo",
+        "stage": "primary_specialists",
+        "status": "running",
+        "detail": null,
+        "at": "2026-11-02T16:49:25.243744+00:00"
+      },
+      {
+        "section": "bo",
+        "stage": "primary_specialists",
+        "status": "completed",
+        "detail": {
+          "round": 0,
+          "agents": {
+            "m2_industry": {
+              "status": "validated",
+              "detail": null,
+              "issues": []
+            },
+            "m4_strategy_capital": {
+              "status": "validated",
+              "detail": null,
+              "issues": []
+            },
+            "m1_operating_model": {
+              "status": "validated",
+              "detail": null,
+              "issues": []
+            },
+            "m1_revenue_quality": {
+              "status": "validated",
+              "detail": null,
+              "issues": []
+            },
+            "m1_competitive_durability": {
+              "status": "validated",
+              "detail": null,
+              "issues": []
+            },
+            "m1_customer_stickiness": {
+              "status": "validated",
+              "detail": null,
+              "issues": []
+            },
+            "m1_pricing_power": {
+              "status": "validated",
+              "detail": null,
+              "issues": []
+            }
+          },
+          "failed": {},
+          "skipped": {}
+        },
+        "at": "2026-11-02T16:49:25.465845+00:00"
+      },
+      {
+        "section": "bo",
+        "stage": "resilience",
+        "status": "running",
+        "detail": null,
+        "at": "2026-11-02T16:49:25.472003+00:00"
+      },
+      {
+        "section": "bo",
+        "stage": "resilience",
+        "status": "completed",
+        "detail": {
+          "round": 0,
+          "agents": {
+            "m1_resilience_integration": {
+              "status": "validated",
+              "detail": null,
+              "issues": []
+            }
+          },
+          "failed": {},
+          "skipped": {}
+        },
+        "at": "2026-11-02T16:49:25.497163+00:00"
+      },
+      {
+        "section": "bo",
+        "stage": "debt_specialist_and_validation",
+        "status": "running",
+        "detail": null,
+        "at": "2026-11-02T16:49:25.499778+00:00"
+      },
+      {
+        "section": "bo",
+        "stage": "debt_specialist_and_validation",
+        "status": "completed",
+        "detail": {
+          "status": "validated",
+          "validated": true,
+          "reason": null,
+          "validator_issues": []
+        },
+        "at": "2026-11-02T16:49:25.526638+00:00"
+      },
+      {
+        "section": "bo",
+        "stage": "reconciliation",
+        "status": "running",
+        "detail": null,
+        "at": "2026-11-02T16:49:25.528235+00:00"
+      },
+      {
+        "section": "bo",
+        "stage": "reconciliation",
+        "status": "completed",
+        "detail": null,
+        "at": "2026-11-02T16:49:25.529888+00:00"
+      },
+      {
+        "section": "bo",
+        "stage": "orchestrator",
+        "status": "running",
+        "detail": null,
+        "at": "2026-11-02T16:49:25.533142+00:00"
+      },
+      {
+        "section": "bo",
+        "stage": "orchestrator",
+        "status": "completed",
+        "detail": {
+          "round": 0,
+          "agents": {
+            "business_orchestrator": {
+              "status": "validated",
+              "detail": null,
+              "issues": []
+            }
+          },
+          "failed": {},
+          "skipped": {}
+        },
+        "at": "2026-11-02T16:49:25.571016+00:00"
+      },
+      {
+        "section": "bo",
+        "stage": "challenger",
+        "status": "running",
+        "detail": null,
+        "at": "2026-11-02T16:49:25.573891+00:00"
+      },
+      {
+        "section": "bo",
+        "stage": "challenger",
+        "status": "completed",
+        "detail": {
+          "round": 0,
+          "agents": {
+            "business_challenge": {
+              "status": "validated",
+              "detail": null,
+              "issues": []
+            }
+          },
+          "failed": {},
+          "skipped": {}
+        },
+        "at": "2026-11-02T16:49:25.586714+00:00"
+      },
+      {
+        "section": "bo",
+        "stage": "memo_preparation",
+        "status": "running",
+        "detail": null,
+        "at": "2026-11-02T16:49:25.592789+00:00"
+      },
+      {
+        "section": "bo",
+        "stage": "memo_preparation",
+        "status": "completed",
+        "detail": null,
+        "at": "2026-11-02T16:49:25.687253+00:00"
+      },
+      {
+        "section": "bo",
+        "stage": "recorded_output",
+        "status": "completed",
+        "detail": {
+          "case_id": "NFH_BROWSER",
+          "analysis_run_id": "ar_b1e9fa0175e643f6",
+          "scope": "business_overview_only",
+          "execution_mode": "offline_simulation",
+          "bo_roster": "v3",
+          "validators_enforced": true,
+          "conclusion_status": "human_review_required",
+          "human_review_status": "pending",
+          "has_synthesis": true,
+          "business_orchestrator_contract": "bo-competitive-positioning-output-1.0.0",
+          "editorial_selection_policy": "bo-editorial-selection-1.0.0",
+          "evidence_snapshot_version": 1,
+          "four_section_memo": {
+            "stage": "bo_four_section_memo:ar_b1e9fa0175e643f6",
+            "schema_version": "bo-four-section-memo-1.0.0",
+            "sha256": "a83283d3283661ca25fd8d7be2b41c5d0d204035a67dfd0a94a51c99fb6c905a",
+            "content_hash": "1346b2f0cd20c04bbd8b6414e3ce902b96c97f48aaa4eaa1b871a76fd3cd6174"
+          },
+          "handoff_id": "bo_08496c561e544776",
+          "outputs": [
+            "/private/var/folders/7t/tnf0mwt17038pq708xnqvfb40000gq/T/pytest-of-Daniel/pytest-137/test_actual_new_analysis_pipel0/out/bo/NFH_BROWSER/ar_b1e9fa0175e643f6"
+          ],
+          "handoff_path": "/private/var/folders/7t/tnf0mwt17038pq708xnqvfb40000gq/T/pytest-of-Daniel/pytest-137/test_actual_new_analysis_pipel0/out/bo/NFH_BROWSER/ar_b1e9fa0175e643f6/handoff.json"
+        },
+        "at": "2026-11-02T16:49:25.694474+00:00"
+      }
+    ],
+    "memo_status": "human_review_required",
+    "worker_tracking": "thread-v1",
+    "metadata": {
+      "company_id": "nfh-10-k-fy2025",
+      "company": "Northfield Health Systems (NFH) \u00b7 FY2025",
+      "reporting_period": "2025-12-31",
+      "evidence_package": "NFH 10-K FY2025",
+      "validation_mode": "standard",
+      "scope": "bo",
+      "submitted_configuration": {
+        "folder": "NFH 10-K FY2025",
+        "case_id": "NFH_BROWSER",
+        "sections": "bo",
+        "cutoff": "2026-02-21T05:00:00+00:00",
+        "bo_validators": "on"
+      },
+      "approval_policy": "existing_review_and_approval_required",
+      "business_overview_workflow": {
+        "bo_roster": "v3",
+        "business_orchestrator_contract": "bo-competitive-positioning-output-1.0.0",
+        "editorial_selection_policy": "bo-editorial-selection-1.0.0"
+      }
+    },
+    "cutoff": "2026-02-21T05:00:00+00:00",
+    "business_overview_workflow": {
+      "bo_roster": "v3",
+      "business_orchestrator_contract": "bo-competitive-positioning-output-1.0.0",
+      "editorial_selection_policy": "bo-editorial-selection-1.0.0"
+    },
+    "sections": {
+      "bo": {
+        "status": "completed",
+        "step": "completed",
+        "steps": [
+          "routing the evidence",
+          "the Module 3 management assessment",
+          "primary specialists",
+          "resilience",
+          "the Module 4 debt specialist",
+          "orchestrator",
+          "challenger",
+          "writing the Business Overview",
+          "recording the Business Overview"
+        ],
+        "work": {
+          "done": 15,
+          "total": 15
+        }
+      },
+      "fo": {
+        "status": "skipped",
+        "step": "Business Overview only run.",
+        "steps": [],
+        "work": null
+      },
+      "rms": {
+        "status": "skipped",
+        "step": "Needs both sections; this run was Business Overview only.",
+        "steps": [],
+        "work": null
+      }
+    },
+    "cost": {
+      "bo": {
+        "calls": 0,
+        "tokens": 0,
+        "total_cost_usd": 0.0,
+        "priced_cost_usd": 0.0,
+        "unpriced_models": [],
+        "by_model": {},
+        "note": "Estimated from LLM_PRICES (USD per million tokens); not a provider invoice.",
+        "text": "no model calls"
+      },
+      "fo": {
+        "calls": 0,
+        "tokens": 0,
+        "total_cost_usd": 0.0,
+        "priced_cost_usd": 0.0,
+        "unpriced_models": [],
+        "by_model": {},
+        "note": "Estimated from LLM_PRICES (USD per million tokens); not a provider invoice.",
+        "text": "no model calls"
+      },
+      "m3": {
+        "calls": 0,
+        "tokens": 0,
+        "total_cost_usd": 0.0,
+        "priced_cost_usd": 0.0,
+        "unpriced_models": [],
+        "by_model": {},
+        "note": "Estimated from LLM_PRICES (USD per million tokens); not a provider invoice.",
+        "text": "no model calls"
+      },
+      "total": {
+        "calls": 0,
+        "tokens": 0,
+        "total_cost_usd": 0.0,
+        "priced_cost_usd": 0.0,
+        "unpriced_models": [],
+        "by_model": {},
+        "note": "Estimated from LLM_PRICES (USD per million tokens); not a provider invoice.",
+        "text": "no model calls"
+      }
+    },
+    "run_ids": {
+      "bo": "ar_b1e9fa0175e643f6"
+    },
+    "artifacts": {
+      "bo": [
+        "/private/var/folders/7t/tnf0mwt17038pq708xnqvfb40000gq/T/pytest-of-Daniel/pytest-137/test_actual_new_analysis_pipel0/out/bo/NFH_BROWSER/ar_b1e9fa0175e643f6"
+      ]
+    }
+  },
+  "backend_calls": [
+    "m1_competitive_durability",
+    "m1_customer_stickiness",
+    "m1_operating_model",
+    "m1_pricing_power",
+    "m1_revenue_quality",
+    "m2_industry",
+    "m4_strategy_capital",
+    "m1_resilience_integration",
+    "analyze",
+    "orchestrate",
+    "challenge"
+  ],
+  "management_calls": [
+    "m3_management_assessment",
+    "m3_validator_7"
+  ],
+  "contract": "bo-competitive-positioning-input-1.0.0",
+  "selection_policy": "bo-editorial-selection-1.0.0",
+  "identity": {
+    "analysis_run_id": "ar_b1e9fa0175e643f6",
+    "as_of_date": "2025-12-31",
+    "case_id": "NFH_BROWSER",
+    "conclusion_id": "tc_911cd744cef84689",
+    "evidence_cutoff_timestamp": "2026-02-21T05:00:00+00:00",
+    "evidence_snapshot_hash": "83a1fc0c86142884ddeea2073fe1ba33d25a3da9be0703481f6ffbf94dc1f7b1",
+    "evidence_snapshot_version": 1,
+    "orchestrator_run_id": "1587f1c4-a5c1-4f8c-af64-3ca504560f0c",
+    "reporting_company": "Northfield Health Systems"
+  },
+  "canonical_references": {
+    "analysis_run_id": "ar_b1e9fa0175e643f6",
+    "evidence_snapshot_version": 1,
+    "topic_conclusion_id": "tc_911cd744cef84689",
+    "audit_stage": "bo_audit:ar_b1e9fa0175e643f6",
+    "business_orchestrator_contract": "bo-competitive-positioning-output-1.0.0",
+    "editorial_selection_hash": "844734da1a5e668eab15f9a52a986e6a10e1d59cb5f619dc45b8932a89ab0552",
+    "four_section_memo": {
+      "stage": "bo_four_section_memo:ar_b1e9fa0175e643f6",
+      "schema_version": "bo-four-section-memo-1.0.0",
+      "sha256": "a83283d3283661ca25fd8d7be2b41c5d0d204035a67dfd0a94a51c99fb6c905a",
+      "content_hash": "1346b2f0cd20c04bbd8b6414e3ce902b96c97f48aaa4eaa1b871a76fd3cd6174"
+    }
+  },
+  "content_hash": "1346b2f0cd20c04bbd8b6414e3ce902b96c97f48aaa4eaa1b871a76fd3cd6174",
+  "source_copy_equal": true,
+  "review_history_identical": true,
+  "read_only_hashes_unchanged": true
+}

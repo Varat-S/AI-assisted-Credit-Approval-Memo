@@ -178,18 +178,25 @@ def start_analysis(company: str = Form(''), sections: str = Form('both'),
         settings = get_settings()
         database = bo_fo.sqlite_path(settings.database_url)
         settled = bo_fo.plan(parameters['folder'], parameters['case_id'] or None, selection.cutoff)
+        from app.services.analysis_preflight import check_database
+        check_database(database)  # before provider setup or any generation
         bo_backend, m3_backend, fo_backend = execution_backends(sections)
         metadata = dict(company_id=selection.company['id'], company=selection.company['label'],
                         reporting_period=selection.evidence['report_date'].isoformat(),
                         evidence_package=selection.evidence['folder'], validation_mode=validation_mode,
                         scope=sections, submitted_configuration=parameters,
                         approval_policy=selection.approval_policy)
+        if sections != 'fo':
+            metadata['business_overview_workflow'] = {'bo_roster': bo_fo.BO_ROSTER,
+                'business_orchestrator_contract': bo_fo.BROWSER_BO_CONTRACT,
+                'editorial_selection_policy': bo_fo.BROWSER_SELECTION_POLICY}
         fingerprint = hashlib.sha256(json.dumps(metadata, sort_keys=True).encode()).hexdigest()
         job_id = bo_fo.jobs.start(
             database=database, folder=parameters['folder'], case_id=settled['case_id'],
             cutoff=selection.cutoff, bo_backend=bo_backend, m3_backend=m3_backend, fo_backend=fo_backend,
             fo_mode='live', output_root=settings.output_dir, data_root=settings.data_dir,
             bo_only=sections == 'bo', fo_only=sections == 'fo', bo_validators=parameters['bo_validators'] == 'on',
+            business_orchestrator_contract=bo_fo.BROWSER_BO_CONTRACT if sections != 'fo' else None,
             metadata=metadata, idempotency_key=submission_key, request_hash=fingerprint)
     except IdempotencyConflict as exc:
         raise HTTPException(409, str(exc)) from exc

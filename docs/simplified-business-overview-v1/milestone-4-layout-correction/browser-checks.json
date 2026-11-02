@@ -1,0 +1,58 @@
+{
+  "screens": [
+    {
+      "width": 1440,
+      "bodyWidth": 1120,
+      "columns": "370.562px 611.422px",
+      "left": 217,
+      "right": 611.5625,
+      "leftTop": 48.40625,
+      "rightTop": 48.40625,
+      "openEvidence": 0,
+      "summary": false
+    },
+    {
+      "width": 1366,
+      "bodyWidth": 1120,
+      "columns": "370.562px 611.422px",
+      "left": 180,
+      "right": 574.5625,
+      "leftTop": 48.40625,
+      "rightTop": 48.40625,
+      "openEvidence": 0,
+      "summary": false
+    },
+    {
+      "width": 1280,
+      "bodyWidth": 1120,
+      "columns": "370.562px 611.422px",
+      "left": 137,
+      "right": 531.5625,
+      "leftTop": 48.40625,
+      "rightTop": 48.40625,
+      "openEvidence": 0,
+      "summary": false
+    },
+    {
+      "width": 1024,
+      "bodyWidth": 1024,
+      "columns": "334.328px 551.656px",
+      "left": 57,
+      "right": 415.328125,
+      "leftTop": 48.40625,
+      "rightTop": 48.40625,
+      "openEvidence": 0,
+      "summary": false
+    }
+  ],
+  "print": {
+    "layout": "table",
+    "left": 0,
+    "right": 640,
+    "leftTop": 236.046875,
+    "rightTop": 236.046875,
+    "tableFont": "12px"
+  },
+  "nativeEvidenceToggle": true,
+  "rightmostDebtColumnVisible": true
+}

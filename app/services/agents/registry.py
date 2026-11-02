@@ -428,7 +428,7 @@ _MITIGANT = [
 ]
 
 
-def default_registry(bo_roster: str = "v1") -> AgentRegistry:
+def default_registry(bo_roster: str = "v1", *, business_orchestrator_contract: str | None = None) -> AgentRegistry:
     """Build the canonical 27-job agent registry.
 
     ``bo_roster="v1"`` (default) is the original roster. ``bo_roster="v2"``
@@ -444,6 +444,11 @@ def default_registry(bo_roster: str = "v1") -> AgentRegistry:
     """
     if bo_roster not in ("v1", "v2", "v3"):
         raise AgentRegistryError(f"Unknown BO roster {bo_roster!r}.")
+    if business_orchestrator_contract is not None:
+        from app.prompts.competitive_positioning import OUTPUT_VERSION
+        from app.prompts.source_selection import OUTPUT_VERSION as SELECTION_VERSION
+        if bo_roster != "v3" or business_orchestrator_contract not in {OUTPUT_VERSION, SELECTION_VERSION}:
+            raise AgentRegistryError("Competitive Positioning requires its explicit 1.0.0 contract and roster v3.")
     defs: list[AgentDefinition] = []
 
     def narrow(agent_id, prompt, params, topic, *, narrative_topics=(), fact_names=()):
@@ -532,15 +537,19 @@ def default_registry(bo_roster: str = "v1") -> AgentRegistry:
 
     financial_narrow_ids = [d[0] for d in _FINANCIAL_NARROW] + ["covenant_extraction"]
     # Orchestrators
+    business_dependencies = business_narrow_ids
+    if business_orchestrator_contract is not None:
+        from app.services.bo.roster_v3 import V3_M1_PRIMARY_IDS, V3_AGENT_6_ID
+        business_dependencies = [*V3_M1_PRIMARY_IDS, V3_AGENT_6_ID]
     defs.append(_orchestrator(
-        "business_orchestrator", Topic.BUSINESS, business_narrow_ids,
-        prompt_name=_bo_prompt(bo_roster, "orchestrator")))
+        "business_orchestrator", Topic.BUSINESS, business_dependencies,
+        prompt_name=_bo_prompt(bo_roster, "orchestrator", business_orchestrator_contract)))
     defs.append(_orchestrator("financial_orchestrator", Topic.FINANCIAL,
                               financial_narrow_ids))
     # Challengers (depend on their orchestrator)
     defs.append(_challenger(
         "business_challenge", Topic.BUSINESS, "business_orchestrator",
-        prompt_name=_bo_prompt(bo_roster, "challenger")))
+        prompt_name=_bo_prompt(bo_roster, "challenger", business_orchestrator_contract)))
     defs.append(_challenger("financial_challenge", Topic.FINANCIAL,
                             "financial_orchestrator"))
 
@@ -592,11 +601,20 @@ def default_registry(bo_roster: str = "v1") -> AgentRegistry:
 
     version = {"v2": AGENT_REGISTRY_VERSION_BO_V2,
                "v3": AGENT_REGISTRY_VERSION_BO_V3}.get(bo_roster, AGENT_REGISTRY_VERSION)
+    if business_orchestrator_contract is not None:
+        version += (":source-selection-1.1.0" if business_orchestrator_contract == "bo-source-selection-output-1.1.0"
+                    else ":competitive-positioning-1.0.0")
     return AgentRegistry(defs, version=version)
 
 
-def _bo_prompt(bo_roster: str, role: str) -> str | None:
+def _bo_prompt(bo_roster: str, role: str, contract: str | None = None) -> str | None:
     """Prompt name of the Business orchestrator/challenger for a roster."""
+    if contract == "bo-source-selection-output-1.1.0":
+        from app.prompts.source_selection import WRITER_PROMPT, CHALLENGER_PROMPT
+        return WRITER_PROMPT if role == "orchestrator" else CHALLENGER_PROMPT
+    if contract is not None:
+        from app.prompts.competitive_positioning import WRITER_PROMPT, CHALLENGER_PROMPT
+        return WRITER_PROMPT if role == "orchestrator" else CHALLENGER_PROMPT
     if bo_roster not in ("v2", "v3"):
         return None
     from app.services.bo.plans import BO_CHALLENGER_PROMPT, BO_ORCHESTRATOR_PROMPT

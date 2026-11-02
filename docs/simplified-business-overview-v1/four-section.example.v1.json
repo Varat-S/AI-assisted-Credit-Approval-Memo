@@ -1,0 +1,256 @@
+{
+  "document": "business_overview_four_section_memo",
+  "schema_version": "bo-four-section-memo-1.0.0",
+  "design_basis": {
+    "repository": "Varat-S/kirotesting",
+    "branch": "UI_Draft_V1",
+    "commit": "34d61e7b3e547228d6766ec4a7e916395821a906",
+    "assembler_version": "bo-four-section-assembler-1.0.0",
+    "selection_policy_version": "bo-editorial-selection-1.0.0",
+    "example_kind": "illustrative_existing_debt_sample_with_explicit_missing_components"
+  },
+  "example_only": true,
+  "identity": {
+    "case_id": null,
+    "analysis_run_id": null,
+    "evidence_snapshot_version": null,
+    "evidence_snapshot_hash": null,
+    "conclusion_id": null,
+    "orchestrator_run_id": null,
+    "as_of_date": null,
+    "evidence_cutoff_timestamp": null
+  },
+  "governance": {
+    "memo_completeness": "incomplete",
+    "conclusion_status": "unavailable",
+    "validators_enforced": null,
+    "independent_challenge_status": "not_recorded",
+    "human_review_status": "not_applicable",
+    "visible_warnings": [
+      "Design example only. This is not a historical run, validated company analysis or approvable memo.",
+      "Debt content is copied from the repository’s illustrative Module 4 sample; its recorded sample status is not proof of validation for a real selected run.",
+      "No same-run Module 1, Module 2 or Module 3 governed artifacts are supplied. No replacement analysis has been generated."
+    ]
+  },
+  "sources": [
+    {
+      "artifact_id": "committed-m4-illustration",
+      "file_path": "examples/bo_m4/m4_analysis.sample.json",
+      "source_path": "/deliverable_1",
+      "schema_version": "bo-m4-analysis-1.0",
+      "sha256": "9de38bee99ec8641200f90f973cb204618cf37af0e24c403e19c3d76f8c9eeb0",
+      "hash_kind": "source_file_bytes",
+      "binding": "example_only",
+      "source_status": "complete",
+      "validation_note": "Illustrative committed fixture; no same-run debt validation or independent-challenge record is asserted."
+    }
+  ],
+  "sections": [
+    {
+      "id": "corporate_structure_debt_obligations",
+      "title": "Corporate Structure & Debt Obligations",
+      "status": "partial",
+      "layout": "structure_left_debt_right",
+      "structure": {
+        "status": "unavailable",
+        "source_ref": null,
+        "content": null
+      },
+      "debt_obligations": {
+        "status": "partial",
+        "source_ref": "committed-m4-illustration",
+        "content": {
+          "extraction_source": {
+            "narrative": "Debt population drawn from Item 8 Financial Statements, Note 8 (Long-Term Debt), cross-referenced to Item 7 MD&A Liquidity & Capital Resources and the Item 15 Exhibit Index supplemental indentures (Exhibits 4.44-4.53).",
+            "item_references": [
+              "Item 7 MD&A",
+              "Item 8 Note 8",
+              "Item 15 Exhibit 4.x"
+            ],
+            "page_references": [
+              "F-18",
+              "F-19",
+              "57"
+            ]
+          },
+          "senior_notes_schedule": [
+            {
+              "senior_note_series": "5.000% Senior Notes",
+              "legal_borrower": "HCA Inc.",
+              "principal_amount_m": 700.0,
+              "coupon_interest_rate": "5.000% fixed",
+              "maturity_year": 2028,
+              "collateral_security_status": "unsecured",
+              "guarantors_credit_support": "Fully and unconditionally guaranteed on an unsecured basis by HCA Healthcare, Inc.",
+              "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed"
+            },
+            {
+              "senior_note_series": "5.250% Senior Notes",
+              "legal_borrower": "HCA Inc.",
+              "principal_amount_m": 750.0,
+              "coupon_interest_rate": "5.250% fixed",
+              "maturity_year": 2030,
+              "collateral_security_status": "unsecured",
+              "guarantors_credit_support": "Fully and unconditionally guaranteed on an unsecured basis by HCA Healthcare, Inc.",
+              "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed"
+            },
+            {
+              "senior_note_series": "5.750% Senior Notes",
+              "legal_borrower": "HCA Inc.",
+              "principal_amount_m": 1500.0,
+              "coupon_interest_rate": "5.750% fixed",
+              "maturity_year": 2035,
+              "collateral_security_status": "unsecured",
+              "guarantors_credit_support": "Fully and unconditionally guaranteed on an unsecured basis by HCA Healthcare, Inc.",
+              "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed"
+            },
+            {
+              "senior_note_series": "6.200% Senior Notes",
+              "legal_borrower": "HCA Inc.",
+              "principal_amount_m": 1250.0,
+              "coupon_interest_rate": "6.200% fixed",
+              "maturity_year": 2055,
+              "collateral_security_status": "unsecured",
+              "guarantors_credit_support": "Fully and unconditionally guaranteed on an unsecured basis by HCA Healthcare, Inc.",
+              "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed"
+            },
+            {
+              "senior_note_series": "Other senior unsecured notes (2026-2064)",
+              "legal_borrower": "HCA Inc.",
+              "principal_amount_m": 39050.0,
+              "coupon_interest_rate": "various fixed, 5.1% effective",
+              "maturity_year": 2064,
+              "collateral_security_status": "unsecured",
+              "guarantors_credit_support": "Fully and unconditionally guaranteed on an unsecured basis by HCA Healthcare, Inc.",
+              "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed"
+            },
+            {
+              "senior_note_series": "Debentures (maturities through 2095)",
+              "legal_borrower": "HCA Inc.",
+              "principal_amount_m": 450.0,
+              "coupon_interest_rate": "7.19% weighted average",
+              "maturity_year": 2095,
+              "collateral_security_status": "unsecured",
+              "guarantors_credit_support": "Fully and unconditionally guaranteed on an unsecured basis by HCA Healthcare, Inc.",
+              "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed"
+            }
+          ],
+          "non_note_obligations_schedule": [
+            {
+              "obligation_facility": "Commercial paper program",
+              "legal_borrower": "HCA Inc.",
+              "principal_drawn_m": 2207.0,
+              "available_facility_limit_m": 4000.0,
+              "interest_rate_terms": "4.3% weighted average; 18-day average life",
+              "maturity": "Short-term",
+              "collateral_security_status": "unsecured",
+              "guarantors_credit_support": "HCA Healthcare, Inc. guarantee",
+              "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed"
+            },
+            {
+              "obligation_facility": "Other senior secured debt (finance leases + other)",
+              "legal_borrower": "HCA Inc.",
+              "principal_drawn_m": 1021.0,
+              "available_facility_limit_m": null,
+              "interest_rate_terms": "4.6% effective",
+              "maturity": "Various",
+              "collateral_security_status": "secured",
+              "guarantors_credit_support": "Secured at operating subsidiary level",
+              "priority_ranking_tier": "tier_1_direct_opco_secured"
+            },
+            {
+              "obligation_facility": "Senior unsecured revolving credit facility (5-year)",
+              "legal_borrower": "HCA Inc.",
+              "principal_drawn_m": 0.0,
+              "available_facility_limit_m": 8000.0,
+              "interest_rate_terms": "SOFR + 1.125%",
+              "maturity": "2030",
+              "collateral_security_status": "unsecured",
+              "guarantors_credit_support": "HCA Healthcare, Inc. guarantee",
+              "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed"
+            },
+            {
+              "obligation_facility": "Debt issuance costs and discounts",
+              "legal_borrower": "HCA Inc.",
+              "principal_drawn_m": -436.0,
+              "available_facility_limit_m": null,
+              "interest_rate_terms": "n/a (contra-liability)",
+              "maturity": "n/a",
+              "collateral_security_status": "unsecured",
+              "guarantors_credit_support": "n/a",
+              "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed"
+            }
+          ],
+          "creditor_priority_framework": {
+            "tier_1_direct_opco_secured_m": 1021.0,
+            "tier_2_senior_unsecured_guaranteed_m": 45471.0,
+            "tier_3_unguaranteed_holdco_m": 0.0,
+            "consolidated_total_indebtedness_m": 46492.0,
+            "structural_subordination_drag_ratio": 0.022,
+            "prospective_loan_secured_placement": "A secured bank loan would rank in Tier 1 ahead of the $43.7B senior unsecured notes, benefiting from direct OpCo collateral.",
+            "prospective_loan_senior_unsecured_placement": "A senior unsecured bank loan would rank pari passu with the existing Tier 2 senior unsecured notes, sharing the HCA Healthcare, Inc. upstream guarantee."
+          }
+        }
+      },
+      "visible_warnings": [
+        "No governed Module 3 corporate structure artifact is supplied. No diagram or legal relationship is inferred.",
+        "Both debt schedules are copied in full from the illustrative source, including aggregate rows and zero-drawn facilities. Their completeness against any actual company debt population is not established.",
+        "The sample cannot establish legal equivalence between a future structure diagram and the debt borrowers or guarantors."
+      ]
+    },
+    {
+      "id": "management",
+      "title": "Management",
+      "status": "unavailable",
+      "source_ref": null,
+      "content": null,
+      "visible_warnings": [
+        "No governed Module 3 management artifact or Validator 7 review is supplied. No management assessment is inferred."
+      ]
+    },
+    {
+      "id": "competitive_positioning",
+      "title": "Competitive Positioning",
+      "status": "unavailable",
+      "source_ref": null,
+      "content": null,
+      "visible_warnings": [
+        "No validated, independently challenged Module 1 selection is supplied. No primary findings or Agent 6 interactions are invented."
+      ]
+    },
+    {
+      "id": "industry",
+      "title": "Industry",
+      "status": "unavailable",
+      "source_ref": null,
+      "content": null,
+      "visible_warnings": [
+        "No governed Module 2 findings are supplied. Missing industry content is not a neutral industry assessment."
+      ]
+    }
+  ],
+  "evidence_ui": {
+    "pattern": "native_details",
+    "initially_expanded": false,
+    "hide_inline_source_citations": true,
+    "detail_fields": [
+      "source_citations",
+      "evidence_quotes",
+      "calculation_traces",
+      "validation_records",
+      "debt_obligations.content.extraction_source",
+      "debt_obligations.content.reconciling_items[*].quote",
+      "debt_obligations.content.reconciling_items[*].evidence_id"
+    ],
+    "always_visible": [
+      "material_qualifications",
+      "management_attribution",
+      "simulation_or_unverified_structure_notice",
+      "completeness_warnings",
+      "unresolved_material_challenges",
+      "all_obligation_rows_and_business_columns"
+    ],
+    "static_pdf_evidence": "appendix"
+  },
+  "content_hash": null
+}

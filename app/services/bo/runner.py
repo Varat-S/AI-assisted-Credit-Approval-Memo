@@ -213,6 +213,8 @@ class BoRunResult:
     output_paths: dict[str, Path] = field(default_factory=dict)
     # Evaluation against a reviewer manifest, when one was supplied.
     evaluation: dict[str, Any] | None = None
+    # Additional frozen reporting artifact; no change to analytical outputs.
+    four_section_memo: dict[str, Any] | None = None
 
 
 class BusinessOverviewRunner:
@@ -244,12 +246,15 @@ class BusinessOverviewRunner:
         on_work=None,
         on_stage=None,
         enforce_validators: bool = True,
+        business_orchestrator_contract: str | None = None,
     ) -> None:
         settings = get_settings()
         # False runs every BO validator in advisory mode: Validators 1-6, Validator 7
         # (M3), Validator 8 (M4 debt) and the orchestrator's synthesis checks still
         # run and are recorded, but nothing is demoted, rejected or escalated on
         # their account. The run always ends human_review_required.
+        # Opt-in editorial contracts retain mandatory selection/source integrity
+        # gates even in exploratory mode; their evidence bindings are never advisory.
         self.enforce_validators = bool(enforce_validators)
         # Called before each step with its name; raises to stop the run. Nothing is
         # committed by the runner, so a stopped run leaves the database untouched. A
@@ -269,6 +274,12 @@ class BusinessOverviewRunner:
         if bo_roster not in {"v2", "v3"}:
             raise ValueError("bo_roster must be 'v2' or 'v3'.")
         self.bo_roster = bo_roster
+        if business_orchestrator_contract is not None:
+            from app.prompts.competitive_positioning import OUTPUT_VERSION
+            from app.prompts.source_selection import OUTPUT_VERSION as SELECTION_VERSION
+            if bo_roster != "v3" or business_orchestrator_contract not in {OUTPUT_VERSION, SELECTION_VERSION}:
+                raise ValueError("Competitive Positioning requires its explicit 1.0.0 contract and roster v3.")
+        self.business_orchestrator_contract = business_orchestrator_contract
         private_m3 = {
             "m3_manifest": m3_manifest, "m3_structure": m3_structure,
             "m3_filing": m3_filing, "m3_company": m3_company,
@@ -457,7 +468,17 @@ class _BoRun:
             self.sections = BO_SECTIONS
             check_mapper = list
             prompt_entries = bo_prompt_catalogue()
-        self.registry = default_registry(self.roster_version)
+        self.business_orchestrator_contract = runner.business_orchestrator_contract
+        from app.prompts.source_selection import OUTPUT_VERSION as SELECTION_VERSION
+        self.independent_challenge_enabled = self.business_orchestrator_contract != SELECTION_VERSION
+        if not self.independent_challenge_enabled:
+            self.active_agent_ids = tuple(a for a in self.active_agent_ids if a != BO_CHALLENGER_ID)
+        if self.business_orchestrator_contract:
+            from app.prompts.competitive_positioning import prompt_catalogue
+            from app.prompts.source_selection import prompt_catalogue as selection_catalogue
+            prompt_entries = [*prompt_entries, *prompt_catalogue(), *selection_catalogue()]
+        self.registry = default_registry(
+            self.roster_version, business_orchestrator_contract=self.business_orchestrator_contract)
         # Module 3 is not a roster agent: its routed input packet and handoff
         # block are built by ``_build_m3_packet``.
         self.m3_packet = None
@@ -539,6 +560,8 @@ class _BoRun:
         self.orchestrator_output: dict | None = None
         self.orchestrator_history: list[dict] = []
         self.orchestrator_validation_feedback: list[str] = []
+        self.editorial_input: dict | None = None
+        self.editorial_selection: dict | None = None
         self.challenge_rounds: list[dict] = []
         self.remediation: dict | None = None
         self.feedback: dict[str, list[dict]] = {}
@@ -620,7 +643,7 @@ class _BoRun:
         resilience and, for a full run, Module 4, orchestrator, challenger and writing."""
         total = 1 + self._m3_units() + len(self.primary_agent_ids) + 1
         if orchestrated:
-            total += (1 if self.enable_m4_debt else 0) + 1 + 1 + 1
+            total += (1 if self.enable_m4_debt else 0) + 1 + int(self.independent_challenge_enabled) + 1
         self.work_done, self.work_total = 0, total
         self.work()
 
@@ -667,6 +690,10 @@ class _BoRun:
                 "coverage_checks": [c.check_id for c in self.checks],
                 "active_agents": list(self.active_agent_ids),
                 "bo_roster": self.roster_version,
+                **({"business_orchestrator_contract": self.business_orchestrator_contract,
+                    "editorial_selection_policy": ("bo-source-selection-1.1.0" if not self.independent_challenge_enabled else "bo-editorial-selection-1.0.0"),
+                    "independent_business_challenge_enabled": self.independent_challenge_enabled}
+                   if self.business_orchestrator_contract else {}),
                 **({"m3_workflow": M3_WORKFLOW} if self.roster_version == "v3" else {}),
                 # The effective M4 debt-specialist flag (requested AND v3 roster)
                 # is recorded so a run can never be misattributed: the requested
@@ -1218,6 +1245,8 @@ class _BoRun:
         )
 
     def _build_orchestrator(self, agent):
+        if self.business_orchestrator_contract:
+            return self._build_competitive_positioning(agent)
         modules = self._build_module_conclusions()
         usable = self._usable()
         resilience = self._usable((self.resilience_agent_id,))
@@ -1288,6 +1317,63 @@ class _BoRun:
         return self._task(agent, orchestrator_input.as_prompt_inputs(), evidence_ids,
                           BO_ORCHESTRATOR_JSON_SCHEMA, parents)
 
+    def _build_competitive_positioning(self, agent):
+        from app.prompts.competitive_positioning import WRITER_SCHEMA
+        from app.services.bo.competitive_positioning import M1_IDS, build_input, evidence_ids
+
+        self._build_module_conclusions()  # all-module governance is unchanged
+        findings = [h for a in self.narrow_agent_ids for h in self.hypotheses.get(a, [])
+                    if not (a == self.resilience_agent_id and self._resilience_pending)]
+        limitations = [
+            {"field": f"agent:{a}", "state": c["status"], "detail": c["detail"]}
+            for a, c in self._coverage().items() if a in M1_IDS and c["status"] != "validated"]
+        limitations += [
+            {"field": f"retrieval:{g.query_id}", "state": "no_results",
+             "detail": f"No admitted passage matched ({g.purpose})."}
+            for a in M1_IDS for g in self.retrieval[a].gaps]
+        # Preserve bounded Agent 6 feedback gaps, without exposing unrelated modules.
+        for feedback in self.resilience_feedback[-1:]:
+            outstanding = feedback.get("outstanding_requests") or feedback.get("unresolved_requests") or []
+            if outstanding or feedback["status"] in {"retrieval_failed", "reconsideration_failed"}:
+                limitations.append({"field": "agent6_retrieval_feedback", "state": feedback["status"],
+                                    "detail": f"{len(outstanding)} outstanding searches; unfulfilled requests are not evidence."})
+            for gap in feedback.get("information_gaps", []):
+                if gap["unresolved"]:
+                    limitations.append({"field": "agent6_information_gap:" + gap["gap_id"],
+                                        "state": gap["outcome"], "detail": gap["original_gap"]})
+        for h in findings:
+            if h.agent_id in M1_IDS:
+                limitations.extend({"field": h.hypothesis_id, "state": "missing_information", "detail": m}
+                                   for m in h.missing_information)
+                if h.presentation_basis.get("open_question"):
+                    limitations.append({"field": h.hypothesis_id, "state": "unverified_material_question",
+                                        "detail": "Material matter remains an information gap, not an established finding: " + h.claim})
+        self.editorial_input = build_input(
+            identity={"case_id": self.case_id, "analysis_run_id": self.analysis_run_id,
+                      "evidence_snapshot_version": self.snapshot_version,
+                      "evidence_snapshot_hash": content_hash(self.evidence.model_dump(mode="json")),
+                      "as_of_date": self.evidence.as_of_date.isoformat() if self.evidence.as_of_date else None,
+                      "evidence_cutoff_timestamp": self.evidence.evidence_cutoff_timestamp.isoformat()
+                      if self.evidence.evidence_cutoff_timestamp else None},
+            hypotheses=findings, parameters=self._business_parameters(), indicators=self.indicators,
+            validated_runs={a: o.run_ids[-1] for a, o in self.agents.items()
+                            if a in M1_IDS and o.status == "validated" and o.run_ids},
+            coverage=self._coverage(), data_limitations=limitations,
+            challenge_feedback=self.feedback.get(agent.agent_id, []),
+            validation_feedback=self.orchestrator_validation_feedback)
+        ids = {h["hypothesis_id"] for h in self.editorial_input["hypotheses"]}
+        if not ids:
+            self.agents[agent.agent_id].detail = "No eligible validated Module 1 findings for Competitive Positioning."
+            return None
+        admitted = {e for h in findings if h.hypothesis_id in ids for e in evidence_ids(h)}
+        parents = [self.agents[a].run_ids[-1] for a in sorted(M1_IDS) if self.agents[a].run_ids]
+        from app.prompts import source_selection
+        if self.business_orchestrator_contract == source_selection.OUTPUT_VERSION:
+            self.editorial_input.update(schema_version=source_selection.INPUT_VERSION,
+                                       policy_version=source_selection.POLICY_VERSION)
+            return self._task(agent, self.editorial_input, admitted, source_selection.WRITER_SCHEMA, parents)
+        return self._task(agent, self.editorial_input, admitted, WRITER_SCHEMA, parents)
+
     def _build_challenger(self, agent):
         if self.conclusion is None or self.orchestrator_output is None:
             self.agents[agent.agent_id].detail = (
@@ -1319,8 +1405,34 @@ class _BoRun:
                 self.orchestrator_output, by_id),
             "coverage": self._coverage(),
         }
+        schema = BO_CHALLENGE_JSON_SCHEMA
+        if self.business_orchestrator_contract:
+            from app.prompts.competitive_positioning import CHALLENGER_SCHEMA
+            from app.services.bo.competitive_positioning import evidence_ids
+            source = self.editorial_input
+            by_id = {h["hypothesis_id"]: h for h in source["hypotheses"]}
+            inputs.update(
+                hypotheses_relied_on=[by_id[hid] for hid in relied if hid in by_id],
+                hypotheses_not_used=[h for hid, h in by_id.items() if hid not in relied],
+                audit_only_hypotheses=source["audit_only_hypotheses"],
+                contradictions=source["contradictions"], duplicate_groups=source["duplicate_groups"],
+                indicators=source["indicators"], coverage=source["coverage"],
+                data_limitations=source["data_limitations"],
+                input_contract=source["schema_version"], identity=source["identity"],
+                editorial_selection=copy.deepcopy(self.editorial_selection),
+                # Components can be omitted editorially while still cited as lineage.
+                omitted_hypotheses=[by_id[d["hypothesis_id"]] for d in self.orchestrator_output["selection_decisions"]
+                                    if d["decision"] == "omitted"])
+            admitted = {e for h in self._usable() if h.hypothesis_id in by_id for e in evidence_ids(h)}
+            admitted |= {e for h in self._audit_only() if h.agent_id in self.m1_primary_ids
+                         or h.agent_id == self.resilience_agent_id for e in evidence_ids(h)}
+            from app.prompts import source_selection
+            schema = (source_selection.CHALLENGER_SCHEMA if self.business_orchestrator_contract == source_selection.OUTPUT_VERSION
+                      else CHALLENGER_SCHEMA)
+            return self._task(agent, inputs, admitted, schema,
+                              [self.agents[BO_ORCHESTRATOR_ID].run_ids[-1]])
         evidence_ids = {e for h in by_id.values() for e in h.evidence_ids()}
-        return self._task(agent, inputs, evidence_ids, BO_CHALLENGE_JSON_SCHEMA,
+        return self._task(agent, inputs, evidence_ids, schema,
                           [self.agents[BO_ORCHESTRATOR_ID].run_ids[-1]])
 
     # -- result handling ------------------------------------------------------
@@ -1734,6 +1846,8 @@ class _BoRun:
         self.reconciliation = reconcile(usable, rejected)
 
     def _on_orchestrator(self, agent, parsed, run_id) -> None:
+        if self.business_orchestrator_contract:
+            self.editorial_selection = None
         by_id = {h.hypothesis_id: h for h in self._usable()}
         all_by_id = {h.hypothesis_id: h for a in self.narrow_agent_ids
                      for h in self.hypotheses.get(a, [])}
@@ -1741,26 +1855,51 @@ class _BoRun:
             *(r.parameter_result_id for r in self.indicators.results),
             *(p.parameter_result_id for p in self._business_parameters()),
         }
-        dropped = drop_uncited_claims(parsed)
+        if self.business_orchestrator_contract:
+            from app.services.bo.competitive_positioning import scoped_indicators
+            eligible_ids = {h["hypothesis_id"] for h in self.editorial_input["hypotheses"]}
+            all_by_id = {hid: h for hid, h in all_by_id.items() if hid in eligible_ids}
+            by_id = all_by_id
+            bounded = scoped_indicators(all_by_id.values(), self.indicators)
+            accepted_ids = {p["parameter_result_id"] for p in self.editorial_input["parameters"]}
+            accepted_ids.update(bounded.known_values())
+        dropped = [] if self.business_orchestrator_contract else drop_uncited_claims(parsed)
         included = (include_all_validated_findings(parsed, all_by_id)
-                    if self.roster_version == "v3" else [])
-        downgrades = downgrade_overstated_claim_types(parsed, all_by_id)
-        qualified = fill_missing_qualifications(parsed, all_by_id)
+                    if self.roster_version == "v3" and not self.business_orchestrator_contract else [])
+        downgrades = ([] if self.business_orchestrator_contract else
+                      downgrade_overstated_claim_types(parsed, all_by_id))
+        qualified = ([] if self.business_orchestrator_contract else
+                     fill_missing_qualifications(parsed, all_by_id))
         # Adjustments describe THIS answer; an earlier rejected one's do not carry.
         self.agents[agent.agent_id].adjustments = [*dropped, *included, *downgrades, *qualified]
-        module_values, module_quotes = governed_module_figures(self.module_conclusions)
-        checks = dict(
-            hypotheses=all_by_id, reconciliation=self.reconciliation,
-            indicators=self.indicators, accepted_parameter_ids=accepted_ids,
-            inserted_claim_ids={a["claim_id"] for a in included},
-            governed_values=[
-                *module_values,
-                *(float(p.value) for p in self._business_parameters()
-                  if isinstance(p.value, (int, float)) and not isinstance(p.value, bool))],
-            governed_quotes=module_quotes)
-        issues = validate_orchestrator_output(parsed, **checks)
+        from app.prompts import source_selection
+        selection_plan = None
+        if self.business_orchestrator_contract == source_selection.OUTPUT_VERSION:
+            from app.services.bo.source_selection import validate_plan, project
+            selection_plan = copy.deepcopy(parsed)
+            issues = validate_plan(parsed, self.editorial_input)
+            if not issues:
+                parsed = project(parsed, self.editorial_input)
+        elif self.business_orchestrator_contract:
+            from app.services.bo.competitive_positioning import validate_output
+            from app.schemas.agentic import ParameterResult
+            issues = validate_output(
+                parsed, hypotheses=list(all_by_id.values()), indicators=self.indicators,
+                parameters=[ParameterResult.model_validate(p) for p in self.editorial_input["parameters"]])
+        else:
+            module_values, module_quotes = governed_module_figures(self.module_conclusions)
+            checks = dict(
+                hypotheses=all_by_id, reconciliation=self.reconciliation,
+                indicators=self.indicators, accepted_parameter_ids=accepted_ids,
+                inserted_claim_ids={a["claim_id"] for a in included},
+                governed_values=[
+                    *module_values,
+                    *(float(p.value) for p in self._business_parameters()
+                      if isinstance(p.value, (int, float)) and not isinstance(p.value, bool))],
+                governed_quotes=module_quotes)
+            issues = validate_orchestrator_output(parsed, **checks)
         canonicalized_claims: list[str] = []
-        if self.rerun_reason == "orchestrator_validation_repair" and any(
+        if not self.business_orchestrator_contract and self.rerun_reason == "orchestrator_validation_repair" and any(
                 issue.startswith("evidence_exists:") for issue in issues):
             repaired = copy.deepcopy(parsed)
             evidence_issue_ids = {
@@ -1794,7 +1933,7 @@ class _BoRun:
                     } for claim_id in canonicalized_claims)
         conclusion = None
         advisory_issues: list[str] = []
-        if issues and not self.enforce_validators:
+        if issues and not self.enforce_validators and not self.business_orchestrator_contract:
             # Validators off: the synthesis stands; its issues are only recorded.
             advisory_issues, issues = issues, []
         if not issues:
@@ -1812,7 +1951,7 @@ class _BoRun:
                 validate_conclusion_provenance(
                     conclusion, accepted_parameter_ids=accepted_ids)
             except ConclusionProvenanceError as exc:
-                if self.enforce_validators:
+                if self.enforce_validators or self.business_orchestrator_contract == source_selection.OUTPUT_VERSION:
                     issues.append(f"provenance: {exc}")
                     conclusion = None
                 else:
@@ -1825,13 +1964,15 @@ class _BoRun:
             "status": ("rejected" if conclusion is None
                        else "accepted_unvalidated" if advisory_issues else "accepted"),
             "issues": list(issues),
-            "claims": len(iter_claims(parsed)),
+            "claims": len(iter_claims(parsed)) if not issues or selection_plan is None else 0,
             "hypotheses_available": len(by_id),
             "canonicalized_evidence_claims": canonicalized_claims,
             "claim_type_downgrades": [d["claim_id"] for d in downgrades],
             "dropped_uncited_claims": [d["claim_id"] for d in dropped],
             "added_qualifications": [d["claim_id"] for d in qualified],
             **({"advisory_issues": advisory_issues} if advisory_issues else {}),
+            **({"editorial_output": copy.deepcopy(parsed)} if self.business_orchestrator_contract else {}),
+            **({"selection_plan": selection_plan} if selection_plan is not None else {}),
         })
         if conclusion is None:
             self._reject(agent.agent_id, run_id, issues)
@@ -1844,6 +1985,15 @@ class _BoRun:
             conclusion, case_id=self.case_id, snapshot_version=self.snapshot_version)
         self.conclusion, self.conclusion_row_id = conclusion, row.id
         self.orchestrator_output = parsed
+        if self.business_orchestrator_contract:
+            from app.services.bo.competitive_positioning import audit_selection
+            self.editorial_selection = audit_selection(
+                parsed, orchestrator_run_id=run_id, conclusion_id=row.id)
+            if selection_plan is not None:
+                self.editorial_selection.update(schema_version=source_selection.OUTPUT_VERSION,
+                                                policy_version=source_selection.POLICY_VERSION,
+                                                selection_plan=copy.deepcopy(selection_plan))
+            self.orchestrator_history[-1]["editorial_selection"] = copy.deepcopy(self.editorial_selection)
         self.agents[agent.agent_id].status = "validated"
         self.agents[agent.agent_id].issues = []
 
@@ -1851,17 +2001,32 @@ class _BoRun:
         claim_ids = {c.get("claim_id") for _, c in iter_claims(self.orchestrator_output)}
         admitted = {e for h in self._usable() for e in h.evidence_ids()}
         admitted |= {e for h in self._audit_only() for e in h.evidence_ids()}
+        known_parameters = set(self.indicators.known_values())
+        allowed_agents = set(self.active_agent_ids)
+        owned_parameters = {p for spec in self.spec_by_agent.values() for p in spec.owned_parameters}
+        if self.business_orchestrator_contract:
+            from app.services.bo.competitive_positioning import M1_IDS, M1_PARAMETERS, evidence_ids
+            all_m1 = [h for a in M1_IDS for h in self.hypotheses.get(a, [])]
+            admitted = {e for h in all_m1 for e in evidence_ids(h)}
+            known_parameters = {i["parameter_result_id"] for i in self.editorial_input["indicators"]}
+            allowed_agents = {*M1_IDS, BO_ORCHESTRATOR_ID, BO_CHALLENGER_ID}
+            owned_parameters = set(M1_PARAMETERS)
         issues = validate_challenger_output(
             parsed, claim_ids=claim_ids, admitted_evidence_ids=admitted,
-            known_parameter_ids=set(self.indicators.known_values()),
-            allowed_agent_ids=set(self.active_agent_ids),
-            owned_parameter_ids={p for spec in self.spec_by_agent.values()
-                                 for p in spec.owned_parameters})
+            known_parameter_ids=known_parameters,
+            allowed_agent_ids=allowed_agents, owned_parameter_ids=owned_parameters)
+        if self.business_orchestrator_contract:
+            from app.services.bo.competitive_positioning import validate_review
+            issues += validate_review(parsed, self.orchestrator_output,
+                                      [h["hypothesis_id"] for h in self.editorial_input["hypotheses"]])
         entry: dict[str, Any] = {
             "round": self.round_index, "agent_run_id": run_id,
             "conclusion_id": self.conclusion_row_id,
             "model_stated_outcome": parsed.get("overall_outcome"),
             "summary": parsed.get("summary"),
+            **({"editorial_review": copy.deepcopy(parsed.get("editorial_review")),
+                "editorial_selection": copy.deepcopy(self.editorial_selection)}
+               if self.business_orchestrator_contract else {}),
         }
         if issues:
             self._reject(agent.agent_id, run_id, issues)
@@ -1905,6 +2070,8 @@ class _BoRun:
     # -- challenge + bounded remediation --------------------------------------
 
     def _challenge_phase(self) -> None:
+        if not self.independent_challenge_enabled:
+            return
         self._stage("challenger", {BO_CHALLENGER_ID})
         if not self.challenge_rounds:
             return
@@ -1977,6 +2144,7 @@ class _BoRun:
             self._resilience_stage("rerun_resilience", force=True)
         self._reconcile()
         self.conclusion, self.orchestrator_output = None, None
+        self.editorial_selection = None
         self._stage("rerun_orchestrator", {BO_ORCHESTRATOR_ID}, force=True)
         self._stage("rerun_challenger", {BO_CHALLENGER_ID}, force=True)
         self.rerun_reason = None
@@ -1995,6 +2163,8 @@ class _BoRun:
                 severity=Severity.MANDATORY,
                 reason="No validated Business Overview conclusion was produced.",
                 evidence_refs=[self.analysis_run_id], case_id=self.case_id)
+        elif not self.independent_challenge_enabled:
+            self.conclusion_status = "human_review_required"
         elif not challenged_current:
             self.conclusion_status = "human_review_required"
             self.escalation.raise_escalation(
@@ -2017,7 +2187,8 @@ class _BoRun:
             self.conclusion_status = "human_review_required"
 
         if self.conclusion is not None:
-            status = ("escalated" if self.conclusion_status == "human_review_required"
+            status = ("not_performed" if not self.independent_challenge_enabled else
+                      "escalated" if self.conclusion_status == "human_review_required"
                       else "reran" if self.remediation else "clean")
             self.conclusion = self.conclusion.model_copy(
                 update={"challenge_status": status})

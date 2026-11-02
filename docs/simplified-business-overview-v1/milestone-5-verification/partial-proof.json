@@ -1,0 +1,2197 @@
+{
+  "label": "partial",
+  "job_id": "efbb6642c2d4462caf26dd0d35a04f7e",
+  "analysis_run_id": "ar_8762bbee4d474387",
+  "dimensions": [
+    {
+      "width": 1440,
+      "bodyWidth": 1120,
+      "left": 217,
+      "right": 611.5625,
+      "structureTop": 165.40625,
+      "debtTop": 165.40625,
+      "openEvidence": 0
+    },
+    {
+      "width": 1024,
+      "bodyWidth": 1024,
+      "left": 57,
+      "right": 415.328125,
+      "structureTop": 165.40625,
+      "debtTop": 165.40625,
+      "openEvidence": 0
+    },
+    {
+      "width": 390,
+      "bodyWidth": 390,
+      "left": 39,
+      "right": 39,
+      "structureTop": 276.890625,
+      "debtTop": 1104.34375,
+      "openEvidence": 0
+    }
+  ],
+  "nativeEvidenceToggle": true,
+  "historyReopenedExactJob": true,
+  "jsonExportEqual": true,
+  "readsTriggeredNoModels": true,
+  "stageHashesUnchanged": true,
+  "pdfEndpointStatus": 501,
+  "proof": {
+    "job": {
+      "job_id": "efbb6642c2d4462caf26dd0d35a04f7e",
+      "status": "finished",
+      "execution_status": "completed",
+      "created_at": "2026-11-02T16:45:41.185130+00:00",
+      "started_at": "2026-11-02T16:45:41.186710+00:00",
+      "finished_at": "2026-11-02T16:45:41.884520+00:00",
+      "folder": "NFH 10-K FY2025",
+      "case_id": "NFH_BROWSER_VISUAL",
+      "bo_only": true,
+      "fo_only": false,
+      "bo_validators": true,
+      "stop_requested": false,
+      "result": {
+        "bo": {
+          "status": "completed",
+          "summary": {
+            "case_id": "NFH_BROWSER_VISUAL",
+            "analysis_run_id": "ar_8762bbee4d474387",
+            "scope": "business_overview_only",
+            "execution_mode": "offline_simulation",
+            "bo_roster": "v3",
+            "validators_enforced": true,
+            "conclusion_status": "human_review_required",
+            "human_review_status": "pending",
+            "has_synthesis": true,
+            "business_orchestrator_contract": "bo-competitive-positioning-output-1.0.0",
+            "editorial_selection_policy": "bo-editorial-selection-1.0.0",
+            "evidence_snapshot_version": 1,
+            "four_section_memo": {
+              "stage": "bo_four_section_memo:ar_8762bbee4d474387",
+              "schema_version": "bo-four-section-memo-1.0.0",
+              "sha256": "213711e77dd8a61437b0debf73b200a5a78ee5803ee5da72b0178ccfcea1217c",
+              "content_hash": "786c8911cd2808bbd0fb63d6d0b0efe94f1f7dd30394b3433e7772df820d0352"
+            },
+            "handoff_id": "bo_2e8b786f9fcf4f27",
+            "outputs": [
+              "/private/tmp/kiro_m5_browser_demo/out/bo/NFH_BROWSER_VISUAL/ar_8762bbee4d474387"
+            ],
+            "handoff_path": "/private/tmp/kiro_m5_browser_demo/out/bo/NFH_BROWSER_VISUAL/ar_8762bbee4d474387/handoff.json"
+          }
+        },
+        "fo": {
+          "status": "skipped",
+          "reason": "Business Overview only run."
+        },
+        "rms": {
+          "status": "skipped",
+          "reason": "Needs both sections; this run was Business Overview only."
+        },
+        "case_id": "NFH_BROWSER_VISUAL",
+        "folder": "NFH 10-K FY2025",
+        "cutoff": "2026-02-21T05:00:00+00:00"
+      },
+      "error": null,
+      "stages": {
+        "bo:foundation": {
+          "section": "bo",
+          "label": "Evidence preparation & management analysis",
+          "status": "completed",
+          "order": 10,
+          "detail": {
+            "module3": {
+              "structure": {
+                "status": "complete",
+                "validation_status": "passed",
+                "error": null
+              },
+              "management": {
+                "status": "complete",
+                "validation_status": "passed",
+                "error": null
+              }
+            }
+          },
+          "updated_at": "2026-11-02T16:45:41.488267+00:00",
+          "started_at": "2026-11-02T16:45:41.419091+00:00",
+          "finished_at": "2026-11-02T16:45:41.488270+00:00"
+        },
+        "bo:primary_specialists": {
+          "section": "bo",
+          "label": "Specialist analysis & validation",
+          "status": "completed",
+          "order": 20,
+          "detail": {
+            "round": 0,
+            "agents": {
+              "m1_competitive_durability": {
+                "status": "validated",
+                "detail": null,
+                "issues": []
+              },
+              "m2_industry": {
+                "status": "validated",
+                "detail": null,
+                "issues": []
+              },
+              "m1_pricing_power": {
+                "status": "validated",
+                "detail": null,
+                "issues": []
+              },
+              "m1_operating_model": {
+                "status": "validated",
+                "detail": null,
+                "issues": []
+              },
+              "m1_customer_stickiness": {
+                "status": "validated",
+                "detail": null,
+                "issues": []
+              },
+              "m4_strategy_capital": {
+                "status": "validated",
+                "detail": null,
+                "issues": []
+              },
+              "m1_revenue_quality": {
+                "status": "validated",
+                "detail": null,
+                "issues": []
+              }
+            },
+            "failed": {},
+            "skipped": {}
+          },
+          "updated_at": "2026-11-02T16:45:41.656309+00:00",
+          "started_at": "2026-11-02T16:45:41.490371+00:00",
+          "finished_at": "2026-11-02T16:45:41.656314+00:00"
+        },
+        "bo:reconciliation": {
+          "section": "bo",
+          "label": "Validation & reconciliation",
+          "status": "completed",
+          "order": 50,
+          "detail": null,
+          "updated_at": "2026-11-02T16:45:41.716433+00:00",
+          "started_at": "2026-11-02T16:45:41.715498+00:00",
+          "finished_at": "2026-11-02T16:45:41.716435+00:00"
+        },
+        "bo:orchestrator": {
+          "section": "bo",
+          "label": "Competitive Positioning writing & validation",
+          "status": "completed",
+          "order": 60,
+          "detail": {
+            "round": 0,
+            "agents": {
+              "business_orchestrator": {
+                "status": "validated",
+                "detail": null,
+                "issues": []
+              }
+            },
+            "failed": {},
+            "skipped": {}
+          },
+          "updated_at": "2026-11-02T16:45:41.755442+00:00",
+          "started_at": "2026-11-02T16:45:41.718339+00:00",
+          "finished_at": "2026-11-02T16:45:41.755446+00:00"
+        },
+        "bo:challenger": {
+          "section": "bo",
+          "label": "Independent challenge",
+          "status": "completed",
+          "order": 70,
+          "detail": {
+            "round": 0,
+            "agents": {
+              "business_challenge": {
+                "status": "validated",
+                "detail": null,
+                "issues": []
+              }
+            },
+            "failed": {},
+            "skipped": {}
+          },
+          "updated_at": "2026-11-02T16:45:41.770060+00:00",
+          "started_at": "2026-11-02T16:45:41.757955+00:00",
+          "finished_at": "2026-11-02T16:45:41.770062+00:00"
+        },
+        "bo:memo_preparation": {
+          "section": "bo",
+          "label": "Memo preparation",
+          "status": "completed",
+          "order": 90,
+          "detail": null,
+          "updated_at": "2026-11-02T16:45:41.871606+00:00",
+          "started_at": "2026-11-02T16:45:41.775735+00:00",
+          "finished_at": "2026-11-02T16:45:41.871612+00:00"
+        },
+        "bo:management_analysis_and_validator7": {
+          "section": "bo",
+          "label": "Management Analysis And Validator7",
+          "status": "completed",
+          "order": 15,
+          "detail": {
+            "module3": {
+              "structure": {
+                "status": "complete",
+                "validation_status": "passed",
+                "error": null
+              },
+              "management": {
+                "status": "complete",
+                "validation_status": "passed",
+                "error": null
+              }
+            }
+          },
+          "updated_at": "2026-11-02T16:45:41.486530+00:00",
+          "started_at": "2026-11-02T16:45:41.443516+00:00",
+          "finished_at": "2026-11-02T16:45:41.486533+00:00"
+        },
+        "bo:resilience": {
+          "section": "bo",
+          "label": "Resilience",
+          "status": "completed",
+          "order": 35,
+          "detail": {
+            "round": 0,
+            "agents": {
+              "m1_resilience_integration": {
+                "status": "validated",
+                "detail": null,
+                "issues": []
+              }
+            },
+            "failed": {},
+            "skipped": {}
+          },
+          "updated_at": "2026-11-02T16:45:41.686371+00:00",
+          "started_at": "2026-11-02T16:45:41.661349+00:00",
+          "finished_at": "2026-11-02T16:45:41.686376+00:00"
+        },
+        "bo:debt_specialist_and_validation": {
+          "section": "bo",
+          "label": "Debt Specialist And Validation",
+          "status": "completed",
+          "order": 45,
+          "detail": {
+            "status": "validated",
+            "validated": true,
+            "reason": null,
+            "validator_issues": []
+          },
+          "updated_at": "2026-11-02T16:45:41.714161+00:00",
+          "started_at": "2026-11-02T16:45:41.689389+00:00",
+          "finished_at": "2026-11-02T16:45:41.714164+00:00"
+        },
+        "bo:recorded_output": {
+          "section": "bo",
+          "label": "Recorded Output",
+          "status": "completed",
+          "order": 100,
+          "detail": {
+            "case_id": "NFH_BROWSER_VISUAL",
+            "analysis_run_id": "ar_8762bbee4d474387",
+            "scope": "business_overview_only",
+            "execution_mode": "offline_simulation",
+            "bo_roster": "v3",
+            "validators_enforced": true,
+            "conclusion_status": "human_review_required",
+            "human_review_status": "pending",
+            "has_synthesis": true,
+            "business_orchestrator_contract": "bo-competitive-positioning-output-1.0.0",
+            "editorial_selection_policy": "bo-editorial-selection-1.0.0",
+            "evidence_snapshot_version": 1,
+            "four_section_memo": {
+              "stage": "bo_four_section_memo:ar_8762bbee4d474387",
+              "schema_version": "bo-four-section-memo-1.0.0",
+              "sha256": "213711e77dd8a61437b0debf73b200a5a78ee5803ee5da72b0178ccfcea1217c",
+              "content_hash": "786c8911cd2808bbd0fb63d6d0b0efe94f1f7dd30394b3433e7772df820d0352"
+            },
+            "handoff_id": "bo_2e8b786f9fcf4f27",
+            "outputs": [
+              "/private/tmp/kiro_m5_browser_demo/out/bo/NFH_BROWSER_VISUAL/ar_8762bbee4d474387"
+            ],
+            "handoff_path": "/private/tmp/kiro_m5_browser_demo/out/bo/NFH_BROWSER_VISUAL/ar_8762bbee4d474387/handoff.json"
+          },
+          "updated_at": "2026-11-02T16:45:41.880884+00:00",
+          "finished_at": "2026-11-02T16:45:41.880890+00:00"
+        }
+      },
+      "events": [
+        {
+          "section": "bo",
+          "stage": "foundation",
+          "status": "running",
+          "detail": null,
+          "at": "2026-11-02T16:45:41.419093+00:00"
+        },
+        {
+          "section": "bo",
+          "stage": "management_analysis_and_validator7",
+          "status": "running",
+          "detail": null,
+          "at": "2026-11-02T16:45:41.443517+00:00"
+        },
+        {
+          "section": "bo",
+          "stage": "management_analysis_and_validator7",
+          "status": "completed",
+          "detail": {
+            "module3": {
+              "structure": {
+                "status": "complete",
+                "validation_status": "passed",
+                "error": null
+              },
+              "management": {
+                "status": "complete",
+                "validation_status": "passed",
+                "error": null
+              }
+            }
+          },
+          "at": "2026-11-02T16:45:41.486534+00:00"
+        },
+        {
+          "section": "bo",
+          "stage": "foundation",
+          "status": "completed",
+          "detail": {
+            "module3": {
+              "structure": {
+                "status": "complete",
+                "validation_status": "passed",
+                "error": null
+              },
+              "management": {
+                "status": "complete",
+                "validation_status": "passed",
+                "error": null
+              }
+            }
+          },
+          "at": "2026-11-02T16:45:41.488271+00:00"
+        },
+        {
+          "section": "bo",
+          "stage": "primary_specialists",
+          "status": "running",
+          "detail": null,
+          "at": "2026-11-02T16:45:41.490373+00:00"
+        },
+        {
+          "section": "bo",
+          "stage": "primary_specialists",
+          "status": "completed",
+          "detail": {
+            "round": 0,
+            "agents": {
+              "m1_competitive_durability": {
+                "status": "validated",
+                "detail": null,
+                "issues": []
+              },
+              "m2_industry": {
+                "status": "validated",
+                "detail": null,
+                "issues": []
+              },
+              "m1_pricing_power": {
+                "status": "validated",
+                "detail": null,
+                "issues": []
+              },
+              "m1_operating_model": {
+                "status": "validated",
+                "detail": null,
+                "issues": []
+              },
+              "m1_customer_stickiness": {
+                "status": "validated",
+                "detail": null,
+                "issues": []
+              },
+              "m4_strategy_capital": {
+                "status": "validated",
+                "detail": null,
+                "issues": []
+              },
+              "m1_revenue_quality": {
+                "status": "validated",
+                "detail": null,
+                "issues": []
+              }
+            },
+            "failed": {},
+            "skipped": {}
+          },
+          "at": "2026-11-02T16:45:41.656315+00:00"
+        },
+        {
+          "section": "bo",
+          "stage": "resilience",
+          "status": "running",
+          "detail": null,
+          "at": "2026-11-02T16:45:41.661350+00:00"
+        },
+        {
+          "section": "bo",
+          "stage": "resilience",
+          "status": "completed",
+          "detail": {
+            "round": 0,
+            "agents": {
+              "m1_resilience_integration": {
+                "status": "validated",
+                "detail": null,
+                "issues": []
+              }
+            },
+            "failed": {},
+            "skipped": {}
+          },
+          "at": "2026-11-02T16:45:41.686377+00:00"
+        },
+        {
+          "section": "bo",
+          "stage": "debt_specialist_and_validation",
+          "status": "running",
+          "detail": null,
+          "at": "2026-11-02T16:45:41.689390+00:00"
+        },
+        {
+          "section": "bo",
+          "stage": "debt_specialist_and_validation",
+          "status": "completed",
+          "detail": {
+            "status": "validated",
+            "validated": true,
+            "reason": null,
+            "validator_issues": []
+          },
+          "at": "2026-11-02T16:45:41.714166+00:00"
+        },
+        {
+          "section": "bo",
+          "stage": "reconciliation",
+          "status": "running",
+          "detail": null,
+          "at": "2026-11-02T16:45:41.715499+00:00"
+        },
+        {
+          "section": "bo",
+          "stage": "reconciliation",
+          "status": "completed",
+          "detail": null,
+          "at": "2026-11-02T16:45:41.716436+00:00"
+        },
+        {
+          "section": "bo",
+          "stage": "orchestrator",
+          "status": "running",
+          "detail": null,
+          "at": "2026-11-02T16:45:41.718340+00:00"
+        },
+        {
+          "section": "bo",
+          "stage": "orchestrator",
+          "status": "completed",
+          "detail": {
+            "round": 0,
+            "agents": {
+              "business_orchestrator": {
+                "status": "validated",
+                "detail": null,
+                "issues": []
+              }
+            },
+            "failed": {},
+            "skipped": {}
+          },
+          "at": "2026-11-02T16:45:41.755447+00:00"
+        },
+        {
+          "section": "bo",
+          "stage": "challenger",
+          "status": "running",
+          "detail": null,
+          "at": "2026-11-02T16:45:41.757957+00:00"
+        },
+        {
+          "section": "bo",
+          "stage": "challenger",
+          "status": "completed",
+          "detail": {
+            "round": 0,
+            "agents": {
+              "business_challenge": {
+                "status": "validated",
+                "detail": null,
+                "issues": []
+              }
+            },
+            "failed": {},
+            "skipped": {}
+          },
+          "at": "2026-11-02T16:45:41.770063+00:00"
+        },
+        {
+          "section": "bo",
+          "stage": "memo_preparation",
+          "status": "running",
+          "detail": null,
+          "at": "2026-11-02T16:45:41.775736+00:00"
+        },
+        {
+          "section": "bo",
+          "stage": "memo_preparation",
+          "status": "completed",
+          "detail": null,
+          "at": "2026-11-02T16:45:41.871614+00:00"
+        },
+        {
+          "section": "bo",
+          "stage": "recorded_output",
+          "status": "completed",
+          "detail": {
+            "case_id": "NFH_BROWSER_VISUAL",
+            "analysis_run_id": "ar_8762bbee4d474387",
+            "scope": "business_overview_only",
+            "execution_mode": "offline_simulation",
+            "bo_roster": "v3",
+            "validators_enforced": true,
+            "conclusion_status": "human_review_required",
+            "human_review_status": "pending",
+            "has_synthesis": true,
+            "business_orchestrator_contract": "bo-competitive-positioning-output-1.0.0",
+            "editorial_selection_policy": "bo-editorial-selection-1.0.0",
+            "evidence_snapshot_version": 1,
+            "four_section_memo": {
+              "stage": "bo_four_section_memo:ar_8762bbee4d474387",
+              "schema_version": "bo-four-section-memo-1.0.0",
+              "sha256": "213711e77dd8a61437b0debf73b200a5a78ee5803ee5da72b0178ccfcea1217c",
+              "content_hash": "786c8911cd2808bbd0fb63d6d0b0efe94f1f7dd30394b3433e7772df820d0352"
+            },
+            "handoff_id": "bo_2e8b786f9fcf4f27",
+            "outputs": [
+              "/private/tmp/kiro_m5_browser_demo/out/bo/NFH_BROWSER_VISUAL/ar_8762bbee4d474387"
+            ],
+            "handoff_path": "/private/tmp/kiro_m5_browser_demo/out/bo/NFH_BROWSER_VISUAL/ar_8762bbee4d474387/handoff.json"
+          },
+          "at": "2026-11-02T16:45:41.880893+00:00"
+        }
+      ],
+      "memo_status": "human_review_required",
+      "worker_tracking": "thread-v1",
+      "metadata": {
+        "company_id": "nfh-10-k-fy2025",
+        "company": "Northfield Health Systems (NFH) · FY2025",
+        "reporting_period": "2025-12-31",
+        "evidence_package": "NFH 10-K FY2025",
+        "validation_mode": "standard",
+        "scope": "bo",
+        "submitted_configuration": {
+          "folder": "NFH 10-K FY2025",
+          "case_id": "NFH_BROWSER_VISUAL",
+          "sections": "bo",
+          "cutoff": "2026-02-21T05:00:00+00:00",
+          "bo_validators": "on"
+        },
+        "approval_policy": "existing_review_and_approval_required",
+        "business_overview_workflow": {
+          "bo_roster": "v3",
+          "business_orchestrator_contract": "bo-competitive-positioning-output-1.0.0",
+          "editorial_selection_policy": "bo-editorial-selection-1.0.0"
+        }
+      },
+      "cutoff": "2026-02-21T05:00:00+00:00",
+      "business_overview_workflow": {
+        "bo_roster": "v3",
+        "business_orchestrator_contract": "bo-competitive-positioning-output-1.0.0",
+        "editorial_selection_policy": "bo-editorial-selection-1.0.0"
+      },
+      "sections": {
+        "bo": {
+          "status": "completed",
+          "step": "completed",
+          "steps": [
+            "routing the evidence",
+            "the Module 3 management assessment",
+            "primary specialists",
+            "resilience",
+            "the Module 4 debt specialist",
+            "orchestrator",
+            "challenger",
+            "writing the Business Overview",
+            "recording the Business Overview"
+          ],
+          "work": {
+            "done": 15,
+            "total": 15
+          }
+        },
+        "fo": {
+          "status": "skipped",
+          "step": "Business Overview only run.",
+          "steps": [],
+          "work": null
+        },
+        "rms": {
+          "status": "skipped",
+          "step": "Needs both sections; this run was Business Overview only.",
+          "steps": [],
+          "work": null
+        }
+      },
+      "cost": {
+        "bo": {
+          "calls": 0,
+          "tokens": 0,
+          "total_cost_usd": 0,
+          "priced_cost_usd": 0,
+          "unpriced_models": [],
+          "by_model": {},
+          "note": "Estimated from LLM_PRICES (USD per million tokens); not a provider invoice.",
+          "text": "no model calls"
+        },
+        "fo": {
+          "calls": 0,
+          "tokens": 0,
+          "total_cost_usd": 0,
+          "priced_cost_usd": 0,
+          "unpriced_models": [],
+          "by_model": {},
+          "note": "Estimated from LLM_PRICES (USD per million tokens); not a provider invoice.",
+          "text": "no model calls"
+        },
+        "m3": {
+          "calls": 0,
+          "tokens": 0,
+          "total_cost_usd": 0,
+          "priced_cost_usd": 0,
+          "unpriced_models": [],
+          "by_model": {},
+          "note": "Estimated from LLM_PRICES (USD per million tokens); not a provider invoice.",
+          "text": "no model calls"
+        },
+        "total": {
+          "calls": 0,
+          "tokens": 0,
+          "total_cost_usd": 0,
+          "priced_cost_usd": 0,
+          "unpriced_models": [],
+          "by_model": {},
+          "note": "Estimated from LLM_PRICES (USD per million tokens); not a provider invoice.",
+          "text": "no model calls"
+        }
+      },
+      "run_ids": {
+        "bo": "ar_8762bbee4d474387"
+      },
+      "artifacts": {
+        "bo": [
+          "/private/tmp/kiro_m5_browser_demo/out/bo/NFH_BROWSER_VISUAL/ar_8762bbee4d474387"
+        ]
+      }
+    },
+    "memo": {
+      "content_hash": "786c8911cd2808bbd0fb63d6d0b0efe94f1f7dd30394b3433e7772df820d0352",
+      "design_basis": {
+        "assembler_version": "bo-four-section-assembler-1.0.0",
+        "selection_policy_version": "bo-editorial-selection-1.0.0"
+      },
+      "document": "business_overview_four_section_memo",
+      "evidence_ui": {
+        "always_visible": [
+          "material_qualifications",
+          "simulation_or_unverified_structure_notice",
+          "completeness_warnings",
+          "unresolved_material_challenges",
+          "all_obligation_rows_and_business_columns"
+        ],
+        "detail_fields": [
+          "source_citations",
+          "evidence_quotes",
+          "calculation_traces",
+          "validation_records"
+        ],
+        "hide_inline_source_citations": true,
+        "initially_expanded": false,
+        "pattern": "native_details",
+        "static_pdf_evidence": "appendix"
+      },
+      "example_only": true,
+      "governance": {
+        "conclusion_status": "human_review_required",
+        "execution_mode": "offline_simulation",
+        "human_review_status": "pending",
+        "independent_challenge_status": "accepted",
+        "memo_completeness": "incomplete",
+        "validators_enforced": true,
+        "visible_warnings": [
+          "Offline/scripted execution; this is not evidence of live model analytical quality.",
+          "Educational structure is not a verified legal/obligor assessment. Management observations are bounded continuity rules, not competence/governance ratings.",
+          "THIS NORTHFIELD HEALTH SYSTEMS ORGANISATION CHART IS A SIMULATED EDUCATIONAL EXAMPLE. Listed legal entities, ownership percentages, borrower designation and guarantor assignments are authoritative educational case assumptions and must not be described as verified actual corporate structure.",
+          "Debt population is preserved as supplied; recorded validation does not establish completeness beyond source scope.",
+          "Educational structure is not a verified legal/obligor assessment. Management observations are bounded continuity rules, not competence/governance ratings.",
+          "Company and fiscal period were confirmed from the admitted SEC filing metadata (form 10-K, CIK 1), not from cover-page text. HTML passages have no pages; citations give page 1 and the passage offset.",
+          "Offline fixture; qualitative model performance not tested.",
+          "Validator 7 used a saved/offline reviewer response; this execution does not verify live reviewer model performance.",
+          "Competitor staffing data are unavailable.",
+          "Competitor staffing data",
+          "industry: No governed M2 industry findings are available."
+        ]
+      },
+      "identity": {
+        "analysis_run_id": "ar_8762bbee4d474387",
+        "as_of_date": "2025-12-31",
+        "case_id": "NFH_BROWSER_VISUAL",
+        "conclusion_id": "tc_5110c76802c94aa2",
+        "evidence_cutoff_timestamp": "2026-02-21T05:00:00+00:00",
+        "evidence_snapshot_hash": "3552f3cb613fa20a3a021a730d2fe8421947758661c4d8c37fd52ec51f79d13b",
+        "evidence_snapshot_version": 1,
+        "orchestrator_run_id": "c5096e63-a0c3-43c0-b9f0-27bc45e2eeab",
+        "reporting_company": "Northfield Health Systems"
+      },
+      "schema_version": "bo-four-section-memo-1.0.0",
+      "sections": [
+        {
+          "debt_obligations": {
+            "content": {
+              "creditor_priority_framework": {
+                "consolidated_total_indebtedness_m": 46492,
+                "prospective_loan_secured_placement": "A secured bank loan would rank in Tier 1 ahead of the $43.7B senior unsecured notes, benefiting from direct OpCo collateral.",
+                "prospective_loan_senior_unsecured_placement": "A senior unsecured bank loan would rank pari passu with the existing Tier 2 senior unsecured notes, sharing the Northfield Health Systems upstream guarantee.",
+                "structural_subordination_drag_ratio": 0.022,
+                "tier_1_direct_opco_secured_m": 1021,
+                "tier_2_senior_unsecured_guaranteed_m": 45471,
+                "tier_3_unguaranteed_holdco_m": 0
+              },
+              "extraction_source": {
+                "item_references": [
+                  "Item 7 MD&A",
+                  "Item 8 Note 8",
+                  "Item 15 Exhibit 4.x"
+                ],
+                "narrative": "Debt population drawn from Item 8 Financial Statements, Note 8 (Long-Term Debt), cross-referenced to Item 7 MD&A Liquidity & Capital Resources and the Item 15 Exhibit Index supplemental indentures (Exhibits 4.44-4.53).",
+                "page_references": [
+                  "F-18",
+                  "F-19",
+                  "57"
+                ]
+              },
+              "non_note_obligations_schedule": [
+                {
+                  "available_facility_limit_m": 4000,
+                  "collateral_security_status": "unsecured",
+                  "guarantors_credit_support": "Northfield Health Systems guarantee",
+                  "interest_rate_terms": "4.3% weighted average; 18-day average life",
+                  "legal_borrower": "Northfield Operating Company",
+                  "maturity": "Short-term",
+                  "obligation_facility": "Commercial paper program",
+                  "principal_drawn_m": 2207,
+                  "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed"
+                },
+                {
+                  "available_facility_limit_m": null,
+                  "collateral_security_status": "secured",
+                  "guarantors_credit_support": "Secured at operating subsidiary level",
+                  "interest_rate_terms": "4.6% effective",
+                  "legal_borrower": "Northfield Operating Company",
+                  "maturity": "Various",
+                  "obligation_facility": "Other senior secured debt (finance leases + other)",
+                  "principal_drawn_m": 1021,
+                  "priority_ranking_tier": "tier_1_direct_opco_secured"
+                },
+                {
+                  "available_facility_limit_m": 8000,
+                  "collateral_security_status": "unsecured",
+                  "guarantors_credit_support": "Northfield Health Systems guarantee",
+                  "interest_rate_terms": "SOFR + 1.125%",
+                  "legal_borrower": "Northfield Operating Company",
+                  "maturity": "2030",
+                  "obligation_facility": "Senior unsecured revolving credit facility (5-year)",
+                  "principal_drawn_m": 0,
+                  "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed"
+                },
+                {
+                  "available_facility_limit_m": 1000,
+                  "collateral_security_status": "unsecured",
+                  "guarantors_credit_support": "Northfield Health Systems guarantee",
+                  "interest_rate_terms": "SOFR + 1.25%",
+                  "legal_borrower": "Northfield Operating Company",
+                  "maturity": "2030",
+                  "obligation_facility": "Additional receivables credit facility",
+                  "principal_drawn_m": 0,
+                  "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed"
+                }
+              ],
+              "reconciling_items": [
+                {
+                  "amount_m": -436,
+                  "evidence_id": "UNRESOLVED:Debt issuance costs and discounts (436)",
+                  "kind": "debt_issuance_costs_and_discounts",
+                  "label": "Debt issuance costs and discounts",
+                  "quote": "Debt issuance costs and discounts (436)"
+                }
+              ],
+              "senior_notes_schedule": [
+                {
+                  "collateral_security_status": "unsecured",
+                  "coupon_interest_rate": "5.000% fixed",
+                  "guarantors_credit_support": "Fully and unconditionally guaranteed on an unsecured basis by Northfield Health Systems",
+                  "legal_borrower": "Northfield Operating Company",
+                  "maturity_year": 2028,
+                  "principal_amount_m": 700,
+                  "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed",
+                  "senior_note_series": "5.000% Senior Notes"
+                },
+                {
+                  "collateral_security_status": "unsecured",
+                  "coupon_interest_rate": "5.250% fixed",
+                  "guarantors_credit_support": "Fully and unconditionally guaranteed on an unsecured basis by Northfield Health Systems",
+                  "legal_borrower": "Northfield Operating Company",
+                  "maturity_year": 2030,
+                  "principal_amount_m": 750,
+                  "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed",
+                  "senior_note_series": "5.250% Senior Notes"
+                },
+                {
+                  "collateral_security_status": "unsecured",
+                  "coupon_interest_rate": "5.750% fixed",
+                  "guarantors_credit_support": "Fully and unconditionally guaranteed on an unsecured basis by Northfield Health Systems",
+                  "legal_borrower": "Northfield Operating Company",
+                  "maturity_year": 2035,
+                  "principal_amount_m": 1500,
+                  "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed",
+                  "senior_note_series": "5.750% Senior Notes"
+                },
+                {
+                  "collateral_security_status": "unsecured",
+                  "coupon_interest_rate": "6.200% fixed",
+                  "guarantors_credit_support": "Fully and unconditionally guaranteed on an unsecured basis by Northfield Health Systems",
+                  "legal_borrower": "Northfield Operating Company",
+                  "maturity_year": 2055,
+                  "principal_amount_m": 1250,
+                  "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed",
+                  "senior_note_series": "6.200% Senior Notes"
+                },
+                {
+                  "collateral_security_status": "unsecured",
+                  "coupon_interest_rate": "various fixed, 5.1% effective",
+                  "guarantors_credit_support": "Fully and unconditionally guaranteed on an unsecured basis by Northfield Health Systems",
+                  "legal_borrower": "Northfield Operating Company",
+                  "maturity_year": 2064,
+                  "principal_amount_m": 39050,
+                  "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed",
+                  "senior_note_series": "Other senior unsecured notes (2026-2064)"
+                },
+                {
+                  "collateral_security_status": "unsecured",
+                  "coupon_interest_rate": "7.19% weighted average",
+                  "guarantors_credit_support": "Fully and unconditionally guaranteed on an unsecured basis by Northfield Health Systems",
+                  "legal_borrower": "Northfield Operating Company",
+                  "maturity_year": 2095,
+                  "principal_amount_m": 450,
+                  "priority_ranking_tier": "tier_2_senior_unsecured_guaranteed",
+                  "senior_note_series": "Debentures (maturities through 2095)"
+                }
+              ]
+            },
+            "recorded_status": "validated",
+            "source_ref": "debt",
+            "status": "complete",
+            "validation_status": "passed",
+            "visible_warnings": [
+              "Debt population is preserved as supplied; recorded validation does not establish completeness beyond source scope."
+            ]
+          },
+          "id": "corporate_structure_debt_obligations",
+          "layout": "structure_left_debt_right",
+          "status": "complete",
+          "structure": {
+            "content": {
+              "artifact_type": "llm_reproducible_corporate_structure_diagrams",
+              "companies": {
+                "Northfield_Health_Systems": {
+                  "company_display_name": "Northfield Health Systems",
+                  "connector_paths": [
+                    {
+                      "child_id": "OPCO",
+                      "label": {
+                        "x_px": 728,
+                        "y_px": 484
+                      },
+                      "parent_id": "NFH",
+                      "points": [
+                        [
+                          720,
+                          412
+                        ],
+                        [
+                          720,
+                          500
+                        ]
+                      ]
+                    }
+                  ],
+                  "layout_note": "Disjoint 260 px leaf slots; 200 px levels; canvas expands without node compression.",
+                  "nodes": [
+                    {
+                      "box": {
+                        "center_x_px": 720,
+                        "height_px": 112,
+                        "top_y_px": 300,
+                        "width_px": 220
+                      },
+                      "display_name": "Northfield Health Systems",
+                      "id": "NFH",
+                      "is_guarantor": false,
+                      "role": "Borrower"
+                    },
+                    {
+                      "box": {
+                        "center_x_px": 720,
+                        "height_px": 112,
+                        "top_y_px": 500,
+                        "width_px": 220
+                      },
+                      "display_name": "Northfield Operating Company",
+                      "id": "OPCO",
+                      "is_guarantor": true,
+                      "role": "OpCo"
+                    }
+                  ],
+                  "ownership_links": [
+                    {
+                      "child_id": "OPCO",
+                      "ownership_percent": 100,
+                      "parent_id": "NFH"
+                    }
+                  ],
+                  "plain_text_tree": "Northfield Health Systems (Borrower)\n└── 100% → Northfield Operating Company (OpCo) [GUARANTOR SHIELD]",
+                  "root_node_id": "NFH",
+                  "simulation_status": "simulated_educational_example"
+                }
+              },
+              "completion_status": "complete",
+              "how_to_use": [
+                "This file contains one case only: companies.Northfield_Health_Systems. Other companies must be supplied through their own separate single-company corporate-structure JSON files using this same schema.",
+                "Select the sole company entry and draw the structure from its nodes, ownership_links and visual_spec; do not infer or invent missing nodes or relationships.",
+                "Use display_name exactly, including punctuation and capitalization, and show role below each company name.",
+                "Render percentage labels only from ownership_links, and never infer unstated ownership.",
+                "Draw a shield when and only when is_guarantor=true.",
+                "Draw only the corporate structure, title, subtitle, legend and simulation footnote. No debt table, financial analysis, proposed loan, bank branding or other panels.",
+                "If the rendering system does not support precise pixel positioning, preserve hierarchy, left-to-right sibling order, node grouping, percentage labels and shield markers.",
+                "Never use this example unless it has been explicitly uploaded or associated with the current Northfield Health Systems analysis case; do not use it to infer any other company structure."
+              ],
+              "provenance": {
+                "assumption_status": "simulated",
+                "authority": "submitted case assumptions; no independent legal verification",
+                "canonical_snapshot_version": 1,
+                "converter_version": "m3-rebuild-1.0",
+                "data_status": "simulated_educational_example",
+                "declared_status": "simulated_educational_example",
+                "evidence_packet_hash": "6cc1c352a56abfaed0d46e29ae929845931480e0d74cac28c673c0c3cc56dd99",
+                "input_document_id": "0a160b0f0fc7e9dd0399a6098c3142ab7e576df57e0c270445f103d10b8f0cb9",
+                "input_schema_version": "1.0",
+                "payload_sha256": "d68b8467d11e0b034020d32794c370d4a4f3bb17468fe0da03f77110ab8cfcf0",
+                "reporting_company": "Northfield Health Systems",
+                "source_sha256": "55ee1c0dac8240bbfae9837e3add0178edc8531e2d60c12f21a6cac0a08368eb",
+                "structured_evidence_id": "68579e89fa8a12c71a7d4d335338e36105db3f48a3eed6b7a1baae6a6af36dd3"
+              },
+              "purpose": "Reproduce only the submitted corporate ownership structure and its provenance.",
+              "revision_notes": [
+                "Deterministic conversion from submitted schema 1.0; exact IDs, roles, ownership, record types and guarantor flags retained.",
+                "Reference visual design with explicit canvas expansion for larger trees."
+              ],
+              "schema_version": "2.0",
+              "simulation_disclaimer": "THIS NORTHFIELD HEALTH SYSTEMS ORGANISATION CHART IS A SIMULATED EDUCATIONAL EXAMPLE. Listed legal entities, ownership percentages, borrower designation and guarantor assignments are authoritative educational case assumptions and must not be described as verified actual corporate structure.",
+              "visual_spec": {
+                "canvas": {
+                  "aspect_ratio": "1440:1080",
+                  "background_hex": "#FFFFFF",
+                  "height_px": 1080,
+                  "width_px": 1440
+                },
+                "colors_by_role": {
+                  "Borrower": "#C25A13",
+                  "HoldCo": "#B34B08",
+                  "JV": "#A7A7A7",
+                  "OpCo": "#D99337",
+                  "Other": "#A7A7A7",
+                  "Parent / Borrower": "#74150F",
+                  "Parent Co": "#74150F"
+                },
+                "footer": {
+                  "color_hex": "#6A6A6A",
+                  "font_size_px": 16,
+                  "text": "Illustrative only — simulated legal entities, ownership stakes and guarantor assignments; not actual corporate information.",
+                  "x_px": 30,
+                  "y_px": 1038
+                },
+                "header": {
+                  "subtitle_color_hex": "#142340",
+                  "subtitle_font_size_px": 26,
+                  "subtitle_format": "{company_display_name} (Illustrative / Simulated)",
+                  "subtitle_position": {
+                    "x_px": 34,
+                    "y_px": 92
+                  },
+                  "title": "Corporate Structure",
+                  "title_color_hex": "#142340",
+                  "title_font_size_px": 53,
+                  "title_position": {
+                    "x_px": 32,
+                    "y_px": 26
+                  }
+                },
+                "legend": {
+                  "background_hex": "#F7F9FB",
+                  "border_hex": "#C8D4DF",
+                  "entries": [
+                    {
+                      "color_hex": "#74150F",
+                      "label": "Parent Co"
+                    },
+                    {
+                      "color_hex": "#B34B08",
+                      "label": "HoldCo"
+                    },
+                    {
+                      "color_hex": "#C25A13",
+                      "label": "Borrower"
+                    },
+                    {
+                      "color_hex": "#D99337",
+                      "label": "Operating Co"
+                    },
+                    {
+                      "color_hex": "#A7A7A7",
+                      "label": "Other / JV"
+                    },
+                    {
+                      "label": "Illustrative guarantor",
+                      "symbol": "outlined shield with checkmark"
+                    }
+                  ],
+                  "height_px": 250,
+                  "width_px": 255,
+                  "x_px": 1155,
+                  "y_px": 25
+                },
+                "negative_requirements": [
+                  "No JPMorgan or any other bank name.",
+                  "No loan arrows or proposed-loan callouts.",
+                  "No debt obligations list.",
+                  "No credit commentary or bottom callout panels.",
+                  "No financial metrics, data tables, or invented numbers.",
+                  "No spell-check underlines or image watermarks.",
+                  "No extra header disclaimer line below the subtitle.",
+                  "No legend footnote or legend note outside the listed legend entries.",
+                  "For single-child relationships, no bent, stepped or diagonal-looking connectors."
+                ],
+                "node_style": {
+                  "corner_radius_px": 18,
+                  "fill": "look up colors_by_role using node.role",
+                  "guarantor_shield": {
+                    "display_when": "node.is_guarantor is true",
+                    "fill": "none",
+                    "position": "inside node near lower-right corner",
+                    "shape": "outlined shield with checkmark",
+                    "size_px": 32,
+                    "stroke_hex": "#000000"
+                  },
+                  "horizontal_alignment": "center",
+                  "name_font": "Arial or Aptos Bold",
+                  "name_font_size_px": 19,
+                  "name_wrapping": "Wrap long names into 2-3 centered lines within their rectangle. Reduce size to 15 px only when needed to prevent overflow.",
+                  "role_font_size_px": 17,
+                  "role_format": "({role})",
+                  "role_name_override": "If role is Parent / Borrower, show (Parent / Borrower) exactly.",
+                  "shape": "rounded_rectangle",
+                  "text_color_hex": "#FFFFFF",
+                  "vertical_alignment": "center"
+                },
+                "ownership_links_style": {
+                  "avoid": "Crossed lines, arrowheads, percent labels disconnected from their links, ambiguous step-parent relationships.",
+                  "bus_exception_rule": "Use a horizontal bus only when a parent has two or more children.",
+                  "bus_y_rule": "Bus lies approximately midway between the parent bottom and child top; do not overlap any node.",
+                  "line_color_hex": "#141414",
+                  "line_width_px": 3,
+                  "percentage_label": {
+                    "applies_to": "one specified parent-child link only",
+                    "font_color_hex": "#111111",
+                    "font_size_px": 19,
+                    "format": "{ownership_percent}%",
+                    "location": "beside child-specific vertical drop, above child box"
+                  },
+                  "sibling_grouping": "For multiple children, draw one horizontal bus per parent with individual vertical drops to each child; all drops attach to the same parent.",
+                  "single_child_alignment_rule": "For any one-to-one parent-child relationship, the child node center_x_px must equal the parent node center_x_px. If supplied coordinates differ slightly, snap the child to the parent centerline.",
+                  "single_child_rule": "If a parent has exactly one child, do not draw a horizontal bus. Draw one perfectly straight vertical connector from the parent bottom center to the child top center, with no elbow, no jog and no lateral offset.",
+                  "style": "black orthogonal (right-angle) connector from bottom center of parent node to top center of child node"
+                }
+              }
+            },
+            "recorded_status": "complete",
+            "source_ref": "structure",
+            "status": "complete",
+            "validation_status": "passed",
+            "visible_warnings": [
+              "Educational structure is not a verified legal/obligor assessment. Management observations are bounded continuity rules, not competence/governance ratings.",
+              "THIS NORTHFIELD HEALTH SYSTEMS ORGANISATION CHART IS A SIMULATED EDUCATIONAL EXAMPLE. Listed legal entities, ownership percentages, borrower designation and guarantor assignments are authoritative educational case assumptions and must not be described as verified actual corporate structure."
+            ]
+          },
+          "title": "Corporate Structure & Debt Obligations",
+          "visible_warnings": [
+            "Educational structure is not a verified legal/obligor assessment. Management observations are bounded continuity rules, not competence/governance ratings.",
+            "THIS NORTHFIELD HEALTH SYSTEMS ORGANISATION CHART IS A SIMULATED EDUCATIONAL EXAMPLE. Listed legal entities, ownership percentages, borrower designation and guarantor assignments are authoritative educational case assumptions and must not be described as verified actual corporate structure.",
+            "Debt population is preserved as supplied; recorded validation does not establish completeness beyond source scope."
+          ]
+        },
+        {
+          "content": {
+            "artifact_type": "senior_management_assessment",
+            "citations": [
+              {
+                "citation_id": "cite:5bdd5877ebb0d6aa",
+                "document_id": "9397c5dfdffa435b8003b449bfd38d968723cdca80a35a618824b6692acc72a6",
+                "matching_method": "exact",
+                "normalized_quote": "As of January 10, 2026, our executive officers were as follows:",
+                "original_source_text": "As of January 10, 2026, our executive officers were as follows:",
+                "outcome": "accepted",
+                "page_char_end": 3181,
+                "page_char_start": 3118,
+                "passage_offset": 3071,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "As of January 10, 2026, our executive officers were as follows:",
+                "source_id": "503f1717501a1066e065699d35f240c8589ec9e4e544c5e0fc43af75119c0602",
+                "source_sha256": "0085eff9cbea286612eea7b155180bd08a4cb17d0785d411f171e8293242138e",
+                "span_end": 110,
+                "span_start": 47
+              },
+              {
+                "citation_id": "cite:541e844939162df2",
+                "document_id": "9397c5dfdffa435b8003b449bfd38d968723cdca80a35a618824b6692acc72a6",
+                "matching_method": "exact",
+                "normalized_quote": "Alex Sample........ 50 Chief Executive Officer",
+                "original_source_text": "Alex Sample........ 50 Chief Executive Officer",
+                "outcome": "accepted",
+                "page_char_end": 3228,
+                "page_char_start": 3182,
+                "passage_offset": 3071,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Alex Sample........ 50 Chief Executive Officer",
+                "source_id": "503f1717501a1066e065699d35f240c8589ec9e4e544c5e0fc43af75119c0602",
+                "source_sha256": "0085eff9cbea286612eea7b155180bd08a4cb17d0785d411f171e8293242138e",
+                "span_end": 157,
+                "span_start": 111
+              },
+              {
+                "citation_id": "cite:0364f966b5065ac0",
+                "document_id": "9397c5dfdffa435b8003b449bfd38d968723cdca80a35a618824b6692acc72a6",
+                "matching_method": "exact",
+                "normalized_quote": "Alex Sample was appointed Chief Executive Officer effective May 1, 2025.",
+                "original_source_text": "Alex Sample was appointed Chief Executive Officer effective May 1, 2025.",
+                "outcome": "accepted",
+                "page_char_end": 3301,
+                "page_char_start": 3229,
+                "passage_offset": 3071,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Alex Sample was appointed Chief Executive Officer effective May 1, 2025.",
+                "source_id": "503f1717501a1066e065699d35f240c8589ec9e4e544c5e0fc43af75119c0602",
+                "source_sha256": "0085eff9cbea286612eea7b155180bd08a4cb17d0785d411f171e8293242138e",
+                "span_end": 230,
+                "span_start": 158
+              },
+              {
+                "citation_id": "cite:1db6db38a1115d92",
+                "document_id": "9397c5dfdffa435b8003b449bfd38d968723cdca80a35a618824b6692acc72a6",
+                "matching_method": "exact",
+                "normalized_quote": "Alex Sample previously served as President of the Company from January 2020 through April 2025.",
+                "original_source_text": "Alex Sample previously served as President of the Company from January 2020 through April 2025.",
+                "outcome": "accepted",
+                "page_char_end": 3397,
+                "page_char_start": 3302,
+                "passage_offset": 3071,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Alex Sample previously served as President of the Company from January 2020 through April 2025.",
+                "source_id": "503f1717501a1066e065699d35f240c8589ec9e4e544c5e0fc43af75119c0602",
+                "source_sha256": "0085eff9cbea286612eea7b155180bd08a4cb17d0785d411f171e8293242138e",
+                "span_end": 326,
+                "span_start": 231
+              }
+            ],
+            "company": "Northfield Health Systems",
+            "completion_status": "complete",
+            "coverage": {
+              "admitted": 1,
+              "expected": 1,
+              "missing": [],
+              "verifiable": true
+            },
+            "facts": [
+              {
+                "citation_ids": [
+                  "cite:0364f966b5065ac0"
+                ],
+                "executive": "Alex Sample",
+                "fact_id": "fact:1",
+                "statement": "Alex Sample was appointed Chief Executive Officer effective May 1, 2025."
+              }
+            ],
+            "filing_period": "2025-12-31",
+            "limitations": [
+              "Company and fiscal period were confirmed from the admitted SEC filing metadata (form 10-K, CIK 1), not from cover-page text. HTML passages have no pages; citations give page 1 and the passage offset.",
+              "Offline fixture; qualitative model performance not tested.",
+              "Validator 7 used a saved/offline reviewer response; this execution does not verify live reviewer model performance."
+            ],
+            "model_assessment": {
+              "explanation": "Offline authored assessment: continuity benefits and potential transition uncertainty require outcome evidence.",
+              "missing_information": [],
+              "signal": "mixed",
+              "supporting_judgment_ids": [
+                "A:1",
+                "E:1"
+              ],
+              "uncertainties": []
+            },
+            "observations": [
+              {
+                "category": "transition",
+                "citation_ids": [
+                  "cite:0364f966b5065ac0"
+                ],
+                "direction": "negative",
+                "executive": "Alex Sample",
+                "observation_id": "A:1",
+                "review_outcome": "accepted",
+                "review_reason": "Explicit offline reviewer fixture: declared facts support the bounded test interpretation.",
+                "rule": "validator_7_review",
+                "signal": "credit_negative",
+                "supporting_fact_ids": [
+                  "fact:1"
+                ],
+                "text": "Recent significant appointment creates potential transition uncertainty; it does not establish a departure, repeated turnover or disruption.",
+                "uncertainties": [
+                  "Biography does not demonstrate realized financial effects."
+                ]
+              },
+              {
+                "category": "continuity",
+                "citation_ids": [
+                  "cite:0364f966b5065ac0"
+                ],
+                "direction": "positive",
+                "executive": "Alex Sample",
+                "observation_id": "E:1",
+                "review_outcome": "accepted",
+                "review_reason": "Explicit offline reviewer fixture: declared facts support the bounded test interpretation.",
+                "rule": "validator_7_review",
+                "signal": "credit_positive",
+                "supporting_fact_ids": [
+                  "fact:1"
+                ],
+                "text": "Supported internal experience mitigates potential transition uncertainty.",
+                "uncertainties": [
+                  "Biography does not demonstrate realized financial effects."
+                ]
+              }
+            ],
+            "overall_assessment": {
+              "information_direction": "unavailable",
+              "information_gaps": true,
+              "outcome": "mixed",
+              "policy": "Offline authored assessment: continuity benefits and potential transition uncertainty require outcome evidence."
+            },
+            "profiles": [
+              {
+                "appointment_date": "2025-05-01",
+                "appointment_precision": "day",
+                "citation_ids": [
+                  "cite:541e844939162df2",
+                  "cite:0364f966b5065ac0",
+                  "cite:1db6db38a1115d92"
+                ],
+                "name": "Alex Sample",
+                "position": "Chief Executive Officer",
+                "prior_internal_roles": [
+                  {
+                    "citation_ids": [
+                      "cite:1db6db38a1115d92"
+                    ],
+                    "end_date": "2025-04",
+                    "end_precision": "month",
+                    "position": "President of the Company",
+                    "start_date": "2020-01",
+                    "start_precision": "month"
+                  }
+                ],
+                "recency": "recent",
+                "roster_position": "Chief Executive Officer",
+                "semantic_support_check": "passed_bounded_rules",
+                "succession": "internal",
+                "tenure": {
+                  "as_of": "2026-01-10",
+                  "basis": "Calculated from accepted appointment claim at disclosed precision",
+                  "maximum_days": 254,
+                  "minimum_days": 254
+                }
+              }
+            ],
+            "rejected_profiles": [],
+            "review_window": {
+              "boundary": "inclusive [start, end]",
+              "end": "2026-01-10",
+              "start": "2023-01-10",
+              "years": 3
+            },
+            "roster_citation_id": "cite:5bdd5877ebb0d6aa",
+            "roster_date": "2026-01-10",
+            "schema_version": "m3-management-assessment-3.0",
+            "source": {
+              "path": "sec-inline-xbrl:9397c5dfdffa435b8003b449bfd38d968723cdca80a35a618824b6692acc72a6",
+              "section_ids": [
+                "503f1717501a1066e065699d35f240c8589ec9e4e544c5e0fc43af75119c0602"
+              ],
+              "sha256": "0085eff9cbea286612eea7b155180bd08a4cb17d0785d411f171e8293242138e"
+            },
+            "validation": {
+              "claim_results": [
+                {
+                  "citation_ids": [
+                    "cite:5bdd5877ebb0d6aa"
+                  ],
+                  "citation_results": [
+                    {
+                      "document_id": "9397c5dfdffa435b8003b449bfd38d968723cdca80a35a618824b6692acc72a6",
+                      "matching_method": "exact",
+                      "normalized_quote": "As of January 10, 2026, our executive officers were as follows:",
+                      "original_source_text": "As of January 10, 2026, our executive officers were as follows:",
+                      "outcome": "accepted",
+                      "page_char_end": 3181,
+                      "page_char_start": 3118,
+                      "passage_offset": 3071,
+                      "physical_page": 1,
+                      "quotation_check": "passed",
+                      "quote": "As of January 10, 2026, our executive officers were as follows:",
+                      "source_id": "503f1717501a1066e065699d35f240c8589ec9e4e544c5e0fc43af75119c0602",
+                      "source_sha256": "0085eff9cbea286612eea7b155180bd08a4cb17d0785d411f171e8293242138e",
+                      "span_end": 110,
+                      "span_start": 47
+                    }
+                  ],
+                  "citations": [
+                    {
+                      "document_id": "9397c5dfdffa435b8003b449bfd38d968723cdca80a35a618824b6692acc72a6",
+                      "matching_method": "exact",
+                      "normalized_quote": "As of January 10, 2026, our executive officers were as follows:",
+                      "original_source_text": "As of January 10, 2026, our executive officers were as follows:",
+                      "outcome": "accepted",
+                      "page_char_end": 3181,
+                      "page_char_start": 3118,
+                      "passage_offset": 3071,
+                      "physical_page": 1,
+                      "quotation_check": "passed",
+                      "quote": "As of January 10, 2026, our executive officers were as follows:",
+                      "source_id": "503f1717501a1066e065699d35f240c8589ec9e4e544c5e0fc43af75119c0602",
+                      "source_sha256": "0085eff9cbea286612eea7b155180bd08a4cb17d0785d411f171e8293242138e",
+                      "span_end": 110,
+                      "span_start": 47
+                    }
+                  ],
+                  "claim_id": "roster",
+                  "executive": "",
+                  "kind": "roster",
+                  "outcome": "accepted",
+                  "reason": "Claim is supported by its declared canonical citations",
+                  "semantic_matching": {
+                    "comparison_text": "As of January 10, 2026, our executive officers were as follows:",
+                    "method": "whitespace_typography",
+                    "policy": "M3-only; no letter, digit, name, date, title or negation substitutions"
+                  },
+                  "statement": "As of January 10, 2026, our executive officers were as follows:"
+                },
+                {
+                  "citation_ids": [
+                    "cite:541e844939162df2"
+                  ],
+                  "citation_results": [
+                    {
+                      "document_id": "9397c5dfdffa435b8003b449bfd38d968723cdca80a35a618824b6692acc72a6",
+                      "matching_method": "exact",
+                      "normalized_quote": "Alex Sample........ 50 Chief Executive Officer",
+                      "original_source_text": "Alex Sample........ 50 Chief Executive Officer",
+                      "outcome": "accepted",
+                      "page_char_end": 3228,
+                      "page_char_start": 3182,
+                      "passage_offset": 3071,
+                      "physical_page": 1,
+                      "quotation_check": "passed",
+                      "quote": "Alex Sample........ 50 Chief Executive Officer",
+                      "source_id": "503f1717501a1066e065699d35f240c8589ec9e4e544c5e0fc43af75119c0602",
+                      "source_sha256": "0085eff9cbea286612eea7b155180bd08a4cb17d0785d411f171e8293242138e",
+                      "span_end": 157,
+                      "span_start": 111
+                    }
+                  ],
+                  "citations": [
+                    {
+                      "document_id": "9397c5dfdffa435b8003b449bfd38d968723cdca80a35a618824b6692acc72a6",
+                      "matching_method": "exact",
+                      "normalized_quote": "Alex Sample........ 50 Chief Executive Officer",
+                      "original_source_text": "Alex Sample........ 50 Chief Executive Officer",
+                      "outcome": "accepted",
+                      "page_char_end": 3228,
+                      "page_char_start": 3182,
+                      "passage_offset": 3071,
+                      "physical_page": 1,
+                      "quotation_check": "passed",
+                      "quote": "Alex Sample........ 50 Chief Executive Officer",
+                      "source_id": "503f1717501a1066e065699d35f240c8589ec9e4e544c5e0fc43af75119c0602",
+                      "source_sha256": "0085eff9cbea286612eea7b155180bd08a4cb17d0785d411f171e8293242138e",
+                      "span_end": 157,
+                      "span_start": 111
+                    }
+                  ],
+                  "claim_id": "executive:1:identity",
+                  "executive": "Alex Sample",
+                  "kind": "identity",
+                  "outcome": "accepted",
+                  "reason": "Claim is supported by its declared canonical citations",
+                  "semantic_matching": {
+                    "comparison_text": "Alex Sample........ 50 Chief Executive Officer",
+                    "method": "whitespace_typography",
+                    "policy": "M3-only; no letter, digit, name, date, title or negation substitutions"
+                  },
+                  "statement": "Alex Sample"
+                },
+                {
+                  "citation_ids": [
+                    "cite:541e844939162df2"
+                  ],
+                  "citation_results": [
+                    {
+                      "document_id": "9397c5dfdffa435b8003b449bfd38d968723cdca80a35a618824b6692acc72a6",
+                      "matching_method": "exact",
+                      "normalized_quote": "Alex Sample........ 50 Chief Executive Officer",
+                      "original_source_text": "Alex Sample........ 50 Chief Executive Officer",
+                      "outcome": "accepted",
+                      "page_char_end": 3228,
+                      "page_char_start": 3182,
+                      "passage_offset": 3071,
+                      "physical_page": 1,
+                      "quotation_check": "passed",
+                      "quote": "Alex Sample........ 50 Chief Executive Officer",
+                      "source_id": "503f1717501a1066e065699d35f240c8589ec9e4e544c5e0fc43af75119c0602",
+                      "source_sha256": "0085eff9cbea286612eea7b155180bd08a4cb17d0785d411f171e8293242138e",
+                      "span_end": 157,
+                      "span_start": 111
+                    }
+                  ],
+                  "citations": [
+                    {
+                      "document_id": "9397c5dfdffa435b8003b449bfd38d968723cdca80a35a618824b6692acc72a6",
+                      "matching_method": "exact",
+                      "normalized_quote": "Alex Sample........ 50 Chief Executive Officer",
+                      "original_source_text": "Alex Sample........ 50 Chief Executive Officer",
+                      "outcome": "accepted",
+                      "page_char_end": 3228,
+                      "page_char_start": 3182,
+                      "passage_offset": 3071,
+                      "physical_page": 1,
+                      "quotation_check": "passed",
+                      "quote": "Alex Sample........ 50 Chief Executive Officer",
+                      "source_id": "503f1717501a1066e065699d35f240c8589ec9e4e544c5e0fc43af75119c0602",
+                      "source_sha256": "0085eff9cbea286612eea7b155180bd08a4cb17d0785d411f171e8293242138e",
+                      "span_end": 157,
+                      "span_start": 111
+                    }
+                  ],
+                  "claim_id": "executive:1:position",
+                  "executive": "Alex Sample",
+                  "kind": "identity",
+                  "outcome": "accepted",
+                  "reason": "Claim is supported by its declared canonical citations",
+                  "semantic_matching": {
+                    "comparison_text": "Alex Sample........ 50 Chief Executive Officer",
+                    "method": "whitespace_typography",
+                    "policy": "M3-only; no letter, digit, name, date, title or negation substitutions"
+                  },
+                  "statement": "Chief Executive Officer"
+                },
+                {
+                  "appointment_scope": "Chief Executive Officer",
+                  "citation_ids": [
+                    "cite:0364f966b5065ac0"
+                  ],
+                  "citation_results": [
+                    {
+                      "document_id": "9397c5dfdffa435b8003b449bfd38d968723cdca80a35a618824b6692acc72a6",
+                      "matching_method": "exact",
+                      "normalized_quote": "Alex Sample was appointed Chief Executive Officer effective May 1, 2025.",
+                      "original_source_text": "Alex Sample was appointed Chief Executive Officer effective May 1, 2025.",
+                      "outcome": "accepted",
+                      "page_char_end": 3301,
+                      "page_char_start": 3229,
+                      "passage_offset": 3071,
+                      "physical_page": 1,
+                      "quotation_check": "passed",
+                      "quote": "Alex Sample was appointed Chief Executive Officer effective May 1, 2025.",
+                      "source_id": "503f1717501a1066e065699d35f240c8589ec9e4e544c5e0fc43af75119c0602",
+                      "source_sha256": "0085eff9cbea286612eea7b155180bd08a4cb17d0785d411f171e8293242138e",
+                      "span_end": 230,
+                      "span_start": 158
+                    }
+                  ],
+                  "citations": [
+                    {
+                      "document_id": "9397c5dfdffa435b8003b449bfd38d968723cdca80a35a618824b6692acc72a6",
+                      "matching_method": "exact",
+                      "normalized_quote": "Alex Sample was appointed Chief Executive Officer effective May 1, 2025.",
+                      "original_source_text": "Alex Sample was appointed Chief Executive Officer effective May 1, 2025.",
+                      "outcome": "accepted",
+                      "page_char_end": 3301,
+                      "page_char_start": 3229,
+                      "passage_offset": 3071,
+                      "physical_page": 1,
+                      "quotation_check": "passed",
+                      "quote": "Alex Sample was appointed Chief Executive Officer effective May 1, 2025.",
+                      "source_id": "503f1717501a1066e065699d35f240c8589ec9e4e544c5e0fc43af75119c0602",
+                      "source_sha256": "0085eff9cbea286612eea7b155180bd08a4cb17d0785d411f171e8293242138e",
+                      "span_end": 230,
+                      "span_start": 158
+                    }
+                  ],
+                  "claim_id": "executive:1:appointment",
+                  "executive": "Alex Sample",
+                  "kind": "appointment",
+                  "outcome": "accepted",
+                  "reason": "Claim is supported by its declared canonical citations",
+                  "semantic_matching": {
+                    "comparison_text": "Alex Sample was appointed Chief Executive Officer effective May 1, 2025.",
+                    "method": "whitespace_typography",
+                    "policy": "M3-only; no letter, digit, name, date, title or negation substitutions"
+                  },
+                  "statement": "Chief Executive Officer; 2025-05-01"
+                },
+                {
+                  "citation_ids": [
+                    "cite:1db6db38a1115d92"
+                  ],
+                  "citation_results": [
+                    {
+                      "document_id": "9397c5dfdffa435b8003b449bfd38d968723cdca80a35a618824b6692acc72a6",
+                      "matching_method": "exact",
+                      "normalized_quote": "Alex Sample previously served as President of the Company from January 2020 through April 2025.",
+                      "original_source_text": "Alex Sample previously served as President of the Company from January 2020 through April 2025.",
+                      "outcome": "accepted",
+                      "page_char_end": 3397,
+                      "page_char_start": 3302,
+                      "passage_offset": 3071,
+                      "physical_page": 1,
+                      "quotation_check": "passed",
+                      "quote": "Alex Sample previously served as President of the Company from January 2020 through April 2025.",
+                      "source_id": "503f1717501a1066e065699d35f240c8589ec9e4e544c5e0fc43af75119c0602",
+                      "source_sha256": "0085eff9cbea286612eea7b155180bd08a4cb17d0785d411f171e8293242138e",
+                      "span_end": 326,
+                      "span_start": 231
+                    }
+                  ],
+                  "citations": [
+                    {
+                      "document_id": "9397c5dfdffa435b8003b449bfd38d968723cdca80a35a618824b6692acc72a6",
+                      "matching_method": "exact",
+                      "normalized_quote": "Alex Sample previously served as President of the Company from January 2020 through April 2025.",
+                      "original_source_text": "Alex Sample previously served as President of the Company from January 2020 through April 2025.",
+                      "outcome": "accepted",
+                      "page_char_end": 3397,
+                      "page_char_start": 3302,
+                      "passage_offset": 3071,
+                      "physical_page": 1,
+                      "quotation_check": "passed",
+                      "quote": "Alex Sample previously served as President of the Company from January 2020 through April 2025.",
+                      "source_id": "503f1717501a1066e065699d35f240c8589ec9e4e544c5e0fc43af75119c0602",
+                      "source_sha256": "0085eff9cbea286612eea7b155180bd08a4cb17d0785d411f171e8293242138e",
+                      "span_end": 326,
+                      "span_start": 231
+                    }
+                  ],
+                  "claim_id": "executive:1:role:1",
+                  "context_evidence_ids": [
+                    "503f1717501a1066e065699d35f240c8589ec9e4e544c5e0fc43af75119c0602"
+                  ],
+                  "executive": "Alex Sample",
+                  "kind": "prior_internal_role",
+                  "outcome": "accepted",
+                  "reason": "Claim is supported by its declared canonical citations",
+                  "semantic_matching": {
+                    "comparison_text": "Alex Sample previously served as President of the Company from January 2020 through April 2025.",
+                    "method": "whitespace_typography",
+                    "policy": "M3-only; no letter, digit, name, date, title or negation substitutions"
+                  },
+                  "statement": "President of the Company; 2020-01 to 2025-04"
+                },
+                {
+                  "citation_ids": [
+                    "cite:0364f966b5065ac0"
+                  ],
+                  "citation_results": [
+                    {
+                      "document_id": "9397c5dfdffa435b8003b449bfd38d968723cdca80a35a618824b6692acc72a6",
+                      "matching_method": "exact",
+                      "normalized_quote": "Alex Sample was appointed Chief Executive Officer effective May 1, 2025.",
+                      "original_source_text": "Alex Sample was appointed Chief Executive Officer effective May 1, 2025.",
+                      "outcome": "accepted",
+                      "page_char_end": 3301,
+                      "page_char_start": 3229,
+                      "passage_offset": 3071,
+                      "physical_page": 1,
+                      "quotation_check": "passed",
+                      "quote": "Alex Sample was appointed Chief Executive Officer effective May 1, 2025.",
+                      "source_id": "503f1717501a1066e065699d35f240c8589ec9e4e544c5e0fc43af75119c0602",
+                      "source_sha256": "0085eff9cbea286612eea7b155180bd08a4cb17d0785d411f171e8293242138e",
+                      "span_end": 230,
+                      "span_start": 158
+                    }
+                  ],
+                  "citations": [
+                    {
+                      "document_id": "9397c5dfdffa435b8003b449bfd38d968723cdca80a35a618824b6692acc72a6",
+                      "matching_method": "exact",
+                      "normalized_quote": "Alex Sample was appointed Chief Executive Officer effective May 1, 2025.",
+                      "original_source_text": "Alex Sample was appointed Chief Executive Officer effective May 1, 2025.",
+                      "outcome": "accepted",
+                      "page_char_end": 3301,
+                      "page_char_start": 3229,
+                      "passage_offset": 3071,
+                      "physical_page": 1,
+                      "quotation_check": "passed",
+                      "quote": "Alex Sample was appointed Chief Executive Officer effective May 1, 2025.",
+                      "source_id": "503f1717501a1066e065699d35f240c8589ec9e4e544c5e0fc43af75119c0602",
+                      "source_sha256": "0085eff9cbea286612eea7b155180bd08a4cb17d0785d411f171e8293242138e",
+                      "span_end": 230,
+                      "span_start": 158
+                    }
+                  ],
+                  "claim_id": "fact:1",
+                  "executive": "Alex Sample",
+                  "kind": "fact",
+                  "outcome": "accepted",
+                  "reason": "Claim is supported by its declared canonical citations",
+                  "semantic_matching": {
+                    "comparison_text": "Alex Sample was appointed Chief Executive Officer effective May 1, 2025.",
+                    "method": "whitespace_typography",
+                    "policy": "M3-only; no letter, digit, name, date, title or negation substitutions"
+                  },
+                  "statement": "Alex Sample was appointed Chief Executive Officer effective May 1, 2025."
+                }
+              ],
+              "explicit_review_corrections": null,
+              "judgment_results": [
+                {
+                  "judgment_id": "A:1",
+                  "original_fact_ids": [
+                    "fact:1"
+                  ],
+                  "original_text": "Recent significant appointment creates potential transition uncertainty; it does not establish a departure, repeated turnover or disruption.",
+                  "outcome": "accepted",
+                  "reason": "Explicit offline reviewer fixture: declared facts support the bounded test interpretation.",
+                  "removed_fact_ids": [],
+                  "reviewed_text": "Recent significant appointment creates potential transition uncertainty; it does not establish a departure, repeated turnover or disruption.",
+                  "supporting_claim_ids": [
+                    "fact:1"
+                  ]
+                },
+                {
+                  "judgment_id": "E:1",
+                  "original_fact_ids": [
+                    "fact:1"
+                  ],
+                  "original_text": "Supported internal experience mitigates potential transition uncertainty.",
+                  "outcome": "accepted",
+                  "reason": "Explicit offline reviewer fixture: declared facts support the bounded test interpretation.",
+                  "removed_fact_ids": [],
+                  "reviewed_text": "Supported internal experience mitigates potential transition uncertainty.",
+                  "supporting_claim_ids": [
+                    "fact:1"
+                  ]
+                }
+              ],
+              "overall_references_valid": true,
+              "rejected_facts": [],
+              "rejected_judgments": [],
+              "validator_7": {
+                "agent_run_id": "2e3428f2-d190-4da9-bf2c-f5a875a0ab40",
+                "decisions": [
+                  {
+                    "judgment_id": "A:1",
+                    "limitations": [],
+                    "outcome": "accepted",
+                    "reason": "Explicit offline reviewer fixture: declared facts support the bounded test interpretation.",
+                    "reviewed_text": "Recent significant appointment creates potential transition uncertainty; it does not establish a departure, repeated turnover or disruption.",
+                    "supporting_claim_ids": [
+                      "fact:1"
+                    ]
+                  },
+                  {
+                    "judgment_id": "E:1",
+                    "limitations": [],
+                    "outcome": "accepted",
+                    "reason": "Explicit offline reviewer fixture: declared facts support the bounded test interpretation.",
+                    "reviewed_text": "Supported internal experience mitigates potential transition uncertainty.",
+                    "supporting_claim_ids": [
+                      "fact:1"
+                    ]
+                  }
+                ],
+                "live_performance_verified": false,
+                "mode": "offline_fixture",
+                "model": "offline-validator7-fixture",
+                "overall": {
+                  "judgment_ids": [
+                    "A:1",
+                    "E:1"
+                  ],
+                  "limitations": [],
+                  "signal": "mixed",
+                  "text": "Offline authored assessment: continuity benefits and potential transition uncertainty require outcome evidence."
+                },
+                "principal_executives": [
+                  "Alex Sample"
+                ],
+                "prompt_hash": "7c610168efb697e0066e2dc2ed2bc3368ded39320fbe41e7c91a50a583db4a0e",
+                "scope_limitations": [
+                  "Offline fixture; qualitative model performance not tested."
+                ]
+              }
+            }
+          },
+          "id": "management",
+          "recorded_status": "complete",
+          "source_ref": "management",
+          "status": "complete",
+          "title": "Management",
+          "validation_status": "passed",
+          "visible_warnings": [
+            "Educational structure is not a verified legal/obligor assessment. Management observations are bounded continuity rules, not competence/governance ratings.",
+            "Company and fiscal period were confirmed from the admitted SEC filing metadata (form 10-K, CIK 1), not from cover-page text. HTML passages have no pages; citations give page 1 and the passage offset.",
+            "Offline fixture; qualitative model performance not tested.",
+            "Validator 7 used a saved/offline reviewer response; this execution does not verify live reviewer model performance."
+          ]
+        },
+        {
+          "challenge_source_ref": "independent_challenge",
+          "content": {
+            "acceptance_state": "accepted",
+            "analysis_run_id": "ar_8762bbee4d474387",
+            "challenge_status": "escalated",
+            "key_drivers": [
+              {
+                "category": "driver",
+                "claim_id": "cp-contracts",
+                "claim_type": "fact",
+                "evidence_ids": [
+                  "64c0e6bbcebc0eb9188a9f573b050ed7e7475374220c70d5cd6cfb687893e215"
+                ],
+                "hypothesis_ids": [
+                  "M1S1-H001",
+                  "M1S1-H002"
+                ],
+                "materiality": "medium",
+                "parameter_result_ids": [],
+                "section": "M1S1",
+                "text": "Multi-year managed-care agreements set negotiated rates.",
+                "title": null,
+                "uncertainty": null
+              }
+            ],
+            "material_risks": [
+              {
+                "category": "risk",
+                "claim_id": "cp-workforce-interaction",
+                "claim_type": "inference",
+                "evidence_ids": [
+                  "4e323b45c424ed33436043be3825866867579768d0d6d8c3a7a45d0a11109fbe",
+                  "64c0e6bbcebc0eb9188a9f573b050ed7e7475374220c70d5cd6cfb687893e215"
+                ],
+                "hypothesis_ids": [
+                  "M1A6-H001",
+                  "M1S4-H001",
+                  "M1S5-H001"
+                ],
+                "materiality": "medium",
+                "parameter_result_ids": [],
+                "section": "M1A6",
+                "text": "Competition for scarce clinical staff can raise costs and constrain service capacity.",
+                "title": null,
+                "uncertainty": "Qualified interaction: competitor staffing data are unavailable."
+              }
+            ],
+            "open_questions": [
+              "Competitor staffing data are unavailable."
+            ],
+            "orchestrator_run_id": "c5096e63-a0c3-43c0-b9f0-27bc45e2eeab",
+            "overall_assessment": {
+              "category": "assessment",
+              "claim_id": "cp-lead",
+              "claim_type": "fact",
+              "evidence_ids": [
+                "64c0e6bbcebc0eb9188a9f573b050ed7e7475374220c70d5cd6cfb687893e215"
+              ],
+              "hypothesis_ids": [
+                "M1S1-H001",
+                "M1S3-H001"
+              ],
+              "materiality": "medium",
+              "parameter_result_ids": [],
+              "section": "executive",
+              "text": "Managed-care contracts set negotiated rates and can be terminated on notice.",
+              "title": null,
+              "uncertainty": "Contract terms do not guarantee patient volumes; renewal outcomes are not established."
+            },
+            "score_reference": null,
+            "strengths": [],
+            "supersedes_id": null,
+            "topic": "business",
+            "unresolved_contradictions": [],
+            "weaknesses": []
+          },
+          "editorial_selection": {
+            "conclusion_id": "tc_5110c76802c94aa2",
+            "follow_up": [
+              "Review competitor staffing data when admitted."
+            ],
+            "interaction_basis": [
+              {
+                "agent6_hypothesis_ids": [
+                  "M1A6-H001"
+                ],
+                "claim_id": "cp-workforce-interaction"
+              }
+            ],
+            "merged_duplicates": [],
+            "orchestrator_run_id": "c5096e63-a0c3-43c0-b9f0-27bc45e2eeab",
+            "policy_version": "bo-editorial-selection-1.0.0",
+            "quoted_values": {
+              "cp-contracts": [],
+              "cp-lead": [],
+              "cp-workforce-interaction": []
+            },
+            "schema_version": "bo-competitive-positioning-output-1.0.0",
+            "selection_decisions": [
+              {
+                "claim_ids": [
+                  "cp-lead",
+                  "cp-contracts"
+                ],
+                "decision": "selected",
+                "hypothesis_id": "M1S1-H001",
+                "reason": "Negotiated revenue terms anchor the contract discussion."
+              },
+              {
+                "claim_ids": [
+                  "cp-contracts"
+                ],
+                "decision": "merged",
+                "hypothesis_id": "M1S1-H002",
+                "reason": "Multi-year duration and negotiated rates fit one contract-terms paragraph."
+              },
+              {
+                "claim_ids": [],
+                "decision": "omitted",
+                "hypothesis_id": "M1S2-H001",
+                "reason": "Stable historical admissions add little to the selected contract and workforce exposures; no volume guarantee is inferred."
+              },
+              {
+                "claim_ids": [
+                  "cp-lead"
+                ],
+                "decision": "selected",
+                "hypothesis_id": "M1S3-H001",
+                "reason": "Termination rights qualify the credit reading of negotiated rates."
+              },
+              {
+                "claim_ids": [],
+                "decision": "omitted",
+                "hypothesis_id": "M1S4-H001",
+                "reason": "Retained as component lineage for the selected Agent 6 interaction; a separate paragraph would repeat that operating exposure."
+              },
+              {
+                "claim_ids": [],
+                "decision": "omitted",
+                "hypothesis_id": "M1S5-H001",
+                "reason": "Retained as component lineage for the selected Agent 6 interaction; no standalone competitive advantage is inferred."
+              },
+              {
+                "claim_ids": [
+                  "cp-workforce-interaction"
+                ],
+                "decision": "selected",
+                "hypothesis_id": "M1A6-H001",
+                "reason": "The validated interaction explains how staff competition may transmit into costs and service capacity."
+              }
+            ]
+          },
+          "id": "competitive_positioning",
+          "recorded_status": "human_review_required",
+          "selection_source_ref": "editorial_selection",
+          "source_ref": "competitive_positioning",
+          "status": "complete",
+          "title": "Competitive Positioning",
+          "validation_status": "accepted",
+          "visible_warnings": [
+            "Competitor staffing data are unavailable.",
+            "Competitor staffing data"
+          ]
+        },
+        {
+          "content": null,
+          "id": "industry",
+          "recorded_status": "incomplete",
+          "source_ref": null,
+          "status": "unavailable",
+          "title": "Industry",
+          "validation_status": "recorded",
+          "visible_warnings": [
+            "industry: No governed M2 industry findings are available."
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "artifact_id": "structure",
+          "binding": "same_run_verified",
+          "content_hash": "863e98db7e8f032257db6386c31391c23ce7cc4f91938af9b2d372d6ecfec02e",
+          "hash_kind": "canonical_stage",
+          "sha256": "39f335ca1eaccf7ecf1c1ffc1c28eb6a2e8924172bb18b0324d03108d179bd22",
+          "source_path": "/module_conclusions/M3/m3_rebuild/structure/artifact",
+          "stage_name": "bo_audit:ar_8762bbee4d474387"
+        },
+        {
+          "artifact_id": "debt",
+          "binding": "same_run_verified",
+          "content_hash": "dda4671691dc6ef67ae0d164b2ea68982c54d7f8a7b71a5c8a6cf7a72afe211a",
+          "hash_kind": "canonical_stage",
+          "sha256": "39f335ca1eaccf7ecf1c1ffc1c28eb6a2e8924172bb18b0324d03108d179bd22",
+          "source_path": "/module_conclusions/M4/m4_analysis/deliverable_1",
+          "stage_name": "bo_audit:ar_8762bbee4d474387"
+        },
+        {
+          "artifact_id": "management",
+          "binding": "same_run_verified",
+          "content_hash": "9f6e70a101ccef3ef6b6e513c7c4b39cc23c1bc0cf78c6a4a0625ca1887fa839",
+          "hash_kind": "canonical_stage",
+          "sha256": "39f335ca1eaccf7ecf1c1ffc1c28eb6a2e8924172bb18b0324d03108d179bd22",
+          "source_path": "/module_conclusions/M3/m3_rebuild/management/artifact",
+          "stage_name": "bo_audit:ar_8762bbee4d474387"
+        },
+        {
+          "artifact_id": "competitive_positioning",
+          "binding": "same_run_verified",
+          "content_hash": "fdfc4c3b97685387d87865ac3bfbd7206f756b5d747a6688a29fa85b85384d76",
+          "hash_kind": "canonical_stage",
+          "sha256": "39f335ca1eaccf7ecf1c1ffc1c28eb6a2e8924172bb18b0324d03108d179bd22",
+          "source_path": "/conclusions/0/payload",
+          "stage_name": "bo_audit:ar_8762bbee4d474387"
+        },
+        {
+          "artifact_id": "editorial_selection",
+          "binding": "same_run_verified",
+          "content_hash": "0d84d9bde188caae6d0fcc66ff75d54b8c274049751c8455bde529874ece6a26",
+          "hash_kind": "canonical_stage",
+          "sha256": "39f335ca1eaccf7ecf1c1ffc1c28eb6a2e8924172bb18b0324d03108d179bd22",
+          "source_path": "/orchestrator/editorial_selection",
+          "stage_name": "bo_audit:ar_8762bbee4d474387"
+        },
+        {
+          "artifact_id": "independent_challenge",
+          "binding": "same_run_verified",
+          "content_hash": "a37d4e8ac554e00e1f4e4d4878da7c2c4a57ab4782b4a6e19561355c092d7f35",
+          "hash_kind": "canonical_stage",
+          "sha256": "39f335ca1eaccf7ecf1c1ffc1c28eb6a2e8924172bb18b0324d03108d179bd22",
+          "source_path": "/challenger/rounds/0",
+          "stage_name": "bo_audit:ar_8762bbee4d474387"
+        }
+      ]
+    },
+    "source_hashes": {
+      "snapshot": "3552f3cb613fa20a3a021a730d2fe8421947758661c4d8c37fd52ec51f79d13b",
+      "audit": "39f335ca1eaccf7ecf1c1ffc1c28eb6a2e8924172bb18b0324d03108d179bd22",
+      "provenance": "9979c5cff776607f3dcee6e7ee605c54119f8d984acd438e8db5212683ee55f9"
+    },
+    "stages": [
+      {
+        "name": "admission",
+        "sha256": "325fa35de5ecf6d2a78a12ce475b3de14fa54d1f6f5ce8464072f26bcc83f7cb",
+        "chain_hash": "94a78800fe6dd81a18ad60a4a240850eff77548d2d9226fcc4ace261e7c6fc58"
+      },
+      {
+        "name": "extraction",
+        "sha256": "0b2bcd27df2ba138b5fdbaeeb5bea634da0c01f5e1f91e71eadc9c9893dcda21",
+        "chain_hash": "eb0d3cf21a84aaa94ebeb706216c9084000dd2a4d7e010cfbac3277a883c61cc"
+      },
+      {
+        "name": "mapping",
+        "sha256": "2a6f67480470afe06975eb21aecc03734564f0037b4b5ffe3ab8c95d0de7b908",
+        "chain_hash": "d10a1c2e99a80e26c8c91b9850a527af4a85f198626e8f8a5e383e1092f147f4"
+      },
+      {
+        "name": "reconciliation",
+        "sha256": "9803f7e825996f505be5e4271305412a645fb6471bf0ba727627f7954b49363e",
+        "chain_hash": "79f1c674f33cfe9f0a7bde451269ba628045476b88d2c0554b5ccc78b425825b"
+      },
+      {
+        "name": "canonical_evidence",
+        "sha256": "3552f3cb613fa20a3a021a730d2fe8421947758661c4d8c37fd52ec51f79d13b",
+        "chain_hash": "885c5308abee8e490c10d20fd57c9e019647aa3005363919000f928d3cadcac2"
+      },
+      {
+        "name": "metrics",
+        "sha256": "b469d784c1cf72d869481f9ef125c9a5fcf08c738c85dcef0dd73f2007720a36",
+        "chain_hash": "82ba8c64c5b6218a95b3d45b5f29eac449bba13866ef8fa4571cdf9d5e750b1b"
+      },
+      {
+        "name": "context",
+        "sha256": "271fcd84ea5b2482d12408305168fd22e79ec901e574b44d13df03f49d2cbbbf",
+        "chain_hash": "a24ffee5fdc67ab50e64ae2383253130e2ace0a4099d94f1810956e509eef9ad"
+      },
+      {
+        "name": "extraction_mapping",
+        "sha256": "9aeb715fb2ea911424dc9713fabcbac7472db9dbf91196088dc58c94680fc5d8",
+        "chain_hash": "25b148e065af5bb7ca548f1f95a8f94bbdaa6adbeadd9692db26bfccd2b878f2"
+      },
+      {
+        "name": "review",
+        "sha256": "21acc0bbd686b980d6c902ec245d52b5ab414b965331054d0497d4d31ab714c9",
+        "chain_hash": "e8a951c6f36e8329d8006b0b563ba4d2d93e6f66c9589a0a56ab1173019851c9"
+      },
+      {
+        "name": "llm_input",
+        "sha256": "95dba11dfd7da5a9f19d5a8c83ad876c6572db18f3fd0b94834e895f5f94aec3",
+        "chain_hash": "84fb2a15ae73c49016565bb994b30586823e838619630ea6b263f2c5edb1a2c2"
+      },
+      {
+        "name": "full_preview",
+        "sha256": "63ee538a25553d0e6064ba5fa090d8fc60ea101727357b43c3135b0db97550a8",
+        "chain_hash": "e2f2496daa80e3bc9f53f7a1cdc4ba804e73aa9e6261de619bb977a70406843d"
+      },
+      {
+        "name": "model_run_7db35941-e8e5-47aa-9fb6-b7c44016cd29",
+        "sha256": "a4c711bae22df464bafb2f8ada35fc0a1c4b185d59e6073c8dd55f4bff3d7168",
+        "chain_hash": "b6c8d41b2ac375d1e84010f7ece6ac4f5f258dab984c169db3e2201604f652cc"
+      },
+      {
+        "name": "model_run_d5bae5ae-d4ce-4e8f-a9f7-2145fc036bd4",
+        "sha256": "d318f12c7e475b9641efbf8fe21f64098bd99c45837d14a569e2b817f4a5f0fb",
+        "chain_hash": "da9fbc710ec6726884d367d8c03562b26990776a04a20b181a860c79cdc8c479"
+      },
+      {
+        "name": "model_run_793d8389-7f99-4756-bb6c-df16b60aaf5c",
+        "sha256": "746c9a063edb4388fbf1f9662da81bc3e668d4695ba5fa093613b740690e64c3",
+        "chain_hash": "3b6ece2aa6ea943124af226ea35c2b3e64357da1b87a1cbe3a82f8056b1971ce"
+      },
+      {
+        "name": "model_run_58685ddd-33d6-4d14-9b7d-f963dfc0f44a",
+        "sha256": "b305fee48a77bc97090ebf4e81d15de2412dd70802fb6fe5b12942180275e817",
+        "chain_hash": "05add39e1b4b32895e1b8164c9f5e700802d1fafd96db6e6e00e969595ad9e91"
+      },
+      {
+        "name": "model_run_3e3828d5-c7af-4c13-b395-091f1997cc33",
+        "sha256": "60a4b8843e7155cc62cb3992a0fa9819c8efa5b7a249302436f1edd0018b6910",
+        "chain_hash": "e22ef6d57f7f378ba4fc3a2d645766bc7ba8aa760261f4a91c48104d934848aa"
+      },
+      {
+        "name": "model_run_018346fc-e841-4936-8da1-a29524ec8f85",
+        "sha256": "129c0e0a25cf4fe86ade718eed07db930153dc56a7ac6b0b8c4fd65a3786b2ed",
+        "chain_hash": "cbbdc1cb1065785fc46f9dd901f2919a6aec68508310a2e3338e3fe1bf8f799a"
+      },
+      {
+        "name": "model_run_c80181bd-8b22-40d4-ae55-badd7088bf6b",
+        "sha256": "75e52644e8e2deee42591b18e6a43675031879d4ebc49673b02291c29b1dbf81",
+        "chain_hash": "0b34ea9c509806b86f51f7f96964536ecd2392b126ea69eff50071128152c987"
+      },
+      {
+        "name": "model_run_38212ebb-fc0c-4627-8572-11bb6a4d3be6",
+        "sha256": "80cdd5519fb0bddab787fa9997a334fb491e7b8c5074f25543cdb1473b55a6fa",
+        "chain_hash": "13262150957e5ee644f039935a09c74a3358ca49eca41dbb8e8e49134ead30c0"
+      },
+      {
+        "name": "model_run_d88886b5-f2f8-4d0a-8e56-e94d9cdc61a2",
+        "sha256": "78ef13ded1cdf7b568b44364ff0b51ceee5b6395cc5a4c30a77cbce779f91071",
+        "chain_hash": "de25b3fe9fe1ac42b07ddbdc2c5f7978401532f0aebc4215a6075a0d2cc31262"
+      },
+      {
+        "name": "model_run_a5787c77-f536-42e8-aa75-a08b89e8fd9c",
+        "sha256": "f9519a06c4f68a39a4df90e06accd552fd342563e1dc14a112e46af6a9bb5e3f",
+        "chain_hash": "45118c31495312c40a52ad05f04c5ef84ac6af91de5aee8df55e7f7ed8367e42"
+      },
+      {
+        "name": "model_run_7a73a9ec-e0ac-40ff-b9b1-1bf6b0b27103",
+        "sha256": "e34dafc3ea42406ead4543b826ac3b13070170a56553dfdf8818649b70cbbbcd",
+        "chain_hash": "c63fe351bcfce552a05f1f78f0464f0008dc6832555f7ca44bd63d7764b021a9"
+      },
+      {
+        "name": "model_run_314c8358-5b38-4f85-9865-c71da0504b87",
+        "sha256": "fadc7da1945ca5dc0aee483272522cecfa235962facbbe2d17d8dec0ac09ebfe",
+        "chain_hash": "98e94636d6d8f23f09737f4252e2da8d8159ea967698e4191b684051c5db31da"
+      },
+      {
+        "name": "model_run_49d06b0b-e49c-4515-b600-e8ca734f84e4",
+        "sha256": "48c11c67b5e589c50cf97e5c37d6cc747d29478d8ab1be9987676d6e998cca5a",
+        "chain_hash": "93055cc81ee828bf44fb05f5dd73bd8c82614a58e0357644e750ae1850673c0b"
+      },
+      {
+        "name": "bo_memo:ar_8762bbee4d474387",
+        "sha256": "345ee95c4afef88a24ec2efb4c00f3c9c4d7efa52d61621fe3ea0ea1624e5dfa",
+        "chain_hash": "86d3343062b5ee17411bbeb9daa5d376f04cb3ea423ac2e5be3218b90c94a22b"
+      },
+      {
+        "name": "bo_audit:ar_8762bbee4d474387",
+        "sha256": "39f335ca1eaccf7ecf1c1ffc1c28eb6a2e8924172bb18b0324d03108d179bd22",
+        "chain_hash": "3b32775c915edbbe3146eff9578877b464b4b6b5b36a919da84bc393e36c9a11"
+      },
+      {
+        "name": "bo_assembly_provenance:ar_8762bbee4d474387",
+        "sha256": "9979c5cff776607f3dcee6e7ee605c54119f8d984acd438e8db5212683ee55f9",
+        "chain_hash": "43ff97e635889e970b7dcfa72352e5964db17674292a3235eb9c2925c7f60573"
+      },
+      {
+        "name": "bo_four_section_memo:ar_8762bbee4d474387",
+        "sha256": "213711e77dd8a61437b0debf73b200a5a78ee5803ee5da72b0178ccfcea1217c",
+        "chain_hash": "dc7b21cbb5f0fdab481c7f592af1c7550cd3777cbc962290352f1ab4c3687683"
+      }
+    ],
+    "backend_calls": [
+      {
+        "bo": {
+          "m1_competitive_durability": 1,
+          "m1_customer_stickiness": 1,
+          "m1_operating_model": 1,
+          "m1_pricing_power": 1,
+          "m1_revenue_quality": 1,
+          "m2_industry": 1,
+          "m4_strategy_capital": 1,
+          "m1_resilience_integration": 1,
+          "m4_debt": 1,
+          "orchestrate": 1,
+          "challenge": 1
+        },
+        "management": [
+          "m3_management_assessment",
+          "m3_validator_7"
+        ]
+      }
+    ]
+  }
+}

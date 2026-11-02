@@ -1,0 +1,688 @@
+{
+  "job_id": "15a100def7e94bd0a57cae1a0d3016f8",
+  "analysis_run_id": "ar_8bb717884a784ffb",
+  "contract": {
+    "bo_roster": "v3",
+    "business_orchestrator_contract": "bo-source-selection-output-1.0.0",
+    "editorial_selection_policy": "bo-source-selection-1.0.0"
+  },
+  "stages": {
+    "bo:foundation": {
+      "section": "bo",
+      "label": "Evidence preparation & management analysis",
+      "status": "completed",
+      "order": 10,
+      "detail": {
+        "module3": {
+          "structure": {
+            "status": "complete",
+            "validation_status": "passed",
+            "error": null
+          },
+          "management": {
+            "status": "complete",
+            "validation_status": "passed",
+            "error": null
+          }
+        }
+      },
+      "updated_at": "2026-11-02T17:47:47.770999+00:00",
+      "started_at": "2026-11-02T17:47:47.696604+00:00",
+      "finished_at": "2026-11-02T17:47:47.771002+00:00"
+    },
+    "bo:primary_specialists": {
+      "section": "bo",
+      "label": "Specialist analysis & validation",
+      "status": "completed",
+      "order": 20,
+      "detail": {
+        "round": 0,
+        "agents": {
+          "m1_pricing_power": {
+            "status": "validated",
+            "detail": null,
+            "issues": []
+          },
+          "m1_operating_model": {
+            "status": "validated",
+            "detail": null,
+            "issues": []
+          },
+          "m4_strategy_capital": {
+            "status": "validated",
+            "detail": null,
+            "issues": []
+          },
+          "m2_industry": {
+            "status": "validated",
+            "detail": null,
+            "issues": []
+          },
+          "m1_revenue_quality": {
+            "status": "validated",
+            "detail": null,
+            "issues": []
+          },
+          "m1_competitive_durability": {
+            "status": "validated",
+            "detail": null,
+            "issues": []
+          },
+          "m1_customer_stickiness": {
+            "status": "validated",
+            "detail": null,
+            "issues": []
+          }
+        },
+        "failed": {},
+        "skipped": {}
+      },
+      "updated_at": "2026-11-02T17:47:47.945004+00:00",
+      "started_at": "2026-11-02T17:47:47.772856+00:00",
+      "finished_at": "2026-11-02T17:47:47.945009+00:00"
+    },
+    "bo:reconciliation": {
+      "section": "bo",
+      "label": "Validation & reconciliation",
+      "status": "completed",
+      "order": 50,
+      "detail": null,
+      "updated_at": "2026-11-02T17:47:48.003267+00:00",
+      "started_at": "2026-11-02T17:47:48.002261+00:00",
+      "finished_at": "2026-11-02T17:47:48.003269+00:00"
+    },
+    "bo:orchestrator": {
+      "section": "bo",
+      "label": "Competitive Positioning selection & validation",
+      "status": "completed",
+      "order": 60,
+      "detail": {
+        "round": 0,
+        "agents": {
+          "business_orchestrator": {
+            "status": "validated",
+            "detail": null,
+            "issues": []
+          }
+        },
+        "failed": {},
+        "skipped": {}
+      },
+      "updated_at": "2026-11-02T17:47:48.018564+00:00",
+      "started_at": "2026-11-02T17:47:48.004921+00:00",
+      "finished_at": "2026-11-02T17:47:48.018568+00:00"
+    },
+    "bo:challenger": {
+      "section": "bo",
+      "label": "Independent challenge",
+      "status": "completed",
+      "order": 70,
+      "detail": {
+        "round": 0,
+        "agents": {
+          "business_challenge": {
+            "status": "validated",
+            "detail": null,
+            "issues": []
+          }
+        },
+        "failed": {},
+        "skipped": {}
+      },
+      "updated_at": "2026-11-02T17:47:48.034102+00:00",
+      "started_at": "2026-11-02T17:47:48.021270+00:00",
+      "finished_at": "2026-11-02T17:47:48.034105+00:00"
+    },
+    "bo:memo_preparation": {
+      "section": "bo",
+      "label": "Memo preparation",
+      "status": "completed",
+      "order": 90,
+      "detail": null,
+      "updated_at": "2026-11-02T17:47:48.135486+00:00",
+      "started_at": "2026-11-02T17:47:48.040277+00:00",
+      "finished_at": "2026-11-02T17:47:48.135493+00:00"
+    },
+    "bo:management_analysis_and_validator7": {
+      "section": "bo",
+      "label": "Management Analysis And Validator7",
+      "status": "completed",
+      "order": 15,
+      "detail": {
+        "module3": {
+          "structure": {
+            "status": "complete",
+            "validation_status": "passed",
+            "error": null
+          },
+          "management": {
+            "status": "complete",
+            "validation_status": "passed",
+            "error": null
+          }
+        }
+      },
+      "updated_at": "2026-11-02T17:47:47.769345+00:00",
+      "started_at": "2026-11-02T17:47:47.723507+00:00",
+      "finished_at": "2026-11-02T17:47:47.769349+00:00"
+    },
+    "bo:resilience": {
+      "section": "bo",
+      "label": "Resilience",
+      "status": "completed",
+      "order": 35,
+      "detail": {
+        "round": 0,
+        "agents": {
+          "m1_resilience_integration": {
+            "status": "validated",
+            "detail": null,
+            "issues": []
+          }
+        },
+        "failed": {},
+        "skipped": {}
+      },
+      "updated_at": "2026-11-02T17:47:47.974037+00:00",
+      "started_at": "2026-11-02T17:47:47.949571+00:00",
+      "finished_at": "2026-11-02T17:47:47.974041+00:00"
+    },
+    "bo:debt_specialist_and_validation": {
+      "section": "bo",
+      "label": "Debt Specialist And Validation",
+      "status": "completed",
+      "order": 45,
+      "detail": {
+        "status": "validated",
+        "validated": true,
+        "reason": null,
+        "validator_issues": []
+      },
+      "updated_at": "2026-11-02T17:47:48.000536+00:00",
+      "started_at": "2026-11-02T17:47:47.976356+00:00",
+      "finished_at": "2026-11-02T17:47:48.000540+00:00"
+    },
+    "bo:recorded_output": {
+      "section": "bo",
+      "label": "Recorded Output",
+      "status": "completed",
+      "order": 100,
+      "detail": {
+        "case_id": "NFH_10-K_FY2025",
+        "analysis_run_id": "ar_8bb717884a784ffb",
+        "scope": "business_overview_only",
+        "execution_mode": "offline_simulation",
+        "bo_roster": "v3",
+        "validators_enforced": true,
+        "conclusion_status": "human_review_required",
+        "human_review_status": "pending",
+        "has_synthesis": true,
+        "business_orchestrator_contract": "bo-source-selection-output-1.0.0",
+        "editorial_selection_policy": "bo-source-selection-1.0.0",
+        "evidence_snapshot_version": 1,
+        "four_section_memo": {
+          "stage": "bo_four_section_memo:ar_8bb717884a784ffb",
+          "schema_version": "bo-four-section-memo-1.0.0",
+          "sha256": "ee6fcc17cafd70b8ee01f07aeafba6cf9740452e914a0c4fde2cd3b9b474ed47",
+          "content_hash": "027170d0b2f0b7e7196d05f061cd9100ec4ecae84b4083d561bddc04850ba0a7"
+        },
+        "handoff_id": "bo_f2c21a40b70d4f35",
+        "outputs": [
+          "/private/tmp/kiro_selection_browser_demo/out/bo/NFH_10-K_FY2025/ar_8bb717884a784ffb"
+        ],
+        "handoff_path": "/private/tmp/kiro_selection_browser_demo/out/bo/NFH_10-K_FY2025/ar_8bb717884a784ffb/handoff.json"
+      },
+      "updated_at": "2026-11-02T17:47:48.140733+00:00",
+      "finished_at": "2026-11-02T17:47:48.140743+00:00"
+    }
+  },
+  "orchestrator_history": [
+    {
+      "added_qualifications": [],
+      "agent_run_id": "e889269d-1b77-4f50-970a-cc23a45b1a92",
+      "canonicalized_evidence_claims": [],
+      "claim_type_downgrades": [],
+      "claims": 3,
+      "dropped_uncited_claims": [],
+      "editorial_output": {
+        "follow_up": [],
+        "interaction_basis": [
+          {
+            "agent6_hypothesis_ids": [
+              "M1A6-H001"
+            ],
+            "claim_id": "selected:M1A6-H001"
+          }
+        ],
+        "key_drivers": [
+          {
+            "category": "driver",
+            "claim_id": "selected:M1S1-H002",
+            "claim_type": "fact",
+            "evidence_ids": [
+              "34f8c5c05c333ba9144201b8221502f43851d69ff7444fe1612a2a789ddbf3ea"
+            ],
+            "hypothesis_ids": [
+              "M1S1-H002"
+            ],
+            "materiality": "medium",
+            "parameter_result_ids": [],
+            "quoted_values": [],
+            "section": "M1S1",
+            "text": "Managed-care agreements generally have multi-year terms.",
+            "title": null,
+            "uncertainty": null
+          }
+        ],
+        "material_risks": [
+          {
+            "category": "risk",
+            "claim_id": "selected:M1A6-H001",
+            "claim_type": "inference",
+            "evidence_ids": [
+              "34f8c5c05c333ba9144201b8221502f43851d69ff7444fe1612a2a789ddbf3ea",
+              "5d09f54bf5830fa368ba4e7d50637378faa13036e3231d57e190f896eee34821"
+            ],
+            "hypothesis_ids": [
+              "M1A6-H001",
+              "M1S4-H001",
+              "M1S5-H001"
+            ],
+            "materiality": "high",
+            "parameter_result_ids": [],
+            "quoted_values": [],
+            "section": "M1A6",
+            "text": "Labour scarcity may intensify competitive pressure for clinical staff and weaken operating resilience.",
+            "title": null,
+            "uncertainty": "Qualified source finding. Competitor staffing data"
+          }
+        ],
+        "merged_duplicates": [],
+        "open_questions": [],
+        "overall_assessment": {
+          "category": "assessment",
+          "claim_id": "selected:M1S1-H001",
+          "claim_type": "fact",
+          "evidence_ids": [
+            "34f8c5c05c333ba9144201b8221502f43851d69ff7444fe1612a2a789ddbf3ea"
+          ],
+          "hypothesis_ids": [
+            "M1S1-H001"
+          ],
+          "materiality": "high",
+          "parameter_result_ids": [],
+          "quoted_values": [],
+          "section": "executive",
+          "text": "Managed-care agreements set negotiated rates.",
+          "title": null,
+          "uncertainty": null
+        },
+        "policy_version": "bo-source-selection-1.0.0",
+        "schema_version": "bo-competitive-positioning-output-1.0.0",
+        "selection_decisions": [
+          {
+            "claim_ids": [
+              "selected:M1S1-H001"
+            ],
+            "decision": "selected",
+            "hypothesis_id": "M1S1-H001",
+            "reason": "Negotiated terms anchor the discussion."
+          },
+          {
+            "claim_ids": [
+              "selected:M1S1-H002"
+            ],
+            "decision": "selected",
+            "hypothesis_id": "M1S1-H002",
+            "reason": "Multi-year duration is relevant."
+          },
+          {
+            "claim_ids": [],
+            "decision": "omitted",
+            "hypothesis_id": "M1S2-H001",
+            "reason": "Component lineage or lower relevance than selected findings."
+          },
+          {
+            "claim_ids": [],
+            "decision": "omitted",
+            "hypothesis_id": "M1S3-H001",
+            "reason": "Component lineage or lower relevance than selected findings."
+          },
+          {
+            "claim_ids": [],
+            "decision": "omitted",
+            "hypothesis_id": "M1S4-H001",
+            "reason": "Component lineage or lower relevance than selected findings."
+          },
+          {
+            "claim_ids": [],
+            "decision": "omitted",
+            "hypothesis_id": "M1S5-H001",
+            "reason": "Component lineage or lower relevance than selected findings."
+          },
+          {
+            "claim_ids": [
+              "selected:M1A6-H001"
+            ],
+            "decision": "selected",
+            "hypothesis_id": "M1A6-H001",
+            "reason": "Supported workforce interaction."
+          }
+        ],
+        "strengths": [],
+        "unresolved_contradictions": [],
+        "weaknesses": []
+      },
+      "editorial_selection": {
+        "conclusion_id": "tc_309df6994a114020",
+        "follow_up": [],
+        "interaction_basis": [
+          {
+            "agent6_hypothesis_ids": [
+              "M1A6-H001"
+            ],
+            "claim_id": "selected:M1A6-H001"
+          }
+        ],
+        "merged_duplicates": [],
+        "orchestrator_run_id": "e889269d-1b77-4f50-970a-cc23a45b1a92",
+        "policy_version": "bo-source-selection-1.0.0",
+        "quoted_values": {
+          "selected:M1A6-H001": [],
+          "selected:M1S1-H001": [],
+          "selected:M1S1-H002": []
+        },
+        "schema_version": "bo-source-selection-output-1.0.0",
+        "selection_decisions": [
+          {
+            "claim_ids": [
+              "selected:M1S1-H001"
+            ],
+            "decision": "selected",
+            "hypothesis_id": "M1S1-H001",
+            "reason": "Negotiated terms anchor the discussion."
+          },
+          {
+            "claim_ids": [
+              "selected:M1S1-H002"
+            ],
+            "decision": "selected",
+            "hypothesis_id": "M1S1-H002",
+            "reason": "Multi-year duration is relevant."
+          },
+          {
+            "claim_ids": [],
+            "decision": "omitted",
+            "hypothesis_id": "M1S2-H001",
+            "reason": "Component lineage or lower relevance than selected findings."
+          },
+          {
+            "claim_ids": [],
+            "decision": "omitted",
+            "hypothesis_id": "M1S3-H001",
+            "reason": "Component lineage or lower relevance than selected findings."
+          },
+          {
+            "claim_ids": [],
+            "decision": "omitted",
+            "hypothesis_id": "M1S4-H001",
+            "reason": "Component lineage or lower relevance than selected findings."
+          },
+          {
+            "claim_ids": [],
+            "decision": "omitted",
+            "hypothesis_id": "M1S5-H001",
+            "reason": "Component lineage or lower relevance than selected findings."
+          },
+          {
+            "claim_ids": [
+              "selected:M1A6-H001"
+            ],
+            "decision": "selected",
+            "hypothesis_id": "M1A6-H001",
+            "reason": "Supported workforce interaction."
+          }
+        ],
+        "selection_plan": {
+          "omissions": [
+            {
+              "hypothesis_id": "M1S2-H001",
+              "reason": "Component lineage or lower relevance than selected findings."
+            },
+            {
+              "hypothesis_id": "M1S3-H001",
+              "reason": "Component lineage or lower relevance than selected findings."
+            },
+            {
+              "hypothesis_id": "M1S4-H001",
+              "reason": "Component lineage or lower relevance than selected findings."
+            },
+            {
+              "hypothesis_id": "M1S5-H001",
+              "reason": "Component lineage or lower relevance than selected findings."
+            }
+          ],
+          "policy_version": "bo-source-selection-1.0.0",
+          "schema_version": "bo-source-selection-output-1.0.0",
+          "selections": [
+            {
+              "hypothesis_id": "M1S1-H001",
+              "placement": "lead",
+              "reason": "Negotiated terms anchor the discussion."
+            },
+            {
+              "hypothesis_id": "M1S1-H002",
+              "placement": "driver",
+              "reason": "Multi-year duration is relevant."
+            },
+            {
+              "hypothesis_id": "M1A6-H001",
+              "placement": "risk",
+              "reason": "Supported workforce interaction."
+            }
+          ]
+        }
+      },
+      "hypotheses_available": 7,
+      "issues": [],
+      "round": 0,
+      "selection_plan": {
+        "omissions": [
+          {
+            "hypothesis_id": "M1S2-H001",
+            "reason": "Component lineage or lower relevance than selected findings."
+          },
+          {
+            "hypothesis_id": "M1S3-H001",
+            "reason": "Component lineage or lower relevance than selected findings."
+          },
+          {
+            "hypothesis_id": "M1S4-H001",
+            "reason": "Component lineage or lower relevance than selected findings."
+          },
+          {
+            "hypothesis_id": "M1S5-H001",
+            "reason": "Component lineage or lower relevance than selected findings."
+          }
+        ],
+        "policy_version": "bo-source-selection-1.0.0",
+        "schema_version": "bo-source-selection-output-1.0.0",
+        "selections": [
+          {
+            "hypothesis_id": "M1S1-H001",
+            "placement": "lead",
+            "reason": "Negotiated terms anchor the discussion."
+          },
+          {
+            "hypothesis_id": "M1S1-H002",
+            "placement": "driver",
+            "reason": "Multi-year duration is relevant."
+          },
+          {
+            "hypothesis_id": "M1A6-H001",
+            "placement": "risk",
+            "reason": "Supported workforce interaction."
+          }
+        ]
+      },
+      "status": "accepted"
+    }
+  ],
+  "challenger": {
+    "recorded_findings": [],
+    "rounds": [
+      {
+        "agent_run_id": "97f4cf20-6ac3-4b28-8bf0-beb1b35630bb",
+        "conclusion_id": "tc_309df6994a114020",
+        "decision": {
+          "deterministic_only": false,
+          "escalated": false,
+          "requires_rerun": false,
+          "rerun_parameter_ids": [],
+          "rerun_scope": []
+        },
+        "editorial_review": {
+          "economic_support_reviewed": true,
+          "material_omissions_reviewed": true,
+          "policy_version": "bo-source-selection-1.0.0",
+          "reviewed_hypothesis_ids": [
+            "M1S1-H001",
+            "M1S1-H002",
+            "M1A6-H001",
+            "M1S2-H001",
+            "M1S3-H001",
+            "M1S4-H001",
+            "M1S5-H001"
+          ],
+          "reviewed_interaction_claim_ids": [
+            "selected:M1A6-H001"
+          ],
+          "reviewed_omitted_hypothesis_ids": [
+            "M1S2-H001",
+            "M1S3-H001",
+            "M1S4-H001",
+            "M1S5-H001"
+          ]
+        },
+        "editorial_selection": {
+          "conclusion_id": "tc_309df6994a114020",
+          "follow_up": [],
+          "interaction_basis": [
+            {
+              "agent6_hypothesis_ids": [
+                "M1A6-H001"
+              ],
+              "claim_id": "selected:M1A6-H001"
+            }
+          ],
+          "merged_duplicates": [],
+          "orchestrator_run_id": "e889269d-1b77-4f50-970a-cc23a45b1a92",
+          "policy_version": "bo-source-selection-1.0.0",
+          "quoted_values": {
+            "selected:M1A6-H001": [],
+            "selected:M1S1-H001": [],
+            "selected:M1S1-H002": []
+          },
+          "schema_version": "bo-source-selection-output-1.0.0",
+          "selection_decisions": [
+            {
+              "claim_ids": [
+                "selected:M1S1-H001"
+              ],
+              "decision": "selected",
+              "hypothesis_id": "M1S1-H001",
+              "reason": "Negotiated terms anchor the discussion."
+            },
+            {
+              "claim_ids": [
+                "selected:M1S1-H002"
+              ],
+              "decision": "selected",
+              "hypothesis_id": "M1S1-H002",
+              "reason": "Multi-year duration is relevant."
+            },
+            {
+              "claim_ids": [],
+              "decision": "omitted",
+              "hypothesis_id": "M1S2-H001",
+              "reason": "Component lineage or lower relevance than selected findings."
+            },
+            {
+              "claim_ids": [],
+              "decision": "omitted",
+              "hypothesis_id": "M1S3-H001",
+              "reason": "Component lineage or lower relevance than selected findings."
+            },
+            {
+              "claim_ids": [],
+              "decision": "omitted",
+              "hypothesis_id": "M1S4-H001",
+              "reason": "Component lineage or lower relevance than selected findings."
+            },
+            {
+              "claim_ids": [],
+              "decision": "omitted",
+              "hypothesis_id": "M1S5-H001",
+              "reason": "Component lineage or lower relevance than selected findings."
+            },
+            {
+              "claim_ids": [
+                "selected:M1A6-H001"
+              ],
+              "decision": "selected",
+              "hypothesis_id": "M1A6-H001",
+              "reason": "Supported workforce interaction."
+            }
+          ],
+          "selection_plan": {
+            "omissions": [
+              {
+                "hypothesis_id": "M1S2-H001",
+                "reason": "Component lineage or lower relevance than selected findings."
+              },
+              {
+                "hypothesis_id": "M1S3-H001",
+                "reason": "Component lineage or lower relevance than selected findings."
+              },
+              {
+                "hypothesis_id": "M1S4-H001",
+                "reason": "Component lineage or lower relevance than selected findings."
+              },
+              {
+                "hypothesis_id": "M1S5-H001",
+                "reason": "Component lineage or lower relevance than selected findings."
+              }
+            ],
+            "policy_version": "bo-source-selection-1.0.0",
+            "schema_version": "bo-source-selection-output-1.0.0",
+            "selections": [
+              {
+                "hypothesis_id": "M1S1-H001",
+                "placement": "lead",
+                "reason": "Negotiated terms anchor the discussion."
+              },
+              {
+                "hypothesis_id": "M1S1-H002",
+                "placement": "driver",
+                "reason": "Multi-year duration is relevant."
+              },
+              {
+                "hypothesis_id": "M1A6-H001",
+                "placement": "risk",
+                "reason": "Supported workforce interaction."
+              }
+            ]
+          }
+        },
+        "findings": [],
+        "issues": [],
+        "model_stated_outcome": "accepted",
+        "outcome": "accepted",
+        "round": 0,
+        "status": "validated",
+        "summary": "Scripted independent review: source-backed wording, preserved qualifications and economically justified omissions; no new causal mechanism identified."
+      }
+    ]
+  },
+  "artifact_hash": "027170d0b2f0b7e7196d05f061cd9100ec4ecae84b4083d561bddc04850ba0a7"
+}

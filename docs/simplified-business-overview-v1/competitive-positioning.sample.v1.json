@@ -1,0 +1,963 @@
+{
+  "schema_version": "bo-competitive-positioning-offline-example-1.0.0",
+  "example_only": true,
+  "warning": "Fictional Northfield Health Systems; scripted writer AND independent challenger responses. This proves offline workflow behavior, not live model analytical quality. M3 inputs are intentionally absent, so the full BO still requires human review.",
+  "base_commit": "34d61e7b3e547228d6766ec4a7e916395821a906",
+  "execution_mode": "offline_simulation",
+  "identity": {
+    "case_id": "NFH_BO",
+    "analysis_run_id": "ar_339c5bb404384721",
+    "evidence_snapshot_version": 1,
+    "conclusion_id": "tc_a9f9fdd9ae6e4a1e",
+    "orchestrator_run_id": "bd86ed6c-2bfe-4dde-b983-0d3e19f0c6fd"
+  },
+  "competitive_positioning_text": "Managed-care contracts set negotiated rates and can be terminated on notice.\nQualification: Contract terms do not guarantee patient volumes; renewal outcomes are not established.\n\nMulti-year managed-care agreements set negotiated rates.\n\nCompetition for scarce clinical staff can raise costs and constrain service capacity.\nQualification: Qualified interaction: competitor staffing data are unavailable.",
+  "original_model_response": "{\"follow_up\": [\"Review competitor staffing data when admitted.\"], \"interaction_basis\": [{\"agent6_hypothesis_ids\": [\"M1A6-H001\"], \"claim_id\": \"cp-workforce-interaction\"}], \"key_drivers\": [{\"category\": \"driver\", \"claim_id\": \"cp-contracts\", \"claim_type\": \"fact\", \"evidence_ids\": [\"E04\"], \"hypothesis_ids\": [\"M1S1-H001\", \"M1S1-H002\"], \"materiality\": \"medium\", \"parameter_result_ids\": [], \"quoted_values\": [], \"section\": \"M1S1\", \"text\": \"Multi-year managed-care agreements set negotiated rates.\", \"uncertainty\": null}], \"material_risks\": [{\"category\": \"risk\", \"claim_id\": \"cp-workforce-interaction\", \"claim_type\": \"inference\", \"evidence_ids\": [\"E02\", \"E01\"], \"hypothesis_ids\": [\"M1A6-H001\", \"M1S4-H001\", \"M1S5-H001\"], \"materiality\": \"medium\", \"parameter_result_ids\": [], \"quoted_values\": [], \"section\": \"M1A6\", \"text\": \"Competition for scarce clinical staff can raise costs and constrain service capacity.\", \"uncertainty\": \"Qualified interaction: competitor staffing data are unavailable.\"}], \"merged_duplicates\": [], \"open_questions\": [\"Competitor staffing data are unavailable.\"], \"overall_assessment\": {\"category\": \"assessment\", \"claim_id\": \"cp-lead\", \"claim_type\": \"fact\", \"evidence_ids\": [\"E04\"], \"hypothesis_ids\": [\"M1S1-H001\", \"M1S3-H001\"], \"materiality\": \"medium\", \"parameter_result_ids\": [], \"quoted_values\": [], \"section\": \"executive\", \"text\": \"Managed-care contracts set negotiated rates and can be terminated on notice.\", \"uncertainty\": \"Contract terms do not guarantee patient volumes; renewal outcomes are not established.\"}, \"policy_version\": \"bo-editorial-selection-1.0.0\", \"schema_version\": \"bo-competitive-positioning-output-1.0.0\", \"selection_decisions\": [{\"claim_ids\": [\"cp-lead\", \"cp-contracts\"], \"decision\": \"selected\", \"hypothesis_id\": \"M1S1-H001\", \"reason\": \"Negotiated revenue terms anchor the contract discussion.\"}, {\"claim_ids\": [\"cp-contracts\"], \"decision\": \"merged\", \"hypothesis_id\": \"M1S1-H002\", \"reason\": \"Multi-year duration and negotiated rates fit one contract-terms paragraph.\"}, {\"claim_ids\": [], \"decision\": \"omitted\", \"hypothesis_id\": \"M1S2-H001\", \"reason\": \"Stable historical admissions add little to the selected contract and workforce exposures; no volume guarantee is inferred.\"}, {\"claim_ids\": [\"cp-lead\"], \"decision\": \"selected\", \"hypothesis_id\": \"M1S3-H001\", \"reason\": \"Termination rights qualify the credit reading of negotiated rates.\"}, {\"claim_ids\": [], \"decision\": \"omitted\", \"hypothesis_id\": \"M1S4-H001\", \"reason\": \"Retained as component lineage for the selected Agent 6 interaction; a separate paragraph would repeat that operating exposure.\"}, {\"claim_ids\": [], \"decision\": \"omitted\", \"hypothesis_id\": \"M1S5-H001\", \"reason\": \"Retained as component lineage for the selected Agent 6 interaction; no standalone competitive advantage is inferred.\"}, {\"claim_ids\": [\"cp-workforce-interaction\"], \"decision\": \"selected\", \"hypothesis_id\": \"M1A6-H001\", \"reason\": \"The validated interaction explains how staff competition may transmit into costs and service capacity.\"}], \"strengths\": [], \"unresolved_contradictions\": [], \"weaknesses\": []}",
+  "validated_writer_output": {
+    "follow_up": [
+      "Review competitor staffing data when admitted."
+    ],
+    "interaction_basis": [
+      {
+        "agent6_hypothesis_ids": [
+          "M1A6-H001"
+        ],
+        "claim_id": "cp-workforce-interaction"
+      }
+    ],
+    "key_drivers": [
+      {
+        "category": "driver",
+        "claim_id": "cp-contracts",
+        "claim_type": "fact",
+        "evidence_ids": [
+          "ev_payer"
+        ],
+        "hypothesis_ids": [
+          "M1S1-H001",
+          "M1S1-H002"
+        ],
+        "materiality": "medium",
+        "parameter_result_ids": [],
+        "quoted_values": [],
+        "section": "M1S1",
+        "text": "Multi-year managed-care agreements set negotiated rates.",
+        "uncertainty": null
+      }
+    ],
+    "material_risks": [
+      {
+        "category": "risk",
+        "claim_id": "cp-workforce-interaction",
+        "claim_type": "inference",
+        "evidence_ids": [
+          "ev_labor",
+          "ev_compete"
+        ],
+        "hypothesis_ids": [
+          "M1A6-H001",
+          "M1S4-H001",
+          "M1S5-H001"
+        ],
+        "materiality": "medium",
+        "parameter_result_ids": [],
+        "quoted_values": [],
+        "section": "M1A6",
+        "text": "Competition for scarce clinical staff can raise costs and constrain service capacity.",
+        "uncertainty": "Qualified interaction: competitor staffing data are unavailable."
+      }
+    ],
+    "merged_duplicates": [],
+    "open_questions": [
+      "Competitor staffing data are unavailable."
+    ],
+    "overall_assessment": {
+      "category": "assessment",
+      "claim_id": "cp-lead",
+      "claim_type": "fact",
+      "evidence_ids": [
+        "ev_payer"
+      ],
+      "hypothesis_ids": [
+        "M1S1-H001",
+        "M1S3-H001"
+      ],
+      "materiality": "medium",
+      "parameter_result_ids": [],
+      "quoted_values": [],
+      "section": "executive",
+      "text": "Managed-care contracts set negotiated rates and can be terminated on notice.",
+      "uncertainty": "Contract terms do not guarantee patient volumes; renewal outcomes are not established."
+    },
+    "policy_version": "bo-editorial-selection-1.0.0",
+    "schema_version": "bo-competitive-positioning-output-1.0.0",
+    "selection_decisions": [
+      {
+        "claim_ids": [
+          "cp-lead",
+          "cp-contracts"
+        ],
+        "decision": "selected",
+        "hypothesis_id": "M1S1-H001",
+        "reason": "Negotiated revenue terms anchor the contract discussion."
+      },
+      {
+        "claim_ids": [
+          "cp-contracts"
+        ],
+        "decision": "merged",
+        "hypothesis_id": "M1S1-H002",
+        "reason": "Multi-year duration and negotiated rates fit one contract-terms paragraph."
+      },
+      {
+        "claim_ids": [],
+        "decision": "omitted",
+        "hypothesis_id": "M1S2-H001",
+        "reason": "Stable historical admissions add little to the selected contract and workforce exposures; no volume guarantee is inferred."
+      },
+      {
+        "claim_ids": [
+          "cp-lead"
+        ],
+        "decision": "selected",
+        "hypothesis_id": "M1S3-H001",
+        "reason": "Termination rights qualify the credit reading of negotiated rates."
+      },
+      {
+        "claim_ids": [],
+        "decision": "omitted",
+        "hypothesis_id": "M1S4-H001",
+        "reason": "Retained as component lineage for the selected Agent 6 interaction; a separate paragraph would repeat that operating exposure."
+      },
+      {
+        "claim_ids": [],
+        "decision": "omitted",
+        "hypothesis_id": "M1S5-H001",
+        "reason": "Retained as component lineage for the selected Agent 6 interaction; no standalone competitive advantage is inferred."
+      },
+      {
+        "claim_ids": [
+          "cp-workforce-interaction"
+        ],
+        "decision": "selected",
+        "hypothesis_id": "M1A6-H001",
+        "reason": "The validated interaction explains how staff competition may transmit into costs and service capacity."
+      }
+    ],
+    "strengths": [],
+    "unresolved_contradictions": [],
+    "weaknesses": []
+  },
+  "validated_conclusion": {
+    "topic": "business",
+    "analysis_run_id": "ar_339c5bb404384721",
+    "overall_assessment": {
+      "claim_id": "cp-lead",
+      "category": "assessment",
+      "text": "Managed-care contracts set negotiated rates and can be terminated on notice.",
+      "parameter_result_ids": [],
+      "evidence_ids": [
+        "ev_payer"
+      ],
+      "materiality": "medium",
+      "uncertainty": "Contract terms do not guarantee patient volumes; renewal outcomes are not established.",
+      "hypothesis_ids": [
+        "M1S1-H001",
+        "M1S3-H001"
+      ],
+      "section": "executive",
+      "claim_type": "fact",
+      "title": null
+    },
+    "strengths": [],
+    "weaknesses": [],
+    "key_drivers": [
+      {
+        "claim_id": "cp-contracts",
+        "category": "driver",
+        "text": "Multi-year managed-care agreements set negotiated rates.",
+        "parameter_result_ids": [],
+        "evidence_ids": [
+          "ev_payer"
+        ],
+        "materiality": "medium",
+        "uncertainty": null,
+        "hypothesis_ids": [
+          "M1S1-H001",
+          "M1S1-H002"
+        ],
+        "section": "M1S1",
+        "claim_type": "fact",
+        "title": null
+      }
+    ],
+    "material_risks": [
+      {
+        "claim_id": "cp-workforce-interaction",
+        "category": "risk",
+        "text": "Competition for scarce clinical staff can raise costs and constrain service capacity.",
+        "parameter_result_ids": [],
+        "evidence_ids": [
+          "ev_labor",
+          "ev_compete"
+        ],
+        "materiality": "medium",
+        "uncertainty": "Qualified interaction: competitor staffing data are unavailable.",
+        "hypothesis_ids": [
+          "M1A6-H001",
+          "M1S4-H001",
+          "M1S5-H001"
+        ],
+        "section": "M1A6",
+        "claim_type": "inference",
+        "title": null
+      }
+    ],
+    "open_questions": [
+      "Competitor staffing data are unavailable."
+    ],
+    "unresolved_contradictions": [],
+    "score_reference": null,
+    "orchestrator_run_id": "bd86ed6c-2bfe-4dde-b983-0d3e19f0c6fd",
+    "challenge_status": "escalated",
+    "supersedes_id": null,
+    "acceptance_state": "accepted"
+  },
+  "editorial_selection": {
+    "conclusion_id": "tc_a9f9fdd9ae6e4a1e",
+    "follow_up": [
+      "Review competitor staffing data when admitted."
+    ],
+    "interaction_basis": [
+      {
+        "agent6_hypothesis_ids": [
+          "M1A6-H001"
+        ],
+        "claim_id": "cp-workforce-interaction"
+      }
+    ],
+    "merged_duplicates": [],
+    "orchestrator_run_id": "bd86ed6c-2bfe-4dde-b983-0d3e19f0c6fd",
+    "policy_version": "bo-editorial-selection-1.0.0",
+    "quoted_values": {
+      "cp-contracts": [],
+      "cp-lead": [],
+      "cp-workforce-interaction": []
+    },
+    "schema_version": "bo-competitive-positioning-output-1.0.0",
+    "selection_decisions": [
+      {
+        "claim_ids": [
+          "cp-lead",
+          "cp-contracts"
+        ],
+        "decision": "selected",
+        "hypothesis_id": "M1S1-H001",
+        "reason": "Negotiated revenue terms anchor the contract discussion."
+      },
+      {
+        "claim_ids": [
+          "cp-contracts"
+        ],
+        "decision": "merged",
+        "hypothesis_id": "M1S1-H002",
+        "reason": "Multi-year duration and negotiated rates fit one contract-terms paragraph."
+      },
+      {
+        "claim_ids": [],
+        "decision": "omitted",
+        "hypothesis_id": "M1S2-H001",
+        "reason": "Stable historical admissions add little to the selected contract and workforce exposures; no volume guarantee is inferred."
+      },
+      {
+        "claim_ids": [
+          "cp-lead"
+        ],
+        "decision": "selected",
+        "hypothesis_id": "M1S3-H001",
+        "reason": "Termination rights qualify the credit reading of negotiated rates."
+      },
+      {
+        "claim_ids": [],
+        "decision": "omitted",
+        "hypothesis_id": "M1S4-H001",
+        "reason": "Retained as component lineage for the selected Agent 6 interaction; a separate paragraph would repeat that operating exposure."
+      },
+      {
+        "claim_ids": [],
+        "decision": "omitted",
+        "hypothesis_id": "M1S5-H001",
+        "reason": "Retained as component lineage for the selected Agent 6 interaction; no standalone competitive advantage is inferred."
+      },
+      {
+        "claim_ids": [
+          "cp-workforce-interaction"
+        ],
+        "decision": "selected",
+        "hypothesis_id": "M1A6-H001",
+        "reason": "The validated interaction explains how staff competition may transmit into costs and service capacity."
+      }
+    ]
+  },
+  "independent_challenger": {
+    "agent_run_id": "cab6bbc9-3889-45fd-b447-482b3502196c",
+    "model_id": "scripted-offline-simulation-v1",
+    "rounds": [
+      {
+        "agent_run_id": "cab6bbc9-3889-45fd-b447-482b3502196c",
+        "conclusion_id": "tc_a9f9fdd9ae6e4a1e",
+        "decision": {
+          "deterministic_only": false,
+          "escalated": false,
+          "requires_rerun": false,
+          "rerun_parameter_ids": [],
+          "rerun_scope": []
+        },
+        "editorial_review": {
+          "economic_support_reviewed": true,
+          "material_omissions_reviewed": true,
+          "policy_version": "bo-editorial-selection-1.0.0",
+          "reviewed_hypothesis_ids": [
+            "M1S1-H001",
+            "M1S1-H002",
+            "M1S2-H001",
+            "M1S3-H001",
+            "M1S4-H001",
+            "M1S5-H001",
+            "M1A6-H001"
+          ],
+          "reviewed_interaction_claim_ids": [
+            "cp-workforce-interaction"
+          ],
+          "reviewed_omitted_hypothesis_ids": [
+            "M1S2-H001",
+            "M1S4-H001",
+            "M1S5-H001"
+          ]
+        },
+        "editorial_selection": {
+          "conclusion_id": "tc_a9f9fdd9ae6e4a1e",
+          "follow_up": [
+            "Review competitor staffing data when admitted."
+          ],
+          "interaction_basis": [
+            {
+              "agent6_hypothesis_ids": [
+                "M1A6-H001"
+              ],
+              "claim_id": "cp-workforce-interaction"
+            }
+          ],
+          "merged_duplicates": [],
+          "orchestrator_run_id": "bd86ed6c-2bfe-4dde-b983-0d3e19f0c6fd",
+          "policy_version": "bo-editorial-selection-1.0.0",
+          "quoted_values": {
+            "cp-contracts": [],
+            "cp-lead": [],
+            "cp-workforce-interaction": []
+          },
+          "schema_version": "bo-competitive-positioning-output-1.0.0",
+          "selection_decisions": [
+            {
+              "claim_ids": [
+                "cp-lead",
+                "cp-contracts"
+              ],
+              "decision": "selected",
+              "hypothesis_id": "M1S1-H001",
+              "reason": "Negotiated revenue terms anchor the contract discussion."
+            },
+            {
+              "claim_ids": [
+                "cp-contracts"
+              ],
+              "decision": "merged",
+              "hypothesis_id": "M1S1-H002",
+              "reason": "Multi-year duration and negotiated rates fit one contract-terms paragraph."
+            },
+            {
+              "claim_ids": [],
+              "decision": "omitted",
+              "hypothesis_id": "M1S2-H001",
+              "reason": "Stable historical admissions add little to the selected contract and workforce exposures; no volume guarantee is inferred."
+            },
+            {
+              "claim_ids": [
+                "cp-lead"
+              ],
+              "decision": "selected",
+              "hypothesis_id": "M1S3-H001",
+              "reason": "Termination rights qualify the credit reading of negotiated rates."
+            },
+            {
+              "claim_ids": [],
+              "decision": "omitted",
+              "hypothesis_id": "M1S4-H001",
+              "reason": "Retained as component lineage for the selected Agent 6 interaction; a separate paragraph would repeat that operating exposure."
+            },
+            {
+              "claim_ids": [],
+              "decision": "omitted",
+              "hypothesis_id": "M1S5-H001",
+              "reason": "Retained as component lineage for the selected Agent 6 interaction; no standalone competitive advantage is inferred."
+            },
+            {
+              "claim_ids": [
+                "cp-workforce-interaction"
+              ],
+              "decision": "selected",
+              "hypothesis_id": "M1A6-H001",
+              "reason": "The validated interaction explains how staff competition may transmit into costs and service capacity."
+            }
+          ]
+        },
+        "findings": [],
+        "issues": [],
+        "model_stated_outcome": "accepted",
+        "outcome": "accepted",
+        "round": 0,
+        "status": "validated",
+        "summary": "Scripted independent review: source-backed wording, preserved qualifications and economically justified omissions; no new causal mechanism identified."
+      }
+    ]
+  },
+  "source_findings_from_frozen_audit": [
+    {
+      "acceptance_state": "accepted",
+      "admissibility": "established",
+      "agent_id": "m1_competitive_durability",
+      "agent_run_id": "df409ee2-0616-41fe-850a-cc3dbde056e0",
+      "analysis_run_id": "ar_339c5bb404384721",
+      "claim": "The company competes with hospitals and ambulatory surgery centres.",
+      "claim_type": "fact",
+      "component_hypothesis_ids": [],
+      "confidence": "medium",
+      "contradicting_evidence_ids": [],
+      "corrects_hypothesis_id": null,
+      "credit_mechanism": null,
+      "direction": "negative",
+      "display_priority": "display",
+      "disposition": "supported",
+      "evidence_basis": "general_statement",
+      "evidence_quotes": [
+        {
+          "evidence_id": "ev_compete",
+          "quote": "We compete with other hospitals, including not-for-profit systems, and with ambulatory surgery centers"
+        }
+      ],
+      "fo_handoffs": [],
+      "hypothesis_id": "M1S5-H001",
+      "interaction_kind": null,
+      "interpretation": {},
+      "investigation": {},
+      "materiality": "high",
+      "missing_information": [],
+      "mitigant": null,
+      "model_stated": {
+        "claim_type": "fact",
+        "disposition": "supported",
+        "evidence_basis": null,
+        "materiality": "high",
+        "quotes": [
+          {
+            "evidence_id": "ev_compete",
+            "quote": "We compete with other hospitals, including not-for-profit systems, and with ambulatory surgery centers"
+          }
+        ]
+      },
+      "parameter_id": null,
+      "parameter_result_ids": [],
+      "presentation_basis": {},
+      "quoted_values": [],
+      "record_id": "hyp_11976e004f3e4703",
+      "recovery": [],
+      "review_flags": [],
+      "review_required": false,
+      "section": "M1S5",
+      "supersedes_id": null,
+      "supporting_evidence_ids": [
+        "ev_compete"
+      ],
+      "topic": "business",
+      "transmission_mechanism": null,
+      "validation_notes": [],
+      "validator_id": "validator_5",
+      "validator_version": "bo-hypothesis-validator-2.2.1"
+    },
+    {
+      "acceptance_state": "accepted",
+      "admissibility": "established",
+      "agent_id": "m1_customer_stickiness",
+      "agent_run_id": "d8ac98f6-8502-4d3a-bcea-6547da961250",
+      "analysis_run_id": "ar_339c5bb404384721",
+      "claim": "Admissions were stable during the year.",
+      "claim_type": "fact",
+      "component_hypothesis_ids": [],
+      "confidence": "medium",
+      "contradicting_evidence_ids": [],
+      "corrects_hypothesis_id": null,
+      "credit_mechanism": null,
+      "direction": "positive",
+      "display_priority": "display",
+      "disposition": "supported",
+      "evidence_basis": "company_specific_disclosure",
+      "evidence_quotes": [
+        {
+          "evidence_id": "ev_model",
+          "quote": "admissions were stable during the year"
+        }
+      ],
+      "fo_handoffs": [],
+      "hypothesis_id": "M1S2-H001",
+      "interaction_kind": null,
+      "interpretation": {},
+      "investigation": {},
+      "materiality": "low",
+      "missing_information": [],
+      "mitigant": null,
+      "model_stated": {
+        "claim_type": "fact",
+        "disposition": "supported",
+        "evidence_basis": null,
+        "materiality": "low",
+        "quotes": [
+          {
+            "evidence_id": "ev_model",
+            "quote": "admissions were stable during the year"
+          }
+        ]
+      },
+      "parameter_id": null,
+      "parameter_result_ids": [],
+      "presentation_basis": {},
+      "quoted_values": [],
+      "record_id": "hyp_071ce257b8ec4d8c",
+      "recovery": [],
+      "review_flags": [],
+      "review_required": false,
+      "section": "M1S2",
+      "supersedes_id": null,
+      "supporting_evidence_ids": [
+        "ev_model"
+      ],
+      "topic": "business",
+      "transmission_mechanism": null,
+      "validation_notes": [],
+      "validator_id": "validator_2",
+      "validator_version": "bo-hypothesis-validator-2.2.1"
+    },
+    {
+      "acceptance_state": "accepted",
+      "admissibility": "established",
+      "agent_id": "m1_operating_model",
+      "agent_run_id": "535f2705-e2b1-47ad-b000-fe53c7a1c56a",
+      "analysis_run_id": "ar_339c5bb404384721",
+      "claim": "A nursing shortage and rising contract labour costs pressure the operating model.",
+      "claim_type": "fact",
+      "component_hypothesis_ids": [],
+      "confidence": "medium",
+      "contradicting_evidence_ids": [],
+      "corrects_hypothesis_id": null,
+      "credit_mechanism": null,
+      "direction": "negative",
+      "display_priority": "display",
+      "disposition": "supported",
+      "evidence_basis": "general_statement",
+      "evidence_quotes": [
+        {
+          "evidence_id": "ev_labor",
+          "quote": "We face a nursing shortage and rising contract labor costs"
+        }
+      ],
+      "fo_handoffs": [],
+      "hypothesis_id": "M1S4-H001",
+      "interaction_kind": null,
+      "interpretation": {},
+      "investigation": {},
+      "materiality": "high",
+      "missing_information": [],
+      "mitigant": null,
+      "model_stated": {
+        "claim_type": "fact",
+        "disposition": "supported",
+        "evidence_basis": null,
+        "materiality": "high",
+        "quotes": [
+          {
+            "evidence_id": "ev_labor",
+            "quote": "We face a nursing shortage and rising contract labor costs"
+          }
+        ]
+      },
+      "parameter_id": null,
+      "parameter_result_ids": [],
+      "presentation_basis": {},
+      "quoted_values": [],
+      "record_id": "hyp_1764219f4da14d47",
+      "recovery": [],
+      "review_flags": [],
+      "review_required": false,
+      "section": "M1S4",
+      "supersedes_id": null,
+      "supporting_evidence_ids": [
+        "ev_labor"
+      ],
+      "topic": "business",
+      "transmission_mechanism": null,
+      "validation_notes": [],
+      "validator_id": "validator_4",
+      "validator_version": "bo-hypothesis-validator-2.2.1"
+    },
+    {
+      "acceptance_state": "accepted",
+      "admissibility": "qualified_narrative",
+      "agent_id": "m1_pricing_power",
+      "agent_run_id": "ff7c40dc-1671-4565-a623-a30bcd8d01e0",
+      "analysis_run_id": "ar_339c5bb404384721",
+      "claim": "Either party may terminate a managed-care agreement on notice.",
+      "claim_type": "fact",
+      "component_hypothesis_ids": [],
+      "confidence": "medium",
+      "contradicting_evidence_ids": [],
+      "corrects_hypothesis_id": null,
+      "credit_mechanism": null,
+      "direction": "negative",
+      "display_priority": "display",
+      "disposition": "qualified",
+      "evidence_basis": "generic_risk_disclosure",
+      "evidence_quotes": [
+        {
+          "evidence_id": "ev_payer",
+          "quote": "Either party may terminate an agreement on notice"
+        }
+      ],
+      "fo_handoffs": [],
+      "hypothesis_id": "M1S3-H001",
+      "interaction_kind": null,
+      "interpretation": {},
+      "investigation": {},
+      "materiality": "high",
+      "missing_information": [],
+      "mitigant": null,
+      "model_stated": {
+        "claim_type": "fact",
+        "disposition": "supported",
+        "evidence_basis": null,
+        "materiality": "high",
+        "quotes": [
+          {
+            "evidence_id": "ev_payer",
+            "quote": "Either party may terminate an agreement on notice"
+          }
+        ]
+      },
+      "parameter_id": null,
+      "parameter_result_ids": [],
+      "presentation_basis": {},
+      "quoted_values": [],
+      "record_id": "hyp_2a8bb92635c44744",
+      "recovery": [],
+      "review_flags": [
+        {
+          "correction": null,
+          "description": "Supported only by risk-factor language about what could happen; it may be reported as a disclosed risk, not as an event that has occurred.",
+          "effect": "qualify",
+          "fo_handoff_variable": null,
+          "heuristic": true,
+          "layer": "D_evidence_sufficiency",
+          "rule_id": "generic_risk_disclosure_only"
+        }
+      ],
+      "review_required": true,
+      "section": "M1S3",
+      "supersedes_id": null,
+      "supporting_evidence_ids": [
+        "ev_payer"
+      ],
+      "topic": "business",
+      "transmission_mechanism": null,
+      "validation_notes": [
+        "generic_risk_disclosure_only: Supported only by risk-factor language about what could happen; it may be reported as a disclosed risk, not as an event that has occurred."
+      ],
+      "validator_id": "validator_3",
+      "validator_version": "bo-hypothesis-validator-2.2.1"
+    },
+    {
+      "acceptance_state": "accepted",
+      "admissibility": "established",
+      "agent_id": "m1_revenue_quality",
+      "agent_run_id": "0c06ec81-2e8d-4e2d-bd92-32353cf1bd61",
+      "analysis_run_id": "ar_339c5bb404384721",
+      "claim": "Managed-care agreements set negotiated rates.",
+      "claim_type": "fact",
+      "component_hypothesis_ids": [],
+      "confidence": "medium",
+      "contradicting_evidence_ids": [],
+      "corrects_hypothesis_id": null,
+      "credit_mechanism": null,
+      "direction": "neutral",
+      "display_priority": "display",
+      "disposition": "supported",
+      "evidence_basis": "general_statement",
+      "evidence_quotes": [
+        {
+          "evidence_id": "ev_payer",
+          "quote": "Our managed care contracts are generally multi-year agreements that set negotiated rates"
+        }
+      ],
+      "fo_handoffs": [],
+      "hypothesis_id": "M1S1-H001",
+      "interaction_kind": null,
+      "interpretation": {},
+      "investigation": {},
+      "materiality": "high",
+      "missing_information": [],
+      "mitigant": null,
+      "model_stated": {
+        "claim_type": "fact",
+        "disposition": "supported",
+        "evidence_basis": null,
+        "materiality": "high",
+        "quotes": [
+          {
+            "evidence_id": "ev_payer",
+            "quote": "Our managed care contracts are generally multi-year agreements that set negotiated rates"
+          }
+        ]
+      },
+      "parameter_id": null,
+      "parameter_result_ids": [],
+      "presentation_basis": {},
+      "quoted_values": [],
+      "record_id": "hyp_fd98d293d9d44b0a",
+      "recovery": [],
+      "review_flags": [],
+      "review_required": false,
+      "section": "M1S1",
+      "supersedes_id": null,
+      "supporting_evidence_ids": [
+        "ev_payer"
+      ],
+      "topic": "business",
+      "transmission_mechanism": null,
+      "validation_notes": [],
+      "validator_id": "validator_1",
+      "validator_version": "bo-hypothesis-validator-2.2.1"
+    },
+    {
+      "acceptance_state": "accepted",
+      "admissibility": "established",
+      "agent_id": "m1_revenue_quality",
+      "agent_run_id": "0c06ec81-2e8d-4e2d-bd92-32353cf1bd61",
+      "analysis_run_id": "ar_339c5bb404384721",
+      "claim": "Managed-care agreements generally have multi-year terms.",
+      "claim_type": "fact",
+      "component_hypothesis_ids": [],
+      "confidence": "medium",
+      "contradicting_evidence_ids": [],
+      "corrects_hypothesis_id": null,
+      "credit_mechanism": null,
+      "direction": "neutral",
+      "display_priority": "display",
+      "disposition": "supported",
+      "evidence_basis": "general_statement",
+      "evidence_quotes": [
+        {
+          "evidence_id": "ev_payer",
+          "quote": "Our managed care contracts are generally multi-year agreements"
+        }
+      ],
+      "fo_handoffs": [],
+      "hypothesis_id": "M1S1-H002",
+      "interaction_kind": null,
+      "interpretation": {},
+      "investigation": {},
+      "materiality": "medium",
+      "missing_information": [],
+      "mitigant": null,
+      "model_stated": {
+        "claim_type": "fact",
+        "disposition": "supported",
+        "evidence_basis": null,
+        "materiality": "medium",
+        "quotes": [
+          {
+            "evidence_id": "ev_payer",
+            "quote": "Our managed care contracts are generally multi-year agreements"
+          }
+        ]
+      },
+      "parameter_id": null,
+      "parameter_result_ids": [],
+      "presentation_basis": {},
+      "quoted_values": [],
+      "record_id": "hyp_9a68c99a72a34a2a",
+      "recovery": [],
+      "review_flags": [],
+      "review_required": false,
+      "section": "M1S1",
+      "supersedes_id": null,
+      "supporting_evidence_ids": [
+        "ev_payer"
+      ],
+      "topic": "business",
+      "transmission_mechanism": null,
+      "validation_notes": [],
+      "validator_id": "validator_1",
+      "validator_version": "bo-hypothesis-validator-2.2.1"
+    },
+    {
+      "acceptance_state": "accepted",
+      "admissibility": "qualified_narrative",
+      "agent_id": "m1_resilience_integration",
+      "agent_run_id": "40e63274-dc5d-4681-84c0-b7f63879a11f",
+      "analysis_run_id": "ar_339c5bb404384721",
+      "claim": "Labour scarcity may intensify competitive pressure for clinical staff and weaken operating resilience.",
+      "claim_type": "inference",
+      "component_hypothesis_ids": [
+        "M1S4-H001",
+        "M1S5-H001"
+      ],
+      "confidence": "medium_low",
+      "contradicting_evidence_ids": [],
+      "corrects_hypothesis_id": null,
+      "credit_mechanism": null,
+      "direction": "negative",
+      "display_priority": "display",
+      "disposition": "qualified",
+      "evidence_basis": "inference",
+      "evidence_quotes": [],
+      "fo_handoffs": [],
+      "hypothesis_id": "M1A6-H001",
+      "interaction_kind": "compound_risk",
+      "interpretation": {},
+      "investigation": {},
+      "materiality": "high",
+      "missing_information": [
+        "Competitor staffing data"
+      ],
+      "mitigant": null,
+      "model_stated": {
+        "claim_type": "inference",
+        "disposition": "qualified",
+        "evidence_basis": null,
+        "materiality": "high",
+        "quotes": []
+      },
+      "parameter_id": null,
+      "parameter_result_ids": [],
+      "presentation_basis": {},
+      "quoted_values": [],
+      "record_id": "hyp_5ad434f628074d2a",
+      "recovery": [],
+      "review_flags": [],
+      "review_required": true,
+      "section": "M1A6",
+      "supersedes_id": null,
+      "supporting_evidence_ids": [
+        "ev_labor",
+        "ev_compete"
+      ],
+      "topic": "business",
+      "transmission_mechanism": "Competition for scarce clinical staff can raise costs and constrain service capacity.",
+      "validation_notes": [],
+      "validator_id": "agent6_governance",
+      "validator_version": "bo-hypothesis-validator-2.2.1"
+    }
+  ],
+  "omission_proof": {
+    "deliberately_omitted_hypothesis_id": "M1S2-H001",
+    "source_claim": "Admissions were stable during the year.",
+    "in_frozen_audit": true,
+    "audit_record_id": "hyp_071ce257b8ec4d8c",
+    "in_handoff_accepted_finding_ids": true,
+    "in_narrative_hypothesis_ids": false,
+    "source_claim_in_narrative_text": false,
+    "automatic_coverage_claim_ids": [],
+    "in_challenger_reviewed_omissions": true
+  },
+  "handoff_preservation": {
+    "schema_version": "bo-handoff-1.3",
+    "accepted_finding_ids": [
+      "M1A6-H001",
+      "M1S1-H001",
+      "M1S1-H002",
+      "M1S2-H001",
+      "M1S3-H001",
+      "M1S4-H001",
+      "M1S5-H001",
+      "M2-H001",
+      "M4-H001"
+    ],
+    "operational_vulnerabilities": [
+      {
+        "claim_id": "cp-workforce-interaction",
+        "title": null,
+        "text": "Competition for scarce clinical staff can raise costs and constrain service capacity.",
+        "section": "M1A6",
+        "materiality": "medium",
+        "hypothesis_ids": [
+          "M1A6-H001",
+          "M1S4-H001",
+          "M1S5-H001"
+        ],
+        "evidence_ids": [
+          "ev_labor",
+          "ev_compete"
+        ]
+      },
+      {
+        "claim_id": "source:M1S3-H001",
+        "title": "Either party may terminate a managed-care agreement on notice.",
+        "text": "Either party may terminate a managed-care agreement on notice.",
+        "section": "M1S3",
+        "materiality": "high",
+        "hypothesis_ids": [
+          "M1S3-H001"
+        ],
+        "evidence_ids": [
+          "ev_payer"
+        ],
+        "claim_type": "fact",
+        "direction": "negative",
+        "admissibility": "qualified_narrative",
+        "missing_information": [],
+        "source_finding_only": true
+      },
+      {
+        "claim_id": "source:M2-H001",
+        "title": "The industry is extensively regulated and exposed to legislative reimbursement reductions.",
+        "text": "The industry is extensively regulated and exposed to legislative reimbursement reductions.",
+        "section": "M2",
+        "materiality": "high",
+        "hypothesis_ids": [
+          "M2-H001"
+        ],
+        "evidence_ids": [
+          "ev_reg"
+        ],
+        "claim_type": "fact",
+        "direction": "negative",
+        "admissibility": "qualified_narrative",
+        "missing_information": [],
+        "source_finding_only": true
+      }
+    ],
+    "canonical_references": {
+      "analysis_run_id": "ar_339c5bb404384721",
+      "evidence_snapshot_version": 1,
+      "topic_conclusion_id": "tc_a9f9fdd9ae6e4a1e",
+      "audit_stage": "bo_audit:ar_339c5bb404384721",
+      "business_orchestrator_contract": "bo-competitive-positioning-output-1.0.0",
+      "editorial_selection_hash": "eb21ad80a6e64c9e4d6d72616ee72d7089fbea02921554541b36b3111bb947cf"
+    },
+    "content_hash": "1aee111e0e6d1f045dcadcbc7283f7f4764fea0eae56d40df6b454704d0b7af4",
+    "conclusion_status": "human_review_required",
+    "human_review_status": "pending"
+  },
+  "frozen_audit_sha256": "33256acb2b8a333d04c18f6da7d6752728ae899f031d284c094c1d7c09a42ae8",
+  "scripted_calls": {
+    "writer": 1,
+    "challenger": 1
+  }
+}

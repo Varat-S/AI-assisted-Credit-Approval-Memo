@@ -1,0 +1,89 @@
+{
+  "notice": "Actual local New Analysis POST, durable worker, real source ingestion and strict reads; only upstream backends scripted. No live/SEC calls.",
+  "cases": [
+    {
+      "label": "partial",
+      "job_id": "efbb6642c2d4462caf26dd0d35a04f7e",
+      "analysis_run_id": "ar_8762bbee4d474387",
+      "dimensions": [
+        {
+          "width": 1440,
+          "bodyWidth": 1120,
+          "left": 217,
+          "right": 611.5625,
+          "structureTop": 165.40625,
+          "debtTop": 165.40625,
+          "openEvidence": 0
+        },
+        {
+          "width": 1024,
+          "bodyWidth": 1024,
+          "left": 57,
+          "right": 415.328125,
+          "structureTop": 165.40625,
+          "debtTop": 165.40625,
+          "openEvidence": 0
+        },
+        {
+          "width": 390,
+          "bodyWidth": 390,
+          "left": 39,
+          "right": 39,
+          "structureTop": 276.890625,
+          "debtTop": 1104.34375,
+          "openEvidence": 0
+        }
+      ],
+      "nativeEvidenceToggle": true,
+      "historyReopenedExactJob": true,
+      "jsonExportEqual": true,
+      "readsTriggeredNoModels": true,
+      "stageHashesUnchanged": true,
+      "pdfEndpointStatus": 501
+    },
+    {
+      "label": "populated",
+      "job_id": "d0d705e35a8f48e198b726c8d89fa8e0",
+      "analysis_run_id": "ar_93fab89e3e484608",
+      "dimensions": [
+        {
+          "width": 1440,
+          "bodyWidth": 1120,
+          "left": 217,
+          "right": 611.5625,
+          "structureTop": 165.40625,
+          "debtTop": 165.40625,
+          "openEvidence": 0
+        },
+        {
+          "width": 1024,
+          "bodyWidth": 1024,
+          "left": 57,
+          "right": 415.328125,
+          "structureTop": 165.40625,
+          "debtTop": 165.40625,
+          "openEvidence": 0
+        },
+        {
+          "width": 390,
+          "bodyWidth": 390,
+          "left": 39,
+          "right": 39,
+          "structureTop": 255.078125,
+          "debtTop": 1082.53125,
+          "openEvidence": 0
+        }
+      ],
+      "nativeEvidenceToggle": true,
+      "historyReopenedExactJob": true,
+      "jsonExportEqual": true,
+      "readsTriggeredNoModels": true,
+      "stageHashesUnchanged": true,
+      "pdfEndpointStatus": 501
+    }
+  ],
+  "sameCompanyRunsIsolated": true,
+  "firstMemoUnchangedAfterSecondRun": true,
+  "mobileScreenshotHeight": 844,
+  "mobileDebtViewCaptured": true
+}

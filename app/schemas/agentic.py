@@ -438,7 +438,7 @@ class TopicConclusion(BaseModel):
     unresolved_contradictions: list[str] = Field(default_factory=list)
     score_reference: str | None = None  # RiskScore id/version; None for Business Overview
     orchestrator_run_id: str
-    challenge_status: Literal["clean", "reran", "escalated"] = "clean"
+    challenge_status: Literal["clean", "reran", "escalated", "not_performed"] = "clean"
     # append-only lineage
     supersedes_id: str | None = None
     acceptance_state: AcceptanceState = AcceptanceState.ACCEPTED

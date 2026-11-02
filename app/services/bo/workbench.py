@@ -133,11 +133,40 @@ def verify_report_identity(session: Session, row: AcceptedBusinessOverviewRow,
         if key in handoff.canonical_references:
             value = handoff.canonical_references[key]
             require(type(value) is type(expected) and value == expected)
+    contract = handoff.canonical_references.get('business_orchestrator_contract')
+    recorded_contract = (run.model_configuration.get('business_orchestrator_contract')
+                         if isinstance(run.model_configuration, dict) else None)
+    if contract is not None or recorded_contract is not None:
+        from app.core.hashing import content_hash
+        from app.prompts.competitive_positioning import OUTPUT_VERSION, POLICY_VERSION
+
+        from app.prompts import source_selection
+        policies = {OUTPUT_VERSION: POLICY_VERSION, 'bo-source-selection-output-1.0.0': 'bo-source-selection-1.0.0', source_selection.OUTPUT_VERSION: source_selection.POLICY_VERSION}
+        require(contract == recorded_contract and contract in policies)
+        if kind == 'memo':
+            require(payload.get('business_orchestrator_contract') == contract)
+        else:
+            selection = (payload.get('orchestrator') or {}).get('editorial_selection')
+            require(content_hash(selection) == handoff.canonical_references.get('editorial_selection_hash'))
+            cid = handoff.business_topic_conclusion_id
+            if cid is None:
+                require(selection is None)
+            else:
+                require(isinstance(selection, dict))
+                require(selection.get('schema_version') == contract
+                        and selection.get('policy_version') == policies[contract]
+                        and selection.get('conclusion_id') == cid)
+                selected = [c for c in payload.get('conclusions', []) if c.get('conclusion_id') == cid]
+                require(len(selected) == 1 and selected[0].get('acceptance_state') == 'accepted')
+                require(selection.get('orchestrator_run_id') == selected[0].get('orchestrator_run_id'))
 
 
 def bo_artifact(session: Session, analysis_run_id: str, kind: str) -> dict[str, Any]:
     """Hash- and identity-verified ``memo`` / ``audit``, or the live ``handoff``."""
     row = _handoff_row(session, analysis_run_id)
+    if kind == 'four_section':
+        from app.services.bo.four_section import read_four_section
+        return read_four_section(session, analysis_run_id)
     if kind == "handoff":
         return dict(row.payload)
     if kind not in ("memo", "audit"):

@@ -82,6 +82,8 @@ def report_available(session, bo, fo):
     from app.services.bo.workbench import bo_artifact, BoRunNotFoundError
     memo = None
     if bo:
+        if 'four_section_memo' in (bo.payload.get('canonical_references') or {}):
+            return bool(bo_artifact(session, bo.analysis_run_id, 'four_section'))
         for kind in ('memo', 'audit'):
             try:
                 report = bo_artifact(session, bo.analysis_run_id, kind)
@@ -188,83 +190,91 @@ def load_review(session, job):
     from app.services.fo.review import run_header, review_for, review_view, overrides_for
     bo, fo = selected_rows(session, job)
     out = dict(job=job, bo=bo, fo=fo, memo=None, audit=None, synthesis=None, financial=None,
-               sources=[], recorded_sources=[], reason=None, errors=[], excluded_claim_ids=[],
+               sources=[], recorded_sources=[], reason=None, errors=[], excluded_claim_ids=[], four_section=None,
                governance=governance(session, job, bo, fo, report_available(session, bo, fo)))
     if bo:
         handoff = read_handoff(session, bo.handoff_id)  # existing typed content-hash integrity guard
         if handoff.analysis_run_id != bo.analysis_run_id or handoff.case_id != bo.case_id or handoff.evidence_snapshot_version != bo.snapshot_version:
             raise WorkspaceRecordError('Handoff identity differs from this selected run.')
-        reports = {}
-        for kind in ('memo','audit'):
-            try:
-                reports[kind] = bo_artifact(session, bo.analysis_run_id, kind)
-            except BoRunNotFoundError:
-                reports[kind] = None
-        memo, audit = reports['memo'], reports['audit']
-        out.update(memo=memo, audit=audit)
-        if not memo or not audit:
-            out['reason'] = 'The selected run has no complete recorded memo and audit package.'
-            out['governance'] = 'Unavailable or incomplete'
+        if 'four_section_memo' in handoff.canonical_references:
+            from app.services.bo.four_section_view import load_view
+            from app.services.bo.four_section import load_saved_inputs
+            out['four_section'] = load_view(session, bo.analysis_run_id, bo.case_id)
+            # Existing Audit & Review keeps all source records, independently
+            # of whether the selected conclusion component is available.
+            out['audit'] = load_saved_inputs(session, bo.analysis_run_id).audit
         else:
-            # Each available archive was independently checked by bo_artifact,
-            # even when the companion is absent. Both are needed for synthesis.
+            reports = {}
+            for kind in ('memo','audit'):
+                try:
+                    reports[kind] = bo_artifact(session, bo.analysis_run_id, kind)
+                except BoRunNotFoundError:
+                    reports[kind] = None
+            memo, audit = reports['memo'], reports['audit']
             out.update(memo=memo, audit=audit)
-            out['sources'] = [{**source, 'anchor':anchor('source', source.get('evidence_id') or source.get('n')),
-                               'href':safe_url(source.get('source_url'))} for source in memo.get('sources') or []]
-            out['recorded_sources'] = list(out['sources'])
-            cid = bo.payload.get('business_topic_conclusion_id')
-            conclusion = session.get(TopicConclusionRow, cid) if cid else None
-            frozen = next((c for c in audit.get('conclusions', []) if c.get('conclusion_id') == cid), None)
-            rounds = (audit.get('challenger') or {}).get('rounds')
-            challenged = next((r for r in reversed(rounds if isinstance(rounds, list) else [])
-                               if r.get('conclusion_id') == cid), None)
-            enforced = job.get('bo_validators', True) and bo.payload.get('validators_enforced', True)
-            if not enforced:
-                out['reason'] = 'Exploratory output is ungoverned. Inspect its advisory synthesis in Audit & Review.'
-            elif not conclusion or not frozen:
-                out['reason'] = 'An accepted synthesis was not recorded.'
-            elif (conclusion.analysis_run_id != bo.analysis_run_id or conclusion.case_id != job.get('case_id') or
-                  conclusion.snapshot_version != bo.snapshot_version or
-                  conclusion.acceptance_state != 'accepted' or frozen.get('acceptance_state') != 'accepted'):
-                out['reason'] = 'The recorded conclusion is not an accepted conclusion for this run.'
-            elif content_hash(conclusion.payload) != content_hash(frozen.get('payload')):
-                raise WorkspaceRecordError('The recorded conclusion differs from its frozen audit artefact.')
-            elif not challenged or challenged.get('status') != 'validated':
-                out['reason'] = 'A successful independent challenge of this conclusion is not recorded.'
+            if not memo or not audit:
+                out['reason'] = 'The selected run has no complete recorded memo and audit package.'
+                out['governance'] = 'Unavailable or incomplete'
             else:
-                payload = frozen['payload']
-                if payload.get('analysis_run_id') != bo.analysis_run_id:
-                    raise WorkspaceRecordError('The synthesized conclusion belongs to another run.')
-                from app.services.analysis_claims import automatic_coverage_ids, ORIGIN_NOTICE
-                additions = automatic_coverage_ids(audit, frozen)
-                def project(claim):
-                    if not isinstance(claim, dict) or not isinstance(claim.get('text'), str) or not claim['text'].strip():
-                        return None
-                    if claim.get('claim_id') in additions:
-                        out['excluded_claim_ids'].append(claim.get('claim_id'))
-                        return None
-                    evidence_ids = claim.get('evidence_ids') or []
-                    return {**claim, 'anchor':anchor('claim',claim.get('claim_id')),
-                            'sources':[s for s in out['sources'] if s.get('evidence_id') in evidence_ids],
-                            'missing_citations':[eid for eid in evidence_ids if not any(s.get('evidence_id') == eid for s in out['sources'])]}
-                synthesis = dict(assessment=project(payload.get('overall_assessment')), strengths=[], weaknesses=[],
-                                 integrated=[], origin_notice=ORIGIN_NOTICE)
-                for key in ('strengths', 'weaknesses'):
-                    synthesis[key] = [view for claim in payload.get(key) or [] if (view := project(claim))]
-                for key in ('key_drivers', 'material_risks'):
-                    synthesis['integrated'].extend(view for claim in payload.get(key) or [] if (view := project(claim)))
-                synthesis['uncertainties'] = list(dict.fromkeys([*(payload.get('open_questions') or []),
-                                                                *(payload.get('unresolved_contradictions') or [])]))
-                out['synthesis'] = synthesis if synthesis['assessment'] else None
+                # Each available archive was independently checked by bo_artifact,
+                # even when the companion is absent. Both are needed for synthesis.
+                out.update(memo=memo, audit=audit)
+                out['sources'] = [{**source, 'anchor':anchor('source', source.get('evidence_id') or source.get('n')),
+                                   'href':safe_url(source.get('source_url'))} for source in memo.get('sources') or []]
+                out['recorded_sources'] = list(out['sources'])
+                cid = bo.payload.get('business_topic_conclusion_id')
+                conclusion = session.get(TopicConclusionRow, cid) if cid else None
+                frozen = next((c for c in audit.get('conclusions', []) if c.get('conclusion_id') == cid), None)
+                rounds = (audit.get('challenger') or {}).get('rounds')
+                challenged = next((r for r in reversed(rounds if isinstance(rounds, list) else [])
+                                   if r.get('conclusion_id') == cid), None)
+                enforced = job.get('bo_validators', True) and bo.payload.get('validators_enforced', True)
+                if not enforced:
+                    out['reason'] = 'Exploratory output is ungoverned. Inspect its advisory synthesis in Audit & Review.'
+                elif not conclusion or not frozen:
+                    out['reason'] = 'An accepted synthesis was not recorded.'
+                elif (conclusion.analysis_run_id != bo.analysis_run_id or conclusion.case_id != job.get('case_id') or
+                      conclusion.snapshot_version != bo.snapshot_version or
+                      conclusion.acceptance_state != 'accepted' or frozen.get('acceptance_state') != 'accepted'):
+                    out['reason'] = 'The recorded conclusion is not an accepted conclusion for this run.'
+                elif content_hash(conclusion.payload) != content_hash(frozen.get('payload')):
+                    raise WorkspaceRecordError('The recorded conclusion differs from its frozen audit artefact.')
+                elif not challenged or challenged.get('status') != 'validated':
+                    out['reason'] = 'A successful independent challenge of this conclusion is not recorded.'
+                else:
+                    payload = frozen['payload']
+                    if payload.get('analysis_run_id') != bo.analysis_run_id:
+                        raise WorkspaceRecordError('The synthesized conclusion belongs to another run.')
+                    from app.services.analysis_claims import automatic_coverage_ids, ORIGIN_NOTICE
+                    additions = automatic_coverage_ids(audit, frozen)
+                    def project(claim):
+                        if not isinstance(claim, dict) or not isinstance(claim.get('text'), str) or not claim['text'].strip():
+                            return None
+                        if claim.get('claim_id') in additions:
+                            out['excluded_claim_ids'].append(claim.get('claim_id'))
+                            return None
+                        evidence_ids = claim.get('evidence_ids') or []
+                        return {**claim, 'anchor':anchor('claim',claim.get('claim_id')),
+                                'sources':[s for s in out['sources'] if s.get('evidence_id') in evidence_ids],
+                                'missing_citations':[eid for eid in evidence_ids if not any(s.get('evidence_id') == eid for s in out['sources'])]}
+                    synthesis = dict(assessment=project(payload.get('overall_assessment')), strengths=[], weaknesses=[],
+                                     integrated=[], origin_notice=ORIGIN_NOTICE)
+                    for key in ('strengths', 'weaknesses'):
+                        synthesis[key] = [view for claim in payload.get(key) or [] if (view := project(claim))]
+                    for key in ('key_drivers', 'material_risks'):
+                        synthesis['integrated'].extend(view for claim in payload.get(key) or [] if (view := project(claim)))
+                    synthesis['uncertainties'] = list(dict.fromkeys([*(payload.get('open_questions') or []),
+                                                                    *(payload.get('unresolved_contradictions') or [])]))
+                    out['synthesis'] = synthesis if synthesis['assessment'] else None
+                    if out['synthesis'] is None:
+                        out['reason'] = ('The recorded overall assessment is an automatic specialist coverage copy.'
+                                         if (payload.get('overall_assessment') or {}).get('claim_id') in additions
+                                         else 'A usable overall assessment is not recorded in the validated conclusion.')
+                selected_claims = ([out['synthesis']['assessment'], *out['synthesis']['strengths'], *out['synthesis']['weaknesses'], *out['synthesis']['integrated']] if out['synthesis'] else [])
+                cited_ids = {source.get('evidence_id') for claim in selected_claims for source in claim.get('sources', [])}
+                out['sources'] = [source for source in out['sources'] if source.get('evidence_id') in cited_ids]
                 if out['synthesis'] is None:
-                    out['reason'] = ('The recorded overall assessment is an automatic specialist coverage copy.'
-                                     if (payload.get('overall_assessment') or {}).get('claim_id') in additions
-                                     else 'A usable overall assessment is not recorded in the validated conclusion.')
-            selected_claims = ([out['synthesis']['assessment'], *out['synthesis']['strengths'], *out['synthesis']['weaknesses'], *out['synthesis']['integrated']] if out['synthesis'] else [])
-            cited_ids = {source.get('evidence_id') for claim in selected_claims for source in claim.get('sources', [])}
-            out['sources'] = [source for source in out['sources'] if source.get('evidence_id') in cited_ids]
-            if out['synthesis'] is None:
-                out['governance'] = 'Unavailable or incomplete' if enforced else 'Human review required · exploratory'
+                    out['governance'] = 'Unavailable or incomplete' if enforced else 'Human review required · exploratory'
     else:
         out['reason'] = 'No Business Overview report is recorded for this selected job.'
     if fo and not job.get('bo_only'):

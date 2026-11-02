@@ -1,0 +1,126 @@
+{
+  "schema_version": "milestone-5-verification-manifest-1.0.0",
+  "preexisting_files_checked": 657,
+  "preexisting_files_unchanged": 653,
+  "preexisting_files_changed": [
+    "app/api/analysis.py",
+    "app/api/templates/analysis_setup.html.j2",
+    "app/services/bo_fo.py",
+    "tests/integration/test_analysis_execution.py"
+  ],
+  "memo_schema_and_content_hashes": "verified against strict reader; Python float serialization retained",
+  "files": {
+    "browser-checks.json": {
+      "sha256": "247d8dfdeda780dc10d0862243b8765bacdb66a9b80760425b33b0bc00b203d8",
+      "bytes": 2415
+    },
+    "end-to-end-trace.json": {
+      "sha256": "1f0f22cfa6f861623ea43d537ed57ca591136af5df565aba9ca9645e39b0cdba",
+      "bytes": 23046
+    },
+    "new-analysis.png": {
+      "sha256": "f6483584d864cecc2be72ac55bbc581955c7b4c183b0041922e3954b6519fd6d",
+      "bytes": 279702
+    },
+    "partial-evidence-expanded.png": {
+      "sha256": "d201951ce87f8fb67d088752f5a873be1dc5c05eb7394cc79d5a3d9c224040b7",
+      "bytes": 36654
+    },
+    "partial-execution.png": {
+      "sha256": "2850980f614b4f33e33b145987c5dc0b7269983b224ae4d274f413e84f432a07",
+      "bytes": 102909
+    },
+    "partial-history.png": {
+      "sha256": "c6542c2a500e90881a3f7f2f31e899029b35655594df33996e98431365741db1",
+      "bytes": 67531
+    },
+    "partial-memo.pdf": {
+      "sha256": "8ec5fe9d5210bcb4801f339f45772c889d8f5ceeba1b8bb8b276b873ff46dd1d",
+      "bytes": 494550
+    },
+    "partial-memo.v1.json": {
+      "sha256": "85a2f36693a3851063527759c8767495735b41474949c18170ac07c7adb95e0e",
+      "bytes": 63646
+    },
+    "partial-print.html": {
+      "sha256": "964c2e2820961a429b8ccd4cb7df8335c51b30c9b4f8e79db90868115cea1fc1",
+      "bytes": 145260
+    },
+    "partial-proof.json": {
+      "sha256": "f948a6847b1e02c9e354c2fc3308b5066313334ff87b20346646bd2d2447a445",
+      "bytes": 99421
+    },
+    "partial-review-1024.png": {
+      "sha256": "bfa9a5253fb9386e17953b9d70461fc62d08b9954783e44abf10bf175d06895d",
+      "bytes": 194592
+    },
+    "partial-review-1440.png": {
+      "sha256": "b320b82a65d415871a7192176ad723fdcdfd62153f7c4a85fd7bd3a3bf49a87b",
+      "bytes": 564762
+    },
+    "partial-review-390.png": {
+      "sha256": "52a98d6cf81261f6018062fee81de5bef11103ffc0008fb9ea9b1a03c5d96800",
+      "bytes": 70488
+    },
+    "partial-review-mobile-debt.png": {
+      "sha256": "d014b3fe6284c2abbd5b43f49648dde34d4dbf55d0378acc24be7dd700062c5d",
+      "bytes": 66156
+    },
+    "partial-review.html": {
+      "sha256": "9a9e427aef915c00fce7f06513f09cf8d1f5aad9856fd31c45fc179a746e0a74",
+      "bytes": 148769
+    },
+    "pdf-checks.json": {
+      "sha256": "38190622b842424f79a06512aa43776390fd4ce2faba7089f6217a9a066c15ec",
+      "bytes": 30261
+    },
+    "populated-evidence-expanded.png": {
+      "sha256": "1f23b7dfa34f31ae8364e0d98dd96f50a1a70a52570e6934ac07df56f4b35ea4",
+      "bytes": 36820
+    },
+    "populated-execution.png": {
+      "sha256": "2850980f614b4f33e33b145987c5dc0b7269983b224ae4d274f413e84f432a07",
+      "bytes": 102909
+    },
+    "populated-history.png": {
+      "sha256": "6ad62cc331b35f23379c8729a480bc27929cd264fc469a2b409737c98f28cb15",
+      "bytes": 87596
+    },
+    "populated-memo.pdf": {
+      "sha256": "77a7adcbcd3ab74b2e8a044288af5330d01a4b3b627cbb18dd93826819589629",
+      "bytes": 501074
+    },
+    "populated-memo.v1.json": {
+      "sha256": "14b0038decf01d42ac7a35abed420ff852c47c19a373a3b0f5a2cf547d82698c",
+      "bytes": 65720
+    },
+    "populated-print.html": {
+      "sha256": "48978793a94e133c35924ac01cd88eec051b5b39f30c2b646a940da76235adb0",
+      "bytes": 148822
+    },
+    "populated-proof.json": {
+      "sha256": "dd052fb55e574b1aff45ba6a71f1fd0a969b7c8d86bf9abaf17246d20cbd3e57",
+      "bytes": 102152
+    },
+    "populated-review-1024.png": {
+      "sha256": "931c2a4dae0d72bf5f6da3ea80a48342ecd5cdabf29e013b1ed4f1aa7df81ad7",
+      "bytes": 192125
+    },
+    "populated-review-1440.png": {
+      "sha256": "1e68c5066c33dcc1d0997f536fbd7a404a955475830b40208bc78ffb5ad5f11d",
+      "bytes": 565721
+    },
+    "populated-review-390.png": {
+      "sha256": "fe7bfd0d2dbed720fbe1754715f16d812ca0ea87b7ade6b88300d514564a17e5",
+      "bytes": 72273
+    },
+    "populated-review-mobile-debt.png": {
+      "sha256": "0d0773f45d4f5ada24979617d394166ccc02c69468b150e0c034420b3ae33baf",
+      "bytes": 66512
+    },
+    "populated-review.html": {
+      "sha256": "85ed7d34dfa08d08418d31d7bb91b533a18cb534ae146a38ed6f4dd146e0c35f",
+      "bytes": 152331
+    }
+  }
+}
