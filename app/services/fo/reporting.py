@@ -7,6 +7,7 @@ reporting currency.
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 from typing import Any
 
@@ -604,7 +605,7 @@ def _fact_text(f: dict) -> str:
 UNRESOLVED_TAG = "Unresolved"  # an escalated measure no analyst has decided yet
 ESCALATED_TAG = "Escalated"  # a measure a trigger escalated, not decided yet
 TAG_CSS = {UNRESOLVED_TAG: "very-high", ESCALATED_TAG: "very-high", "Overridden by analyst": "moderate",
-           "Engine score": "low"}
+           "Engine score": "moderate"}
 
 
 def unresolved_tags(ad: dict | None, overrides: list | None) -> dict:
@@ -2121,3 +2122,13 @@ def render_overview_html(payload: dict[str, Any], *, run: dict | None = None, re
     """A standalone scorecard page for one recorded run."""
     view = overview_view(payload, run_status=(run or {}).get("run_status"), review=review, overrides=overrides)
     return _env.get_template("fo_overview.html.j2").render(view=view, run=run)
+
+
+def render_audit_html(payload: dict[str, Any], *, run: dict | None = None, review: dict | None = None,
+                      overrides: list | None = None) -> str:
+    """The audit report for one recorded run: every pre-check and trigger agent in full (evidence, passages read,
+    rules and the model run) and each measure's calculation, which the workbench leaves out of its brief view.
+    Laid out in full: every collapsible section is rendered open."""
+    view = overview_view(payload, run_status=(run or {}).get("run_status"), review=review, overrides=overrides)
+    html = _env.get_template("fo_audit.html.j2").render(view=view, run=run)
+    return re.sub(r"<details\b(?![^>]*\bopen\b)", "<details open", html)

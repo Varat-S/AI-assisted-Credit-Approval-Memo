@@ -252,7 +252,7 @@ def test_long_debt_display_records_are_not_truncated(db_session, tmp_path):
     assert len(page.xpath('//*[@data-schedule="senior_notes"]//tbody/tr')) == 6
 
 
-def test_landscape_print_summary_and_full_schedules_preserve_sources(db_session, tmp_path):
+def test_portrait_print_summary_and_full_schedules_preserve_sources(db_session, tmp_path):
     from app.api.analysis import _render_review
     from tests.integration.test_analysis_review_workspace import seed_run
     result, _ = run(db_session, tmp_path)
@@ -264,7 +264,7 @@ def test_landscape_print_summary_and_full_schedules_preserve_sources(db_session,
     printed = _render_review(db_session, selected, view, pdf=True)
     standalone = render_page(load_view(db_session, result.analysis_run_id), pdf=True)
     for output in (printed, standalone):
-        assert '@page{size:A4 landscape;' in output
+        assert '@page{size:A4;' in output and 'landscape' not in output
         page = html.fromstring(output)
         assert page.xpath('//*[@class="bo-structure"]/parent::*/*[@class="bo-debt-summary"]')
         assert page.xpath('//*[contains(@class,"bo-print-schedules")]')

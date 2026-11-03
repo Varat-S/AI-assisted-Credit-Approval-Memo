@@ -23,7 +23,10 @@ from jinja2 import Environment, FileSystemLoader
 from app.services.analysis_setup import company_registry, validate_setup, provider_configuration, SetupError
 
 router = APIRouter(tags=["analysis workspace"])
-_env = Environment(loader=FileSystemLoader(str(Path(__file__).parent / "templates")), autoescape=True)
+# The reporting templates hold the FO memo section, shared by the Memo tab and the standalone FO memo.
+_env = Environment(loader=FileSystemLoader([str(Path(__file__).parent / "templates"),
+                                            str(Path(__file__).parents[1] / "services" / "reporting" / "templates")]),
+                   autoescape=True)
 
 
 def _setup_page(*, values, check="", extra_errors=(), notice=None, reports=None, edgar=None, status_code=None):
@@ -208,11 +211,11 @@ def start_analysis(company: str = Form(''), sections: str = Form('both'),
 
 
 @router.get('/analysis/{job_id}/execution', response_class=HTMLResponse)
-def execution(job_id: str):
+def execution(job_id: str, session: Session = Depends(get_session)):
     job = bo_fo.jobs.get(job_id)
     if job is None:
         raise HTTPException(404, 'Unknown analysis.')
-    return HTMLResponse(_env.get_template('analysis_execution.html.j2').render(job=job, analysis=analysis_workspace.analysis_tabs(job, 'execution')),
+    return HTMLResponse(_env.get_template('analysis_execution.html.j2').render(job=job, analysis=analysis_workspace.analysis_tabs(job, 'execution', session)),
                         headers={'Cache-Control':'no-store'})
 
 
@@ -255,7 +258,7 @@ def _render_review(session, job, view, *, pdf=False):
     credit = _credit_view(session, job)  # _selected_workspace has verified the run references
     return _env.get_template('analysis_review.html.j2').render(
         job=job, view=display, rms=credit['rms'] if credit else None, pdf=pdf,
-        analysis=analysis_workspace.analysis_tabs(job, 'memo'))
+        analysis=analysis_workspace.analysis_tabs(job, 'memo', session))
 
 
 @router.get('/analysis/{job_id}/memo.pdf')
@@ -307,10 +310,9 @@ def rms_page(session, job_id, *, notice=None, error=None, status_code=200):
     except analysis_workspace.WorkspaceRecordError as exc:
         raise HTTPException(409, 'The selected run could not be verified. Its records require attention.') from exc
     if view is None:
-        raise HTTPException(404, "Risk Mitigation & Structuring needs this analysis's Business and Financial "
-                                 "Overview runs.")
-    return HTMLResponse(_env.get_template('analysis_rms.html.j2').render(
-        job=job, view=view, notice=notice, error=error, analysis=analysis_workspace.analysis_tabs(job, 'rms')),
+        raise HTTPException(404, "The credit view needs this analysis's Business and Financial Overview runs.")
+    return HTMLResponse(_env.get_template('credit_case.html.j2').render(
+        job=job, view=view, notice=notice, error=error, analysis=analysis_workspace.analysis_tabs(job, 'rms', session)),
         status_code=status_code, headers={'Cache-Control':'no-store'})
 
 
@@ -327,5 +329,5 @@ def audit_analysis(job_id: str, session: Session = Depends(get_session)):
     display = {**view, 'financial':public_record(view['financial']), 'reason':public_record(view['reason'])}
     return HTMLResponse(_env.get_template('analysis_audit.html.j2').render(
         job=job, view=display, audit=audit, anchor=analysis_workspace.anchor,
-        analysis=analysis_workspace.analysis_tabs(job, 'audit')),
+        analysis=analysis_workspace.analysis_tabs(job, 'audit', session)),
         headers={'Cache-Control':'no-store'})

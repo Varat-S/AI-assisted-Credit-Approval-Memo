@@ -8,6 +8,7 @@ agent responses (no network, no model).
 from __future__ import annotations
 
 import json
+import re
 import shutil
 from pathlib import Path
 
@@ -687,6 +688,20 @@ def test_browser_run_list_run_form_workbench_and_artifacts(client, tmp_path):
     overview = client.get(f"{base}/overview.json").json()
     assert overview["metrics"][0]["key"] == "overall"
     assert client.get(f"{base}/overview.html").status_code == 200
+    # The workbench shows each agent check and measure briefly; evidence, passages, model runs and each measure's
+    # calculation are in the audit report, laid out in full.
+    assert "Rules and passages read" not in workbench.text and "Model run details" not in workbench.text
+    assert "Workings, sources and notes" not in workbench.text
+    assert f'href="{base}/audit.html#fo-dscr-t2"' in workbench.text and f'href="{base}/audit.html#fo-dscr"' in workbench.text
+    assert f'src="{base}/audit.html"' in workbench.text
+    assert 'id="audit"' in workbench.text and 'href="#audit"' in workbench.text  # inline preview, as on the BO workbench
+    audit = client.get(f"{base}/audit.html")
+    assert audit.status_code == 200 and "Financial Overview audit report" in audit.text
+    assert "Rules and passages read" in audit.text and "Model run details" in audit.text
+    assert "Measure calculations" in audit.text and "Workings, sources and notes" in audit.text
+    assert 'id="fo-dscr-t2"' in audit.text and 'id="fo-dscr"' in audit.text and 'id="fo-composite"' not in audit.text
+    assert "<details" in audit.text and not re.search(r"<details(?![^>]*\bopen\b)", audit.text)  # nothing folded
+    assert client.get(f"/cases/OTHER/fo/runs/{run_id}/audit.html").status_code == 404
     assert client.get(base).json()["integrity_ok"] is True
     assert [r["run_id"] for r in client.get("/cases/NVDA_WEB/fo/runs").json()["runs"]] == [run_id]
     assert client.get(f"/cases/OTHER/fo/runs/{run_id}/overview.json").status_code == 404

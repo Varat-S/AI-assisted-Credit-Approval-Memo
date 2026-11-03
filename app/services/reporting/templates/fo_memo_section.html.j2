@@ -1,0 +1,78 @@
+{# The Financial Overview section of a memo, from fo.memo.build_memo(). Rendered inside the analysis's Memo tab (and
+   its PDF) and as the body of the standalone FO memo (fo_memo.html.j2), so both read the same. Uses the memo-*
+   classes each page styles. Optional: `fo_tab`, the FO workbench address, to link each measure to its card. #}
+{% set ex, out = memo.executive, memo.outstanding %}
+{% macro risk(s) %}<span class="memo-risk {{ s.css }}">{{ s.label }}{% if s.score is not none %} · {{ s.text }}{% endif %}</span>{% endmacro %}
+{% macro outcome(v) %}<span class="memo-risk {{ 'very-low' if v in ['pass', 'compliant', 'routine', 'none', 'no_adjustment', 'not_applicable', 'billed_revenue', 'continued'] else 'high' if v in ['fail', 'breach', 'escalated', 'unresolved', 'stopped'] else 'moderate' }}">{{ (v or 'not run')|replace('_', ' ') }}</span>{% endmacro %}
+{% macro cell(v) %}{{ v.text if v is mapping else v }}{% endmacro %}
+
+<h3>Executive Financial Credit Assessment</h3>
+<p>{{ ex.headline }}</p>
+{% set comp = ex.composite %}
+{% set tiles = [('Composite risk score', comp.text ~ (' / 10' if comp.score is not none else '')), ('Indicative rating', comp.rating or '—'), ('Risk level', comp.label|capitalize), ('Measures scored', ex.measures_scored ~ ' / ' ~ memo.measures|length)] %}
+{% if pdf %}{# the PDF renderer has no grid: the tiles go side by side in a table #}<table class="memo-score-table"><tr>{% for label, value in tiles %}<td><span>{{ label }}</span><br><strong>{{ value }}</strong></td>{% endfor %}</tr></table>
+{% else %}<div class="memo-scores">{% for label, value in tiles %}<div><span>{{ label }}</span><strong>{{ value }}</strong></div>{% endfor %}</div>{% endif %}
+<p class="technical-note">{% if comp.score is not none %}The composite combines the scored measures below by their weights{% if comp.after_override %}, after the analyst's overrides on the Financial Overview tab{% endif %}. {% endif %}Scores run from 1 (lowest risk) to 10 (highest). The rating is the engine's indicative mapping of the composite (1 = AAA, 10 = D), not an agency rating. It updates when an analyst records a decision on the Financial Overview tab.</p>
+<p class="memo-empty">Status: {{ (memo.status.run_status or 'unknown')|replace('_', ' ') }}. {{ memo.status.text }} Analyst review: {{ memo.status.human_review_status }}.</p>
+<div class="memo-columns">
+<section><h3>Financial strengths</h3>{% if ex.strengths %}<ul>{% for s in ex.strengths %}<li>{{ s.text }}</li>{% endfor %}</ul>{% else %}<p class="memo-empty">No measure scores low risk.</p>{% endif %}</section>
+<section><h3>Financial weaknesses</h3>{% if ex.weaknesses %}<ul>{% for s in ex.weaknesses %}<li>{{ s.text }}</li>{% endfor %}</ul>{% else %}<p class="memo-empty">No measure scores above moderate risk.</p>{% endif %}
+{% if ex.watch %}<h3>Moderate risk</h3><ul>{% for s in ex.watch %}<li>{{ s.text }}</li>{% endfor %}</ul>{% endif %}</section>
+</div>
+{% if out.run_decision or out.pending_overrides or out.unresolved_triggers %}
+<div class="notice-warning"><strong>Requires an analyst.</strong><ul>
+{% for e in out.run_decision %}<li>Going concern: {{ e.reason }}</li>{% endfor %}
+{% for e in out.pending_overrides %}<li>{{ e.measure }} ({{ e.title }}): engine score {{ e.engine_score if e.engine_score is not none else 'none' }}. {{ e.reason }}</li>{% endfor %}
+{% for t in out.unresolved_triggers %}<li>Trigger {{ t.trigger }}: {{ t.reason }}</li>{% endfor %}
+</ul></div>
+{% endif %}
+
+<h3>Pre-checks</h3>
+{% if memo.prechecks %}
+<div class="memo-table-wrap"><table class="memo-table"><thead><tr><th>Check</th><th>Outcome</th><th>Finding</th><th>Effect on the scores</th></tr></thead><tbody>
+{% for p in memo.prechecks %}<tr><td>{{ p.title }}</td><td>{{ outcome(p.status) }}{% if p.decided_by %}<br><small>{{ p.decided_by|replace('_', ' ') }}</small>{% endif %}</td><td>{{ p.reason or '—' }}</td><td>{{ p.effect or '—' }}</td></tr>{% endfor %}
+</tbody></table></div>
+<p class="technical-note">The Pre-check Agent classifies the filing's passages; its quotes are verified against the filing before they count.</p>
+{% else %}<p class="memo-empty">No pre-check was recorded for this run.</p>{% endif %}
+
+<h3>Financial Measures</h3>
+<div class="memo-table-wrap"><table class="memo-table"><thead><tr><th style="width:27%">Measure</th><th style="width:31%">Recorded period and value</th><th style="width:11%">Trend</th><th style="width:15%">Industry benchmark</th><th style="width:16%">Risk score</th></tr></thead><tbody>
+{% for m in memo.measures %}<tr id="fo-memo-{{ m.key }}"><td><strong>{% if fo_tab %}<a href="{{ fo_tab }}#fo-{{ m.key }}">{{ m.title }}</a>{% else %}{{ m.title }}{% endif %}</strong></td>
+<td>{% if m.primary %}<small>{{ m.primary.label }}</small><br>{% for period in m.primary.periods %}{{ period.heading }}: {{ cell(period.value) }}{% if not loop.last %}<br>{% endif %}{% endfor %}{% else %}Not scored{% endif %}</td>
+<td>{% if m.trend %}{{ m.trend.direction|capitalize }}{% else %}—{% endif %}</td>
+<td>{% for b in m.benchmarks %}{{ b|replace(': industry benchmark', ':') }}{% if not loop.last %}<br>{% endif %}{% else %}—{% endfor %}</td>
+<td>{{ risk(m.score) }}{% if m.escalated %}<br><span class="memo-risk high">awaiting analyst</span>{% endif %}</td></tr>
+{% if m.formula or m.override or m.triggers or m.qualifications or m.why_unscored %}<tr class="memo-note-row"><td colspan="5"><small>
+{% if m.formula %}Formula: {{ m.formula }}<br>{% endif %}
+{% if m.why_unscored %}Not scored: {{ m.why_unscored }}<br>{% endif %}
+{% if m.override %}<strong>{{ m.override }}</strong><br>{% endif %}
+{% for t in m.triggers %}Trigger {{ t.trigger }}{% if t.unresolved %} (unresolved){% endif %}: {{ t.reason }}<br>{% endfor %}
+{% for q in m.qualifications %}{{ q }}{% if not loop.last %}<br>{% endif %}{% endfor %}
+</small></td></tr>{% endif %}
+{% endfor %}
+</tbody></table></div>
+
+<h3>Composite Risk Score</h3>
+{% if memo.composite.rows %}
+<div class="memo-table-wrap"><table class="memo-table"><thead><tr><th>Measure</th><th>Score</th><th>Weight</th><th>Share used</th><th>Contribution</th><th>Notes</th></tr></thead><tbody>
+{% for r in memo.composite.rows %}<tr><td>{{ r.name }}</td><td>{{ cell(r.score) }}</td><td>{{ r.weight }}</td><td>{{ r.share }}</td><td>{{ r.contribution }}</td><td>{{ r.notes or '' }}</td></tr>{% endfor %}
+</tbody></table></div>
+{% endif %}
+{% if memo.composite.formula %}<p class="technical-note">{{ memo.composite.formula }}{% if memo.composite.average and memo.composite.average != '—' %}; weighted average {{ memo.composite.average }}{% endif %}.{% for a in memo.composite.adjustments %} {{ a }}.{% endfor %}</p>{% endif %}
+{% if memo.composite.gaps %}<p class="memo-empty">{{ memo.composite.gaps }}</p>{% endif %}
+
+{% if memo.decisions.review or memo.decisions.overrides %}
+<h3>Analyst decisions</h3><ul>
+{% if memo.decisions.review %}<li>Run decision: {{ memo.decisions.review.decision }} by {{ memo.decisions.review.reviewer }} on {{ (memo.decisions.review.decided_at or '')[:10] }}: {{ memo.decisions.review.reason }}</li>{% endif %}
+{% for o in memo.decisions.overrides %}<li>{{ o.measure }}: {{ 'overridden to ' ~ o.analyst_score if o.decision == 'override' else 'engine score accepted' }} (engine {{ o.engine_score }}) by {{ o.reviewer }} on {{ (o.decided_at or '')[:10] }}: {{ o.reason }}</li>{% endfor %}
+</ul>
+{% endif %}
+
+{% if out.unscored or out.data_limitations %}
+<h3>Outstanding Items and Limitations</h3>
+{% if out.unscored %}<p><strong>Measures not scored</strong></p><ul>{% for u in out.unscored %}<li>{{ u.measure }}: {{ u.reason }}</li>{% endfor %}</ul>{% endif %}
+{% if out.data_limitations %}<p><strong>Data limitations</strong></p><ul>{% for d in out.data_limitations %}<li>{{ d }}</li>{% endfor %}</ul>{% endif %}
+{% endif %}
+
+<h3>Basis of Preparation</h3>
+<p class="technical-note">Every figure is computed by code from the {{ memo.case.form }}'s Inline XBRL facts ({{ memo.case.filing_folder }}){% if memo.case.source and memo.case.source.url %}, <a href="{{ memo.case.source.url }}">{{ memo.case.source.url }}</a>{% endif %}, for the period ending {{ memo.case.period_end or 'unknown' }} (FY{{ memo.case.fiscal_year or '?' }}); amounts are in millions of the reporting currency. Industry group: {{ memo.case.industry_group or 'not classified' }}. Run {{ memo.run.run_id }} (hash {{ (memo.run.content_hash or '')[:16] }}), engine {{ memo.run.engine_version }}{% if memo.run.agent_model %}, agent model {{ memo.run.agent_model }}{% endif %}. This section renders the recorded run; it adds no analysis of its own. Version {{ memo.version }}.</p>

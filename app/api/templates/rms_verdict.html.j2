@@ -1,4 +1,4 @@
-{# Shared by the credit view and an analysis's RMS tab. Needs view, rms, r, rec, fo, fo_run, bo_run and the credit_macros. #}
+{# The credit view's RMS verdict (the loan request form is rms_request.html.j2). Needs view, rms, r, rec, fo, fo_run, bo_run and the credit_macros. #}
 <section id="verdict"><h2>Verdict</h2>
 {% if r %}{% set kind = 'approve' if r.verdict.startswith('approve') or r.verdict == 'counter_offer' else r.verdict %}
 <div class="card verdict {{ kind }}">
@@ -13,14 +13,5 @@
 {% if r.warnings %}<p class="warn"><strong>Warnings</strong> (gates waived because the BO reviewer accepted the handoff):</p><ul>{% for g in r.warnings %}<li>{{ g }}</li>{% endfor %}</ul>{% endif %}
 <p class="subtle">Assessment <code>{{ r.run_id }}</code>{% if r.supersedes %} (supersedes <code>{{ r.supersedes }}</code>){% endif %} · <code>{{ r.output }}</code></p>
 </div>
-{% else %}<p>No assessment of these runs yet. Enter the requested loan below, or leave it blank for a debt capacity report.</p>{% endif %}
-{% if fo %}
-<form method="post" action="/cases/{{ view.case_id }}/credit/assess" class="grid" style="margin-top:14px" id="assess-form">
-<input type="hidden" name="fo_run" value="{{ fo_run }}"><input type="hidden" name="bo_run" value="{{ bo_run }}">{% if analysis %}<input type="hidden" name="job" value="{{ analysis.job.job_id }}">{% endif %}
-<div><label for="requested_amount_m">Requested loan, US$ millions <small>(blank: debt capacity only)</small></label><input id="requested_amount_m" name="requested_amount_m" type="number" min="0.1" step="0.1" value="{{ rms.request.requested_amount_m if rms.request.requested_amount_m is not none else '' }}"></div>
-<div><label for="tenor_years">Tenor, years</label><input id="tenor_years" name="tenor_years" type="number" min="1" step="1" value="{{ rms.request.tenor_years }}"></div>
-<div><label for="interest_rate">Interest rate, as a decimal <small>(blank: SOFR + credit spread + business premium)</small></label><input id="interest_rate" name="interest_rate" type="number" min="0" max="1" step="0.0005" placeholder="e.g. 0.065" value="{{ rms.request.interest_rate if rms.request.interest_rate is not none else '' }}"></div>
-<div><label for="collateral_value_m">Collateral value, US$ millions <small>(secured only)</small></label><input id="collateral_value_m" name="collateral_value_m" type="number" min="0" step="0.1" value="{{ rms.request.collateral_value_m if rms.request.collateral_value_m is not none else '' }}"></div>
-<div class="buttons"><button class="primary-button" type="submit">{{ 'Re-assess' if r else 'Assess' }}</button></div>
-</form>{% else %}<p class="notice">This case has no Financial Overview run: RMS needs one.</p>{% endif %}
+{% else %}<p>No assessment of these runs yet. Enter the requested loan under <a href="#assess-form">Loan request</a>, or leave it blank for a debt capacity report.</p>{% endif %}
 </section>

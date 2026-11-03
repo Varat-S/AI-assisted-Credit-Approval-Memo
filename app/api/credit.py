@@ -9,6 +9,9 @@ assessment's last request), so the page always shows a verdict built from the de
 * ``POST /cases/{case_id}/credit/fo/{run_id}/review`` -- the analyst's going-concern decision
 * ``POST /cases/{case_id}/credit/bo/{analysis_run_id}/review`` -- accept or reject the BO handoff
 
+An analysis's Credit view tab (``/analysis/{job_id}/rms``) renders the same page for its two runs; its forms send
+``job``, and every route here then returns to that tab instead.
+
 The decisions go through the same services as the BO and FO workbenches, which keep their own rules (one
 decision per item, bound to the recorded content). RMS writes only its own files.
 """
@@ -61,8 +64,17 @@ def credit_context(case_id, fo_run=None, bo_run=None) -> dict:
     return {"url": credit_url(case_id, fo_run, bo_run), "fo_run": fo_run or "", "bo_run": bo_run or ""}
 
 
-def _back(case_id, fo_run, bo_run, notice=None):
+def _back(case_id, fo_run, bo_run, notice=None, job=""):
+    if job:
+        return RedirectResponse(f"/analysis/{quote(job, safe='')}/rms?{urlencode({'notice': notice})}", status_code=303)
     return RedirectResponse(credit_url(case_id, fo_run, bo_run, notice), status_code=303)
+
+
+def _error(session, case_id, fo_run, bo_run, error, job="", status_code=400):
+    if job:
+        from app.api.analysis import rms_page
+        return rms_page(session, job, error=error, status_code=status_code)
+    return _page(session, case_id, fo_run=fo_run, bo_run=bo_run, error=error, status_code=status_code)
 
 
 def back_to_credit(case_id, fo_run, bo_run, notice):
@@ -113,7 +125,7 @@ def credit_assess(
     tenor_years: str = Form(default=""),
     interest_rate: str = Form(default=""),
     collateral_value_m: str = Form(default=""),
-    job: str = Form(default=""),  # set by an analysis's RMS tab: go back there
+    job: str = Form(default=""),  # set by an analysis's Credit view tab: go back there
     session: Session = Depends(get_session),
 ):
     bo_run = bo_run or None
@@ -126,14 +138,8 @@ def credit_assess(
         summary = assess_case(session, case_id, output_root=get_settings().output_dir, request=request,
                               fo_run_id=fo_run, bo_run_id=bo_run)
     except (ValueError, RmsRunError) as exc:  # RmsRunError is a ValueError too
-        if job:
-            from app.api.analysis import rms_page
-            return rms_page(session, job, error=f"Not assessed: {exc}", status_code=400)
-        return _page(session, case_id, fo_run=fo_run, bo_run=bo_run, error=f"Not assessed: {exc}", status_code=400)
-    notice = f"Assessed: {summary['verdict'].replace('_', ' ')}."
-    if job:
-        return RedirectResponse(f"/analysis/{quote(job, safe='')}/rms?{urlencode({'notice': notice})}", status_code=303)
-    return _back(case_id, fo_run, bo_run, notice)
+        return _error(session, case_id, fo_run, bo_run, f"Not assessed: {exc}", job)
+    return _back(case_id, fo_run, bo_run, f"Assessed: {summary['verdict'].replace('_', ' ')}.", job)
 
 
 @router.post("/cases/{case_id}/credit/fo/{run_id}/override")
@@ -141,30 +147,30 @@ def credit_fo_override(
     case_id: str, run_id: str,
     measure: str = Form(...), decision: str = Form(...), score: str = Form(default=""),
     reviewer: str = Form(default=""), reason: str = Form(default=""), bo_run: str = Form(default=""),
-    session: Session = Depends(get_session),
+    job: str = Form(default=""), session: Session = Depends(get_session),
 ):
     _fo_row(session, case_id, run_id)
     try:
         override_measure(session, run_id, measure=measure, decision=decision, reviewer=reviewer, reason=reason,
                          score=score.strip() or None, output_root=get_settings().output_dir)
     except FoReviewError as exc:
-        return _page(session, case_id, fo_run=run_id, bo_run=bo_run or None, error=str(exc), status_code=400)
-    return _back(case_id, run_id, bo_run or None, _reassess(session, case_id, run_id, bo_run or None))
+        return _error(session, case_id, run_id, bo_run or None, str(exc), job)
+    return _back(case_id, run_id, bo_run or None, _reassess(session, case_id, run_id, bo_run or None), job)
 
 
 @router.post("/cases/{case_id}/credit/fo/{run_id}/review")
 def credit_fo_review(
     case_id: str, run_id: str,
     decision: str = Form(...), reviewer: str = Form(default=""), reason: str = Form(default=""),
-    bo_run: str = Form(default=""), session: Session = Depends(get_session),
+    bo_run: str = Form(default=""), job: str = Form(default=""), session: Session = Depends(get_session),
 ):
     _fo_row(session, case_id, run_id)
     try:
         review_run(session, run_id, decision=decision, reviewer=reviewer, reason=reason,
                    output_root=get_settings().output_dir)
     except FoReviewError as exc:
-        return _page(session, case_id, fo_run=run_id, bo_run=bo_run or None, error=str(exc), status_code=400)
-    return _back(case_id, run_id, bo_run or None, _reassess(session, case_id, run_id, bo_run or None))
+        return _error(session, case_id, run_id, bo_run or None, str(exc), job)
+    return _back(case_id, run_id, bo_run or None, _reassess(session, case_id, run_id, bo_run or None), job)
 
 
 @router.post("/cases/{case_id}/credit/bo/{analysis_run_id}/review")
@@ -172,7 +178,7 @@ def credit_bo_review(
     case_id: str, analysis_run_id: str,
     decision: str = Form(...), reviewer: str = Form(default=""), reason: str = Form(default=""),
     acknowledge_unresolved: bool = Form(default=False), fo_run: str = Form(default=""),
-    session: Session = Depends(get_session),
+    job: str = Form(default=""), session: Session = Depends(get_session),
 ):
     row = session.query(AcceptedBusinessOverviewRow).filter_by(analysis_run_id=analysis_run_id).one_or_none()
     if row is None or row.case_id != case_id:
@@ -181,7 +187,6 @@ def credit_bo_review(
         review_handoff(session, row.handoff_id, reviewer=reviewer, reason=reason, decision=decision,
                        acknowledge_unresolved=acknowledge_unresolved)
     except HandoffError as exc:
-        return _page(session, case_id, fo_run=fo_run or None, bo_run=analysis_run_id, error=str(exc),
-                     status_code=400)
+        return _error(session, case_id, fo_run or None, analysis_run_id, str(exc), job)
     return _back(case_id, fo_run or None, analysis_run_id,
-                 _reassess(session, case_id, fo_run or None, analysis_run_id) if fo_run else "Decision recorded.")
+                 _reassess(session, case_id, fo_run or None, analysis_run_id) if fo_run else "Decision recorded.", job)

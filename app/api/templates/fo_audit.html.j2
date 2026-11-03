@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Financial Overview audit report</title>{% include 'browser_style.html.j2' %}
+<style>
+  /* A report, laid out in full: sections are open and their headings don't fold them away. */
+  details > summary { pointer-events: none; cursor: default; list-style: none; }
+  details > summary::-webkit-details-marker { display: none; }
+  .fo-agent-box > summary::before { content: none; }
+  .fo-agent-box > summary { grid-template-columns: minmax(0, 1fr) auto; }
+  .fo-agent-title { grid-column: 1; } .fo-agent-reason, .fo-agent-box > summary > .fo-attn { grid-column: 1 / 3; }
+  .fo-agent-reason { display: block; }
+  .fo-agents-tools, .fo-agents > .fo-agents-intro:first-of-type { display: none; }
+  .fo-agent-body details > summary { color: inherit; font-size: 1rem; margin-bottom: 6px; }
+  .fo-card details > summary { font-weight: 600; margin: 12px 0 6px; }
+  #fo-measures { margin-top: 32px; }
+</style></head>
+<body>
+<header><span class="badge">Financial Overview audit report</span><h1>{{ view.meta.entity_name or view.filing.folder }}</h1>
+<p class="subtle">{{ view.meta.document_type or '10-K' }} for the period ending {{ view.meta.period_end or 'unknown' }}{% if view.meta.ticker %} · {{ view.meta.ticker }}{% endif %}</p>
+{% if run %}<p class="subtle">Case {{ run.case_id }} · run <code>{{ run.run_id }}</code> · {{ run.started_at }} · content hash <code>{{ run.content_hash[:16] }}</code></p>{% endif %}
+<p class="notice">Each measure's calculation, and every pre-check and trigger agent in full: the verified evidence and its quotes, the items held back, the passages each check read, its rules and keyword cross-checks, and the model run (model, prompt and hash). The complete exchanges with each model are in <code>precheck_transcript.json</code> and <code>trigger_transcript.json</code> in the run's output folder.</p>
+</header>
+<main>
+{% set fo_agents_only = True %}{% include 'fo_scorecard.html.j2' %}
+</main></body></html>

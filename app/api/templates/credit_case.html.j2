@@ -1,33 +1,49 @@
 <!doctype html>
 <html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Credit view</title>{% include 'browser_style.html.j2' %}
-{% include 'credit_style.html.j2' %}</head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Credit view</title>{% include 'workspace_style.html.j2' %}{% include 'review_workbench_style.html.j2' %}{% include 'credit_style.html.j2' %}
+<style>
+  .wb-rail form.grid { grid-template-columns: 1fr; gap: 6px; } .wb-rail form.grid label { margin: 4px 0 2px; }
+  .wb-rail form.grid input, .wb-rail form.grid select { width: 100%; box-sizing: border-box; padding: 7px 9px; }
+  .wb-rail form.grid .buttons button { flex: 1; padding: 8px 10px; }
+  .wb-rail .escalation:first-of-type { border-top: 0; margin-top: 0; padding-top: 0; }
+  .wb-rail h3 { font-size: .88rem; margin: 12px 0 6px; } .wb-panel + .wb-panel h3:first-child { margin-top: 0; }
+  .wb-main .card { background: var(--c-ffffff); } .wb-main .big { font-size: 1.2rem; }
+  .wb-main .verdict { margin: 0; } #verdict, #rms { padding: 14px 18px; }
+  .wb-menu form.grid { grid-template-columns: 1fr; min-width: 260px; }
+</style></head>
 <body>
+{% set active='memos' %}{% include 'analysis_nav.html.j2' %}
 {% from 'credit_macros.html.j2' import usd, st, sc with context %}
 {% set fo, bo, rms = view.fo, view.bo, view.rms %}{% set r = rms.latest %}{% set rec = rms.record %}
 {% set fo_run = fo.run_id if fo else '' %}{% set bo_run = bo.analysis_run_id if bo else '' %}
-<header><span class="badge">Business Overview + Financial Overview + Risk Mitigation &amp; Structuring</span>
-<h1>{{ (fo.entity_name if fo else none) or view.case_id }}: credit view</h1>
-<p class="subtle">Case <code>{{ view.case_id }}</code>{% if fo and fo.period_end %} · period ending {{ fo.period_end }}{% endif %}. Decisions made on this page are recorded like those on the BO and FO workbenches, and RMS is re-assessed straight after each one, with the last requested loan.</p>
+{% if analysis %}{% include 'analysis_tabs.html.j2' %}
+{% set bo_link = (analysis.tabs|selectattr('key', 'equalto', 'bo')|first).href %}{% set fo_link = (analysis.tabs|selectattr('key', 'equalto', 'fo')|first).href %}
+{% else %}
 {% set bo_link = '/cases/' ~ view.case_id ~ '/bo.html?' ~ {'analysis_run_id': bo_run, 'credit': 1, 'fo_run': fo_run}|urlencode %}
 {% set fo_link = '/cases/' ~ view.case_id ~ '/fo.html?' ~ {'run_id': fo_run, 'credit': 1, 'bo_run': bo_run}|urlencode %}
-<div class="actions"><a href="/credit-memos">All cases</a>{% if bo %}<a href="{{ bo_link }}">Business Overview workbench</a>{% endif %}{% if fo %}<a href="{{ fo_link }}">Financial Overview workbench</a>{% endif %}<a href="/run">Run BO and FO</a></div>
-{% if view.fo_runs|length > 1 or view.bo_runs|length > 1 %}
-<form method="get" action="/cases/{{ view.case_id }}/credit.html" class="grid" style="margin-top:14px">
-<div><label for="fo_run_pick">FO run</label><select id="fo_run_pick" name="fo_run">{% for x in view.fo_runs %}<option value="{{ x.run_id }}"{% if x.run_id == fo_run %} selected{% endif %}>{{ x.run_id }} ({{ x.status|replace('_', ' ') }}, {{ x.started_at[:10] }})</option>{% endfor %}</select></div>
-<div><label for="bo_run_pick">BO run</label><select id="bo_run_pick" name="bo_run">{% for x in view.bo_runs %}<option value="{{ x.analysis_run_id }}"{% if x.analysis_run_id == bo_run %} selected{% endif %}>{{ x.analysis_run_id }} ({{ x.human_review_status }}, {{ x.created_at[:10] }})</option>{% endfor %}</select></div>
-<div class="buttons"><button type="submit">Show these runs</button></div></form>{% endif %}
-</header>
+{% endif %}
+{% macro job_field() %}{% if analysis %}<input type="hidden" name="job" value="{{ analysis.job.job_id }}">{% endif %}{% endmacro %}
 <main>
-{% if error %}<section><p class="notice" role="alert"><strong>{{ error }}</strong></p></section>{% endif %}
-{% if notice %}<section><p class="notice" role="status">{{ notice }}</p></section>{% endif %}
-
+<div class="wb-bar">
+  <div class="wb-title"><strong>{{ (fo.entity_name if fo else none) or view.case_id }}: credit view</strong> <span class="subtle">Case {{ view.case_id }}{% if fo and fo.period_end %} · period ending {{ fo.period_end }}{% endif %}{% if bo %} · Business Overview <code>{{ bo_run }}</code> ({{ bo.human_review_status }}){% endif %}{% if fo %} · Financial Overview <code>{{ fo_run }}</code>{% endif %}</span></div>
+  <div class="wb-status"><span class="wb-pill">Verdict {% if r %}{{ st(r.verdict) }}{% else %}<span class="warn">not assessed</span>{% endif %}</span>{% if bo %}<span class="wb-pill">BO {{ st(bo.human_review_status) }}</span>{% endif %}{% if fo %}<span class="wb-pill">FO composite {% if fo.composite is not none %}<strong>{{ sc(fo.composite) }}</strong> {{ fo.rating }}{% else %}—{% endif %}</span>{% endif %}</div>
+  <div class="wb-actions">{% if bo and bo_link %}<a href="{{ bo_link }}">Business Overview</a>{% endif %}{% if fo and fo_link %}<a href="{{ fo_link }}">Financial Overview</a>{% endif %}
+  {% if not analysis and (view.fo_runs|length > 1 or view.bo_runs|length > 1) %}<details class="wb-menu"><summary>Switch runs &#9662;</summary><div>
+  <form method="get" action="/cases/{{ view.case_id }}/credit.html" class="grid">
+  <div><label for="fo_run_pick">FO run</label><select id="fo_run_pick" name="fo_run">{% for x in view.fo_runs %}<option value="{{ x.run_id }}"{% if x.run_id == fo_run %} selected{% endif %}>{{ x.run_id }} ({{ x.status|replace('_', ' ') }}, {{ x.started_at[:10] }})</option>{% endfor %}</select></div>
+  <div><label for="bo_run_pick">BO run</label><select id="bo_run_pick" name="bo_run">{% for x in view.bo_runs %}<option value="{{ x.analysis_run_id }}"{% if x.analysis_run_id == bo_run %} selected{% endif %}>{{ x.analysis_run_id }} ({{ x.human_review_status }}, {{ x.created_at[:10] }})</option>{% endfor %}</select></div>
+  <div class="buttons"><button type="submit">Show these runs</button></div></form></div></details>{% endif %}
+  {% if not analysis %}<a href="/credit-memos">All cases</a>{% endif %}</div>
+</div>
+{% if error %}<p class="notice" role="alert"><strong>{{ error }}</strong></p>{% endif %}
+{% if notice %}<p class="notice" role="status">{{ notice }}</p>{% endif %}
+<div class="wb-layout">
+<div class="wb-main">
 {% include 'rms_verdict.html.j2' %}
 
-<div class="panels">
-<section id="bo" class="card"><h2>Business Overview</h2>
+<details class="wb-section" id="bo" open><summary><h2>Business Overview</h2>{% if bo %}<span class="subtle">handoff {{ bo.human_review_status }} · conclusion {{ bo.conclusion_status|replace('_', ' ') }}{% if bo.m4.present %} · M4 {{ (bo.m4.verdict or '—')|replace('_', ' ') }}{% endif %} · {{ bo.unresolved_challenges|length }} unresolved challenge(s)</span>{% endif %}</summary>
 {% if bo %}
-<dl class="facts">
+<dl class="wb-facts">
 <dt>Handoff</dt><dd>{{ st(bo.human_review_status) }}{% if bo.reviewer %} by {{ bo.reviewer }}{% endif %}{% if bo.reviewed_at %} ({{ bo.reviewed_at[:10] }}){% endif %}</dd>
 <dt>Conclusion</dt><dd>{{ st(bo.conclusion_status) }}</dd>
 <dt>M4 credit verdict</dt><dd>{% if bo.m4.present %}{{ st(bo.m4.verdict) }} · placement {{ (bo.m4.placement or '—')|replace('_', ' ') }}{% else %}<span class="warn">no Module 4 output</span>{% endif %}</dd>
@@ -36,24 +52,15 @@
 <dt>M3 structural findings</dt><dd>{% if bo.m3_findings %}{% for f in bo.m3_findings %}{{ f.finding_id }} ({{ f.dimension|replace('_', ' ') }}){% if not loop.last %}; {% endif %}{% endfor %}{% else %}none counted{% endif %}</dd>
 <dt>Unresolved challenges</dt><dd>{{ bo.unresolved_challenges|length }}</dd>
 </dl>
-{% if bo.risks %}<p><strong>Material risks and weaknesses</strong></p><ul>{% for x in bo.risks %}<li>{{ x.title }} <small class="subtle">{{ x.claim_id }}</small></li>{% endfor %}</ul>{% endif %}
-{% if bo.unproven_mitigants %}<p><strong>Unproven mitigants</strong></p><ul>{% for m in bo.unproven_mitigants %}<li>{{ m }}</li>{% endfor %}</ul>{% endif %}
-{% if bo.can_reject %}
-<form method="post" action="/cases/{{ view.case_id }}/credit/bo/{{ bo_run }}/review" class="grid" id="bo-review-form">
-<input type="hidden" name="fo_run" value="{{ fo_run }}">
-<div><label for="bo_reviewer">Reviewer</label><input id="bo_reviewer" name="reviewer" required></div>
-<div><label for="bo_reason">Reason</label><input id="bo_reason" name="reason" required></div>
-{% if bo.unresolved_challenges %}<div class="buttons"><label style="font-weight:normal"><input type="checkbox" name="acknowledge_unresolved" value="true" style="width:auto"> I acknowledge the {{ bo.unresolved_challenges|length }} unresolved challenge(s); they stay recorded</label></div>{% endif %}
-<div class="buttons">{% if bo.can_accept %}<button type="submit" name="decision" value="accept">Accept the Business Overview</button>{% endif %}<button type="submit" name="decision" value="reject">Reject</button></div>
-</form>{% if not bo.can_accept %}<p class="notice">There is no validated conclusion to accept.</p>{% endif %}
-{% endif %}
-<p><a href="{{ bo_link }}">Open the full Business Overview (memo, agents, evidence)</a> <span class="subtle">· you can come back here</span></p>
+{% if bo.risks %}<h3>Material risks and weaknesses</h3><ul>{% for x in bo.risks %}<li>{{ x.title }} <small class="subtle">{{ x.claim_id }}</small></li>{% endfor %}</ul>{% endif %}
+{% if bo.unproven_mitigants %}<h3>Unproven mitigants</h3><ul>{% for m in bo.unproven_mitigants %}<li>{{ m }}</li>{% endfor %}</ul>{% endif %}
+{% if bo_link %}<p><a href="{{ bo_link }}">Open the full Business Overview (memo, agents, evidence)</a>{% if not analysis %} <span class="subtle">· you can come back here</span>{% endif %}</p>{% endif %}
 {% else %}<p>No Business Overview run for this case.</p>{% endif %}
-</section>
+</details>
 
-<section id="fo" class="card"><h2>Financial Overview</h2>
+<details class="wb-section" id="fo" open><summary><h2>Financial Overview</h2>{% if fo %}<span class="subtle">{{ fo.status|replace('_', ' ') }} · composite {{ sc(fo.composite) }}{% if fo.rating %} ({{ fo.rating }}){% endif %} · going concern {{ (fo.gc_status or '—')|replace('_', ' ') }} · covenants {{ (fo.covenant_status or '—')|replace('_', ' ') }}</span>{% endif %}</summary>
 {% if fo %}
-<dl class="facts">
+<dl class="wb-facts">
 <dt>Run</dt><dd>{{ st(fo.status) }} <code>{{ fo.run_id }}</code></dd>
 <dt>Composite risk score</dt><dd>{% if fo.composite is not none %}<strong>{{ sc(fo.composite) }} ({{ fo.rating }})</strong>{% else %}not scored{% endif %}{% if fo.engine_composite != fo.composite %} <span class="subtle">· engine {{ sc(fo.engine_composite) }} ({{ fo.engine_rating }})</span>{% endif %}</dd>
 <dt>Going concern</dt><dd>{{ st(fo.gc_status) }}</dd>
@@ -63,12 +70,35 @@
 {% for m in fo.measures %}<tr><td>{{ m.name }}</td><td class="num">{{ '{:g}'.format(m.weight) }}%</td><td class="num">{{ sc(m.engine) }}</td><td class="num"><strong>{{ sc(m.score) }}</strong></td><td>{% if m.decision %}{{ m.decision.decision }} by {{ m.decision.reviewer }}{% endif %}</td></tr>{% endfor %}
 </tbody></table></div>
 <p class="subtle">Risk scores run 1 (lowest) to 10. The FO rating methodology is provisional.</p>
-{% if fo.pending %}<h3>Waiting for an analyst ({{ fo.pending|length }})</h3>
+{% if fo.decisions %}<h3>Analyst decisions applied</h3><ul>{% for d in fo.decisions %}<li>{{ d }}</li>{% endfor %}</ul>{% endif %}
+{% if fo_link %}<p><a href="{{ fo_link }}">Open the full Financial Overview (scorecard, pre-checks, triggers, evidence)</a>{% if not analysis %} <span class="subtle">· you can come back here</span>{% endif %}</p>{% endif %}
+{% else %}<p>No Financial Overview run for this case.</p>{% endif %}
+</details>
+
+{% include 'rms_detail.html.j2' %}
+</div>
+
+<aside class="wb-rail" aria-label="Decisions and loan request">
+{% set n_pending = (fo.pending|length if fo and fo.pending else 0) + (1 if bo and bo.can_reject else 0) %}
+<div class="wb-panel" id="decisions"><h2>Decisions</h2>
+<p class="subtle" style="margin:0 0 6px">Each decision is recorded like one on the BO or FO tab, and RMS is re-assessed straight after it, with the last requested loan.</p>
+{% if not n_pending %}<p class="ok" style="margin:6px 0 0">Nothing is waiting for a decision.</p>{% endif %}
+{% if bo and bo.can_reject %}
+<h3>Business Overview handoff</h3>
+<form method="post" action="/cases/{{ view.case_id }}/credit/bo/{{ bo_run }}/review" class="grid" id="bo-review-form">
+<input type="hidden" name="fo_run" value="{{ fo_run }}">{{ job_field() }}
+<div><label for="bo_reviewer">Reviewer</label><input id="bo_reviewer" name="reviewer" required></div>
+<div><label for="bo_reason">Reason</label><input id="bo_reason" name="reason" required></div>
+{% if bo.unresolved_challenges %}<div class="buttons"><label style="font-weight:normal"><input type="checkbox" name="acknowledge_unresolved" value="true" style="width:auto"> I acknowledge the {{ bo.unresolved_challenges|length }} unresolved challenge(s); they stay recorded</label></div>{% endif %}
+<div class="buttons">{% if bo.can_accept %}<button type="submit" name="decision" value="accept">Accept the Business Overview</button>{% endif %}<button type="submit" name="decision" value="reject">Reject</button></div>
+</form>{% if not bo.can_accept %}<p class="notice">There is no validated conclusion to accept.</p>{% endif %}
+{% endif %}
+{% if fo and fo.pending %}<h3 class="bad">Waiting for an analyst ({{ fo.pending|length }})</h3>
 {% for e in fo.pending %}<div class="escalation">
 {% if e.type == 'measure_override' %}
 <p><strong>{{ e.measure_name or e.measure|replace('_', ' ') }}</strong>: engine score {{ sc(e.engine_score) }}.{% if e.reason %} <span class="subtle">{{ e.reason }}</span>{% endif %}</p>
 <form method="post" action="/cases/{{ view.case_id }}/credit/fo/{{ fo_run }}/override" class="grid fo-override-form">
-<input type="hidden" name="measure" value="{{ e.measure }}"><input type="hidden" name="bo_run" value="{{ bo_run }}">
+<input type="hidden" name="measure" value="{{ e.measure }}"><input type="hidden" name="bo_run" value="{{ bo_run }}">{{ job_field() }}
 <div><label>Your score <small>(to override, 1-10)</small></label><input name="score" type="number" min="1" max="10" step="0.1"></div>
 <div><label>Reviewer</label><input name="reviewer" required></div>
 <div><label>Reason</label><input name="reason" required></div>
@@ -77,20 +107,33 @@
 {% else %}
 <p><strong>Going-concern decision</strong>{% if e.reason %}: <span class="subtle">{{ e.reason }}</span>{% endif %}</p>
 <form method="post" action="/cases/{{ view.case_id }}/credit/fo/{{ fo_run }}/review" class="grid fo-review-form">
-<input type="hidden" name="bo_run" value="{{ bo_run }}">
+<input type="hidden" name="bo_run" value="{{ bo_run }}">{{ job_field() }}
 <div><label>Reviewer</label><input name="reviewer" required></div>
 <div><label>Reason</label><input name="reason" required></div>
 <div class="buttons">{% if e.disagreement %}<button type="submit" name="decision" value="use_verified">Use the verified result</button>{% endif %}<button type="submit" name="decision" value="continue">Continue (going-concern fail stands)</button><button type="submit" name="decision" value="stop">Stop</button></div>
 </form>
 {% endif %}</div>{% endfor %}
 {% endif %}
-{% if fo.decisions %}<p><strong>Analyst decisions applied</strong></p><ul>{% for d in fo.decisions %}<li>{{ d }}</li>{% endfor %}</ul>{% endif %}
-<p><a href="{{ fo_link }}">Open the full Financial Overview (scorecard, pre-checks, triggers, evidence)</a> <span class="subtle">· you can come back here</span></p>
-{% else %}<p>No Financial Overview run for this case.</p>{% endif %}
-</section>
 </div>
-
-{% include 'rms_detail.html.j2' %}
+<div class="wb-panel" id="loan-request"><h2>Loan request</h2>{% include 'rms_request.html.j2' %}</div>
+<nav class="wb-panel" aria-label="Review checklist"><h2>Review checklist</h2>
+<ul class="wb-checklist">
+<li><a href="#decisions"><span>Decisions waiting</span><span class="wb-n{{ ' attn' if n_pending else ' clear' }}">{{ n_pending }}</span></a></li>
+<li><a href="#verdict"><span>Verdict</span>{% if r %}{{ st(r.verdict) }}{% else %}<span class="warn">none</span>{% endif %}</a></li>
+{% if rms.stale %}<li><a href="#stale"><span>Out of date</span><span class="wb-n attn">{{ rms.stale|length }}</span></a></li>{% endif %}
+{% if r and r.gates %}<li><a href="#verdict"><span>Gates holding</span><span class="wb-n attn">{{ r.gates|length }}</span></a></li>{% endif %}
+<li><a href="#bo"><span>Business Overview</span>{% if bo %}{{ st(bo.human_review_status) }}{% endif %}</a></li>
+<li><a href="#fo"><span>Financial Overview</span>{% if fo and fo.composite is not none %}<span class="wb-n">{{ sc(fo.composite) }}</span>{% endif %}</a></li>
+{% if rec %}<li><a href="#rms"><span>Grade, capacity and structure</span></a></li>{% endif %}
+</ul></nav>
+</aside>
+</div>
+<script>
+(function () {
+  function reveal(id) { var el = id && document.getElementById(id); var d = el && el.closest('details.wb-section'); if (d && !d.open) { d.open = true; el.scrollIntoView(); } }
+  document.addEventListener('click', function (e) { var a = e.target.closest && e.target.closest('a[href^="#"]'); if (a) reveal(decodeURIComponent(a.hash.slice(1))); });
+})();
+</script>
 </main>
 </body>
 </html>

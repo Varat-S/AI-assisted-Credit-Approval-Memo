@@ -1,92 +1,136 @@
 <!doctype html>
 <html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Business Overview workbench</title>{% include 'workspace_style.html.j2' %}
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Business Overview workbench</title>{% include 'workspace_style.html.j2' %}{% include 'review_workbench_style.html.j2' %}
 <style>
   header h1 { font-size: 2.3rem; margin: 8px 0 10px; } nav ul { padding: 0; }
   .ok { color: var(--c-2f6b45); font-weight: bold; } .bad { color: var(--c-9a3324); font-weight: bold; } .warn { color: var(--c-8a6d1c); font-weight: bold; }
-  .epistemic { display: inline-block; padding: .15rem .45rem; border-radius: .3rem; font-size: .78rem; font-weight: 700; letter-spacing: .02em; }
+  .epistemic { display: inline-block; padding: .1rem .4rem; border-radius: .3rem; font-size: .72rem; font-weight: 700; letter-spacing: .02em; white-space: nowrap; }
   .epistemic.fact { color: var(--c-205537); background: var(--c-e1f3e7); border: 1px solid var(--c-78b58c); }
   .epistemic.inference { color: var(--c-775700); background: var(--c-fff3bf); border: 1px solid var(--c-d4aa39); }
   .epistemic.assumption { color: var(--c-942d29); background: var(--c-fde5e2); border: 1px solid var(--c-d58880); }
-  iframe { width: 100%; height: 720px; border: 1px solid var(--c-c9d1da); background: var(--c-ffffff); }
-  form.review input[type=text] { width: 22rem; max-width: 100%; }
+  td.claim { min-width: 18rem; } td .subtle { font-size: .78rem; }
 </style></head>
 <body>
 {% set active='memos' %}{% include 'analysis_nav.html.j2' %}
 {% macro st(v) %}<span class="{{ 'ok' if v in ['validated', 'accepted', 'completed', 'supported'] else 'bad' if v in ['rejected', 'failed', 'unavailable', 'human_review_required', 'blocked'] else 'warn' }}">{{ v|replace('_', ' ') }}</span>{% endmacro %}
-{% if analysis %}{% include 'analysis_tabs.html.j2' %}{% else %}<header><span class="badge">Business Overview only</span><h1>Business Overview workbench</h1>
+{% if analysis %}{% include 'analysis_tabs.html.j2' %}{% elif not view %}<header><span class="badge">Business Overview only</span><h1>Business Overview workbench</h1>
 <p class="subtle">Read-only inspection of recorded Business Overview runs. Approval is a separate, explicit reviewer action.</p>
 <div class="actions"><a href="/credit-memos">All cases</a></div></header>{% endif %}
 <main>
-{% if credit %}<div class="notice" id="credit-back" style="position:sticky;top:0;z-index:5;border-left-color:var(--c-2f6fb0);background:var(--c-eef3fb)"><a href="{{ credit.url }}"><strong>&larr; Back to the credit view (BO + FO + RMS)</strong></a> <span class="subtle">A decision you make here takes you back there, with RMS re-assessed.</span></div>{% endif %}
+{% if credit %}<div class="notice" id="credit-back" style="position:sticky;top:0;z-index:8;border-left-color:var(--c-2f6fb0);background:var(--c-eef3fb)"><a href="{{ credit.url }}"><strong>&larr; Back to the credit view</strong></a> <span class="subtle">A decision you make here takes you back there, with RMS re-assessed.</span></div>{% endif %}
 {% if error %}<section><p class="notice" role="alert"><strong>{{ error }}</strong></p></section>{% endif %}
-<section><h2>Case and run selection</h2>
+{% if not view %}
+<section id="runs"><h2>Recorded runs</h2>
 {% if runs %}
 <div class="table-wrap"><table><thead><tr><th>Case</th><th>Run</th><th>Started</th><th>Mode</th><th>Conclusion</th><th>Human review</th><th>Open</th></tr></thead><tbody>
-{% for r in runs %}<tr{% if view and r.analysis_run_id == view.analysis_run_id %} style="background:var(--c-eef3f8)"{% endif %}><td>{{ r.case_id }}</td><td><code>{{ r.analysis_run_id }}</code></td><td>{{ r.started_at }}</td><td>{{ r.execution_mode|replace('_', ' ') }}</td><td>{{ st(r.conclusion_status) }}</td><td>{{ st(r.human_review_status) }}</td><td><a href="/cases/{{ r.case_id }}/bo.html?analysis_run_id={{ r.analysis_run_id }}">Inspect</a></td></tr>{% endfor %}
+{% for r in runs %}<tr><td>{{ r.case_id }}</td><td><code>{{ r.analysis_run_id }}</code></td><td>{{ r.started_at }}</td><td>{{ r.execution_mode|replace('_', ' ') }}</td><td>{{ st(r.conclusion_status) }}</td><td>{{ st(r.human_review_status) }}</td><td><a href="/cases/{{ r.case_id }}/bo.html?analysis_run_id={{ r.analysis_run_id }}">Inspect</a></td></tr>{% endfor %}
 </tbody></table></div>
 {% else %}<p>No Business Overview run has been recorded. Use <code>python -m app.cli run-bo-case</code>.</p>{% endif %}
 </section>
-{% if view %}
+{% else %}
 {% set base = '/cases/' ~ view.case.case_id ~ '/bo/runs/' ~ view.analysis_run_id %}
-<section><h2>{{ view.case.borrower or view.case.case_id }} &mdash; run {{ view.analysis_run_id }}</h2>
+{% set e = view.evidence_status %}
+{% set oq = view.open_questions %}
+{% set challenges = view.handoff.unresolved_challenges or [] %}
+{% set n_contra = (view.contradictions|length) + (oq.unresolved_contradictions|length if oq.unresolved_contradictions else 0) %}
+{% set n_open = (oq.open_questions|length) + (oq.missing_information|length) %}
+{% set n_agents_ok = view.agents|selectattr('status', 'equalto', 'validated')|list|length %}
+<div class="wb-bar">
+  <div class="wb-title"><strong>{{ view.case.borrower or view.case.case_id }}</strong> <span class="subtle">Business Overview · case {{ view.case.case_id }} · run <code>{{ view.analysis_run_id }}</code> · as of {{ view.case.as_of_date }}</span></div>
+  <div class="wb-status"><span class="wb-pill">Conclusion {{ st(view.conclusion_status) }}</span><span class="wb-pill">Review {{ st(view.handoff.human_review_status) }}</span></div>
+  <div class="wb-actions">{% set credit_tab = (analysis.tabs|selectattr('key', 'equalto', 'rms')|first) if analysis else none %}<a class="wb-primary" href="{{ credit.url if credit else credit_tab.href if credit_tab and credit_tab.href else '/cases/' ~ view.case.case_id ~ '/credit.html?bo_run=' ~ view.analysis_run_id }}">Credit view</a><a href="{{ base }}/memo.pdf">Memo PDF</a>
+  <details class="wb-menu"><summary>Downloads &#9662;</summary><div><a href="{{ base }}/memo.html">Memo HTML</a><a href="{{ base }}/memo.json">Memo JSON</a><a href="{{ base }}/audit.pdf">Audit PDF</a><a href="{{ base }}/audit.html">Audit HTML</a><a href="{{ base }}/audit.json">Audit JSON</a><a href="{{ base }}/handoff.json">Handoff JSON</a></div></details>
+  <a href="/bo">All runs</a></div>
+</div>
 {% if view.run.execution_mode == 'offline_simulation' %}<p class="notice"><strong>{{ view.run.execution_label }}</strong></p>{% endif %}
+<div class="wb-layout">
+<div class="wb-main">
+<section id="summary"><h2>Run summary</h2>
 <p>Conclusion: {{ st(view.conclusion_status) }}. {{ view.status_text }}</p>
-<div class="actions"><a href="{{ credit.url if credit else '/cases/' ~ view.case.case_id ~ '/credit.html?bo_run=' ~ view.analysis_run_id }}"><strong>Credit view (BO + FO + RMS)</strong></a><a href="#evidence">Evidence status</a><a href="#agents">Agent execution</a><a href="#accepted">Accepted hypotheses</a><a href="#rejected">Rejected hypotheses</a><a href="#contradictions">Contradictions</a><a href="#open">Open questions</a><a href="#memo">Memo preview</a><a href="#audit">Audit preview</a><a href="#review">Review</a></div>
-<p class="subtle">Downloads: <a href="{{ base }}/memo.pdf"><strong>memo PDF</strong></a> · <a href="{{ base }}/memo.html">memo HTML</a> · <a href="{{ base }}/memo.json">memo JSON</a> · <a href="{{ base }}/audit.pdf">audit PDF</a> · <a href="{{ base }}/audit.html">audit HTML</a> · <a href="{{ base }}/audit.json">audit JSON</a> · <a href="{{ base }}/handoff.json">handoff JSON</a></p>
+<div class="wb-stats">
+  <div class="wb-stat"><b>{{ view.accepted_hypotheses|length }}</b><span>accepted / qualified</span></div>
+  <div class="wb-stat"><b>{{ view.rejected_hypotheses|length }}</b><span>rejected</span></div>
+  <div class="wb-stat"><b>{{ view.unverified_hypotheses|length }}</b><span>unverified</span></div>
+  <div class="wb-stat"><b>{{ n_contra }}</b><span>contradictions</span></div>
+  <div class="wb-stat"><b>{{ challenges|length }}</b><span>unresolved challenges</span></div>
+  <div class="wb-stat"><b>{{ n_agents_ok }}/{{ view.agents|length }}</b><span>agents validated</span></div>
+</div>
 </section>
 
 <section id="evidence"><h2>Evidence status</h2>
-{% set e = view.evidence_status %}
 <p>Evidence snapshot v{{ e.snapshot_version }} (<code>{{ e.content_hash[:16] }}</code>) · {{ e.documents }} admitted documents · {{ e.rejected_sources }} rejected · {{ e.facts }} facts · {{ e.narrative_passages }} narrative passages · {{ e.human_verified_facts }} human-verified facts · {{ e.retrieval_gaps }} retrieval gap(s).</p>
 <p class="subtle">As of {{ view.case.as_of_date }}; evidence cut-off {{ view.case.evidence_cutoff }}.</p>
 </section>
 
-<section id="agents"><h2>Agent execution status</h2>
+<details class="wb-section" id="agents"><summary><h2>Agent execution status</h2><span class="subtle">{{ n_agents_ok }} of {{ view.agents|length }} validated · {{ view.execution.ai_calls }} AI calls · {{ view.execution.runtime_seconds }} s</span></summary>
 <p>AI calls: {{ view.execution.ai_calls }} · runtime {{ view.execution.runtime_seconds }} s · tokens: {{ view.execution.token_usage }}</p>
 <div class="table-wrap"><table><thead><tr><th>Code</th><th>Agent</th><th>Role</th><th>Status</th><th>Runs</th><th>Detail</th></tr></thead><tbody>
 {% for a in view.agents %}<tr><td>{{ a.code or '' }}</td><td><code>{{ a.agent_id }}</code></td><td>{{ a.role }}</td><td>{{ st(a.status) }}</td><td>{{ a.runs }}</td><td>{{ a.detail or '' }}{% for i in a.validation_issues %}<br>{{ i }}{% endfor %}</td></tr>{% endfor %}
 </tbody></table></div>
 <p>Challenger: {% if view.challenger.rounds is string %}{{ st(view.challenger.rounds) }}{% else %}{% for r in view.challenger.rounds %}round {{ r.round }} {{ st(r.outcome) }} ({{ r.findings|length }} finding(s)){{ '; ' if not loop.last }}{% endfor %}{% endif %}. Rerun: {% if view.rerun is string %}{{ view.rerun|replace('_', ' ') }}{% else %}one round, scope {{ view.rerun.executed_scope|join(', ') }}{% endif %}.</p>
-</section>
+</details>
 
 {% macro hypotheses(items) %}
 {% if items %}<div class="table-wrap"><table><thead><tr><th>Id</th><th>Claim</th><th>Type</th><th>Direction</th><th>Disposition</th><th>Confidence</th><th>Notes</th></tr></thead><tbody>
-{% for h in items %}<tr><td><code>{{ h.hypothesis_id }}</code></td><td>{{ h.claim }}{% if h.corrects_hypothesis_id %}<br><span class="subtle">corrects {{ h.corrects_hypothesis_id }}</span>{% endif %}</td><td>{% if h.claim_type in ['fact', 'calculated_fact'] %}<span class="epistemic fact">FACT</span>{% elif h.claim_type == 'assumption' %}<span class="epistemic assumption">ASSUMPTION</span>{% elif h.claim_type == 'management_claim' %}<span class="epistemic inference">ATTRIBUTED CLAIM</span>{% else %}<span class="epistemic inference">INFERENCE</span>{% endif %}</td><td>{{ h.direction }}</td><td>{{ st(h.disposition) }}<br><span class="subtle">{{ h.admissibility|replace('_', ' ') }}</span></td><td>{{ h.confidence|replace('_', ' ') }}</td><td>{% for n in h.validation_notes %}{{ n }}<br>{% endfor %}{% for m in h.missing_information %}<span class="subtle">missing: {{ m }}</span><br>{% endfor %}</td></tr>{% endfor %}
+{% for h in items %}<tr><td><code>{{ h.hypothesis_id }}</code></td><td class="claim">{{ h.claim }}{% if h.corrects_hypothesis_id %}<br><span class="subtle">corrects {{ h.corrects_hypothesis_id }}</span>{% endif %}</td><td>{% if h.claim_type in ['fact', 'calculated_fact'] %}<span class="epistemic fact">FACT</span>{% elif h.claim_type == 'assumption' %}<span class="epistemic assumption">ASSUMPTION</span>{% elif h.claim_type == 'management_claim' %}<span class="epistemic inference">ATTRIBUTED CLAIM</span>{% else %}<span class="epistemic inference">INFERENCE</span>{% endif %}</td><td>{{ h.direction }}</td><td>{{ st(h.disposition) }}<br><span class="subtle">{{ h.admissibility|replace('_', ' ') }}</span></td><td>{{ h.confidence|replace('_', ' ') }}</td><td>{% for n in h.validation_notes %}{{ n }}<br>{% endfor %}{% for m in h.missing_information %}<span class="subtle">missing: {{ m }}</span><br>{% endfor %}</td></tr>{% endfor %}
 </tbody></table></div>{% else %}<p>None.</p>{% endif %}
 {% endmacro %}
-<section id="accepted"><h2>Accepted and qualified hypotheses</h2>{{ hypotheses(view.accepted_hypotheses) }}</section>
-<section id="rejected"><h2>Rejected hypotheses</h2>{{ hypotheses(view.rejected_hypotheses) }}
-<h3>Unverified hypotheses</h3>{{ hypotheses(view.unverified_hypotheses) }}</section>
+<details class="wb-section" id="accepted" open><summary><h2>Accepted and qualified hypotheses</h2><span class="subtle">{{ view.accepted_hypotheses|length }}</span></summary>{{ hypotheses(view.accepted_hypotheses) }}</details>
+<details class="wb-section" id="rejected"{% if view.rejected_hypotheses or view.unverified_hypotheses %} open{% endif %}><summary><h2>Rejected hypotheses</h2><span class="subtle">{{ view.rejected_hypotheses|length }} rejected · {{ view.unverified_hypotheses|length }} unverified</span></summary>{{ hypotheses(view.rejected_hypotheses) }}
+<h3 id="unverified">Unverified hypotheses</h3>{{ hypotheses(view.unverified_hypotheses) }}</details>
 
-<section id="contradictions"><h2>Contradictions</h2>
+<details class="wb-section" id="contradictions"{% if n_contra %} open{% endif %}><summary><h2>Contradictions</h2><span class="subtle">{{ n_contra }} · {{ view.duplicate_groups|length }} duplicate group(s) merged</span></summary>
 {% if view.contradictions %}<ul>{% for c in view.contradictions %}<li>{{ c.kind|replace('_', ' ') }}: <code>{{ c.hypothesis_ids|join(' vs ') }}</code></li>{% endfor %}</ul>{% else %}<p>No cross-agent contradiction was detected.</p>{% endif %}
-{% if view.open_questions.unresolved_contradictions %}<ul>{% for c in view.open_questions.unresolved_contradictions %}<li>{{ c }}</li>{% endfor %}</ul>{% endif %}
+{% if oq.unresolved_contradictions %}<ul>{% for c in oq.unresolved_contradictions %}<li>{{ c }}</li>{% endfor %}</ul>{% endif %}
 <p class="subtle">Duplicate groups merged across specialists: {{ view.duplicate_groups|length }}.</p>
-</section>
+</details>
 
-<section id="open"><h2>Open questions</h2>
-{% for title, items in [('Open questions', view.open_questions.open_questions), ('Missing information', view.open_questions.missing_information), ('Coverage and retrieval limitations', view.open_questions.data_limitations)] %}
-<h3>{{ title }}</h3>{% if items %}<ul>{% for i in items %}<li>{{ i }}</li>{% endfor %}</ul>{% else %}<p>None recorded.</p>{% endif %}{% endfor %}
-<h3>Unresolved challenger findings</h3>
-{% if view.handoff.unresolved_challenges %}<ul>{% for f in view.handoff.unresolved_challenges %}<li><strong>{{ f.severity }}</strong> {{ f.issue_type|replace('_', ' ') }}: {{ f.reason }}</li>{% endfor %}</ul>{% else %}<p>None.</p>{% endif %}
-</section>
+<details class="wb-section" id="open"{% if n_open or challenges %} open{% endif %}><summary><h2>Open questions</h2><span class="subtle">{{ oq.open_questions|length }} open · {{ oq.missing_information|length }} missing · {{ oq.data_limitations|length }} limitation(s) · {{ challenges|length }} unresolved challenge(s)</span></summary>
+{% for title, items in [('Open questions', oq.open_questions), ('Missing information', oq.missing_information), ('Coverage and retrieval limitations', oq.data_limitations)] %}
+<h3>{{ title }}</h3>{% if items %}<ul>{% for i in items %}<li>{{ i }}</li>{% endfor %}</ul>{% else %}<p class="subtle">None recorded.</p>{% endif %}{% endfor %}
+<h3 id="challenges">Unresolved challenger findings</h3>
+{% if challenges %}<ul>{% for f in challenges %}<li><strong>{{ f.severity }}</strong> {{ f.issue_type|replace('_', ' ') }}: {{ f.reason }}</li>{% endfor %}</ul>{% else %}<p class="subtle">None.</p>{% endif %}
+</details>
 
-<section id="memo"><h2>Business memo preview</h2><iframe title="Business Overview memo" src="{{ base }}/memo.html"></iframe></section>
-<section id="audit"><h2>Audit report preview</h2><iframe title="Business Overview audit report" src="{{ base }}/audit.html"></iframe></section>
+<details class="wb-section" id="memo"><summary><h2>Business memo preview</h2><span class="subtle">the recorded memo, inline</span></summary><iframe class="wb-preview" loading="lazy" title="Business Overview memo" src="{{ base }}/memo.html"></iframe></details>
+<details class="wb-section" id="audit"><summary><h2>Audit report preview</h2><span class="subtle">the recorded audit report, inline</span></summary><iframe class="wb-preview" loading="lazy" title="Business Overview audit report" src="{{ base }}/audit.html"></iframe></details>
+</div>
 
-<section id="review"><h2>Human review</h2>
+<aside class="wb-rail" aria-label="Review">
+<div class="wb-panel" id="review"><h2>Human review</h2>
 <p>Handoff <code>{{ view.handoff.handoff_id }}</code>: {{ st(view.handoff.human_review_status) }}{% if view.handoff.reviewer %} by {{ view.handoff.reviewer }} at {{ view.handoff.reviewed_at }}{% endif %}.</p>
 {% if view.handoff.human_review_status == 'pending' %}
 <form class="review" method="post" action="{{ base }}/review">
 {% if credit %}<input type="hidden" name="credit" value="1"><input type="hidden" name="fo_run" value="{{ credit.fo_run }}">{% endif %}{% if analysis %}<input type="hidden" name="job" value="{{ analysis.job.job_id }}">{% endif %}
-<p><label>Reviewer <input type="text" name="reviewer" required></label></p>
-<p><label>Reason <input type="text" name="reason" required></label></p>
-{% if view.handoff.unresolved_challenges %}<p><label><input type="checkbox" name="acknowledge_unresolved" value="true"> I acknowledge the unresolved challenger findings listed above; they remain recorded on the handoff.</label></p>{% endif %}
-<p>{% if view.handoff.can_accept %}<button type="submit" name="decision" value="accept">Accept this Business Overview</button> {% endif %}<button type="submit" name="decision" value="reject">Reject</button></p>
+<label for="bo-reviewer">Reviewer</label><input id="bo-reviewer" type="text" name="reviewer" required>
+<label for="bo-reason">Reason</label><textarea id="bo-reason" name="reason" rows="3" required></textarea>
+{% if challenges %}<label class="wb-check"><input type="checkbox" name="acknowledge_unresolved" value="true"> <span>I acknowledge the <a href="#challenges">{{ challenges|length }} unresolved challenger finding(s)</a>; they remain recorded on the handoff.</span></label>{% endif %}
+<div class="wb-buttons">{% if view.handoff.can_accept %}<button type="submit" name="decision" value="accept">Accept this Business Overview</button>{% endif %}<button type="submit" name="decision" value="reject">Reject</button></div>
 {% if not view.handoff.can_accept %}<p class="notice">There is no validated conclusion to accept.</p>{% endif %}
 </form>
 {% else %}<p class="subtle">This decision is recorded and is not revised in place.</p>{% endif %}
-</section>
+</div>
+<nav class="wb-panel" aria-label="Review checklist"><h2>Review checklist</h2>
+<ul class="wb-checklist">
+<li><a href="#evidence"><span>Retrieval gaps</span><span class="wb-n{{ ' attn' if e.retrieval_gaps else ' clear' }}">{{ e.retrieval_gaps }}</span></a></li>
+<li><a href="#agents"><span>Agents validated</span><span class="wb-n{{ ' clear' if n_agents_ok == view.agents|length else ' attn' }}">{{ n_agents_ok }}/{{ view.agents|length }}</span></a></li>
+<li><a href="#accepted"><span>Accepted hypotheses</span><span class="wb-n">{{ view.accepted_hypotheses|length }}</span></a></li>
+<li><a href="#rejected"><span>Rejected</span><span class="wb-n">{{ view.rejected_hypotheses|length }}</span></a></li>
+<li><a href="#unverified"><span>Unverified</span><span class="wb-n{{ ' attn' if view.unverified_hypotheses else ' clear' }}">{{ view.unverified_hypotheses|length }}</span></a></li>
+<li><a href="#contradictions"><span>Contradictions</span><span class="wb-n{{ ' attn' if n_contra else ' clear' }}">{{ n_contra }}</span></a></li>
+<li><a href="#open"><span>Open questions</span><span class="wb-n{{ ' attn' if n_open else ' clear' }}">{{ n_open }}</span></a></li>
+<li><a href="#challenges"><span>Unresolved challenges</span><span class="wb-n{{ ' attn' if challenges else ' clear' }}">{{ challenges|length }}</span></a></li>
+<li><a href="#memo"><span>Memo preview</span></a></li>
+<li><a href="#audit"><span>Audit preview</span></a></li>
+</ul></nav>
+</aside>
+</div>
+<script>
+(function () {
+  function reveal(id) { var el = id && document.getElementById(id); var d = el && el.closest('details'); if (d && !d.open) { d.open = true; el.scrollIntoView(); } }
+  document.addEventListener('click', function (e) { var a = e.target.closest && e.target.closest('a[href^="#"]'); if (a) reveal(decodeURIComponent(a.hash.slice(1))); });
+  reveal(decodeURIComponent(location.hash.slice(1)));
+})();
+</script>
 {% endif %}
 </main></body></html>

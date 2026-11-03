@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Financial Overview workbench</title>{% include 'workspace_style.html.j2' %}
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Financial Overview workbench</title>{% include 'workspace_style.html.j2' %}{% include 'review_workbench_style.html.j2' %}
 <style>
   header h1 { font-size: 2.3rem; margin: 8px 0 10px; } nav ul { padding: 0; }
   .ok { color: var(--c-2f6b45); font-weight: bold; } .bad { color: var(--c-9a3324); font-weight: bold; } .warn { color: var(--c-8a6d1c); font-weight: bold; }
@@ -15,59 +15,104 @@
   .fo-progress .track.measured .bar { animation: none; left: 0; opacity: 1; transition: width .4s ease; }
   @keyframes fo-slide { from { left: -40%; } to { left: 100%; } }
   @media (prefers-reduced-motion: reduce) { .fo-progress .bar { animation: none; left: 0; width: 100%; opacity: .5; } .fo-progress .track.measured .bar { opacity: 1; transition: none; } }
+  .wb-main .fo-agent-title { flex-basis: 22rem; } .wb-main .fo-big { font-size: 1.7rem; } .wb-main .fo-rating { font-size: 1.3rem; }
+  .wb-main .fo-card h3 { font-size: 1rem; margin: 0 0 8px; } .wb-main .fo-formula { font-size: .82rem; }
+  .wb-gate-list { margin: 4px 0 0; padding-left: 18px; } .wb-gate-list li { margin: 3px 0; }
 </style></head>
 <body>
 {% set active='memos' %}{% include 'analysis_nav.html.j2' %}
 {% macro st(v) %}<span class="{{ 'ok' if v in ['completed', 'accepted', 'continued', 'pass', 'compliant', 'routine', 'overridden', 'none', 'no_adjustment', 'Engine score', 'Overridden by analyst', 'not_applicable', 'billed_revenue'] else 'bad' if v in ['failed', 'rejected', 'stopped', 'fail', 'escalated', 'breach', 'unresolved'] else 'warn' }}">{{ (v or '—')|replace('_', ' ') }}</span>{% endmacro %}
-{% if analysis %}{% include 'analysis_tabs.html.j2' %}{% else %}<header><span class="badge">Financial Overview only</span><h1>Financial Overview workbench</h1>
+{% if analysis %}{% include 'analysis_tabs.html.j2' %}{% elif not view %}<header><span class="badge">Financial Overview only</span><h1>Financial Overview workbench</h1>
 <p class="subtle">Financial scorecard from a 10-K's Inline XBRL. The pre-checks run first (going concern; covenants: breach, waiver or relief amendment; acquisitions and divestitures: DSO and Debt/EBITDAR adjusted for the year's deals; prepaid model: DSO on billed revenue or at a reduced weight; always interpreted by the Pre-check Agent), then facts are collected, ratios computed and scored 1–10, and combined into a composite risk score. Every number is computed by code; the agent only classifies the filing's passages, and its quotes are verified. Unresolved pre-checks are escalated to an analyst.</p>
 <div class="actions"><a href="/credit-memos">All cases</a></div></header>{% endif %}
 <main>
-{% if credit %}<div class="notice" id="credit-back" style="position:sticky;top:0;z-index:5;border-left-color:var(--c-2f6fb0);background:var(--c-eef3fb)"><a href="{{ credit.url }}"><strong>&larr; Back to the credit view (BO + FO + RMS)</strong></a> <span class="subtle">A decision you make here takes you back there, with RMS re-assessed.</span></div>{% endif %}
+{% if credit %}<div class="notice" id="credit-back" style="position:sticky;top:0;z-index:8;border-left-color:var(--c-2f6fb0);background:var(--c-eef3fb)"><a href="{{ credit.url }}"><strong>&larr; Back to the credit view</strong></a> <span class="subtle">A decision you make here takes you back there, with RMS re-assessed.</span></div>{% endif %}
 {% if error %}<section><p class="notice" id="fo-failed"><strong>Run failed{% if failed and failed.step %} during step {{ failed.number }}: {{ failed.step }}{% endif %}.</strong> {{ error }}</p>
 {% if failed and failed.done %}<details><summary>Steps completed before it ({{ failed.done|length }})</summary><ol>{% for d in failed.done %}<li>{{ d }}</li>{% endfor %}</ol></details>{% endif %}</section>{% endif %}
 {% if stopped %}<section><p class="notice" id="fo-stopped"><strong>Run stopped.</strong> {{ stopped }} Model calls already made are still logged (and billed); no run was recorded.</p></section>{% endif %}
 
-
+{% if not view %}
 <section id="runs"><h2>Recorded runs</h2>
 {% if runs %}
 <div class="table-wrap"><table><thead><tr><th>Case</th><th>Company</th><th>Period end</th><th>Going concern</th><th>Covenants</th><th>Acquisitions</th><th>Prepaid model</th><th>Composite</th><th>Rating</th><th>Model</th><th>Run</th><th>Started</th><th>Status</th><th>Open</th></tr></thead><tbody>
-{% for r in runs %}<tr{% if view and r.run_id == view.run_id %} style="background:var(--c-eef3f8)"{% endif %}><td>{{ r.case_id }}</td><td>{{ r.entity_name or r.filing_folder }}</td><td>{{ r.period_end or '' }}</td><td>{{ st(r.going_concern) if r.going_concern else '—' }}</td><td>{{ st(r.covenants) if r.covenants else '—' }}</td><td>{{ st(r.acquisitions) if r.acquisitions else '—' }}</td><td>{{ st(r.prepaid) if r.prepaid else '—' }}</td><td>{% if r.run_status == 'stopped' %}Not scored: going-concern fail{% elif r.run_status == 'awaiting_review' %}Awaiting decision{% else %}{{ r.composite_score if r.composite_score is not none else '—' }}{% endif %}</td><td>{{ r.credit_rating or '—' }}</td><td>{% if r.agent_model %}<code>{{ r.agent_model }}</code>{% else %}—{% endif %}</td><td><code>{{ r.run_id }}</code></td><td>{{ r.started_at }}</td><td>{{ st(r.run_status) }}</td><td><a href="/cases/{{ r.case_id }}/fo.html?run_id={{ r.run_id }}">Inspect</a></td></tr>{% endfor %}
+{% for r in runs %}<tr><td>{{ r.case_id }}</td><td>{{ r.entity_name or r.filing_folder }}</td><td>{{ r.period_end or '' }}</td><td>{{ st(r.going_concern) if r.going_concern else '—' }}</td><td>{{ st(r.covenants) if r.covenants else '—' }}</td><td>{{ st(r.acquisitions) if r.acquisitions else '—' }}</td><td>{{ st(r.prepaid) if r.prepaid else '—' }}</td><td>{% if r.run_status == 'stopped' %}Not scored: going-concern fail{% elif r.run_status == 'awaiting_review' %}Awaiting decision{% else %}{{ r.composite_score if r.composite_score is not none else '—' }}{% endif %}</td><td>{{ r.credit_rating or '—' }}</td><td>{% if r.agent_model %}<code>{{ r.agent_model }}</code>{% else %}—{% endif %}</td><td><code>{{ r.run_id }}</code></td><td>{{ r.started_at }}</td><td>{{ st(r.run_status) }}</td><td><a href="/cases/{{ r.case_id }}/fo.html?run_id={{ r.run_id }}">Inspect</a></td></tr>{% endfor %}
 </tbody></table></div>
 {% else %}<p>No Financial Overview run has been recorded yet.</p>{% endif %}
 </section>
-
-{% if view %}
+{% else %}
 {% set base = '/cases/' ~ view.case_id ~ '/fo/runs/' ~ view.run_id %}
 {% set o = view.overview %}
-<section id="filing"><h2>{{ o.meta.entity_name or view.filing_folder }} &mdash; run {{ view.run_id }}</h2>
-<dl>
-<dt>Case</dt><dd>{{ view.case_id }}</dd>
-<dt>Filing</dt><dd>{{ o.meta.document_type or '10-K' }}, period ending {{ o.meta.period_end or 'unknown' }} (fiscal year {{ o.meta.fiscal_year or '?' }}){% if o.meta.ticker %} · {{ o.meta.ticker }}{% endif %}{% if o.meta.cik %} · CIK {{ o.meta.cik }}{% endif %}</dd>
-<dt>Folder</dt><dd><code>edgar_filings/{{ o.filing.folder }}</code> · signature <code>{{ o.filing.signature[:16] }}</code></dd>
-<dt>Files used</dt><dd>{% for k, v in o.filing.files.items() %}{{ k }}: <code>{{ v }}</code>{{ ' · ' if not loop.last }}{% endfor %}</dd>
-<dt>Evidence</dt><dd>{{ o.filing.fact_count }} facts · {{ o.filing.context_count }} contexts · {{ o.filing.section_count }} presentation sections · {{ o.filing.working_capital_lines }} working-capital lines in the calculation linkbase</dd>
-<dt>Industry group</dt><dd>{% if o.industry.industry_group %}{{ o.industry.industry_group }} (matched by {{ o.industry.matched_by }} to {{ o.industry.ticker }} in {{ o.industry.mapping_file }}){% else %}Not classified. {{ o.industry.note }}{% endif %}</dd>
-<dt>Pre-check Agent model</dt><dd>{% if view.agent_model %}<code>{{ view.agent_model }}</code>{% else %}<span class="subtle">not recorded</span>{% endif %}</dd>
-<dt>Engine</dt><dd>{{ o.engine_version }} · reference data <code>{{ o.reference_hash[:16] }}</code> · run hash <code>{{ view.content_hash[:16] }}</code> {% if view.integrity_ok %}<span class="ok">verified</span>{% else %}<span class="bad">does not match the recorded payload</span>{% endif %}</dd>
-<dt>Run status</dt><dd>{{ st(view.run_status) }}</dd>
-<dt>Human review</dt><dd>{{ st(view.human_review_status) }}{% if view.review %} · {{ view.review.decision }} by {{ view.review.reviewer }} on {{ view.review.decided_at[:16]|replace('T', ' ') }}: {{ view.review.reason }}{% endif %}{% for ov in view.overrides %} · {{ ov.measure }}: {{ 'override to ' ~ ov.analyst_score if ov.decision == 'override' else 'engine score accepted' }} by {{ ov.reviewer }} on {{ ov.decided_at[:16]|replace('T', ' ') }}: {{ ov.reason }}{% endfor %}{% if view.human_review_status == 'pending' %} <span class="subtle">(nothing was escalated: no going-concern fail, no covenant breach and no unresolved deal)</span>{% endif %}</dd>
-</dl>
+{% set c = o.composite %}
 {% set pending_override = o.gate.pending if o.gate.state in ['awaiting_override', 'awaiting_gc_decision'] else [] %}
+{% set needs = (o.gate.checks or []) if o.gate.state in ('awaiting_override', 'awaiting_gc_decision') else (['going_concern'] if o.gate.state == 'awaiting_review' else []) %}
+{% set checks = [('precheck', 'going_concern', 'fo-precheck', 'Going concern'), ('covenants', 'covenants', 'fo-covenants', 'Covenants'), ('acquisitions', 'acquisitions', 'fo-acquisitions', 'Acquisitions'), ('prepaid', 'prepaid', 'fo-prepaid', 'Prepaid model'),
+  ('dscr_t2', 'dscr_t2', 'fo-dscr-t2', 'DSCR T2'), ('dscr_t3', 'dscr_t3', 'fo-dscr-t3', 'DSCR T3'), ('dscr_t1', 'dscr_t1', 'fo-dscr-t1', 'DSCR T1'),
+  ('icr_t2', 'icr_t2', 'fo-icr-t2', 'ICR T2'), ('icr_t3', 'icr_t3', 'fo-icr-t3', 'ICR T3'), ('icr_t1', 'icr_t1', 'fo-icr-t1', 'ICR T1'),
+  ('leverage_t1', 'leverage_t1', 'fo-leverage-t1', 'Debt/EBITDAR T1'), ('leverage_t2', 'leverage_t2', 'fo-leverage-t2', 'Debt/EBITDAR T2'), ('leverage_t3', 'leverage_t3', 'fo-leverage-t3', 'Debt/EBITDAR T3'), ('leverage_t4', 'leverage_t4', 'fo-leverage-t4', 'Debt/EBITDAR T4'),
+  ('rcf_t1', 'rcf_t1', 'fo-rcf-t1', 'RCF/Debt T1'), ('rcf_t2', 'rcf_t2', 'fo-rcf-t2', 'RCF/Debt T2'), ('rcf_t3', 'rcf_t3', 'fo-rcf-t3', 'RCF/Debt T3'), ('rcf_t4', 'rcf_t4', 'fo-rcf-t4', 'RCF/Debt T4'),
+  ('margin_t1', 'margin_t1', 'fo-margin-t1', 'EBITDAR Margin T1'), ('margin_t2', 'margin_t2', 'fo-margin-t2', 'EBITDAR Margin T2'), ('dso_t1', 'dso_t1', 'fo-dso-t1', 'DSO T1'),
+  ('liquidity_t1', 'liquidity_t1', 'fo-liquidity-t1', 'Liquidity T1'), ('liquidity_t2', 'liquidity_t2', 'fo-liquidity-t2', 'Liquidity T2'), ('liquidity_t3', 'liquidity_t3', 'fo-liquidity-t3', 'Liquidity T3')] %}
+<div class="wb-bar">
+  <div class="wb-title"><strong>{{ o.meta.entity_name or view.filing_folder }}</strong> <span class="subtle">Financial Overview · case {{ view.case_id }} · {{ o.meta.document_type or '10-K' }} period ending {{ o.meta.period_end or 'unknown' }} · run <code>{{ view.run_id }}</code></span></div>
+  <div class="wb-status">{% if o.gate.show_composite %}<span class="wb-pill">Composite <span class="risk {{ c.css }}">{{ c.text }}</span>{% if c.rating %} <strong>{{ c.rating }}</strong>{% endif %}{% if o.gate.provisional %} <span class="warn">provisional</span>{% endif %}</span>{% endif %}<span class="wb-pill">Run {{ st(view.run_status) }}</span><span class="wb-pill">Review {{ st(view.human_review_status) }}</span></div>
+  <div class="wb-actions">{% set credit_tab = (analysis.tabs|selectattr('key', 'equalto', 'rms')|first) if analysis else none %}<a class="wb-primary" href="{{ credit.url if credit else credit_tab.href if credit_tab and credit_tab.href else '/cases/' ~ view.case_id ~ '/credit.html?fo_run=' ~ view.run_id }}">Credit view</a>
+  <details class="wb-menu"><summary>Downloads &#9662;</summary><div><a href="{{ base }}/overview.json">Overview JSON</a><a href="{{ base }}/overview.html">Standalone scorecard HTML</a><a href="{{ base }}/audit.html">Audit HTML</a><a href="{{ base }}/memo.html">Memo HTML</a><a href="{{ base }}/memo.json">Memo JSON</a></div></details>
+  <a href="/fo">All runs</a></div>
+</div>
+<div class="wb-layout">
+<div class="wb-main">
 {% if o.gate.state in ['awaiting_gc_decision', 'awaiting_review'] or pending_override %}
-<div class="fo-gate" style="border-left:4px solid var(--c-ef4444);background:var(--c-fdf1f0);padding:12px 16px;border-radius:6px">
+<div class="fo-gate" style="border-left:4px solid var(--c-ef4444);background:var(--c-fdf1f0);padding:10px 14px;border-radius:8px;margin-bottom:12px">
 <strong>&#9888; Waiting for an analyst.</strong> Each decision is in the agent check that raised it (marked &#9888; below):
-<ul style="margin:6px 0 0">{% if o.gate.state == 'awaiting_gc_decision' %}<li><a href="#review">Going concern: agent and verified evidence disagree</a></li>{% elif o.gate.state == 'awaiting_review' %}<li><a href="#review">Going concern: FAIL, continue or stop</a></li>{% endif %}{% for e in pending_override %}<li><a href="#override-{{ e.measure }}">{{ e.measure_name }}: {{ e.title or 'covenant breach' }}</a> · engine score {{ e.engine_score if e.engine_score is not none else 'none' }}</li>{% endfor %}</ul>
+<ul class="wb-gate-list">{% if o.gate.state == 'awaiting_gc_decision' %}<li><a href="#review">Going concern: agent and verified evidence disagree</a></li>{% elif o.gate.state == 'awaiting_review' %}<li><a href="#review">Going concern: FAIL, continue or stop</a></li>{% endif %}{% for e in pending_override %}<li><a href="#override-{{ e.measure }}">{{ e.measure_name }}: {{ e.title or 'covenant breach' }}</a> · engine score {{ e.engine_score if e.engine_score is not none else 'none' }}</li>{% endfor %}</ul>
 </div>
 {% endif %}
 {% if o.settings.errors %}<p class="notice">{{ o.settings.errors|join(' ') }}</p>{% endif %}
-<div class="actions"><a href="{{ credit.url if credit else '/cases/' ~ view.case_id ~ '/credit.html?fo_run=' ~ view.run_id }}"><strong>Credit view (BO + FO + RMS)</strong></a>{% if o.precheck %}<a href="#fo-precheck">Going concern</a>{% endif %}{% if o.covenants %}<a href="#fo-covenants">Covenants</a>{% endif %}{% if o.acquisitions %}<a href="#fo-acquisitions">Acquisitions</a>{% endif %}{% if o.prepaid %}<a href="#fo-prepaid">Prepaid model</a>{% endif %}{% if o.dscr_t2 %}<a href="#fo-dscr-t2">DSCR trigger T2</a>{% endif %}{% if o.dscr_t3 %}<a href="#fo-dscr-t3">DSCR trigger T3</a>{% endif %}{% if o.dscr_t1 %}<a href="#fo-dscr-t1">DSCR trigger T1</a>{% endif %}{% if o.icr_t2 %}<a href="#fo-icr-t2">ICR trigger T2</a>{% endif %}{% if o.icr_t3 %}<a href="#fo-icr-t3">ICR trigger T3</a>{% endif %}{% if o.icr_t1 %}<a href="#fo-icr-t1">ICR trigger T1</a>{% endif %}{% if o.leverage_t1 %}<a href="#fo-leverage-t1">Debt/EBITDAR trigger T1</a>{% endif %}{% if o.leverage_t2 %}<a href="#fo-leverage-t2">Debt/EBITDAR trigger T2</a>{% endif %}{% if o.leverage_t3 %}<a href="#fo-leverage-t3">Debt/EBITDAR trigger T3</a>{% endif %}{% if o.leverage_t4 %}<a href="#fo-leverage-t4">Debt/EBITDAR trigger T4</a>{% endif %}{% if o.rcf_t1 %}<a href="#fo-rcf-t1">RCF/Debt trigger T1</a>{% endif %}{% if o.rcf_t2 %}<a href="#fo-rcf-t2">RCF/Debt trigger T2</a>{% endif %}{% if o.rcf_t3 %}<a href="#fo-rcf-t3">RCF/Debt trigger T3</a>{% endif %}{% if o.rcf_t4 %}<a href="#fo-rcf-t4">RCF/Debt trigger T4</a>{% endif %}{% if o.margin_t1 %}<a href="#fo-margin-t1">EBITDAR Margin trigger T1</a>{% endif %}{% if o.margin_t2 %}<a href="#fo-margin-t2">EBITDAR Margin trigger T2</a>{% endif %}{% if o.dso_t1 %}<a href="#fo-dso-t1">DSO trigger T1</a>{% endif %}{% if o.liquidity_t1 %}<a href="#fo-liquidity-t1">Liquidity trigger T1</a>{% endif %}{% if o.liquidity_t2 %}<a href="#fo-liquidity-t2">Liquidity trigger T2</a>{% endif %}{% if o.liquidity_t3 %}<a href="#fo-liquidity-t3">Liquidity trigger T3</a>{% endif %}<a href="#fo-composite">Composite</a>{% for m in o.measures %}<a href="#fo-{{ m.key }}">{{ m.short }}</a>{% endfor %}<a href="#memo">Memo preview</a></div>
-<p class="subtle">Downloads: <a href="{{ base }}/overview.json">overview JSON</a> · <a href="{{ base }}/overview.html">standalone scorecard HTML</a> · <a href="{{ base }}/memo.html">memo HTML</a> · <a href="{{ base }}/memo.json">memo JSON</a></p>
-<p class="subtle">{% if view.output_folder %}Saved files: <code>{{ view.output_folder }}</code> (financial_overview.json, financial_overview.html, financial_memo.json, financial_memo.html{% if (o.precheck and o.precheck.agent) or (o.covenants and o.covenants.agent) or (o.acquisitions and o.acquisitions.agent) or (o.prepaid and o.prepaid.agent) %}, precheck_transcript.json{% endif %}{% if view.review %}, review.json{% endif %}{% if view.overrides %}, overrides.json{% endif %}){% else %}No saved files for this run in this server's output folder (it may have been run with a different <code>--output</code>).{% endif %}</p>
+<section id="filing"><h2>{{ o.meta.entity_name or view.filing_folder }} &mdash; run {{ view.run_id }}</h2>
+<dl class="wb-facts">
+<dt>Filing</dt><dd>{{ o.meta.document_type or '10-K' }}, period ending {{ o.meta.period_end or 'unknown' }} (fiscal year {{ o.meta.fiscal_year or '?' }}){% if o.meta.ticker %} · {{ o.meta.ticker }}{% endif %}{% if o.meta.cik %} · CIK {{ o.meta.cik }}{% endif %}</dd>
+<dt>Industry group</dt><dd>{% if o.industry.industry_group %}{{ o.industry.industry_group }} (matched by {{ o.industry.matched_by }} to {{ o.industry.ticker }} in {{ o.industry.mapping_file }}){% else %}Not classified. {{ o.industry.note }}{% endif %}</dd>
+<dt>Evidence</dt><dd>{{ o.filing.fact_count }} facts · {{ o.filing.context_count }} contexts · {{ o.filing.section_count }} presentation sections · {{ o.filing.working_capital_lines }} working-capital lines in the calculation linkbase</dd>
+<dt>Integrity</dt><dd>run hash <code>{{ view.content_hash[:16] }}</code> {% if view.integrity_ok %}<span class="ok">verified</span>{% else %}<span class="bad">does not match the recorded payload</span>{% endif %}</dd>
+<dt>Human review</dt><dd>{{ st(view.human_review_status) }}{% if view.review %} · {{ view.review.decision }} by {{ view.review.reviewer }} on {{ view.review.decided_at[:16]|replace('T', ' ') }}: {{ view.review.reason }}{% endif %}{% for ov in view.overrides %} · {{ ov.measure }}: {{ 'override to ' ~ ov.analyst_score if ov.decision == 'override' else 'engine score accepted' }} by {{ ov.reviewer }} on {{ ov.decided_at[:16]|replace('T', ' ') }}: {{ ov.reason }}{% endfor %}{% if view.human_review_status == 'pending' %} <span class="subtle">(nothing was escalated: no going-concern fail, no covenant breach and no unresolved deal)</span>{% endif %}</dd>
+</dl>
+<details><summary>Provenance: folder, files, model and engine</summary>
+<dl class="wb-facts">
+<dt>Case</dt><dd>{{ view.case_id }}</dd>
+<dt>Folder</dt><dd><code>edgar_filings/{{ o.filing.folder }}</code> · signature <code>{{ o.filing.signature[:16] }}</code></dd>
+<dt>Files used</dt><dd>{% for k, v in o.filing.files.items() %}{{ k }}: <code>{{ v }}</code>{{ ' · ' if not loop.last }}{% endfor %}</dd>
+<dt>Pre-check Agent model</dt><dd>{% if view.agent_model %}<code>{{ view.agent_model }}</code>{% else %}<span class="subtle">not recorded</span>{% endif %}</dd>
+<dt>Engine</dt><dd>{{ o.engine_version }} · reference data <code>{{ o.reference_hash[:16] }}</code></dd>
+<dt>Run status</dt><dd>{{ st(view.run_status) }}</dd>
+<dt>Saved files</dt><dd>{% if view.output_folder %}<code>{{ view.output_folder }}</code> (financial_overview.json, financial_overview.html, financial_memo.json, financial_memo.html{% if (o.precheck and o.precheck.agent) or (o.covenants and o.covenants.agent) or (o.acquisitions and o.acquisitions.agent) or (o.prepaid and o.prepaid.agent) %}, precheck_transcript.json{% endif %}{% if view.review %}, review.json{% endif %}{% if view.overrides %}, overrides.json{% endif %}){% else %}No saved files for this run in this server's output folder (it may have been run with a different <code>--output</code>).{% endif %}</dd>
+</dl>
+</details>
 </section>
-{% set decision_run_id = view.run_id %}{% with view = o, decision_base = base %}{% include 'fo_scorecard.html.j2' %}{% endwith %}
-<section id="memo"><h2>Financial memo preview</h2>
-<p class="subtle">The analyst-facing write-up of this run, built from the recorded scores, pre-checks, triggers and any analyst decisions. It adds no analysis of its own.</p>
-<iframe title="Financial Overview memo" src="{{ base }}/memo.html" style="width:100%;height:720px;border:1px solid var(--c-c9d1da);background:var(--c-ffffff)"></iframe></section>
+{% set decision_run_id = view.run_id %}{% with view = o, decision_base = base, fo_brief = True, fo_audit_href = base ~ '/audit.html' %}{% include 'fo_scorecard.html.j2' %}{% endwith %}
+<details class="wb-section" id="memo"><summary><h2>Financial memo preview</h2><span class="subtle">built from the recorded scores, pre-checks, triggers and any analyst decisions</span></summary>
+<p class="subtle">The analyst-facing write-up of this run. It adds no analysis of its own.</p>
+<iframe class="wb-preview" loading="lazy" title="Financial Overview memo" src="{{ base }}/memo.html"></iframe></details>
+<details class="wb-section" id="audit"><summary><h2>Audit report preview</h2><span class="subtle">every pre-check and trigger agent in full: evidence, passages read, rules and model runs</span></summary><iframe class="wb-preview" loading="lazy" title="Financial Overview audit report" src="{{ base }}/audit.html"></iframe></details>
+</div>
+
+<aside class="wb-rail" aria-label="Review">
+<nav class="wb-panel" aria-label="Review checklist"><h2>Review checklist</h2>
+{% if needs %}<p class="bad" style="margin:0 0 6px">&#9888; {{ needs|length }} decision(s) waiting</p>{% else %}<p class="subtle" style="margin:0 0 6px">No decision is waiting for an analyst.</p>{% endif %}
+<p class="wb-checklist-head">Agent checks</p>
+<ul class="wb-checklist">{% for attr, key, anchor, label in checks %}{% set chk = o[attr] %}{% if chk %}<li><a href="#{{ anchor }}"><span>{% if key in needs %}<span class="bad">&#9888;</span> {% endif %}{{ label }}</span><span class="risk {{ chk.css }}">{{ chk.label }}</span></a></li>{% endif %}{% endfor %}</ul>
+<p class="wb-checklist-head">Scores</p>
+<ul class="wb-checklist"><li><a href="#fo-composite"><span>Composite</span>{% if o.gate.show_composite %}<span class="risk {{ c.css }}">{{ c.text }}</span>{% endif %}</a></li>
+{% if o.gate.show_measures %}{% for m in o.measures %}<li><a href="#fo-{{ m.key }}"><span>{{ m.short }}</span><span class="risk {{ m.headline.css }}">{{ m.headline.text }}</span></a></li>{% endfor %}{% endif %}
+<li><a href="#memo"><span>Memo preview</span></a></li>
+<li><a href="#audit"><span>Audit preview</span></a></li></ul>
+</nav>
+</aside>
+</div>
+<script>
+(function () {
+  function reveal(id) { var el = id && document.getElementById(id); var d = el && el.closest('details.wb-section'); if (d && !d.open) { d.open = true; el.scrollIntoView(); } }
+  document.addEventListener('click', function (e) { var a = e.target.closest && e.target.closest('a[href^="#"]'); if (a) reveal(decodeURIComponent(a.hash.slice(1))); });
+})();
+</script>
 {% endif %}
 </main></body></html>

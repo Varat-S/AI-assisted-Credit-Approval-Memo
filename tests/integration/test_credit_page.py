@@ -237,6 +237,19 @@ def test_an_analysis_rms_tab_shows_and_reassesses_exactly_its_runs(client, monke
     assert response.status_code == 303 and response.headers["location"].startswith("/analysis/hca-job/rms?notice=")
     page = client.get(response.headers["location"]).text
     assert "Assessed: refer." in page and "RMS-G02" in page and "Debt capacity:" in page
+    # So does a decision made in the tab's Decisions panel, and a bad one shows its error on the tab.
+    assert page.count('name="job" value="hca-job"') >= 3  # the assess, BO review and FO override forms
+    bad = client.post(f"/cases/{CASE}/credit/fo/{FO_RUN}/override", data={
+        "measure": "liquidity", "decision": "override", "score": "", "reviewer": "A", "reason": "r",
+        "bo_run": BO_RUN, "job": "hca-job"})
+    assert bad.status_code == 400 and "An override needs a score from 1 to 10." in bad.text
+    assert 'aria-current="page"' in bad.text and 'data-tab="rms"' in bad.text
+    response = client.post(f"/cases/{CASE}/credit/fo/{FO_RUN}/override", follow_redirects=False, data={
+        "measure": "liquidity", "decision": "accept", "reviewer": "A", "reason": "Engine score stands",
+        "bo_run": BO_RUN, "job": "hca-job"})
+    assert response.status_code == 303 and response.headers["location"].startswith("/analysis/hca-job/rms?notice=")
+    assert "Decision recorded; RMS re-assessed:" in client.get(response.headers["location"]).text
+    assert "Waiting for an analyst" not in client.get("/analysis/hca-job/rms").text
     # Accepting the BO re-assesses it (through the BO review route's hook; the seeded handoff has no memo for
     # the workbench to show), and the tab shows the new assessment.
     from app.api import deps, workbench
@@ -246,7 +259,8 @@ def test_an_analysis_rms_tab_shows_and_reassesses_exactly_its_runs(client, monke
         review_handoff(session, "boh-hca", reviewer="B. Reviewer", reason="Checked", decision="accept")
         workbench._reassess_rms(session, BO_RUN)
         session.commit()
-    assert [r["sources"]["bo_review_status"] for r in records(client.output_root, CASE)] == ["pending", "accepted"]
+    assert [r["sources"]["bo_review_status"] for r in records(client.output_root, CASE)] == [
+        "pending", "pending", "accepted"]
     page = client.get("/analysis/hca-job/rms").text
     assert f"<code>{BO_RUN}</code> (accepted)" in page and "Out of date:" not in page
     # RMS needs both modules; a single-module analysis has no RMS tab.
@@ -292,3 +306,28 @@ def test_the_memo_page_explains_the_rms_verdict_and_follows_fo_decisions(client)
     post(client, f"/cases/{CASE}/credit/assess", {"fo_run": FO_RUN, "bo_run": BO_RUN, "requested_amount_m": ""})
     text = memo_section()
     assert "VerdictDebt capacity report" in text and "RequestedNone" in text and "No loan amount was requested, so RMS gives no verdict" in text
+
+
+def test_the_fo_tab_warns_until_the_escalated_measure_is_decided(client, monkeypatch):
+    from lxml import html
+    from app.services import bo_fo
+
+    job = {"job_id": "hca-job", "case_id": CASE, "metadata": {"company": "HCA Healthcare, Inc."},
+           "bo_validators": True, "execution_status": "completed", "folder": "fixture",
+           "result": {"bo": {"summary": {"analysis_run_id": BO_RUN}}, "fo": {"summary": {"run_id": FO_RUN}}}}
+    monkeypatch.setattr(bo_fo, "jobs", type("Records", (), {"get": lambda self, ident: {"hca-job": job}.get(ident)})())
+    pages = ["/analysis/hca-job/rms", "/analysis/hca-job/execution"]  # the trimmed FO seed can't render fo.html
+
+    def warnings(path):
+        tabs = html.fromstring(client.get(path).text).xpath('//nav[@class="analysis-tabs"]/a')
+        return {a.get("data-tab"): a.xpath('./span[@class="tab-warning"]/@aria-label') for a in tabs}
+
+    for path in pages:  # the liquidity escalation is open: only the FO tab warns, on every page of the analysis
+        tabs = warnings(path)
+        assert tabs["fo"] == ["1 measure escalated to an analyst: liquidity"], path
+        assert not any(w for key, w in tabs.items() if key != "fo"), path
+    post(client, f"/cases/{CASE}/credit/fo/{FO_RUN}/override",
+         {"measure": "liquidity", "decision": "override", "score": "8", "reviewer": "A. Analyst",
+          "reason": "Liquidity is adequate", "bo_run": BO_RUN})
+    for path in pages:
+        assert warnings(path)["fo"] == [], path

@@ -34,7 +34,7 @@ from app.services.fo import loader, precheck
 from app.services.fo import cancel as fo_cancel
 from app.services.fo import models as fo_models
 from app.services.fo.memo import build_memo, filing_source, render_memo_html
-from app.services.fo.reporting import render_overview_html
+from app.services.fo.reporting import render_audit_html, render_overview_html
 from app.services.fo.review import (
     FoReviewError,
     override_measure,
@@ -167,7 +167,7 @@ def financial_overview_workbench(
         view["output_folder"] = str(saved.resolve()) if saved.is_dir() else None
     return _page(session, view=view, runs=runs,
                  credit=credit_context(case_id, selected, bo_run) if credit else None,
-                 analysis=analysis_for(job, case_id, selected, 'fo'))
+                 analysis=analysis_for(job, case_id, selected, 'fo', session))
 
 
 def _reassess_rms(session: Session, run_id: str) -> None:
@@ -277,6 +277,16 @@ def get_financial_overview_artifact(
         return fo_artifact(session, run_id, kind)
     except FoRunNotFoundError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+
+@router.get("/cases/{case_id}/fo/runs/{run_id}/audit.html", response_class=HTMLResponse)
+def get_financial_overview_audit_html(case_id: str, run_id: str,
+                                      session: Session = Depends(get_session)) -> HTMLResponse:
+    """Every pre-check and trigger agent in full: the workbench shows each one briefly and links here."""
+    row = _run_for_case(session, case_id, run_id)
+    return HTMLResponse(render_audit_html(dict(row.payload), run=run_header(row),
+                                          review=review_view(review_for(session, run_id)),
+                                          overrides=overrides_for(session, run_id)))
 
 
 @router.get("/cases/{case_id}/fo/runs/{run_id}/overview.html", response_class=HTMLResponse)

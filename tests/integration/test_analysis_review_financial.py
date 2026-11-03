@@ -32,7 +32,11 @@ def test_review_financial_payload_and_exact_run_integrity(db_session,nvda_as_hos
         tiles=[(t.findtext('span'),t.findtext('strong')) for t in html.fromstring(response.text).xpath('//div[@class="memo-scores"]/div')]
         composite=expected['executive']['composite']
         assert tiles==[('Composite risk score',f"{composite['text']} / 10"),('Indicative rating',composite['rating']),
-                       ('Risk level',composite['label'].capitalize())]
+                       ('Risk level',composite['label'].capitalize()),
+                       ('Measures scored',f"{expected['executive']['measures_scored']} / {len(expected['measures'])}")]
+        # The fuller FO section: pre-checks, the measure table with trends, the composite build-up.
+        assert 'Pre-checks' in text and 'Composite Risk Score' in text and 'Basis of Preparation' in text
+        assert 'Executive Financial Credit Assessment' in text and 'Industry benchmark' in text
         assert 'not an agency rating' in text
         # A combined analysis shows RMS; none is assessed for these runs yet.
         assert "No Risk Mitigation & Structuring assessment of this analysis's runs is recorded" in text

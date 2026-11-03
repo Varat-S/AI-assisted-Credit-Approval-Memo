@@ -285,7 +285,7 @@ def _bo_page(session, case_id, analysis_run_id, *, credit=False, fo_run=None, jo
         _env.get_template("bo_workbench.html.j2").render(
             runs=runs, view=view, error=error,
             credit=credit_context(case_id, fo_run, selected) if credit else None,
-            analysis=analysis_for(job, case_id, selected, 'bo')),
+            analysis=analysis_for(job, case_id, selected, 'bo', session)),
         status_code=status_code)
 
 

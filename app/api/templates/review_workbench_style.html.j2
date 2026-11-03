@@ -1,0 +1,51 @@
+{# Compact layout shared by the BO and FO workbenches: a sticky run bar, the review content and a side rail. #}
+<style>
+  body { max-width: 1380px; padding-top: 28px; }
+  main > section, .wb-main > section, .wb-main > details.wb-section { padding: 14px 18px; margin-bottom: 12px; border-radius: 10px; }
+  .wb-main > section { background: var(--c-ffffff); border: 1px solid var(--c-dce4ee); }
+  main h2, .wb-main h2 { font-size: 1.02rem; margin: 0 0 8px; } .wb-main h3 { font-size: .94rem; margin: 14px 0 6px; }
+  .wb-main p { margin: 6px 0; } .wb-main ul { margin: 4px 0; padding-left: 20px; }
+  .wb-main table, .wb-rail table { font-size: .84rem; } .wb-main th, .wb-main td { padding: 6px 9px; vertical-align: top; }
+  .wb-bar { position: sticky; top: 0; z-index: 6; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; padding: 10px 16px; margin-bottom: 12px; background: var(--c-ffffff); border: 1px solid var(--c-dce4ee); border-radius: 10px; box-shadow: 0 2px 8px var(--c-1d39460a); }
+  .wb-title { flex: 1 1 280px; min-width: 0; } .wb-title strong { font-size: 1.08rem; } .wb-title .subtle { display: block; font-size: .78rem; overflow-wrap: anywhere; }
+  .wb-status { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: .84rem; }
+  .wb-pill { display: inline-flex; gap: 5px; align-items: center; padding: 2px 9px; border: 1px solid var(--c-dce4ee); border-radius: 999px; background: var(--c-f8fafd); white-space: nowrap; }
+  .wb-actions { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: .84rem; }
+  .wb-actions > a, .wb-menu > summary { padding: 4px 10px; border: 1px solid var(--c-c9d1da); border-radius: 6px; text-decoration: none; background: var(--c-ffffff); cursor: pointer; }
+  .wb-actions > a.wb-primary { background: var(--c-294f53); border-color: var(--c-294f53); color: var(--c-ffffff); }
+  .wb-menu { position: relative; margin: 0; } .wb-menu > summary { list-style: none; color: var(--c-1e5d60); line-height: inherit; } .wb-menu > summary::-webkit-details-marker { display: none; }
+  .wb-menu > div { position: absolute; right: 0; top: calc(100% + 4px); z-index: 7; min-width: 210px; padding: 6px; background: var(--c-ffffff); border: 1px solid var(--c-dce4ee); border-radius: 8px; box-shadow: 0 8px 24px var(--c-1d39460a); }
+  .wb-menu > div a { display: block; padding: 5px 9px; border-radius: 5px; text-decoration: none; } .wb-menu > div a:hover { background: var(--c-f1f6f5); }
+  .wb-layout { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 14px; align-items: start; }
+  .wb-rail { position: sticky; top: 74px; display: grid; gap: 12px; max-height: calc(100vh - 90px); overflow-y: auto; }
+  .wb-panel { padding: 14px 16px; background: var(--c-ffffff); border: 1px solid var(--c-dce4ee); border-radius: 10px; font-size: .86rem; }
+  .wb-panel h2 { font-size: .95rem; margin: 0 0 8px; }
+  .wb-panel label { display: block; margin: 8px 0 3px; font-weight: 600; font-size: .82rem; }
+  .wb-panel input[type=text], .wb-panel textarea { width: 100%; box-sizing: border-box; padding: 7px 9px; font: inherit; }
+  .wb-panel label.wb-check { display: flex; gap: 8px; font-weight: 400; } .wb-panel label.wb-check input { margin-top: 3px; flex-shrink: 0; }
+  .wb-buttons { display: flex; gap: 8px; margin-top: 10px; } .wb-buttons button { flex: 1; padding: 8px 10px; }
+  .wb-buttons button[value=accept] { background: var(--c-294f53); border-color: var(--c-294f53); color: var(--c-ffffff); }
+  .wb-checklist { display: grid; gap: 4px; margin: 0; padding: 0; list-style: none; }
+  .wb-checklist a { display: flex; justify-content: space-between; gap: 8px; align-items: center; padding: 5px 8px; border-radius: 6px; text-decoration: none; color: inherit; }
+  .wb-checklist a:hover { background: var(--c-f1f6f5); } .wb-checklist .wb-n { font-weight: 700; min-width: 1.6rem; text-align: center; border-radius: 5px; padding: 0 6px; background: var(--c-eef3f8); }
+  .wb-checklist .wb-n.attn { background: var(--c-fdf1f0); color: var(--c-9a3324); } .wb-checklist .wb-n.clear { background: var(--c-e1f3e7); color: var(--c-205537); }
+  .wb-checklist .risk { font-size: .74rem; min-width: 0; padding: 0 6px; }
+  .wb-checklist-head { margin: 10px 0 2px; font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--c-62707b); font-weight: 700; }
+  .wb-stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; margin: 4px 0 8px; }
+  .wb-stat { padding: 7px 10px; border: 1px solid var(--c-e3e8ee); border-radius: 8px; background: var(--c-f8fafd); }
+  .wb-stat b { display: block; font-size: 1.05rem; } .wb-stat span { font-size: .76rem; color: var(--c-62707b); }
+  details.wb-section { margin-top: 0; background: var(--c-ffffff); border: 1px solid var(--c-dce4ee); }
+  details.wb-section > summary { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; cursor: pointer; list-style: none; }
+  details.wb-section > summary::-webkit-details-marker { display: none; }
+  details.wb-section > summary::before { content: "▸"; color: var(--c-155cb7); transition: transform .15s; }
+  details.wb-section[open] > summary::before { transform: rotate(90deg); }
+  details.wb-section > summary h2 { display: inline; margin: 0; } details.wb-section > summary .subtle { font-size: .82rem; }
+  details.wb-section[open] > summary { margin-bottom: 8px; }
+  .wb-main section, .wb-main details.wb-section, .fo-agent { scroll-margin-top: 80px; }
+  .wb-preview { width: 100%; height: 620px; border: 1px solid var(--c-c9d1da); background: var(--c-ffffff); border-radius: 6px; }
+  dl.wb-facts { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 3px 14px; margin: 6px 0; font-size: .86rem; }
+  dl.wb-facts dt { color: var(--c-62707b); } dl.wb-facts dd { margin: 0; overflow-wrap: anywhere; }
+  @media (max-width: 980px) { .wb-layout { grid-template-columns: 1fr; } .wb-rail { position: static; max-height: none; } .wb-bar { position: static; } }
+  @media (max-width: 560px) { dl.wb-facts { grid-template-columns: 1fr; } dl.wb-facts dd { margin-bottom: 6px; } }
+  @media (prefers-reduced-motion: reduce) { details.wb-section > summary::before { transition: none; } }
+</style>

@@ -40,12 +40,20 @@ def selected_rows(session, job):
 
 
 ANALYSIS_TABS = (('memo', 'Memo'), ('bo', 'Business Overview'), ('fo', 'Financial Overview'),
-                 ('rms', 'Risk Mitigation & Structuring'), ('audit', 'Audit & Review'), ('execution', 'Execution'))
+                 ('rms', 'Credit view'), ('audit', 'Audit & Review'), ('execution', 'Execution'))
 
 
-def analysis_tabs(job, current):
+def fo_pending_measures(session, fo_run_id):
+    """The FO run's measures escalated to an analyst with no decision yet (accept or override)."""
+    from app.services.fo.review import overrides_for, pending_measures
+    run = session.get(FinancialOverviewRunRow, fo_run_id) if fo_run_id else None
+    return pending_measures(run.payload or {}, overrides_for(session, fo_run_id)) if run else []
+
+
+def analysis_tabs(job, current, session=None):
     """Header tabs shared by every page of one analysis. A tab whose report is not recorded yet has no href;
-    a module outside the analysis scope has no tab, nor RMS, which needs both."""
+    a module outside the analysis scope has no tab, nor RMS, which needs both. With a ``session``, the FO tab
+    carries a warning while any of its measures awaits an analyst's decision."""
     try:
         ids = run_references(job)
     except WorkspaceRecordError:
@@ -61,11 +69,15 @@ def analysis_tabs(job, current):
         'execution': f'/analysis/{job_id}/execution',
     }
     skipped = {'fo', 'rms'} if job.get('bo_only') else {'bo', 'rms'} if job.get('fo_only') else set()
+    pending = fo_pending_measures(session, ids['fo']) if session is not None and 'fo' not in skipped else []
+    warnings = {'fo': f"{len(pending)} measure{'s' if len(pending) != 1 else ''} escalated to an analyst: "
+                      f"{', '.join(pending)}" if pending else None}
     return {'job': job, 'current': current, 'tabs': [
-        {'key': key, 'label': label, 'href': hrefs[key]} for key, label in ANALYSIS_TABS if key not in skipped]}
+        {'key': key, 'label': label, 'href': hrefs[key], 'warning': warnings.get(key)}
+        for key, label in ANALYSIS_TABS if key not in skipped]}
 
 
-def analysis_for(job_id, case_id, run_id, current):
+def analysis_for(job_id, case_id, run_id, current, session=None):
     """The analysis a workbench was opened from (``?job=``), or None when it does not own that run."""
     from app.services import bo_fo
     job = bo_fo.jobs.get(job_id) if job_id else None
@@ -75,7 +87,7 @@ def analysis_for(job_id, case_id, run_id, current):
         ids = run_references(job)
     except WorkspaceRecordError:
         return None
-    return analysis_tabs(job, current) if ids.get(current) == run_id else None
+    return analysis_tabs(job, current, session) if ids.get(current) == run_id else None
 
 
 def report_available(session, bo, fo):
