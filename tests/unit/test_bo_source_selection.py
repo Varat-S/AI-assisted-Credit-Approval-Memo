@@ -73,3 +73,56 @@ def test_cache_and_specialist_definitions_separated():
     assert new.get('business_orchestrator').definition_hash()!=old.get('business_orchestrator').definition_hash()
     for agent in ['m1_revenue_quality','m1_customer_stickiness','m1_pricing_power','m1_operating_model','m1_competitive_durability','m1_resilience_integration']:
         assert new.get(agent).definition_hash()==old.get(agent).definition_hash()
+
+
+@pytest.mark.parametrize('direction,disposition,admissibility', [
+    ('positive', 'supported', 'established'),
+    ('negative', 'qualified', 'qualified_narrative'),
+    ('neutral', 'supported', 'established'),
+])
+def test_primary_costs_retained_alongside_agent6(editorial, direction, disposition, admissibility):
+    from app.schemas.bo import HypothesisRecord
+    from app.services.bo.competitive_presentation import grouped_findings, COST
+    records, _ = editorial
+    cost = next(h for h in records if h.agent_id == 'm1_operating_model')
+    cost = HypothesisRecord.model_validate({**cost.model_dump(mode='json'),
+        'direction': direction, 'disposition': disposition, 'admissibility': admissibility})
+    records = [cost if h.hypothesis_id == cost.hypothesis_id else h for h in records]
+    source = packet(records)
+    choice = plan(source)
+    interaction = next(h for h in source['hypotheses'] if h['agent_id'] == 'm1_resilience_integration')
+    choice['omissions'] = [d for d in choice['omissions'] if d['hypothesis_id'] != interaction['hypothesis_id']]
+    choice['selections'].append(dict(hypothesis_id=interaction['hypothesis_id'],
+        placement='risk', reason='Supplementary interaction.'))
+    before = deepcopy((choice, source))
+    output = project(choice, source)
+    claims = [c for _, c in iter_claims(output)]
+    retained = next(c for c in claims if c['claim_id'] == 'selected:' + cost.hypothesis_id)
+    assert retained['text'] == cost.claim
+    assert retained['claim_type'] == cost.claim_type.value
+    assert set(retained['evidence_ids']) == set(cost.evidence_ids())
+    assert retained['quoted_values'] == cost.quoted_values
+    assert retained['parameter_result_ids'] == cost.parameter_result_ids
+    if disposition == 'qualified':
+        assert 'Qualified source finding.' in retained['uncertainty']
+    assert any(c['claim_id'] == 'selected:' + interaction['hypothesis_id'] for c in claims)
+    decision = next(d for d in output['selection_decisions'] if d['hypothesis_id'] == cost.hypothesis_id)
+    assert decision['decision'] == 'selected' and 'Mandatory primary cost coverage' in decision['reason']
+    audit = dict(run={'analysis_run_id': 'run'}, hypotheses={'records': source['hypotheses']})
+    provenance = dict(producer_records=[dict(agent_id=h.agent_id, agent_run_id=h.agent_run_id,
+        validation_status='valid') for h in records])
+    groups = grouped_findings([dict(claim=c, evidence={}) for c in claims], audit, provenance)
+    assert [e['source_hypothesis_id'] for g in groups if g['title'] == COST for e in g['entries']] == [cost.hypothesis_id]
+    assert (choice, source) == before
+
+
+def test_retention_does_not_promote_unverified_costs(editorial):
+    from app.schemas.bo import HypothesisRecord
+    records, _ = editorial
+    cost = next(h for h in records if h.agent_id == 'm1_operating_model')
+    unverified = HypothesisRecord.model_validate({**cost.model_dump(mode='json'),
+        'hypothesis_id': 'M1S4-H999', 'disposition': 'unverified', 'admissibility': 'audit_only'})
+    source = packet([*records, unverified])
+    assert 'M1S4-H999' not in {h['hypothesis_id'] for h in source['hypotheses']}
+    output = project(plan(source), source)
+    assert all('M1S4-H999' not in c['hypothesis_ids'] for _, c in iter_claims(output))

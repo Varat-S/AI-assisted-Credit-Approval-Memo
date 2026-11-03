@@ -90,3 +90,18 @@ def test_watch_trigger_preserves_source_metrics_without_inventing_thresholds(edi
     groups=grouped_findings(*data(records))
     entry=next(e for g in groups for e in g['entries'] if e['source_hypothesis_id']==cost.hypothesis_id)
     assert entry['pointers'][2]['parts']==[]
+
+
+@pytest.mark.parametrize('components', [
+    ['M1S1-H001', 'M1S3-H001'],  # revenue-only interactions still follow costs
+    ['M1S4-H001'],
+    ['M1S1-H001', 'M1S4-H001'],
+])
+def test_all_agent6_insights_follow_both_primary_groups(editorial, components):
+    records, _ = editorial
+    interaction = next(h for h in records if h.agent_id == 'm1_resilience_integration')
+    interaction.component_hypothesis_ids = components
+    groups = grouped_findings(*data(records))
+    assert [g['title'] for g in groups] == [REVENUE, COST, INTERACTIONS]
+    assert [e['source_hypothesis_id'] for e in groups[-1]['entries']] == [interaction.hypothesis_id]
+    assert all(e['source_agent_id'] != interaction.agent_id for g in groups[:-1] for e in g['entries'])

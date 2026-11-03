@@ -53,17 +53,12 @@ def selected_source(claim, audit, provenance):
 
 
 def grouped_findings(entries, audit, provenance):
-    records = {h['hypothesis_id']: h for h in audit['hypotheses']['records']
-               if h['acceptance_state'] == 'accepted'}
     groups = {name: [] for name in GROUPS}
     for entry in entries:
         claim = entry['claim']
         index, source = selected_source(claim, audit, provenance)
         if source['agent_id'] == V3_AGENT_6_ID:
-            dimensions = {PRIMARY_GROUP.get(records[hid]['agent_id']) for hid in source['component_hypothesis_ids']
-                          if hid in records}
-            dimensions.discard(None)
-            group = next(iter(dimensions)) if len(dimensions) == 1 else INTERACTIONS
+            group = INTERACTIONS
         else:
             group = PRIMARY_GROUP[source['agent_id']]
         details = []

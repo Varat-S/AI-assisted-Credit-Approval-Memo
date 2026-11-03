@@ -311,7 +311,7 @@ def structure_filename(artifact):
     return f"Visualized {company} Corporate structure.json"
 
 
-def render_svg(artifact):
+def render_svg(artifact, *, show_title=True):
     """Render from the final contract alone; SVG has no external resources."""
     spec = artifact["visual_spec"]
     company = next(iter(artifact["companies"].values()))
@@ -321,7 +321,8 @@ def render_svg(artifact):
     def text(x, y, value, size=19, color="#142340", anchor="start", bold=False):
         parts.append(f'<text x="{x}" y="{y}" font-family="Arial, sans-serif" font-size="{size}" fill="{color}" text-anchor="{anchor}" font-weight="{"bold" if bold else "normal"}">{escape(str(value))}</text>')
     header = spec["header"]
-    text(32, 68, header["title"], 53, bold=True)
+    if show_title:
+        text(32, 68, header["title"], 53, bold=True)
     text(34, 116, header["subtitle_format"].format(company_display_name=company["company_display_name"]), 26)
     for path, link in zip(company["connector_paths"], company["ownership_links"]):
         pts = " ".join(f"{x},{y}" for x, y in path["points"])

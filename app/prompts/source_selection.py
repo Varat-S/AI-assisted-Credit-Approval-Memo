@@ -5,8 +5,8 @@ from app.prompts.competitive_positioning import _object, CHALLENGER_SCHEMA as OL
 INPUT_VERSION = 'bo-source-selection-input-1.1.0'
 OUTPUT_VERSION = 'bo-source-selection-output-1.1.0'
 POLICY_VERSION = 'bo-source-selection-1.1.0'
-PROJECTION_VERSION = 'bo-source-copy-projection-1.0.0'
-WRITER_PROMPT = 'bo_source_selector_1_1_0'
+PROJECTION_VERSION = 'bo-source-copy-projection-1.1.0'
+WRITER_PROMPT = 'bo_source_selector_1_2_0'
 CHALLENGER_PROMPT = 'bo_source_selection_challenger_1_1_0'
 WRITER_SCHEMA = _object({
     'schema_version': {'const': OUTPUT_VERSION},
@@ -31,12 +31,17 @@ verbatim with their complete source lineage. Reasons are audit metadata only.
 Use exactly one lead: an existing finding, not a new overall assessment. Order
 other selections within driver and risk groups. Balance relevant strengths and
 vulnerabilities; do not label a negative finding a driver or a positive finding a risk.
-Only Agent 6 supplies cross-dimensional insights. Prefer its existing interaction
+Retain every supplied eligible m1_operating_model (Specialist 4) primary cost
+finding as a selection, including qualified findings with their qualifications.
+Agent 6 interactions supplement these primary cost findings and must not replace
+them. Software deterministically retains any such finding you omit.
+Only Agent 6 supplies cross-dimensional insights. For other primary findings, prefer its existing interaction
 when separate primary findings would duplicate that insight; components remain
 in evidence even when omitted from the visible narrative. Do not invent relationships.
 Each eligible hypothesis ID from hypotheses must appear exactly once across
 selections and omissions. Omission reasons must explain relevance or duplication.
-No finding quota or specialist quota. Never select audit_only_hypotheses.
+Apart from mandatory eligible primary cost coverage, no finding or specialist quota.
+Never select audit_only_hypotheses.
 If validation/challenge feedback is supplied, repair only the selection plan.
 Return only the JSON contract. No memo text or evidence fields are permitted.
 '''
@@ -53,6 +58,6 @@ Selection reasons are audit metadata, never analytical evidence.
 
 def prompt_catalogue():
     return [dict(name=WRITER_PROMPT, role='orchestrate', template=WRITER_TEMPLATE,
-                 response_schema=WRITER_SCHEMA, label='Source finding selector 1.0.0'),
+                 response_schema=WRITER_SCHEMA, label='Source finding selector 1.2.0'),
             dict(name=CHALLENGER_PROMPT, role='challenge', template=CHALLENGER_TEMPLATE,
                  response_schema=CHALLENGER_SCHEMA, label='Source selection independent challenge 1.0.0')]

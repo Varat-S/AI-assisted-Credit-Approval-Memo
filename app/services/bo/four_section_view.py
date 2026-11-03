@@ -149,7 +149,7 @@ def load_view(session, analysis_run_id, case_id=None):
     if structure:
         from app.services.bo.m3_rebuild.structure import render_svg
         # Only the existing deterministic, escaping SVG generator supplies Markup.
-        svg = Markup(render_svg(structure))
+        svg = Markup(render_svg(structure, show_title=False))
     return {'memo': artifact, 'svg': svg, 'claims': claims, 'finding_groups': finding_groups, 'evidence': evidence,
             'structure_tree': next(iter(structure['companies'].values()))['plain_text_tree'] if structure else None,
             'review': public_record({'status': row.human_review_status,

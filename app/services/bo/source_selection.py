@@ -3,7 +3,7 @@ from collections import Counter
 from copy import deepcopy
 
 from app.prompts import source_selection as contract
-from app.services.bo.competitive_positioning import _schema_issues, evidence_ids
+from app.services.bo.competitive_positioning import _schema_issues, evidence_ids, eligible
 from app.services.bo.roster_v3 import V3_AGENT_6_ID
 from app.schemas.bo import HypothesisRecord
 
@@ -36,6 +36,28 @@ def validate_plan(plan, source):
 
 def project(plan, source):
     """Cannot receive model-authored prose: the wire schema contains only IDs/reasons."""
+    issues = validate_plan(plan, source)
+    if issues:
+        raise ValueError('; '.join(issues))
+    # Preserve the model's raw plan in the runner audit, but apply mandatory
+    # primary cost coverage before copying claims. Interactions supplement these
+    # findings; component lineage alone does not replace their visible analysis.
+    plan = deepcopy(plan)
+    records = {h['hypothesis_id']: h for h in source['hypotheses']}
+    retained = []
+    for omission in plan['omissions']:
+        h = records[omission['hypothesis_id']]
+        if (h['agent_id'] == 'm1_operating_model'
+                and eligible(HypothesisRecord.model_validate(h))):
+            retained.append(dict(
+                hypothesis_id=h['hypothesis_id'],
+                placement='risk' if h['direction'] == 'negative' else 'driver',
+                reason='Mandatory primary cost coverage: Agent 6 interactions supplement '
+                       'rather than replace this validated finding. Original selector omission: '
+                       + omission['reason']))
+    retained_ids = {d['hypothesis_id'] for d in retained}
+    plan['omissions'] = [d for d in plan['omissions'] if d['hypothesis_id'] not in retained_ids]
+    plan['selections'].extend(sorted(retained, key=lambda d: d['hypothesis_id']))
     issues = validate_plan(plan, source)
     if issues:
         raise ValueError('; '.join(issues))
