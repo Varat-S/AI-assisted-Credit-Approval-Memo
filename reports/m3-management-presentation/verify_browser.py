@@ -19,9 +19,13 @@ import websockets
 
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--saved-hca', action='store_true', help='Use the recorded real HCA previews, with no model calls.')
+parser.add_argument('--two-page', action='store_true', help='Verify the expanded two-page saved-HCA PDF.')
 args = parser.parse_args()
+if args.two_page and not args.saved_hca:
+    parser.error('--two-page requires --saved-hca')
 repository = Path(__file__).resolve().parents[2]
-folder = Path(__file__).parent.resolve() / 'hca_saved' if args.saved_hca else Path(__file__).parent.resolve()
+folder = (Path(__file__).parent.resolve() / ('hca_two_page' if args.two_page else 'hca_saved')
+          if args.saved_hca else Path(__file__).parent.resolve())
 jobs = ([('before_web.html', 'before.png', 1200, 1200), ('web.html', 'desktop.png', 1200, 1200),
          ('web.html', 'mobile.png', 390, 844)] if args.saved_hca else
         [('management_before_focus.html', 'management_before.png', 1200, 1200),
@@ -106,6 +110,11 @@ async def verify(port):
         pdf = await call('Page.printToPDF', {'printBackground': True, 'preferCSSPageSize': True,
                                            'displayHeaderFooter': False})
         (folder / pdf_file).write_bytes(base64.b64decode(pdf['data']))
+        if args.two_page:
+            await navigate('print_full.html')
+            complete = await call('Page.printToPDF', {'printBackground': True, 'preferCSSPageSize': True,
+                                                     'displayHeaderFooter': False})
+            (folder / 'memo_full.pdf').write_bytes(base64.b64decode(complete['data']))
         (folder / 'browser_verification.json').write_text(json.dumps(results, indent=2) + '\n', encoding='utf-8')
         await call('Browser.close')
 
@@ -151,7 +160,32 @@ with pdfplumber.open(folder / pdf_file) as pdf:
     if args.saved_hca:
         result['qualified_positive_supporting_factor'] = 'Supporting Factor' in text and 'Qualified' in text and 'Credit Concerns' not in text
         result['html_has_no_physical_page_claims'] = 'Page 1' not in text and 'p. 1' not in text
-    assert result['pages'] == 1 and all(value for key, value in result.items() if key not in ('renderer', 'pages', 'records')), result
+    if args.two_page:
+        first = normalized(pdf.pages[0].extract_text() or '')
+        second = normalized(pdf.pages[1].extract_text() or '') if len(pdf.pages) > 1 else ''
+        rows = preview.xpath('//table[@class="bo-management-executive-table"]//tbody/tr')
+        names = [normalized(row.xpath('./td[1]/strong')[0].text_content()) for row in rows]
+        result.update(assessment_on_page_1='Management Credit Assessment' in first and overall in first,
+                      details_on_page_2='Management Details & Monitoring' in second,
+                      all_seven_executives_on_page_2=len(names) == 7 and all(name in second for name in names),
+                      inventory_limitation_visible='1 distinct reviewed finding' in first,
+                      no_invented_monitoring='No management-specific monitoring indicators or thresholds were recorded.' in second,
+                      no_internal_fact_ids=not bool(re.search(r'\bf_\d+\b', text)),
+                      a4_portrait_pages=all(abs(p.width-595.276) < 1 and abs(p.height-841.89) < 1 for p in pdf.pages),
+                      text_within_page_bounds=all(0 <= w['x0'] <= w['x1'] <= p.width+1 and
+                                                 0 <= w['top'] <= w['bottom'] <= p.height+1
+                                                 for p in pdf.pages for w in p.extract_words()))
+        with pdfplumber.open(folder / 'memo_full.pdf') as complete:
+            pages = [normalized(p.extract_text() or '') for p in complete.pages]
+            assessment = [i for i, text in enumerate(pages) if 'Management Credit Assessment' in text]
+            details = [i for i, text in enumerate(pages) if 'Management Details & Monitoring' in text]
+            result['management_is_two_consecutive_pages_in_full_memo'] = (
+                len(assessment) == len(details) == 1 and details[0] == assessment[0] + 1)
+            result['full_memo_management_pages'] = [i+1 for i in assessment + details]
+            result['full_memo_pages'] = len(pages)
+    assert result['pages'] == (2 if args.two_page else 1) and all(value for key, value in result.items() if key not in ('renderer', 'pages', 'records')), result
     pdf.pages[0].to_image(resolution=120).save(folder / ('pdf_page1.png' if args.saved_hca else 'management_sample_page1.png'))
+    if args.two_page:
+        pdf.pages[1].to_image(resolution=120).save(folder / 'pdf_page2.png')
     (folder / 'pdf_verification.json').write_text(json.dumps(result, indent=2) + '\n', encoding='utf-8')
     print(json.dumps(result))

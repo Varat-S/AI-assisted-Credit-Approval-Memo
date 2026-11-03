@@ -1,0 +1,11 @@
+{
+  "run_id": "ar_70066e79dd954e3c",
+  "new_model_calls": 0,
+  "model_runs_before_and_after": 14,
+  "frozen_stages_unchanged": true,
+  "frozen_stage_count": 29,
+  "canonical_files_unchanged": true,
+  "canonical_files_verified": 70,
+  "web_render_byte_identical": true,
+  "web_sha256": "0c36fb49d6905b45a20a21a9c41f65cd97f4b0e933ac97597e3b68614dca0cc5"
+}

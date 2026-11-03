@@ -1,5 +1,7 @@
 # BO M3 management presentation refinement
 
+**Latest PDF update:** the saved real HCA management assessment now has a two-page PDF edition, while the web output remains byte-for-byte unchanged. See the [two-page PDF](hca_two_page/management.pdf) and [observation inventory / verification report](hca_two_page/report.md). Only one supported finding exists; the second page adds sourced executive context and recorded gaps, not new judgments. Relevant regressions: **326 passed, 1 skipped**, including **95 focused checks**. The sections below retain the earlier one-page milestone and full-suite baseline history.
+
 Branch: `feat/m3-management-presentation`. Original base: `UI_Draft_V2` at `27b5ef6cb56e6654c71d7cbe3aa376542bc9d088`. Initial implementation: `d7a6c05`; previous completed refinement: `c5460a3`. The final corrections below use the saved real HCA run without new inference.
 
 ## Changes made

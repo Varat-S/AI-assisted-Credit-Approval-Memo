@@ -1,0 +1,15 @@
+{
+  "broader": {
+    "passed": 326,
+    "failed": 0,
+    "skipped": 1
+  },
+  "focused_subset": {
+    "passed": 95,
+    "failed": 0,
+    "skipped": 0
+  },
+  "skip_reasons": [
+    "No PDF backend installed."
+  ]
+}

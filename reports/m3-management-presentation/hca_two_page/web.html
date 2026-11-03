@@ -1,0 +1,3045 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Business Overview · HCA Healthcare, Inc.</title>
+<script>
+  (function () {
+    var saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (e) {}
+    var dark = saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+  })();
+  document.addEventListener('DOMContentLoaded', function () {
+    var root = document.documentElement;
+    var button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'theme-toggle';
+    function label() {
+      var dark = root.dataset.theme === 'dark';
+      button.textContent = dark ? '☀ Light mode' : '☾ Dark mode';
+      button.setAttribute('aria-pressed', String(dark));
+    }
+    button.addEventListener('click', function () {
+      root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+      try { localStorage.setItem('theme', root.dataset.theme); } catch (e) {}
+      label();
+    });
+    // Without a saved choice, keep following the operating system setting.
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (event) {
+      var saved = null;
+      try { saved = localStorage.getItem('theme'); } catch (e) {}
+      if (!saved) { root.dataset.theme = event.matches ? 'dark' : 'light'; label(); }
+    });
+    label();
+    document.body.appendChild(button);
+  });
+</script>
+<style>
+  :root {
+    color-scheme: light;
+    --c-007b77:#007b77;
+    --c-093264:#093264;
+    --c-10b981:#10b981;
+    --c-155cb7:#155cb7;
+    --c-183f43:#183f43;
+    --c-192b3b:#192b3b;
+    --c-1d39460a:#1d39460a;
+    --c-1d3e42:#1d3e42;
+    --c-1e5d60:#1e5d60;
+    --c-205537:#205537;
+    --c-22334a:#22334a;
+    --c-226c67:#226c67;
+    --c-254c50:#254c50;
+    --c-284f53:#284f53;
+    --c-285d5e:#285d5e;
+    --c-294f53:#294f53;
+    --c-2f6b45:#2f6b45;
+    --c-2f6fb0:#2f6fb0;
+    --c-315e62:#315e62;
+    --c-344955:#344955;
+    --c-386963:#386963;
+    --c-395c5b:#395c5b;
+    --c-397477:#397477;
+    --c-397b77:#397b77;
+    --c-3a6949:#3a6949;
+    --c-488c8c:#488c8c;
+    --c-497578:#497578;
+    --c-517273:#517273;
+    --c-518587:#518587;
+    --c-56687e:#56687e;
+    --c-586e71:#586e71;
+    --c-5b6c80:#5b6c80;
+    --c-5c7175:#5c7175;
+    --c-61717d:#61717d;
+    --c-61757b:#61757b;
+    --c-62707b:#62707b;
+    --c-64727b:#64727b;
+    --c-64748b:#64748b;
+    --c-687780:#687780;
+    --c-6a7b7d:#6a7b7d;
+    --c-6e684e:#6e684e;
+    --c-70808b:#70808b;
+    --c-718087:#718087;
+    --c-719596:#719596;
+    --c-72808a:#72808a;
+    --c-74808a:#74808a;
+    --c-775700:#775700;
+    --c-789b99:#789b99;
+    --c-78b58c:#78b58c;
+    --c-7f8999:#7f8999;
+    --c-836328:#836328;
+    --c-849097:#849097;
+    --c-84cc16:#84cc16;
+    --c-8a6d1c:#8a6d1c;
+    --c-8a94a0:#8a94a0;
+    --c-934a42:#934a42;
+    --c-942d29:#942d29;
+    --c-9a3324:#9a3324;
+    --c-9e483e:#9e483e;
+    --c-a2473b:#a2473b;
+    --c-a3adb3:#a3adb3;
+    --c-aacac1:#aacac1;
+    --c-b26e61:#b26e61;
+    --c-b42318:#b42318;
+    --c-b47b72:#b47b72;
+    --c-c69a44:#c69a44;
+    --c-c7d5d4:#c7d5d4;
+    --c-c8d7e9:#c8d7e9;
+    --c-c9d1da:#c9d1da;
+    --c-c9d9d3:#c9d9d3;
+    --c-c9dcd3:#c9dcd3;
+    --c-d49b25:#d49b25;
+    --c-d4aa39:#d4aa39;
+    --c-d58880:#d58880;
+    --c-d7b9b4:#d7b9b4;
+    --c-d8dfdf:#d8dfdf;
+    --c-d8e0df:#d8e0df;
+    --c-d8e2df:#d8e2df;
+    --c-d9dfdf:#d9dfdf;
+    --c-dce2e1:#dce2e1;
+    --c-dce4e3:#dce4e3;
+    --c-dce4ee:#dce4ee;
+    --c-dfe5ec:#dfe5ec;
+    --c-e1cbb7:#e1cbb7;
+    --c-e1e6ed:#e1e6ed;
+    --c-e1eeea:#e1eeea;
+    --c-e1f3e7:#e1f3e7;
+    --c-e2e8e5:#e2e8e5;
+    --c-e3e8ee:#e3e8ee;
+    --c-e4e9e7:#e4e9e7;
+    --c-e5eaea:#e5eaea;
+    --c-e7ebeb:#e7ebeb;
+    --c-e7ecf2:#e7ecf2;
+    --c-e9efed:#e9efed;
+    --c-eab308:#eab308;
+    --c-eaf4f2:#eaf4f2;
+    --c-edf0ef:#edf0ef;
+    --c-edf4ef:#edf4ef;
+    --c-edf4f2:#edf4f2;
+    --c-edf5f1:#edf5f1;
+    --c-eef3f8:#eef3f8;
+    --c-eef3fb:#eef3fb;
+    --c-ef4444:#ef4444;
+    --c-f0f6f4:#f0f6f4;
+    --c-f1f6f4:#f1f6f4;
+    --c-f1f6f5:#f1f6f5;
+    --c-f3f6fa:#f3f6fa;
+    --c-f4f7e9:#f4f7e9;
+    --c-f59e0b:#f59e0b;
+    --c-f5f6f4:#f5f6f4;
+    --c-f5f8f7:#f5f8f7;
+    --c-f8fafd:#f8fafd;
+    --c-f97316:#f97316;
+    --c-faf3e4:#faf3e4;
+    --c-fbefec:#fbefec;
+    --c-fbf7ed:#fbf7ed;
+    --c-fcf3f1:#fcf3f1;
+    --c-fcf8f3:#fcf8f3;
+    --c-fde5e2:#fde5e2;
+    --c-fdf1f0:#fdf1f0;
+    --c-fff3bf:#fff3bf;
+    --c-fff6ee:#fff6ee;
+    --c-fff8e5:#fff8e5;
+    --c-fff9ec:#fff9ec;
+    --c-ffffff:#ffffff;
+  }
+  /* Screen only: printed and PDF output stays light. */
+  @media screen {
+    :root[data-theme=dark] {
+      color-scheme: dark;
+      --c-007b77:#8ce4e1;
+      --c-093264:#96bae6;
+      --c-10b981:#10b981;
+      --c-155cb7:#568fd7;
+      --c-183f43:#aadbe1;
+      --c-192b3b:#b2c9de;
+      --c-1d39460a:#a9cbdb0a;
+      --c-1d3e42:#add6db;
+      --c-1e5d60:#91d9dd;
+      --c-205537:#9cdab7;
+      --c-22334a:#a6bbd6;
+      --c-226c67:#87d9d4;
+      --c-254c50:#a2cfd4;
+      --c-284f53:#9fccd1;
+      --c-285d5e:#95d1d2;
+      --c-294f53:#a0cbd0;
+      --c-2f6b45:#8bcca3;
+      --c-2f6fb0:#4e8fd0;
+      --c-315e62:#93c5c9;
+      --c-344955:#a0b7c5;
+      --c-386963:#8ec3bc;
+      --c-395c5b:#9ac1c0;
+      --c-397477:#82c0c3;
+      --c-397b77:#7ec3bf;
+      --c-3a6949:#8fc19f;
+      --c-488c8c:#71b6b6;
+      --c-497578:#83b1b4;
+      --c-517273:#89abac;
+      --c-518587:#77abad;
+      --c-56687e:#7f92a8;
+      --c-586e71:#8ba2a5;
+      --c-5b6c80:#7e8fa3;
+      --c-5c7175:#889ea2;
+      --c-61717d:#82929e;
+      --c-61757b:#83979d;
+      --c-62707b:#83919d;
+      --c-64727b:#84929b;
+      --c-64748b:#75859c;
+      --c-687780:#808e97;
+      --c-6a7b7d:#829395;
+      --c-6e684e:#aea88d;
+      --c-70808b:#768691;
+      --c-718087:#7a8990;
+      --c-719596:#6c9192;
+      --c-72808a:#77858f;
+      --c-74808a:#78838d;
+      --c-775700:#e5ce8f;
+      --c-789b99:#688c8a;
+      --c-78b58c:#4f9064;
+      --c-7f8999:#6a7585;
+      --c-836328:#d5b374;
+      --c-849097:#6d7980;
+      --c-84cc16:#84cc16;
+      --c-8a6d1c:#ddc070;
+      --c-8a94a0:#656f7c;
+      --c-934a42:#bc726a;
+      --c-942d29:#d56a66;
+      --c-9a3324:#da6f60;
+      --c-9e483e:#c16a60;
+      --c-a2473b:#c4685c;
+      --c-a3adb3:#556167;
+      --c-aacac1:#3f655a;
+      --c-b26e61:#a45d50;
+      --c-b42318:#d76056;
+      --c-b47b72:#95594f;
+      --c-c69a44:#c0933b;
+      --c-c7d5d4:#3d4746;
+      --c-c8d7e9:#2c3847;
+      --c-c9d1da:#383e45;
+      --c-c9d9d3:#394541;
+      --c-c9dcd3:#37453e;
+      --c-d49b25:#d49b25;
+      --c-d4aa39:#d4aa39;
+      --c-d58880:#8e382f;
+      --c-d7b9b4:#55403c;
+      --c-d8dfdf:#343a3a;
+      --c-d8e0df:#333a39;
+      --c-d8e2df:#313a37;
+      --c-d9dfdf:#343939;
+      --c-dce2e1:#313636;
+      --c-dce4e3:#2f3736;
+      --c-dce4ee:#262e38;
+      --c-dfe5ec:#282e35;
+      --c-e1cbb7:#534334;
+      --c-e1e6ed:#272c33;
+      --c-e1eeea:#26342f;
+      --c-e1f3e7:#213527;
+      --c-e2e8e5:#2c322f;
+      --c-e3e8ee:#262b32;
+      --c-e4e9e7:#2b302e;
+      --c-e5eaea:#2a2f2f;
+      --c-e7ebeb:#292e2e;
+      --c-e7ecf2:#22282f;
+      --c-e9efed:#262d2a;
+      --c-eab308:#eab308;
+      --c-eaf4f2:#202d2b;
+      --c-edf0ef:#252928;
+      --c-edf4ef:#202a23;
+      --c-edf4f2:#202a28;
+      --c-edf5f1:#1f2b25;
+      --c-eef3f8:#1b232b;
+      --c-eef3fb:#161f2e;
+      --c-ef4444:#ef4444;
+      --c-f0f6f4:#1e2825;
+      --c-f1f6f4:#1f2724;
+      --c-f1f6f5:#1f2725;
+      --c-f3f6fa:#191f28;
+      --c-f4f7e9:#2b301c;
+      --c-f59e0b:#f59e0b;
+      --c-f5f6f4:#222420;
+      --c-f5f8f7:#1d2422;
+      --c-f8fafd:#141b26;
+      --c-f97316:#f97316;
+      --c-faf3e4:#352c18;
+      --c-fbefec:#2f1b16;
+      --c-fbf7ed:#2f2816;
+      --c-fcf3f1:#2c1915;
+      --c-fcf8f3:#2a2115;
+      --c-fde5e2:#391814;
+      --c-fdf1f0:#2e1513;
+      --c-fff3bf:#504617;
+      --c-fff6ee:#321f0f;
+      --c-fff8e5:#382d10;
+      --c-fff9ec:#34280f;
+      --c-ffffff:#262b31;
+    }
+  }
+  .theme-toggle { position: fixed; right: 18px; bottom: 18px; z-index: 1000; border: 1px solid var(--c-c8d7e9); border-radius: 20px; padding: 7px 14px; background: var(--c-ffffff); color: var(--c-22334a); font-size: .82rem; box-shadow: 0 4px 14px var(--c-1d39460a); }
+  .theme-toggle:hover { border-color: var(--c-719596); }
+  @media print { .theme-toggle { display: none; } }
+</style>
+<style>
+  :root { font-family: system-ui, sans-serif; color: var(--c-22334a); background: var(--c-f3f6fa); }
+  * { box-sizing: border-box; }
+  body { max-width: 1200px; margin: 0 auto; padding: 32px 24px; line-height: 1.55; }
+  h1, h2, h3 { line-height: 1.2; } h1 { margin-bottom: 12px; }
+  a { color: var(--c-155cb7); } a:hover { color: var(--c-093264); }
+  header, main > section, .workbench-counts, nav { background: var(--c-ffffff); border: 1px solid var(--c-dce4ee); border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+  .subtle { color: var(--c-5b6c80); } .notice { background: var(--c-fff8e5); border-left: 4px solid var(--c-d49b25); padding: 14px 18px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 18px; }
+  .actions a { display: inline-block; border: 1px solid var(--c-c8d7e9); border-radius: 6px; padding: 7px 12px; text-decoration: none; }
+  .badge { display: inline-block; background: var(--c-eef3fb); padding: 2px 10px; border-radius: 20px; font-size: .9rem; }
+  dl { display: grid; grid-template-columns: minmax(130px, 180px) 1fr; gap: 6px 16px; } dt { color: var(--c-5b6c80); } dd { margin: 0; overflow-wrap: anywhere; }
+  nav ul { display: flex; flex-wrap: wrap; gap: 10px 22px; list-style: none; padding: 0; }
+  .table-wrap { overflow-x: auto; } table { width: 100%; border-collapse: collapse; font-size: .93rem; }
+  th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--c-e7ecf2); vertical-align: top; } th { color: var(--c-56687e); background: var(--c-f8fafd); }
+  pre { white-space: pre-wrap; overflow-wrap: anywhere; background: var(--c-f8fafd); padding: 16px; max-height: 500px; overflow-y: auto; font-size: .82rem; }
+  details { margin-top: 14px; } summary { cursor: pointer; color: var(--c-155cb7); } section { scroll-margin-top: 20px; }
+  fieldset { border: 1px solid var(--c-dce4ee); border-radius: 8px; margin: 0 0 24px; padding: 20px; } legend { font-weight: 600; padding: 0 8px; }
+  label { display: block; font-weight: 600; margin: 0 0 6px; } input, select, button { font: inherit; }
+  input:not([type=file]), select { width: 100%; padding: 9px 11px; border: 1px solid var(--c-c8d7e9); border-radius: 6px; background: var(--c-ffffff); } input[type=file] { max-width: 100%; }
+  small { color: var(--c-5b6c80); overflow-wrap: anywhere; } .form-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 20px; }
+  button { border: 1px solid var(--c-c8d7e9); border-radius: 6px; padding: 8px 12px; cursor: pointer; background: var(--c-eef3fb); color: var(--c-155cb7); } button:disabled { cursor: default; opacity: .6; } .primary-button { background: var(--c-155cb7); color: var(--c-ffffff); padding: 12px 18px; }
+  .workflow { display: flex; flex-wrap: wrap; gap: 12px 28px; padding-left: 24px; } .workflow .current { font-weight: 700; } .workflow .pending { color: var(--c-7f8999); }
+  .hash { max-width: 230px; overflow-wrap: anywhere; font: .8rem ui-monospace,monospace; } .facts-scroll { max-height: 650px; } .facts-scroll thead { position: sticky; top: 0; background: var(--c-f8fafd); }
+  .filter-row { display: grid; grid-template-columns: 1fr; gap: 8px; margin-bottom: 20px; } [hidden] { display: none !important; }
+  @media (max-width: 650px) { .form-grid { grid-template-columns: 1fr; } fieldset { padding: 14px; } }
+  @media (max-width: 650px) { body { padding: 16px 12px; } header, main > section, nav { padding: 18px; } dl { grid-template-columns: 1fr; } }
+</style>
+<style>
+  :root{color:var(--c-192b3b);background:var(--c-f5f6f4);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+  body{max-width:1120px;padding:42px 28px 30px;line-height:1.55}h1{font-family:Georgia,serif;font-size:2.8rem;font-weight:500;letter-spacing:-.03em;margin:14px 0}h2{font-size:1.18rem}a{color:var(--c-1e5d60)}a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--c-488c8c);outline-offset:4px}
+  .eyebrow{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--c-517273);font-weight:700}.workspace-header{background:transparent;border:0;padding:20px 0 32px;margin:0}.workspace-header p{max-width:650px;color:var(--c-62707b)}.workspace-cards{display:grid;grid-template-columns:1fr 1fr;gap:24px;border:0;padding:0;background:transparent;margin:0}.workspace-card{position:relative;display:block;min-height:245px;padding:32px;border:1px solid var(--c-d8dfdf);border-radius:12px;background:var(--c-ffffff);text-decoration:none;color:var(--c-192b3b);transition:border-color .15s,box-shadow .15s}.workspace-card:hover{color:var(--c-192b3b);border-color:var(--c-719596);box-shadow:0 8px 24px var(--c-1d39460a)}.workspace-card h2{font-size:1.45rem;margin:24px 0 10px}.workspace-card p{max-width:330px;color:var(--c-62707b);margin:0}.card-icon{display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;border-radius:10px;background:var(--c-edf4f2);color:var(--c-285d5e)}.card-arrow{position:absolute;right:30px;top:38px;color:var(--c-497578)}.workspace-footer{margin-top:34px;font-size:.8rem;color:var(--c-74808a)}
+  .workspace-nav{display:flex;align-items:center;justify-content:space-between;padding:0 0 22px;border:0;border-bottom:1px solid var(--c-dce2e1);border-radius:0;background:transparent;margin-bottom:24px;gap:16px}.workspace-nav .brand{color:var(--c-344955);text-decoration:none;font-size:.8rem;letter-spacing:.08em;font-weight:700}.workspace-nav ul{margin:0;gap:22px}.workspace-nav a{text-decoration:none;font-size:.9rem}.workspace-nav a[aria-current=page]{color:var(--c-183f43);font-weight:700;border-bottom:2px solid var(--c-397477);padding-bottom:7px}
+  .setup-header{padding:0;border:0;background:transparent;margin-bottom:28px}.setup-header h1{font-size:2.3rem;margin:8px 0 10px}.setup-header>p{color:var(--c-62707b);margin:0}.stepper{display:flex;list-style:none;padding:18px 22px;margin:26px 0 0;background:var(--c-ffffff);border:1px solid var(--c-dce2e1);border-radius:10px;gap:36px}.stepper li{display:flex;align-items:center;gap:10px;color:var(--c-849097)}.step-number{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;border:1px solid var(--c-d9dfdf);font-size:.8rem}.stepper [aria-current=step]{color:var(--c-254c50);font-weight:700}.stepper [aria-current=step] .step-number{background:var(--c-284f53);color:var(--c-ffffff);border-color:var(--c-284f53)}
+  .setup-layout{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(270px,1fr);gap:24px;align-items:start}.setup-panel,.evidence-panel{background:var(--c-ffffff);border:1px solid var(--c-dce2e1);border-radius:12px;padding:28px}.setup-panel h2,.evidence-panel h2{margin:0 0 20px}.setup-panel fieldset{margin:24px 0 0;padding:0;border:0}.setup-panel legend{padding:0;font-size:.94rem;margin-bottom:10px}.setup-panel select{margin-bottom:0;padding:12px}.choice{display:flex;align-items:flex-start;gap:12px;padding:14px;border:1px solid var(--c-dce2e1);border-radius:8px;margin:0 0 10px;font-weight:400;cursor:pointer}.choice:has(input:checked){border-color:var(--c-518587);background:var(--c-f0f6f4)}.choice input{width:17px;height:17px;padding:0;flex-shrink:0;margin:3px 0 0;accent-color:var(--c-315e62)}.choice strong{display:block;font-size:.91rem}.choice small{display:block;margin-top:3px;line-height:1.5;font-size:.8rem}.setup-panel details{border-top:1px solid var(--c-e7ebeb);padding-top:18px;margin-top:22px}.setup-panel details label{margin-top:15px;font-size:.88rem}.setup-panel .hint{font-size:.8rem;color:var(--c-687780);margin:8px 0}.mode-note{font-size:.82rem;border-left:3px solid var(--c-c69a44);background:var(--c-fbf7ed);padding:12px 14px;margin:12px 0}.setup-actions{display:flex;justify-content:space-between;gap:16px;align-items:center;border-top:1px solid var(--c-e7ebeb);margin-top:24px;padding-top:22px}.primary-button{background:var(--c-294f53);border-color:var(--c-294f53);color:var(--c-ffffff);border-radius:7px;padding:12px 20px}.primary-button:disabled{background:var(--c-dce4e3);color:var(--c-6a7b7d);border-color:var(--c-dce4e3);opacity:1}.secondary-button{background:var(--c-ffffff);border-color:var(--c-c7d5d4);color:var(--c-315e62);padding:11px 16px}.execution-note{font-size:.8rem;color:var(--c-687780);margin:12px 0 0}.evidence-panel .evidence-name{font-family:Georgia,serif;font-size:1.25rem;margin:5px 0 20px}.evidence-panel dl{display:block;margin:0}.evidence-panel dt{font-size:.76rem;color:var(--c-718087);margin-top:17px}.evidence-panel dd{font-size:.88rem;margin-top:4px;overflow-wrap:anywhere}.evidence-tag{display:inline-block;font-size:.72rem;padding:3px 9px;border-radius:20px;color:var(--c-386963);background:var(--c-edf5f1)}.readiness{margin-top:24px;padding-top:18px;border-top:1px solid var(--c-e5eaea);font-size:.8rem;color:var(--c-687780)}.readiness strong{display:block;color:var(--c-395c5b);margin-bottom:4px}.setup-errors{margin-bottom:20px;padding:15px 18px;border:1px solid var(--c-e1cbb7);background:var(--c-fcf8f3);border-radius:8px;font-size:.9rem}.setup-errors ul{margin:6px 0;padding-left:20px}.setup-checked{padding:12px 16px;background:var(--c-edf5f1);border:1px solid var(--c-c9dcd3);border-radius:8px;margin-bottom:20px;font-size:.88rem}.placeholder{padding:32px;background:var(--c-ffffff);border:1px solid var(--c-dce2e1);border-radius:12px}.placeholder p{color:var(--c-62707b);max-width:620px}
+  #add-evidence{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:28px 40px;align-items:start}#add-evidence>h2,#add-evidence>.hint{grid-column:1/-1;margin:0}#add-evidence>h2{margin-bottom:-14px}#add-evidence form{margin:0;min-width:0}#add-evidence fieldset{margin:0}#add-evidence legend{font-weight:600;font-size:1rem;margin-bottom:14px}#add-evidence label:not(.choice){display:block;margin:16px 0 6px;font-size:.88rem;font-weight:600}#add-evidence legend+label{margin-top:0}#add-evidence input:not([type=radio]):not([type=checkbox]){width:100%;box-sizing:border-box;padding:11px 12px}#add-evidence input[type=radio],#add-evidence input[type=checkbox]{width:17px;height:17px;padding:0;margin:0;accent-color:var(--c-315e62)}#add-evidence .choice{margin:14px 0 0}#add-evidence .hint{margin:6px 0 0}#add-evidence .setup-actions{justify-content:flex-start;margin-top:20px;padding-top:0;border-top:0}#add-evidence form[action$="/fetch"]{grid-column:1/-1;order:3;padding-top:24px;border-top:1px solid var(--c-e7ebeb)}#add-evidence .table-wrap{margin-top:4px}#add-evidence table{font-size:.86rem}#add-evidence th,#add-evidence td{padding:9px 12px;vertical-align:middle}#add-evidence td:nth-child(n+3):nth-child(-n+5){white-space:nowrap}#add-evidence th:first-child,#add-evidence td:first-child{width:36px}#add-evidence td input[type=radio]{display:block;margin:0 auto}#add-evidence td label{margin:0!important;font-weight:400!important}
+  @media(max-width:800px){ #add-evidence{grid-template-columns:1fr}}
+  @media(max-width:800px){.setup-layout{grid-template-columns:1fr}.workspace-nav{align-items:flex-start}.workspace-nav .brand{max-width:150px}.workspace-cards{gap:16px}.workspace-card{padding:24px}.card-arrow{right:22px;top:30px}}
+  @media(max-width:560px){body{padding:22px 16px}.workspace-header h1{font-size:2.1rem}.workspace-cards{grid-template-columns:1fr}.workspace-card{min-height:205px}.setup-panel,.evidence-panel{padding:22px}.stepper{gap:18px;padding:14px;font-size:.84rem}.step-number{width:24px;height:24px}.workspace-nav ul{gap:14px}.setup-actions{flex-wrap:wrap}.workspace-nav .brand{font-size:.7rem}}
+  @media(prefers-reduced-motion:reduce){.workspace-card{transition:none}}
+</style><style>
+.memo-header{display:flex;align-items:flex-start;justify-content:space-between;gap:24px}.memo-actions{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 24px}.memo-button{display:inline-flex;align-items:center;box-sizing:border-box;background:var(--c-ffffff);border:1px solid var(--c-c7d5d4);border-radius:7px;padding:11px 16px;text-decoration:none;font-size:.9rem;font-weight:600;color:var(--c-315e62)}.memo-button.primary{background:var(--c-294f53);border-color:var(--c-294f53);color:var(--c-ffffff);padding:12px 20px}.memo-meta{display:flex;flex-wrap:wrap;gap:10px 24px;font-size:.88rem;color:var(--c-62707b)}.memo-meta span{display:inline-block}.memo-scores{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:16px 0}.memo-scores>div{padding:12px 14px;border:1px solid var(--c-dce2e1);border-left:4px solid var(--c-397477);border-radius:8px;background:var(--c-f5f8f7)}.memo-scores span{display:block;font-size:.75rem;color:var(--c-62707b)}.memo-scores strong{font-size:1.15rem}.memo-scores.rms-approve>div:first-child{border-left-color:var(--c-2f6b45)}.memo-scores.rms-refer>div:first-child,.memo-scores.rms-counter_offer>div:first-child{border-left-color:var(--c-d49b25)}.memo-scores.rms-decline>div:first-child{border-left-color:var(--c-9a3324)}.memo-status{font-size:.88rem;padding:12px 16px;background:var(--c-edf5f1);border:1px solid var(--c-c9dcd3);border-radius:8px;margin:18px 0}.memo-paper{padding:28px;background:var(--c-ffffff);border:1px solid var(--c-dce2e1);border-radius:12px}.memo-paper h2{font-size:1.18rem;border-top:1px solid var(--c-e4e9e7);padding-top:22px;margin:28px 0 16px}.memo-paper h2:first-child{border:0;padding-top:0;margin-top:0}.memo-paper h3{font-size:1rem;margin:18px 0 8px}.memo-paper p,.memo-paper li{font-size:.9rem;line-height:1.6}.memo-claim{margin:14px 0 20px}.memo-claim p{margin:4px 0}.memo-claim .qualification{color:var(--c-6e684e);font-size:.8rem}.memo-empty{color:var(--c-72808a);font-size:.85rem}.source-list{list-style:none;padding:0}.source-list li{padding:14px 0;border-bottom:1px solid var(--c-edf0ef);overflow-wrap:anywhere}.source-list small{display:block;color:var(--c-687780)}.memo-columns{display:grid;grid-template-columns:1fr 1fr;gap:30px}.memo-table-wrap{overflow-x:auto}.memo-table{width:100%;font-size:.82rem;border-collapse:collapse}.memo-table th,.memo-table td{padding:10px;text-align:left;border-bottom:1px solid var(--c-e2e8e5)}.memo-table th{color:var(--c-5c7175);background:var(--c-f5f8f7)}.record-id{font-size:.73rem;color:var(--c-70808b);overflow-wrap:anywhere}.notice-warning{padding:12px 16px;border-left:3px solid var(--c-c69a44);background:var(--c-fbf7ed);font-size:.85rem}.audit-tabs{display:flex;gap:12px;flex-wrap:wrap;margin:20px 0}.audit-tabs a{font-size:.8rem;text-decoration:none;padding:7px 10px;border:1px solid var(--c-d8e2df);border-radius:6px}.audit-record{padding:16px 0;border-bottom:1px solid var(--c-e2e8e5)}.audit-record pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:480px;overflow-y:auto;background:var(--c-f5f8f7);padding:14px;font-size:.75rem}.audit-record details{margin:12px 0}.audit-record summary{font-size:.82rem}.audit-record dl{display:block;font-size:.82rem}.audit-record dt{color:var(--c-61717d);margin-top:8px}.audit-record dd{margin:3px 0}.audit-record blockquote{border-left:3px solid var(--c-c9d9d3);padding-left:14px;color:var(--c-586e71);font-size:.85rem}.audit-record:target,.source-list li:target,.memo-claim:target{background:var(--c-f4f7e9);scroll-margin-top:20px}.audit-link{font-size:.78rem}.source-cite{font-size:.75rem;white-space:nowrap}.memo-risk{display:inline-block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.03em;padding:1px 6px;border-radius:4px;border:1px solid var(--c-c9d1da);color:var(--c-62707b);white-space:nowrap}.memo-risk.very-low,.memo-risk.low{border-color:var(--c-2f6b45);color:var(--c-2f6b45)}.memo-risk.moderate{border-color:var(--c-8a6d1c);color:var(--c-8a6d1c)}.memo-risk.elevated,.memo-risk.high,.memo-risk.very-high{border-color:var(--c-9a3324);color:var(--c-9a3324)}.memo-table td{vertical-align:top}.memo-table small{color:var(--c-62707b)}.memo-table tr.memo-note-row td{padding-top:0;background:var(--c-f5f8f7)}.memo-paper .notice-warning ul{margin:6px 0 0}.memo-score-table{width:100%;border-collapse:separate;margin:12px 0}.memo-score-table td{width:25%;padding:8px 10px;border:1px solid var(--c-dce2e1);border-left:4px solid var(--c-397477);background:var(--c-f5f8f7)}.memo-score-table span{font-size:.75rem;color:var(--c-62707b)}.memo-score-table strong{font-size:1.1rem}@media(max-width:760px){.memo-columns{grid-template-columns:1fr;gap:0}.memo-paper{padding:22px}.memo-header{flex-direction:column;gap:0}.memo-header h1{font-size:1.8rem}}
+</style><style>
+.bo-four-section{min-width:0}.bo-finding-group{margin-top:24px}.bo-four-section .memo-claim[data-claim-id]{border-bottom:1px solid var(--c-dce2e1);padding-bottom:18px;margin-bottom:24px}.bo-four-section .memo-claim[data-claim-id]>.bo-evidence{border-top:0;margin:12px 0 0;padding-top:0}.bo-finding-badges{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:8px 0 12px}.bo-finding-badge{display:inline-flex;align-items:center;gap:6px;padding:3px 8px;border:1px solid var(--c-c7d5d4);border-radius:.3rem;background:var(--c-f5f8f7);color:var(--c-315e62);font-size:.72rem;font-weight:700;letter-spacing:.02em;line-height:1.35;white-space:nowrap}.bo-type-fact,.bo-type-calculated_fact{color:var(--c-205537);background:var(--c-e1f3e7);border-color:var(--c-78b58c)}.bo-type-inference,.bo-type-management_claim{color:var(--c-775700);background:var(--c-fff3bf);border-color:var(--c-d4aa39)}.bo-type-assumption{color:var(--c-942d29);background:var(--c-fde5e2);border-color:var(--c-d58880)}.bo-badge-icon{width:15px;height:15px;flex:none}.bo-direction-sign{font-size:1.15em;font-weight:700;line-height:1;min-width:12px;text-align:center}.bo-direction-positive{background:var(--c-e1f3e7);border-color:var(--c-78b58c);color:var(--c-205537)}.bo-direction-negative{background:var(--c-fde5e2);border-color:var(--c-d58880);color:var(--c-942d29)}.bo-competitive-positioning{text-align:justify;text-justify:inter-word}.bo-finding-points{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;margin:16px 0}.bo-finding-point{display:grid;grid-template-columns:minmax(110px,170px) minmax(0,1fr);gap:24px;padding:16px 18px;border:1px solid var(--c-c7d5d4);border-radius:.3rem;background:var(--c-f5f8f7)}.bo-finding-points dt{align-self:start;font-weight:600;margin:0;padding-top:2px}.bo-finding-points dd{min-width:0;margin:0}.bo-finding-points dd p{margin:0 0 8px}.bo-finding-points dd p:last-child{margin-bottom:0}.bo-four-section .bo-section-number{color:var(--c-517273);font-size:.8em;margin-right:10px}.bo-four-section .memo-columns{grid-template-columns:minmax(0,1fr);gap:24px}.bo-structure,.bo-debt{min-width:0}.bo-tree{font:inherit;font-size:.8rem;white-space:pre-wrap;overflow-wrap:anywhere;background:transparent;padding:0;max-height:none}.bo-diagram-zoom summary{cursor:pointer;font-size:.8rem;color:var(--c-315e62)}.bo-diagram-full{overflow:auto;max-height:650px}.bo-diagram-full svg{width:1440px;max-width:none;height:auto}.bo-diagram svg{width:100%;height:auto;display:block}.bo-debt-table{min-width:1080px}.bo-four-section .memo-table-wrap{max-width:100%;overflow-x:auto}.bo-four-section .memo-table td{vertical-align:top;overflow-wrap:anywhere;min-width:90px}.bo-four-section h4{font-size:.88rem;margin:18px 0 10px}.bo-priority{font-size:.84rem}.bo-priority dt{color:var(--c-62707b);margin-top:10px}.bo-priority dd{margin:2px 0 10px;overflow-wrap:anywhere}.bo-evidence{border-top:1px solid var(--c-dce2e1);margin:12px 0 20px;padding-top:10px}.bo-evidence summary{cursor:pointer;font-size:.8rem;color:var(--c-315e62);padding:5px 0}.bo-evidence-body pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:.72rem;background:var(--c-f5f8f7);padding:14px;max-height:420px;overflow:auto}.bo-evidence-appendix{break-before:page}.bo-four-section .bo-memo-section .qualification{font-size:.82rem}.bo-four-section .memo-claim p{white-space:pre-line}
+@media screen and (max-width:760px){.bo-four-section .bo-finding-point{grid-template-columns:minmax(0,1fr);gap:8px;padding:14px}.bo-finding-points dt{margin:0}.bo-four-section .memo-columns{grid-template-columns:minmax(0,1fr)}.bo-four-section .bo-structure{margin-bottom:18px}}
+@media print{body .analysis-header{margin-bottom:10px}body .analysis-header h1{font-size:24px;margin:4px 0 6px}body .analysis-meta{font-size:9pt}.memo-status{font-size:9pt;line-height:1.35;padding:6px 10px;margin:8px 0}.bo-four-section h2{font-size:14pt;margin:14px 0 10px;padding-top:12px}.theme-toggle{display:none}.bo-four-section h2,.bo-four-section h3,.bo-four-section h4{break-after:avoid}.bo-four-section .notice-warning{break-inside:avoid;font-size:9pt;line-height:1.35;padding:7px 10px;margin:8px 0}.bo-four-section h3{margin:8px 0}.bo-four-section .technical-note{font-size:9pt;line-height:1.35}.bo-four-section .bo-tree{font-size:9.5pt;line-height:1.35}.bo-four-section .bo-structure-debt{display:block;width:100%;break-inside:auto}.bo-four-section .bo-structure,.bo-four-section .bo-debt-summary{display:block;width:100%}.bo-four-section .bo-structure{padding-right:0}.bo-four-section .bo-debt-summary{padding-left:0;margin-top:18px}.bo-print-diagram{width:100%;max-width:760px;margin:4px auto;break-inside:avoid}.bo-print-diagram>svg{width:100%;height:auto;display:block}.bo-print-diagram>svg>svg{max-width:none}.bo-print-schedules{break-before:page}.bo-four-section .bo-debt-summary-table{font-size:10pt}.bo-four-section .bo-debt-summary-table th{background:transparent;font-weight:400}.bo-four-section .bo-debt-summary-table th:first-child{width:76%}.bo-four-section .memo-table-wrap{overflow:visible}.bo-four-section .bo-debt-table{min-width:0;table-layout:fixed}.bo-four-section .memo-table{font-size:9pt}.bo-four-section .memo-table td,.bo-four-section .memo-table th{padding:5px;min-width:0;overflow-wrap:anywhere}.bo-four-section thead{display:table-header-group}.bo-four-section tr{break-inside:avoid}.bo-diagram{max-width:440px}.bo-evidence-body pre{max-height:none;overflow:visible;font-size:8pt}.bo-evidence{display:none}.bo-four-section .bo-memo-section{break-inside:auto}}
+.bo-management-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin:18px 0}.bo-management-card{border:1px solid var(--c-c7d5d4);border-radius:.3rem;background:var(--c-f5f8f7);padding:14px;min-width:0}.bo-management-card h3{margin:0 0 5px}.bo-management-card .technical-note{margin:0 0 10px}.bo-management-finding{border-top:1px solid var(--c-dce2e1);padding-top:10px}.bo-management-gaps{margin:18px 0}.bo-management-support{border-top:1px solid var(--c-dce2e1);padding:14px 0}.bo-management-support summary{cursor:pointer;font-weight:600;color:var(--c-315e62)}.bo-management-citation{overflow-wrap:anywhere}.bo-management-print .memo-claim{margin-bottom:8px;padding-bottom:5px}.bo-management-print h3{margin-top:12px}
+@media screen and (max-width:760px){.bo-management-grid{grid-template-columns:minmax(0,1fr)}}
+.bo-management-other{margin:16px 0}.bo-management-other summary{cursor:pointer;font-weight:600;color:var(--c-315e62)}.bo-management-assessment-gaps{margin:16px 0;padding:12px 16px;border-left:2px solid var(--c-c7d5d4)}.bo-management-assessment-gaps ul{margin:6px 0;padding-left:20px;font-size:.84rem}.bo-management-assessment-gaps li{margin:4px 0}.bo-management-overall .technical-note,.bo-management-finding .technical-note{margin:4px 0}.bo-management-finding .source-cite{overflow-wrap:anywhere}
+.bo-management-support .source-cite,.bo-management-finding .source-cite{white-space:normal;overflow-wrap:anywhere}
+.bo-management-classification{font-size:.8rem;font-weight:700;color:var(--c-315e62)}.bo-management-qualifications ul{margin:6px 0;padding-left:20px}.bo-management-qualifications li{margin:5px 0}.bo-management-sources ol{padding-left:22px;font-size:.76rem;overflow-wrap:anywhere}.bo-management-methodology{border-left:2px solid var(--c-c7d5d4);padding-left:12px;margin:14px 0}
+@media print{.bo-management-overall h3,.bo-management-print h3,.bo-management-sources h3{font-size:11pt}.bo-management-overall h4,.bo-management-direction-group h4{font-size:10pt;margin:8px 0 4px}.bo-management-overall p,.bo-management-print p{font-size:10pt;line-height:1.35}.bo-management-qualifications li{font-size:9pt!important;line-height:1.3;margin:4px 0}.bo-management-print .memo-claim{margin:6px 0;padding:0;border:0}.bo-management-finding .source-cite{margin:2px 0;font-size:8pt}.bo-management-assessment-gaps{padding:6px 10px;margin:10px 0}.bo-management-assessment-gaps ul{font-size:9pt;line-height:1.3}.bo-management-sources ol{font-size:8pt;line-height:1.3;margin:5px 0}.bo-management-sources .technical-note{font-size:8pt;line-height:1.3}}
+</style></head><body><article class="memo-paper"><div class="bo-four-section" data-run-id="ar_70066e79dd954e3c"><section class="bo-memo-section" data-memo-section="management" data-status="partial" aria-labelledby="bo-section-2">
+<h2 id="bo-section-2"><span class="bo-section-number">02</span> Management</h2>
+
+
+
+
+
+
+<div class="memo-claim bo-management-overall">
+  <h3>Overall assessment</h3>
+  <p class="bo-management-classification">Reviewed assessment · Qualified · Recorded outcome: Positive</p>
+  <p class="bo-management-assessment-text">The management team at HCA Healthcare exhibits strong organizational continuity, evidenced by long-tenured executives and internal promotions, which supports stable governance. The leadership structure incorporates experienced professionals with deep internal institutional knowledge as well as relevant external oversight experience, providing confidence in the leadership succession process.</p>
+  <div class="bo-management-qualifications"><h4>Material qualifications</h4><ul><li class="qualification">No specific data on recent performance or turnover trends were provided, limiting the ability to assess executive impact on current financial metrics.</li><li class="qualification">Operational effectiveness depends on ongoing execution, which tenure alone does not guarantee.</li><li class="qualification">Details on specific management turnover events or recent organizational performance results.</li><li class="qualification">Some submitted supporting evidence was rejected; this finding uses the surviving reviewed evidence.</li><li class="qualification">Validation withheld 6 evidence claims and 1 judgment; only surviving reviewed findings are presented.</li></ul></div>
+</div>
+
+
+<h3>Credit-Relevant Findings</h3>
+<div class="bo-management-grid">
+
+  <section class="bo-management-card" data-management-category="leadership_stability">
+    <h3>Leadership Stability and Succession</h3>
+
+    <div data-finding-group="supporting_factors"><h4>Supporting Factors</h4>
+<div class="memo-claim bo-management-finding" data-review-status="qualified" data-direction="positive">
+  <p class="bo-management-classification">Supporting Factor · Qualified</p>
+  <p>The executive team displays high levels of institutional knowledge, with several senior leaders having multi-decade careers within the company, indicating stable internal succession pipelines and established operating expertise.</p>
+
+<p class="source-cite"><a href="#bo-management-citation-cite-3a4643a70b852db1">Source 1 · Passage offset 159626</a>; <a href="#bo-management-citation-cite-7c662b827dfaedbd">Source 2 · Passage offset 161626</a>; <a href="#bo-management-citation-cite-ab282799fb6b25fd">Source 3 · Passage offset 163626</a></p>
+
+</div>
+</div>
+
+  </section>
+
+</div>
+
+
+
+
+
+<div class="bo-management-assessment-gaps"><h3>Areas Requiring Further Assessment</h3>
+  <ul><li>Financial Stewardship — Insufficient evidence.</li><li>Operational Execution Capability — Insufficient evidence.</li><li>Governance and Integrity — Insufficient evidence.</li><li>Relevant Expertise — Insufficient evidence.</li></ul>
+
+</div>
+
+
+<div class="bo-management-sources"><h3>Sources</h3><ol><li value="1">HCA Healthcare, Inc. · Form 10-K · 2025-12-31 · Passage offset 159626</li><li value="2">HCA Healthcare, Inc. · Form 10-K · 2025-12-31 · Passage offset 161626</li><li value="3">HCA Healthcare, Inc. · Form 10-K · 2025-12-31 · Passage offset 163626</li></ol></div>
+
+
+
+<details class="bo-management-support" data-run-id="ar_70066e79dd954e3c">
+  <summary>Executive Profiles &amp; Supporting Evidence</summary>
+  <h3>Original model assessment</h3><p>The management team at HCA Healthcare exhibits strong organizational continuity, evidenced by long-tenured executives and internal promotions, which supports stable governance. The inclusion of external hires with significant experience in regulated sectors (GE/Healthcare) adds relevant oversight capabilities, while the firm's history of grooming internal talent for senior roles provides confidence in the leadership succession process.</p>
+  <h3>Executive profiles</h3>
+  <div class="memo-claim">
+    <h4>Samuel N. Hazen · Chief Executive Officer and Director</h4>
+    <p>Appointment: 2019-01 (month)</p>
+    <p>Recorded tenure: 2558 to 2588 days as of 2026-02-01</p>
+    <p>Succession: Internal</p>
+    <p>President and Chief Operating Officer · 2016-11 to 2018-12</p>
+
+<p class="source-cite"><a href="#bo-management-citation-cite-60e57edaae678e7c">Source 1 · Passage offset 159626</a></p>
+
+  </div><div class="memo-claim">
+    <h4>Jennifer L. Berres · Senior Vice President and Chief Human Resources Officer</h4>
+    <p>Appointment: 2019-11-01 (day)</p>
+    <p>Recorded tenure: 2284 to 2284 days as of 2026-02-01</p>
+    <p>Succession: Internal</p>
+    <p>Vice President — Human Resources · 2013-04 to 2019-10</p>
+
+<p class="source-cite"><a href="#bo-management-citation-cite-375bb668a13614c7">Source 1 · Passage offset 159626</a></p>
+
+  </div><div class="memo-claim">
+    <h4>Michael S. Cuffe, M.D. · Executive Vice President and Chief Clinical Officer</h4>
+    <p>Appointment: 2022-01-01 (day)</p>
+    <p>Recorded tenure: 1492 to 1492 days as of 2026-02-01</p>
+    <p>Succession: Unavailable</p>
+
+
+<p class="source-cite"><a href="#bo-management-citation-cite-5d94a44e1c81f297">Source 1 · Passage offset 159626</a></p>
+
+  </div><div class="memo-claim">
+    <h4>Jon M. Foster · Executive Vice President and Chief Operating Officer</h4>
+    <p>Appointment: 2023-01-01 (day)</p>
+    <p>Recorded tenure: 1127 to 1127 days as of 2026-02-01</p>
+    <p>Succession: Internal</p>
+    <p>President — American Group · 2013-01 to 2022-12</p>
+
+<p class="source-cite"><a href="#bo-management-citation-cite-1c23b42c8b1f94d9">Source 1 · Passage offset 159626</a>; <a href="#bo-management-citation-cite-ed61fb4b8f791606">Source 2 · Passage offset 161626</a></p>
+
+  </div><div class="memo-claim">
+    <h4>Michael A. Marks · Executive Vice President and Chief Financial Officer</h4>
+    <p>Appointment: 2024-05-01 (day)</p>
+    <p>Recorded tenure: 641 to 641 days as of 2026-02-01</p>
+    <p>Succession: Internal</p>
+    <p>Senior Vice President — Finance · 2023-01 to 2024-04</p>
+
+<p class="source-cite"><a href="#bo-management-citation-cite-b65c8d8d3fd356be">Source 1 · Passage offset 159626</a>; <a href="#bo-management-citation-cite-492221a3907018f9">Source 2 · Passage offset 161626</a></p>
+
+  </div><div class="memo-claim">
+    <h4>Michael R. McAlevey · Executive Vice President — Chief Legal and Administrative Officer</h4>
+    <p>Appointment: 2024-04-01 (day)</p>
+    <p>Recorded tenure: 671 to 671 days as of 2026-02-01</p>
+    <p>Succession: Unavailable</p>
+
+
+<p class="source-cite"><a href="#bo-management-citation-cite-3ff9dbedca922d45">Source 1 · Passage offset 159626</a>; <a href="#bo-management-citation-cite-c53d545cf8901b95">Source 2 · Passage offset 161626</a></p>
+
+  </div><div class="memo-claim">
+    <h4>Erica L. Rossitto · Senior Vice President and Chief Nurse Executive</h4>
+    <p>Appointment: 2026-02-01 (day)</p>
+    <p>Recorded tenure: 0 to 0 days as of 2026-02-01</p>
+    <p>Succession: Internal</p>
+    <p>Senior Vice President and Assistant Chief Nurse Executive · 2023-12 to 2026-01</p>
+
+<p class="source-cite"><a href="#bo-management-citation-cite-06d4d8f2ed311be1">Source 1 · Passage offset 159626</a>; <a href="#bo-management-citation-cite-05a57aa2f5e13d17">Source 3 · Passage offset 163626</a></p>
+
+  </div>
+  <h3>Original reviewed observations</h3>
+  <div class="memo-claim"><p>The executive team displays high levels of institutional knowledge, with several senior leaders having multi-decade careers within the company, indicating stable internal succession pipelines and established operating expertise.</p>
+    <p class="technical-note">Recorded direction: positive · Review: Qualified</p>
+    <p class="qualification">The supporting facts f_01 and f_03 were rejected for paraphrasing; institutional knowledge is instead supported by appointment and role claim IDs.</p>
+    <p class="qualification">Operational effectiveness depends on ongoing execution, which tenure alone does not guarantee.</p><p class="qualification">Operational effectiveness depends on ongoing execution, which tenure alone does not guarantee.</p>
+
+<p class="source-cite"><a href="#bo-management-citation-cite-3a4643a70b852db1">Source 1 · Passage offset 159626</a>; <a href="#bo-management-citation-cite-7c662b827dfaedbd">Source 2 · Passage offset 161626</a>; <a href="#bo-management-citation-cite-ab282799fb6b25fd">Source 3 · Passage offset 163626</a></p>
+
+  </div>
+  <h3>Original qualifications and limitations</h3><p class="qualification">Company and fiscal period were confirmed from the admitted SEC filing metadata (form 10-K, CIK 860730), not from cover-page text. HTML passages have no pages; citations give page 1 and the passage offset.</p><p class="qualification">No specific data on recent performance or turnover trends were provided, limiting the ability to assess executive impact on current financial metrics.</p><p class="qualification">Details on specific management turnover events or recent organizational performance results.</p><p class="qualification">No specific data on recent performance or turnover trends were provided, limiting the ability to assess executive impact on current financial metrics.</p><p class="qualification">Operational effectiveness depends on ongoing execution, which tenure alone does not guarantee.</p><p class="qualification">Fact-level assessments of specific prior roles for Dr. Cuffe and Mr. McAlevey were rejected due to citation failure or ambiguity.</p><p class="qualification">Supporting fact statements (f_01, f_02, f_03) were rejected for paraphrasing canonical content.</p><p class="qualification">6 individual evidence claims are unsupported; other supported claims remain usable.</p><p class="qualification">Qualified or withheld judgments are identified individually in the review record.</p>
+  <h3>Processing and detailed review records</h3><p class="technical-note">The supporting facts f_01 and f_03 were rejected for paraphrasing; institutional knowledge is instead supported by appointment and role claim IDs.</p><p class="technical-note">Company and fiscal period were confirmed from the admitted SEC filing metadata (form 10-K, CIK 860730), not from cover-page text. HTML passages have no pages; citations give page 1 and the passage offset.</p><p class="technical-note">Fact-level assessments of specific prior roles for Dr. Cuffe and Mr. McAlevey were rejected due to citation failure or ambiguity.</p><p class="technical-note">Supporting fact statements (f_01, f_02, f_03) were rejected for paraphrasing canonical content.</p><p class="technical-note">6 individual evidence claims are unsupported; other supported claims remain usable.</p><p class="technical-note">Qualified or withheld judgments are identified individually in the review record.</p><p class="technical-note">Educational structure is not a verified legal/obligor assessment. Management observations are bounded continuity rules, not competence/governance ratings.</p>
+  <h3>Recorded source citations</h3>
+
+  <div class="bo-management-citation" id="bo-management-citation-cite-0c9be82321b39c2b" data-source-id="05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e" data-source-sha256="2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c">
+    <p class="source-cite">Source 1 · HCA Healthcare, Inc. · Form 10-K · 2025-12-31 · Passage offset 159626</p><blockquote>As of February 1, 2026, our executive officers were as follows:</blockquote>
+  </div>
+  <div class="bo-management-citation" id="bo-management-citation-cite-60e57edaae678e7c" data-source-id="05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e" data-source-sha256="2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c">
+    <p class="source-cite">Source 1 · HCA Healthcare, Inc. · Form 10-K · 2025-12-31 · Passage offset 159626</p><blockquote>Samuel N. Hazen
+65
+Chief Executive Officer and Director</blockquote>
+  </div>
+  <div class="bo-management-citation" id="bo-management-citation-cite-3a4643a70b852db1" data-source-id="05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e" data-source-sha256="2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c">
+    <p class="source-cite">Source 1 · HCA Healthcare, Inc. · Form 10-K · 2025-12-31 · Passage offset 159626</p><blockquote>Samuel N. Hazen has served as Chief Executive Officer since January 2019 and was appointed as a director in September 2018.</blockquote>
+  </div>
+  <div class="bo-management-citation" id="bo-management-citation-cite-a4adcfc45cbb5727" data-source-id="05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e" data-source-sha256="2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c">
+    <p class="source-cite">Source 1 · HCA Healthcare, Inc. · Form 10-K · 2025-12-31 · Passage offset 159626</p><blockquote>From November 2016 through December 2018, Mr. Hazen served as the Company’s President and Chief Operating Officer.</blockquote>
+  </div>
+  <div class="bo-management-citation" id="bo-management-citation-cite-375bb668a13614c7" data-source-id="05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e" data-source-sha256="2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c">
+    <p class="source-cite">Source 1 · HCA Healthcare, Inc. · Form 10-K · 2025-12-31 · Passage offset 159626</p><blockquote>Jennifer L. Berres
+55
+Senior Vice President and Chief Human Resources Officer</blockquote>
+  </div>
+  <div class="bo-management-citation" id="bo-management-citation-cite-d59428ba43875bd5" data-source-id="05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e" data-source-sha256="2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c">
+    <p class="source-cite">Source 1 · HCA Healthcare, Inc. · Form 10-K · 2025-12-31 · Passage offset 159626</p><blockquote>Jennifer L. Berres was appointed Senior Vice President and Chief Human Resources Officer effective November 1, 2019.</blockquote>
+  </div>
+  <div class="bo-management-citation" id="bo-management-citation-cite-1774df4345abec50" data-source-id="05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e" data-source-sha256="2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c">
+    <p class="source-cite">Source 1 · HCA Healthcare, Inc. · Form 10-K · 2025-12-31 · Passage offset 159626</p><blockquote>Ms. Berres joined HCA in 1993 and served in various capacities, including as Vice President — Human Resources from April 2013 through October 2019.</blockquote>
+  </div>
+  <div class="bo-management-citation" id="bo-management-citation-cite-5d94a44e1c81f297" data-source-id="05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e" data-source-sha256="2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c">
+    <p class="source-cite">Source 1 · HCA Healthcare, Inc. · Form 10-K · 2025-12-31 · Passage offset 159626</p><blockquote>Michael S. Cuffe, M.D.
+60
+Executive Vice President and Chief Clinical Officer</blockquote>
+  </div>
+  <div class="bo-management-citation" id="bo-management-citation-cite-08bf1723f733a2bb" data-source-id="05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e" data-source-sha256="2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c">
+    <p class="source-cite">Source 1 · HCA Healthcare, Inc. · Form 10-K · 2025-12-31 · Passage offset 159626</p><blockquote>Michael S. Cuffe, M.D. was appointed Executive Vice President and Chief Clinical Officer effective January 1, 2022.</blockquote>
+  </div>
+  <div class="bo-management-citation" id="bo-management-citation-cite-1c23b42c8b1f94d9" data-source-id="05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e" data-source-sha256="2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c">
+    <p class="source-cite">Source 1 · HCA Healthcare, Inc. · Form 10-K · 2025-12-31 · Passage offset 159626</p><blockquote>Jon M. Foster
+64
+Executive Vice President and Chief Operating Officer</blockquote>
+  </div>
+  <div class="bo-management-citation" id="bo-management-citation-cite-ed61fb4b8f791606" data-source-id="73a762a8c89fc539f60cb565f068dbf1f6098bf6c8ad237732f992c1749a3e13" data-source-sha256="2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c">
+    <p class="source-cite">Source 2 · HCA Healthcare, Inc. · Form 10-K · 2025-12-31 · Passage offset 161626</p><blockquote>Jon M. Foster was appointed Executive Vice President and Chief Operating Officer effective January 1, 2023.</blockquote>
+  </div>
+  <div class="bo-management-citation" id="bo-management-citation-cite-7c662b827dfaedbd" data-source-id="73a762a8c89fc539f60cb565f068dbf1f6098bf6c8ad237732f992c1749a3e13" data-source-sha256="2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c">
+    <p class="source-cite">Source 2 · HCA Healthcare, Inc. · Form 10-K · 2025-12-31 · Passage offset 161626</p><blockquote>Prior to that time, he served as President — American Group from January 2013 to December 2022</blockquote>
+  </div>
+  <div class="bo-management-citation" id="bo-management-citation-cite-b65c8d8d3fd356be" data-source-id="05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e" data-source-sha256="2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c">
+    <p class="source-cite">Source 1 · HCA Healthcare, Inc. · Form 10-K · 2025-12-31 · Passage offset 159626</p><blockquote>Michael A. Marks
+56
+Executive Vice President and Chief Financial Officer</blockquote>
+  </div>
+  <div class="bo-management-citation" id="bo-management-citation-cite-492221a3907018f9" data-source-id="73a762a8c89fc539f60cb565f068dbf1f6098bf6c8ad237732f992c1749a3e13" data-source-sha256="2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c">
+    <p class="source-cite">Source 2 · HCA Healthcare, Inc. · Form 10-K · 2025-12-31 · Passage offset 161626</p><blockquote>Michael A. Marks was appointed Executive Vice President and Chief Financial Officer, effective May 1, 2024.</blockquote>
+  </div>
+  <div class="bo-management-citation" id="bo-management-citation-cite-87e1d0346fa53802" data-source-id="73a762a8c89fc539f60cb565f068dbf1f6098bf6c8ad237732f992c1749a3e13" data-source-sha256="2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c">
+    <p class="source-cite">Source 2 · HCA Healthcare, Inc. · Form 10-K · 2025-12-31 · Passage offset 161626</p><blockquote>He previously served as Senior Vice President — Finance from January 2023 through April 2024.</blockquote>
+  </div>
+  <div class="bo-management-citation" id="bo-management-citation-cite-3ff9dbedca922d45" data-source-id="05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e" data-source-sha256="2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c">
+    <p class="source-cite">Source 1 · HCA Healthcare, Inc. · Form 10-K · 2025-12-31 · Passage offset 159626</p><blockquote>Michael R. McAlevey
+62
+Executive Vice President — Chief Legal and Administrative Officer</blockquote>
+  </div>
+  <div class="bo-management-citation" id="bo-management-citation-cite-c53d545cf8901b95" data-source-id="73a762a8c89fc539f60cb565f068dbf1f6098bf6c8ad237732f992c1749a3e13" data-source-sha256="2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c">
+    <p class="source-cite">Source 2 · HCA Healthcare, Inc. · Form 10-K · 2025-12-31 · Passage offset 161626</p><blockquote>Michael R. McAlevey was appointed Executive Vice President — Chief Legal and Administrative Officer of the Company, effective April 1, 2024.</blockquote>
+  </div>
+  <div class="bo-management-citation" id="bo-management-citation-cite-06d4d8f2ed311be1" data-source-id="05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e" data-source-sha256="2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c">
+    <p class="source-cite">Source 1 · HCA Healthcare, Inc. · Form 10-K · 2025-12-31 · Passage offset 159626</p><blockquote>Erica L. Rossitto
+48
+Senior Vice President and Chief Nurse Executive</blockquote>
+  </div>
+  <div class="bo-management-citation" id="bo-management-citation-cite-05a57aa2f5e13d17" data-source-id="ff343f80e7ef1cd0d55086c5c0942a1a81c81c0865fedc0348ddb9d56859388f" data-source-sha256="2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c">
+    <p class="source-cite">Source 3 · HCA Healthcare, Inc. · Form 10-K · 2025-12-31 · Passage offset 163626</p><blockquote>Erica L. Rossitto was appointed Senior Vice President and Chief Nurse Executive, effective February 1, 2026.</blockquote>
+  </div>
+  <div class="bo-management-citation" id="bo-management-citation-cite-ab282799fb6b25fd" data-source-id="ff343f80e7ef1cd0d55086c5c0942a1a81c81c0865fedc0348ddb9d56859388f" data-source-sha256="2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c">
+    <p class="source-cite">Source 3 · HCA Healthcare, Inc. · Form 10-K · 2025-12-31 · Passage offset 163626</p><blockquote>She previously served as Senior Vice President and Assistant Chief Nurse Executive from December 2023 through January 2026.</blockquote>
+  </div>
+</details>
+
+<details class="bo-evidence" data-run-id="ar_70066e79dd954e3c"><summary>Evidence · Management</summary><div class="bo-evidence-body" id="bo-evidence-3"><p class="record-id">Analysis run: ar_70066e79dd954e3c · Evidence snapshot: 1</p><pre>{
+  "calculation_traces": [],
+  "citations": [],
+  "claim": null,
+  "content": {
+    "artifact": {
+      "artifact_type": "senior_management_assessment",
+      "citations": [
+        {
+          "citation_id": "cite:0c9be82321b39c2b",
+          "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+          "matching_method": "exact",
+          "normalized_quote": "As of February 1, 2026, our executive officers were as follows:",
+          "original_source_text": "As of February 1, 2026, our executive officers were as follows:",
+          "outcome": "accepted",
+          "page_char_end": 159764,
+          "page_char_start": 159701,
+          "passage_offset": 159626,
+          "physical_page": 1,
+          "quotation_check": "passed",
+          "quote": "As of February 1, 2026, our executive officers were as follows:",
+          "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+          "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+          "span_end": 138,
+          "span_start": 75
+        },
+        {
+          "citation_id": "cite:60e57edaae678e7c",
+          "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+          "matching_method": "exact",
+          "normalized_quote": "Samuel N. Hazen 65 Chief Executive Officer and Director",
+          "original_source_text": "Samuel N. Hazen\n65\nChief Executive Officer and Director",
+          "outcome": "accepted",
+          "page_char_end": 159841,
+          "page_char_start": 159786,
+          "passage_offset": 159626,
+          "physical_page": 1,
+          "quotation_check": "passed",
+          "quote": "Samuel N. Hazen\n65\nChief Executive Officer and Director",
+          "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+          "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+          "span_end": 215,
+          "span_start": 160
+        },
+        {
+          "citation_id": "cite:3a4643a70b852db1",
+          "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+          "matching_method": "exact",
+          "normalized_quote": "Samuel N. Hazen has served as Chief Executive Officer since January 2019 and was appointed as a director in September 2018.",
+          "original_source_text": "Samuel N. Hazen has served as Chief Executive Officer since January 2019 and was appointed as a director in September 2018.",
+          "outcome": "accepted",
+          "page_char_end": 160422,
+          "page_char_start": 160299,
+          "passage_offset": 159626,
+          "physical_page": 1,
+          "quotation_check": "passed",
+          "quote": "Samuel N. Hazen has served as Chief Executive Officer since January 2019 and was appointed as a director in September 2018.",
+          "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+          "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+          "span_end": 796,
+          "span_start": 673
+        },
+        {
+          "citation_id": "cite:a4adcfc45cbb5727",
+          "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+          "matching_method": "exact",
+          "normalized_quote": "From November 2016 through December 2018, Mr. Hazen served as the Company\u0027s President and Chief Operating Officer.",
+          "original_source_text": "From November 2016 through December 2018, Mr. Hazen served as the Company\u2019s President and Chief Operating Officer.",
+          "outcome": "accepted",
+          "page_char_end": 160537,
+          "page_char_start": 160423,
+          "passage_offset": 159626,
+          "physical_page": 1,
+          "quotation_check": "passed",
+          "quote": "From November 2016 through December 2018, Mr. Hazen served as the Company\u2019s President and Chief Operating Officer.",
+          "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+          "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+          "span_end": 911,
+          "span_start": 797
+        },
+        {
+          "citation_id": "cite:375bb668a13614c7",
+          "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+          "matching_method": "exact",
+          "normalized_quote": "Jennifer L. Berres 55 Senior Vice President and Chief Human Resources Officer",
+          "original_source_text": "Jennifer L. Berres\n55\nSenior Vice President and Chief Human Resources Officer",
+          "outcome": "accepted",
+          "page_char_end": 159919,
+          "page_char_start": 159842,
+          "passage_offset": 159626,
+          "physical_page": 1,
+          "quotation_check": "passed",
+          "quote": "Jennifer L. Berres\n55\nSenior Vice President and Chief Human Resources Officer",
+          "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+          "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+          "span_end": 293,
+          "span_start": 216
+        },
+        {
+          "citation_id": "cite:d59428ba43875bd5",
+          "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+          "matching_method": "exact",
+          "normalized_quote": "Jennifer L. Berres was appointed Senior Vice President and Chief Human Resources Officer effective November 1, 2019.",
+          "original_source_text": "Jennifer L. Berres was appointed Senior Vice President and Chief Human Resources Officer effective November 1, 2019.",
+          "outcome": "accepted",
+          "page_char_end": 161135,
+          "page_char_start": 161019,
+          "passage_offset": 159626,
+          "physical_page": 1,
+          "quotation_check": "passed",
+          "quote": "Jennifer L. Berres was appointed Senior Vice President and Chief Human Resources Officer effective November 1, 2019.",
+          "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+          "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+          "span_end": 1509,
+          "span_start": 1393
+        },
+        {
+          "citation_id": "cite:1774df4345abec50",
+          "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+          "matching_method": "exact",
+          "normalized_quote": "Ms. Berres joined HCA in 1993 and served in various capacities, including as Vice President - Human Resources from April 2013 through October 2019.",
+          "original_source_text": "Ms. Berres joined HCA in 1993 and served in various capacities, including as Vice President \u2014 Human Resources from April 2013 through October 2019.",
+          "outcome": "accepted",
+          "page_char_end": 161283,
+          "page_char_start": 161136,
+          "passage_offset": 159626,
+          "physical_page": 1,
+          "quotation_check": "passed",
+          "quote": "Ms. Berres joined HCA in 1993 and served in various capacities, including as Vice President \u2014 Human Resources from April 2013 through October 2019.",
+          "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+          "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+          "span_end": 1657,
+          "span_start": 1510
+        },
+        {
+          "citation_id": "cite:5d94a44e1c81f297",
+          "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+          "matching_method": "exact",
+          "normalized_quote": "Michael S. Cuffe, M.D. 60 Executive Vice President and Chief Clinical Officer",
+          "original_source_text": "Michael S. Cuffe, M.D.\n60\nExecutive Vice President and Chief Clinical Officer",
+          "outcome": "accepted",
+          "page_char_end": 159997,
+          "page_char_start": 159920,
+          "passage_offset": 159626,
+          "physical_page": 1,
+          "quotation_check": "passed",
+          "quote": "Michael S. Cuffe, M.D.\n60\nExecutive Vice President and Chief Clinical Officer",
+          "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+          "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+          "span_end": 371,
+          "span_start": 294
+        },
+        {
+          "citation_id": "cite:08bf1723f733a2bb",
+          "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+          "matching_method": "exact",
+          "normalized_quote": "Michael S. Cuffe, M.D. was appointed Executive Vice President and Chief Clinical Officer effective January 1, 2022.",
+          "original_source_text": "Michael S. Cuffe, M.D. was appointed Executive Vice President and Chief Clinical Officer effective January 1, 2022.",
+          "outcome": "accepted",
+          "page_char_end": 161399,
+          "page_char_start": 161284,
+          "passage_offset": 159626,
+          "physical_page": 1,
+          "quotation_check": "passed",
+          "quote": "Michael S. Cuffe, M.D. was appointed Executive Vice President and Chief Clinical Officer effective January 1, 2022.",
+          "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+          "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+          "span_end": 1773,
+          "span_start": 1658
+        },
+        {
+          "citation_id": "cite:1c23b42c8b1f94d9",
+          "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+          "matching_method": "exact",
+          "normalized_quote": "Jon M. Foster 64 Executive Vice President and Chief Operating Officer",
+          "original_source_text": "Jon M. Foster\n64\nExecutive Vice President and Chief Operating Officer",
+          "outcome": "accepted",
+          "page_char_end": 160067,
+          "page_char_start": 159998,
+          "passage_offset": 159626,
+          "physical_page": 1,
+          "quotation_check": "passed",
+          "quote": "Jon M. Foster\n64\nExecutive Vice President and Chief Operating Officer",
+          "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+          "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+          "span_end": 441,
+          "span_start": 372
+        },
+        {
+          "citation_id": "cite:ed61fb4b8f791606",
+          "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+          "matching_method": "exact",
+          "normalized_quote": "Jon M. Foster was appointed Executive Vice President and Chief Operating Officer effective January 1, 2023.",
+          "original_source_text": "Jon M. Foster was appointed Executive Vice President and Chief Operating Officer effective January 1, 2023.",
+          "outcome": "accepted",
+          "page_char_end": 162373,
+          "page_char_start": 162266,
+          "passage_offset": 161626,
+          "physical_page": 1,
+          "quotation_check": "passed",
+          "quote": "Jon M. Foster was appointed Executive Vice President and Chief Operating Officer effective January 1, 2023.",
+          "source_id": "73a762a8c89fc539f60cb565f068dbf1f6098bf6c8ad237732f992c1749a3e13",
+          "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+          "span_end": 747,
+          "span_start": 640
+        },
+        {
+          "citation_id": "cite:7c662b827dfaedbd",
+          "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+          "matching_method": "exact",
+          "normalized_quote": "Prior to that time, he served as President - American Group from January 2013 to December 2022",
+          "original_source_text": "Prior to that time, he served as President \u2014 American Group from January 2013 to December 2022",
+          "outcome": "accepted",
+          "page_char_end": 162468,
+          "page_char_start": 162374,
+          "passage_offset": 161626,
+          "physical_page": 1,
+          "quotation_check": "passed",
+          "quote": "Prior to that time, he served as President \u2014 American Group from January 2013 to December 2022",
+          "source_id": "73a762a8c89fc539f60cb565f068dbf1f6098bf6c8ad237732f992c1749a3e13",
+          "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+          "span_end": 842,
+          "span_start": 748
+        },
+        {
+          "citation_id": "cite:b65c8d8d3fd356be",
+          "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+          "matching_method": "exact",
+          "normalized_quote": "Michael A. Marks 56 Executive Vice President and Chief Financial Officer",
+          "original_source_text": "Michael A. Marks\n56\nExecutive Vice President and Chief Financial Officer",
+          "outcome": "accepted",
+          "page_char_end": 160140,
+          "page_char_start": 160068,
+          "passage_offset": 159626,
+          "physical_page": 1,
+          "quotation_check": "passed",
+          "quote": "Michael A. Marks\n56\nExecutive Vice President and Chief Financial Officer",
+          "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+          "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+          "span_end": 514,
+          "span_start": 442
+        },
+        {
+          "citation_id": "cite:492221a3907018f9",
+          "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+          "matching_method": "exact",
+          "normalized_quote": "Michael A. Marks was appointed Executive Vice President and Chief Financial Officer, effective May 1, 2024.",
+          "original_source_text": "Michael A. Marks was appointed Executive Vice President and Chief Financial Officer, effective May 1, 2024.",
+          "outcome": "accepted",
+          "page_char_end": 163078,
+          "page_char_start": 162971,
+          "passage_offset": 161626,
+          "physical_page": 1,
+          "quotation_check": "passed",
+          "quote": "Michael A. Marks was appointed Executive Vice President and Chief Financial Officer, effective May 1, 2024.",
+          "source_id": "73a762a8c89fc539f60cb565f068dbf1f6098bf6c8ad237732f992c1749a3e13",
+          "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+          "span_end": 1452,
+          "span_start": 1345
+        },
+        {
+          "citation_id": "cite:87e1d0346fa53802",
+          "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+          "matching_method": "exact",
+          "normalized_quote": "He previously served as Senior Vice President - Finance from January 2023 through April 2024.",
+          "original_source_text": "He previously served as Senior Vice President \u2014 Finance from January 2023 through April 2024.",
+          "outcome": "accepted",
+          "page_char_end": 163172,
+          "page_char_start": 163079,
+          "passage_offset": 161626,
+          "physical_page": 1,
+          "quotation_check": "passed",
+          "quote": "He previously served as Senior Vice President \u2014 Finance from January 2023 through April 2024.",
+          "source_id": "73a762a8c89fc539f60cb565f068dbf1f6098bf6c8ad237732f992c1749a3e13",
+          "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+          "span_end": 1546,
+          "span_start": 1453
+        },
+        {
+          "citation_id": "cite:3ff9dbedca922d45",
+          "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+          "matching_method": "exact",
+          "normalized_quote": "Michael R. McAlevey 62 Executive Vice President - Chief Legal and Administrative Officer",
+          "original_source_text": "Michael R. McAlevey\n62\nExecutive Vice President \u2014 Chief Legal and Administrative Officer",
+          "outcome": "accepted",
+          "page_char_end": 160229,
+          "page_char_start": 160141,
+          "passage_offset": 159626,
+          "physical_page": 1,
+          "quotation_check": "passed",
+          "quote": "Michael R. McAlevey\n62\nExecutive Vice President \u2014 Chief Legal and Administrative Officer",
+          "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+          "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+          "span_end": 603,
+          "span_start": 515
+        },
+        {
+          "citation_id": "cite:c53d545cf8901b95",
+          "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+          "matching_method": "exact",
+          "normalized_quote": "Michael R. McAlevey was appointed Executive Vice President - Chief Legal and Administrative Officer of the Company, effective April 1, 2024.",
+          "original_source_text": "Michael R. McAlevey was appointed Executive Vice President \u2014 Chief Legal and Administrative Officer of the Company, effective April 1, 2024.",
+          "outcome": "accepted",
+          "page_char_end": 163624,
+          "page_char_start": 163484,
+          "passage_offset": 161626,
+          "physical_page": 1,
+          "quotation_check": "passed",
+          "quote": "Michael R. McAlevey was appointed Executive Vice President \u2014 Chief Legal and Administrative Officer of the Company, effective April 1, 2024.",
+          "source_id": "73a762a8c89fc539f60cb565f068dbf1f6098bf6c8ad237732f992c1749a3e13",
+          "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+          "span_end": 1998,
+          "span_start": 1858
+        },
+        {
+          "citation_id": "cite:06d4d8f2ed311be1",
+          "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+          "matching_method": "exact",
+          "normalized_quote": "Erica L. Rossitto 48 Senior Vice President and Chief Nurse Executive",
+          "original_source_text": "Erica L. Rossitto\n48\nSenior Vice President and Chief Nurse Executive",
+          "outcome": "accepted",
+          "page_char_end": 160298,
+          "page_char_start": 160230,
+          "passage_offset": 159626,
+          "physical_page": 1,
+          "quotation_check": "passed",
+          "quote": "Erica L. Rossitto\n48\nSenior Vice President and Chief Nurse Executive",
+          "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+          "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+          "span_end": 672,
+          "span_start": 604
+        },
+        {
+          "citation_id": "cite:05a57aa2f5e13d17",
+          "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+          "matching_method": "exact",
+          "normalized_quote": "Erica L. Rossitto was appointed Senior Vice President and Chief Nurse Executive, effective February 1, 2026.",
+          "original_source_text": "Erica L. Rossitto was appointed Senior Vice President and Chief Nurse Executive, effective February 1, 2026.",
+          "outcome": "accepted",
+          "page_char_end": 164417,
+          "page_char_start": 164309,
+          "passage_offset": 163626,
+          "physical_page": 1,
+          "quotation_check": "passed",
+          "quote": "Erica L. Rossitto was appointed Senior Vice President and Chief Nurse Executive, effective February 1, 2026.",
+          "source_id": "ff343f80e7ef1cd0d55086c5c0942a1a81c81c0865fedc0348ddb9d56859388f",
+          "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+          "span_end": 791,
+          "span_start": 683
+        },
+        {
+          "citation_id": "cite:ab282799fb6b25fd",
+          "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+          "matching_method": "exact",
+          "normalized_quote": "She previously served as Senior Vice President and Assistant Chief Nurse Executive from December 2023 through January 2026.",
+          "original_source_text": "She previously served as Senior Vice President and Assistant Chief Nurse Executive from December 2023 through January 2026.",
+          "outcome": "accepted",
+          "page_char_end": 164541,
+          "page_char_start": 164418,
+          "passage_offset": 163626,
+          "physical_page": 1,
+          "quotation_check": "passed",
+          "quote": "She previously served as Senior Vice President and Assistant Chief Nurse Executive from December 2023 through January 2026.",
+          "source_id": "ff343f80e7ef1cd0d55086c5c0942a1a81c81c0865fedc0348ddb9d56859388f",
+          "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+          "span_end": 915,
+          "span_start": 792
+        }
+      ],
+      "company": "HCA Healthcare, Inc.",
+      "completion_status": "partial",
+      "coverage": {
+        "admitted": 7,
+        "expected": 7,
+        "missing": [],
+        "verifiable": true
+      },
+      "facts": [],
+      "filing_period": "2025-12-31",
+      "limitations": [
+        "Company and fiscal period were confirmed from the admitted SEC filing metadata (form 10-K, CIK 860730), not from cover-page text. HTML passages have no pages; citations give page 1 and the passage offset.",
+        "No specific data on recent performance or turnover trends were provided, limiting the ability to assess executive impact on current financial metrics.",
+        "Details on specific management turnover events or recent organizational performance results.",
+        "No specific data on recent performance or turnover trends were provided, limiting the ability to assess executive impact on current financial metrics.",
+        "Operational effectiveness depends on ongoing execution, which tenure alone does not guarantee.",
+        "Fact-level assessments of specific prior roles for Dr. Cuffe and Mr. McAlevey were rejected due to citation failure or ambiguity.",
+        "Supporting fact statements (f_01, f_02, f_03) were rejected for paraphrasing canonical content.",
+        "6 individual evidence claims are unsupported; other supported claims remain usable.",
+        "Qualified or withheld judgments are identified individually in the review record."
+      ],
+      "model_assessment": {
+        "explanation": "The management team at HCA Healthcare exhibits strong organizational continuity, evidenced by long-tenured executives and internal promotions, which supports stable governance. The inclusion of external hires with significant experience in regulated sectors (GE/Healthcare) adds relevant oversight capabilities, while the firm\u0027s history of grooming internal talent for senior roles provides confidence in the leadership succession process.",
+        "missing_information": [
+          "Details on specific management turnover events or recent organizational performance results."
+        ],
+        "signal": "credit_positive",
+        "supporting_judgment_ids": [
+          "j_01",
+          "j_02"
+        ],
+        "uncertainties": [
+          "No specific data on recent performance or turnover trends were provided, limiting the ability to assess executive impact on current financial metrics."
+        ]
+      },
+      "observations": [
+        {
+          "category": "continuity",
+          "citation_ids": [
+            "cite:3a4643a70b852db1",
+            "cite:1774df4345abec50",
+            "cite:7c662b827dfaedbd",
+            "cite:87e1d0346fa53802",
+            "cite:ab282799fb6b25fd"
+          ],
+          "direction": "positive",
+          "executive": null,
+          "observation_id": "j_01",
+          "review_outcome": "qualified",
+          "review_reason": "The supporting facts f_01 and f_03 were rejected for paraphrasing; institutional knowledge is instead supported by appointment and role claim IDs.",
+          "rule": "validator_7_review",
+          "signal": "credit_positive",
+          "supporting_fact_ids": [
+            "executive:1:appointment",
+            "executive:2:role:1",
+            "executive:4:role:1",
+            "executive:5:role:1",
+            "executive:7:role:1"
+          ],
+          "text": "The executive team displays high levels of institutional knowledge, with several senior leaders having multi-decade careers within the company, indicating stable internal succession pipelines and established operating expertise.",
+          "uncertainties": [
+            "Operational effectiveness depends on ongoing execution, which tenure alone does not guarantee.",
+            "Operational effectiveness depends on ongoing execution, which tenure alone does not guarantee."
+          ]
+        }
+      ],
+      "overall_assessment": {
+        "information_direction": "unavailable",
+        "information_gaps": true,
+        "outcome": "positive",
+        "policy": "The management team at HCA Healthcare exhibits strong organizational continuity, evidenced by long-tenured executives and internal promotions, which supports stable governance. The leadership structure incorporates experienced professionals with deep internal institutional knowledge as well as relevant external oversight experience, providing confidence in the leadership succession process."
+      },
+      "profiles": [
+        {
+          "appointment_date": "2019-01",
+          "appointment_precision": "month",
+          "citation_ids": [
+            "cite:60e57edaae678e7c",
+            "cite:3a4643a70b852db1",
+            "cite:a4adcfc45cbb5727"
+          ],
+          "name": "Samuel N. Hazen",
+          "position": "Chief Executive Officer and Director",
+          "prior_internal_roles": [
+            {
+              "citation_ids": [
+                "cite:a4adcfc45cbb5727"
+              ],
+              "end_date": "2018-12",
+              "end_precision": "month",
+              "position": "President and Chief Operating Officer",
+              "start_date": "2016-11",
+              "start_precision": "month"
+            }
+          ],
+          "recency": "stable",
+          "roster_position": "Chief Executive Officer and Director",
+          "semantic_support_check": "passed_bounded_rules",
+          "succession": "internal",
+          "tenure": {
+            "as_of": "2026-02-01",
+            "basis": "Calculated from accepted appointment claim at disclosed precision",
+            "maximum_days": 2588,
+            "minimum_days": 2558
+          }
+        },
+        {
+          "appointment_date": "2019-11-01",
+          "appointment_precision": "day",
+          "citation_ids": [
+            "cite:375bb668a13614c7",
+            "cite:d59428ba43875bd5",
+            "cite:1774df4345abec50"
+          ],
+          "name": "Jennifer L. Berres",
+          "position": "Senior Vice President and Chief Human Resources Officer",
+          "prior_internal_roles": [
+            {
+              "citation_ids": [
+                "cite:1774df4345abec50"
+              ],
+              "end_date": "2019-10",
+              "end_precision": "month",
+              "position": "Vice President \u2014 Human Resources",
+              "start_date": "2013-04",
+              "start_precision": "month"
+            }
+          ],
+          "recency": "stable",
+          "roster_position": "Senior Vice President and Chief Human Resources Officer",
+          "semantic_support_check": "passed_bounded_rules",
+          "succession": "internal",
+          "tenure": {
+            "as_of": "2026-02-01",
+            "basis": "Calculated from accepted appointment claim at disclosed precision",
+            "maximum_days": 2284,
+            "minimum_days": 2284
+          }
+        },
+        {
+          "appointment_date": "2022-01-01",
+          "appointment_precision": "day",
+          "citation_ids": [
+            "cite:5d94a44e1c81f297",
+            "cite:08bf1723f733a2bb"
+          ],
+          "name": "Michael S. Cuffe, M.D.",
+          "position": "Executive Vice President and Chief Clinical Officer",
+          "prior_internal_roles": [],
+          "recency": "stable",
+          "roster_position": "Executive Vice President and Chief Clinical Officer",
+          "semantic_support_check": "passed_bounded_rules",
+          "succession": "unavailable",
+          "tenure": {
+            "as_of": "2026-02-01",
+            "basis": "Calculated from accepted appointment claim at disclosed precision",
+            "maximum_days": 1492,
+            "minimum_days": 1492
+          }
+        },
+        {
+          "appointment_date": "2023-01-01",
+          "appointment_precision": "day",
+          "citation_ids": [
+            "cite:1c23b42c8b1f94d9",
+            "cite:ed61fb4b8f791606",
+            "cite:7c662b827dfaedbd"
+          ],
+          "name": "Jon M. Foster",
+          "position": "Executive Vice President and Chief Operating Officer",
+          "prior_internal_roles": [
+            {
+              "citation_ids": [
+                "cite:7c662b827dfaedbd"
+              ],
+              "end_date": "2022-12",
+              "end_precision": "month",
+              "position": "President \u2014 American Group",
+              "start_date": "2013-01",
+              "start_precision": "month"
+            }
+          ],
+          "recency": "stable",
+          "roster_position": "Executive Vice President and Chief Operating Officer",
+          "semantic_support_check": "passed_bounded_rules",
+          "succession": "internal",
+          "tenure": {
+            "as_of": "2026-02-01",
+            "basis": "Calculated from accepted appointment claim at disclosed precision",
+            "maximum_days": 1127,
+            "minimum_days": 1127
+          }
+        },
+        {
+          "appointment_date": "2024-05-01",
+          "appointment_precision": "day",
+          "citation_ids": [
+            "cite:b65c8d8d3fd356be",
+            "cite:492221a3907018f9",
+            "cite:87e1d0346fa53802"
+          ],
+          "name": "Michael A. Marks",
+          "position": "Executive Vice President and Chief Financial Officer",
+          "prior_internal_roles": [
+            {
+              "citation_ids": [
+                "cite:87e1d0346fa53802"
+              ],
+              "end_date": "2024-04",
+              "end_precision": "month",
+              "position": "Senior Vice President \u2014 Finance",
+              "start_date": "2023-01",
+              "start_precision": "month"
+            }
+          ],
+          "recency": "recent",
+          "roster_position": "Executive Vice President and Chief Financial Officer",
+          "semantic_support_check": "passed_bounded_rules",
+          "succession": "internal",
+          "tenure": {
+            "as_of": "2026-02-01",
+            "basis": "Calculated from accepted appointment claim at disclosed precision",
+            "maximum_days": 641,
+            "minimum_days": 641
+          }
+        },
+        {
+          "appointment_date": "2024-04-01",
+          "appointment_precision": "day",
+          "citation_ids": [
+            "cite:3ff9dbedca922d45",
+            "cite:c53d545cf8901b95"
+          ],
+          "name": "Michael R. McAlevey",
+          "position": "Executive Vice President \u2014 Chief Legal and Administrative Officer",
+          "prior_internal_roles": [],
+          "recency": "recent",
+          "roster_position": "Executive Vice President \u2014 Chief Legal and Administrative Officer",
+          "semantic_support_check": "passed_bounded_rules",
+          "succession": "unavailable",
+          "tenure": {
+            "as_of": "2026-02-01",
+            "basis": "Calculated from accepted appointment claim at disclosed precision",
+            "maximum_days": 671,
+            "minimum_days": 671
+          }
+        },
+        {
+          "appointment_date": "2026-02-01",
+          "appointment_precision": "day",
+          "citation_ids": [
+            "cite:06d4d8f2ed311be1",
+            "cite:05a57aa2f5e13d17",
+            "cite:ab282799fb6b25fd"
+          ],
+          "name": "Erica L. Rossitto",
+          "position": "Senior Vice President and Chief Nurse Executive",
+          "prior_internal_roles": [
+            {
+              "citation_ids": [
+                "cite:ab282799fb6b25fd"
+              ],
+              "end_date": "2026-01",
+              "end_precision": "month",
+              "position": "Senior Vice President and Assistant Chief Nurse Executive",
+              "start_date": "2023-12",
+              "start_precision": "month"
+            }
+          ],
+          "recency": "recent",
+          "roster_position": "Senior Vice President and Chief Nurse Executive",
+          "semantic_support_check": "passed_bounded_rules",
+          "succession": "internal",
+          "tenure": {
+            "as_of": "2026-02-01",
+            "basis": "Calculated from accepted appointment claim at disclosed precision",
+            "maximum_days": 0,
+            "minimum_days": 0
+          }
+        }
+      ],
+      "rejected_profiles": [],
+      "review_window": {
+        "boundary": "inclusive [start, end]",
+        "end": "2026-02-01",
+        "start": "2023-02-01",
+        "years": 3
+      },
+      "roster_citation_id": "cite:0c9be82321b39c2b",
+      "roster_date": "2026-02-01",
+      "schema_version": "m3-management-assessment-3.0",
+      "source": {
+        "path": "sec-inline-xbrl:9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+        "section_ids": [
+          "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+          "73a762a8c89fc539f60cb565f068dbf1f6098bf6c8ad237732f992c1749a3e13",
+          "ff343f80e7ef1cd0d55086c5c0942a1a81c81c0865fedc0348ddb9d56859388f"
+        ],
+        "sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c"
+      },
+      "validation": {
+        "claim_results": [
+          {
+            "citation_ids": [
+              "cite:0c9be82321b39c2b"
+            ],
+            "citation_results": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "As of February 1, 2026, our executive officers were as follows:",
+                "original_source_text": "As of February 1, 2026, our executive officers were as follows:",
+                "outcome": "accepted",
+                "page_char_end": 159764,
+                "page_char_start": 159701,
+                "passage_offset": 159626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "As of February 1, 2026, our executive officers were as follows:",
+                "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 138,
+                "span_start": 75
+              }
+            ],
+            "citations": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "As of February 1, 2026, our executive officers were as follows:",
+                "original_source_text": "As of February 1, 2026, our executive officers were as follows:",
+                "outcome": "accepted",
+                "page_char_end": 159764,
+                "page_char_start": 159701,
+                "passage_offset": 159626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "As of February 1, 2026, our executive officers were as follows:",
+                "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 138,
+                "span_start": 75
+              }
+            ],
+            "claim_id": "roster",
+            "executive": "",
+            "kind": "roster",
+            "outcome": "accepted",
+            "reason": "Claim is supported by its declared canonical citations",
+            "semantic_matching": {
+              "comparison_text": "As of February 1, 2026, our executive officers were as follows:",
+              "method": "whitespace_typography",
+              "policy": "M3-only; no letter, digit, name, date, title or negation substitutions"
+            },
+            "statement": "As of February 1, 2026, our executive officers were as follows:"
+          },
+          {
+            "citation_ids": [
+              "cite:60e57edaae678e7c"
+            ],
+            "citation_results": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Samuel N. Hazen 65 Chief Executive Officer and Director",
+                "original_source_text": "Samuel N. Hazen\n65\nChief Executive Officer and Director",
+                "outcome": "accepted",
+                "page_char_end": 159841,
+                "page_char_start": 159786,
+                "passage_offset": 159626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Samuel N. Hazen\n65\nChief Executive Officer and Director",
+                "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 215,
+                "span_start": 160
+              }
+            ],
+            "citations": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Samuel N. Hazen 65 Chief Executive Officer and Director",
+                "original_source_text": "Samuel N. Hazen\n65\nChief Executive Officer and Director",
+                "outcome": "accepted",
+                "page_char_end": 159841,
+                "page_char_start": 159786,
+                "passage_offset": 159626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Samuel N. Hazen\n65\nChief Executive Officer and Director",
+                "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 215,
+                "span_start": 160
+              }
+            ],
+            "claim_id": "executive:1:identity",
+            "executive": "Samuel N. Hazen",
+            "kind": "identity",
+            "outcome": "accepted",
+            "reason": "Claim is supported by its declared canonical citations",
+            "semantic_matching": {
+              "comparison_text": "Samuel N. Hazen 65 Chief Executive Officer and Director",
+              "method": "whitespace_typography",
+              "policy": "M3-only; no letter, digit, name, date, title or negation substitutions"
+            },
+            "statement": "Samuel N. Hazen"
+          },
+          {
+            "citation_ids": [
+              "cite:60e57edaae678e7c"
+            ],
+            "citation_results": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Samuel N. Hazen 65 Chief Executive Officer and Director",
+                "original_source_text": "Samuel N. Hazen\n65\nChief Executive Officer and Director",
+                "outcome": "accepted",
+                "page_char_end": 159841,
+                "page_char_start": 159786,
+                "passage_offset": 159626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Samuel N. Hazen\n65\nChief Executive Officer and Director",
+                "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 215,
+                "span_start": 160
+              }
+            ],
+            "citations": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Samuel N. Hazen 65 Chief Executive Officer and Director",
+                "original_source_text": "Samuel N. Hazen\n65\nChief Executive Officer and Director",
+                "outcome": "accepted",
+                "page_char_end": 159841,
+                "page_char_start": 159786,
+                "passage_offset": 159626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Samuel N. Hazen\n65\nChief Executive Officer and Director",
+                "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 215,
+                "span_start": 160
+              }
+            ],
+            "claim_id": "executive:1:position",
+            "executive": "Samuel N. Hazen",
+            "kind": "identity",
+            "outcome": "accepted",
+            "reason": "Claim is supported by its declared canonical citations",
+            "semantic_matching": {
+              "comparison_text": "Samuel N. Hazen 65 Chief Executive Officer and Director",
+              "method": "whitespace_typography",
+              "policy": "M3-only; no letter, digit, name, date, title or negation substitutions"
+            },
+            "statement": "Chief Executive Officer and Director"
+          },
+          {
+            "appointment_scope": "Chief Executive Officer",
+            "citation_ids": [
+              "cite:3a4643a70b852db1"
+            ],
+            "citation_results": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Samuel N. Hazen has served as Chief Executive Officer since January 2019 and was appointed as a director in September 2018.",
+                "original_source_text": "Samuel N. Hazen has served as Chief Executive Officer since January 2019 and was appointed as a director in September 2018.",
+                "outcome": "accepted",
+                "page_char_end": 160422,
+                "page_char_start": 160299,
+                "passage_offset": 159626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Samuel N. Hazen has served as Chief Executive Officer since January 2019 and was appointed as a director in September 2018.",
+                "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 796,
+                "span_start": 673
+              }
+            ],
+            "citations": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Samuel N. Hazen has served as Chief Executive Officer since January 2019 and was appointed as a director in September 2018.",
+                "original_source_text": "Samuel N. Hazen has served as Chief Executive Officer since January 2019 and was appointed as a director in September 2018.",
+                "outcome": "accepted",
+                "page_char_end": 160422,
+                "page_char_start": 160299,
+                "passage_offset": 159626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Samuel N. Hazen has served as Chief Executive Officer since January 2019 and was appointed as a director in September 2018.",
+                "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 796,
+                "span_start": 673
+              }
+            ],
+            "claim_id": "executive:1:appointment",
+            "executive": "Samuel N. Hazen",
+            "kind": "appointment",
+            "outcome": "accepted",
+            "reason": "Claim is supported by its declared canonical citations",
+            "semantic_matching": {
+              "comparison_text": "Samuel N. Hazen has served as Chief Executive Officer since January 2019 and was appointed as a director in September 2018.",
+              "method": "whitespace_typography",
+              "policy": "M3-only; no letter, digit, name, date, title or negation substitutions"
+            },
+            "statement": "Chief Executive Officer and Director; 2019-01"
+          },
+          {
+            "citation_ids": [
+              "cite:a4adcfc45cbb5727"
+            ],
+            "citation_results": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "From November 2016 through December 2018, Mr. Hazen served as the Company\u0027s President and Chief Operating Officer.",
+                "original_source_text": "From November 2016 through December 2018, Mr. Hazen served as the Company\u2019s President and Chief Operating Officer.",
+                "outcome": "accepted",
+                "page_char_end": 160537,
+                "page_char_start": 160423,
+                "passage_offset": 159626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "From November 2016 through December 2018, Mr. Hazen served as the Company\u2019s President and Chief Operating Officer.",
+                "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 911,
+                "span_start": 797
+              }
+            ],
+            "citations": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "From November 2016 through December 2018, Mr. Hazen served as the Company\u0027s President and Chief Operating Officer.",
+                "original_source_text": "From November 2016 through December 2018, Mr. Hazen served as the Company\u2019s President and Chief Operating Officer.",
+                "outcome": "accepted",
+                "page_char_end": 160537,
+                "page_char_start": 160423,
+                "passage_offset": 159626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "From November 2016 through December 2018, Mr. Hazen served as the Company\u2019s President and Chief Operating Officer.",
+                "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 911,
+                "span_start": 797
+              }
+            ],
+            "claim_id": "executive:1:role:1",
+            "context_evidence_ids": [
+              "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e"
+            ],
+            "executive": "Samuel N. Hazen",
+            "kind": "prior_internal_role",
+            "outcome": "accepted",
+            "reason": "Claim is supported by its declared canonical citations",
+            "semantic_matching": {
+              "comparison_text": "From November 2016 through December 2018, Mr. Hazen served as the Company\u0027s President and Chief Operating Officer.",
+              "method": "whitespace_typography",
+              "policy": "M3-only; no letter, digit, name, date, title or negation substitutions"
+            },
+            "statement": "President and Chief Operating Officer; 2016-11 to 2018-12"
+          },
+          {
+            "citation_ids": [
+              "cite:375bb668a13614c7"
+            ],
+            "citation_results": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Jennifer L. Berres 55 Senior Vice President and Chief Human Resources Officer",
+                "original_source_text": "Jennifer L. Berres\n55\nSenior Vice President and Chief Human Resources Officer",
+                "outcome": "accepted",
+                "page_char_end": 159919,
+                "page_char_start": 159842,
+                "passage_offset": 159626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Jennifer L. Berres\n55\nSenior Vice President and Chief Human Resources Officer",
+                "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 293,
+                "span_start": 216
+              }
+            ],
+            "citations": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Jennifer L. Berres 55 Senior Vice President and Chief Human Resources Officer",
+                "original_source_text": "Jennifer L. Berres\n55\nSenior Vice President and Chief Human Resources Officer",
+                "outcome": "accepted",
+                "page_char_end": 159919,
+                "page_char_start": 159842,
+                "passage_offset": 159626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Jennifer L. Berres\n55\nSenior Vice President and Chief Human Resources Officer",
+                "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 293,
+                "span_start": 216
+              }
+            ],
+            "claim_id": "executive:2:identity",
+            "executive": "Jennifer L. Berres",
+            "kind": "identity",
+            "outcome": "accepted",
+            "reason": "Claim is supported by its declared canonical citations",
+            "semantic_matching": {
+              "comparison_text": "Jennifer L. Berres 55 Senior Vice President and Chief Human Resources Officer",
+              "method": "whitespace_typography",
+              "policy": "M3-only; no letter, digit, name, date, title or negation substitutions"
+            },
+            "statement": "Jennifer L. Berres"
+          },
+          {
+            "citation_ids": [
+              "cite:375bb668a13614c7"
+            ],
+            "citation_results": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Jennifer L. Berres 55 Senior Vice President and Chief Human Resources Officer",
+                "original_source_text": "Jennifer L. Berres\n55\nSenior Vice President and Chief Human Resources Officer",
+                "outcome": "accepted",
+                "page_char_end": 159919,
+                "page_char_start": 159842,
+                "passage_offset": 159626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Jennifer L. Berres\n55\nSenior Vice President and Chief Human Resources Officer",
+                "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 293,
+                "span_start": 216
+              }
+            ],
+            "citations": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Jennifer L. Berres 55 Senior Vice President and Chief Human Resources Officer",
+                "original_source_text": "Jennifer L. Berres\n55\nSenior Vice President and Chief Human Resources Officer",
+                "outcome": "accepted",
+                "page_char_end": 159919,
+                "page_char_start": 159842,
+                "passage_offset": 159626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Jennifer L. Berres\n55\nSenior Vice President and Chief Human Resources Officer",
+                "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 293,
+                "span_start": 216
+              }
+            ],
+            "claim_id": "executive:2:position",
+            "executive": "Jennifer L. Berres",
+            "kind": "identity",
+            "outcome": "accepted",
+            "reason": "Claim is supported by its declared canonical citations",
+            "semantic_matching": {
+              "comparison_text": "Jennifer L. Berres 55 Senior Vice President and Chief Human Resources Officer",
+              "method": "whitespace_typography",
+              "policy": "M3-only; no letter, digit, name, date, title or negation substitutions"
+            },
+            "statement": "Senior Vice President and Chief Human Resources Officer"
+          },
+          {
+            "appointment_scope": "Senior Vice President and Chief Human Resources Officer",
+            "citation_ids": [
+              "cite:d59428ba43875bd5"
+            ],
+            "citation_results": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Jennifer L. Berres was appointed Senior Vice President and Chief Human Resources Officer effective November 1, 2019.",
+                "original_source_text": "Jennifer L. Berres was appointed Senior Vice President and Chief Human Resources Officer effective November 1, 2019.",
+                "outcome": "accepted",
+                "page_char_end": 161135,
+                "page_char_start": 161019,
+                "passage_offset": 159626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Jennifer L. Berres was appointed Senior Vice President and Chief Human Resources Officer effective November 1, 2019.",
+                "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 1509,
+                "span_start": 1393
+              }
+            ],
+            "citations": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Jennifer L. Berres was appointed Senior Vice President and Chief Human Resources Officer effective November 1, 2019.",
+                "original_source_text": "Jennifer L. Berres was appointed Senior Vice President and Chief Human Resources Officer effective November 1, 2019.",
+                "outcome": "accepted",
+                "page_char_end": 161135,
+                "page_char_start": 161019,
+                "passage_offset": 159626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Jennifer L. Berres was appointed Senior Vice President and Chief Human Resources Officer effective November 1, 2019.",
+                "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 1509,
+                "span_start": 1393
+              }
+            ],
+            "claim_id": "executive:2:appointment",
+            "executive": "Jennifer L. Berres",
+            "kind": "appointment",
+            "outcome": "accepted",
+            "reason": "Claim is supported by its declared canonical citations",
+            "semantic_matching": {
+              "comparison_text": "Jennifer L. Berres was appointed Senior Vice President and Chief Human Resources Officer effective November 1, 2019.",
+              "method": "whitespace_typography",
+              "policy": "M3-only; no letter, digit, name, date, title or negation substitutions"
+            },
+            "statement": "Senior Vice President and Chief Human Resources Officer; 2019-11-01"
+          },
+          {
+            "citation_ids": [
+              "cite:1774df4345abec50"
+            ],
+            "citation_results": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Ms. Berres joined HCA in 1993 and served in various capacities, including as Vice President - Human Resources from April 2013 through October 2019.",
+                "original_source_text": "Ms. Berres joined HCA in 1993 and served in various capacities, including as Vice President \u2014 Human Resources from April 2013 through October 2019.",
+                "outcome": "accepted",
+                "page_char_end": 161283,
+                "page_char_start": 161136,
+                "passage_offset": 159626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Ms. Berres joined HCA in 1993 and served in various capacities, including as Vice President \u2014 Human Resources from April 2013 through October 2019.",
+                "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 1657,
+                "span_start": 1510
+              }
+            ],
+            "citations": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Ms. Berres joined HCA in 1993 and served in various capacities, including as Vice President - Human Resources from April 2013 through October 2019.",
+                "original_source_text": "Ms. Berres joined HCA in 1993 and served in various capacities, including as Vice President \u2014 Human Resources from April 2013 through October 2019.",
+                "outcome": "accepted",
+                "page_char_end": 161283,
+                "page_char_start": 161136,
+                "passage_offset": 159626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Ms. Berres joined HCA in 1993 and served in various capacities, including as Vice President \u2014 Human Resources from April 2013 through October 2019.",
+                "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 1657,
+                "span_start": 1510
+              }
+            ],
+            "claim_id": "executive:2:role:1",
+            "context_evidence_ids": [
+              "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e"
+            ],
+            "executive": "Jennifer L. Berres",
+            "kind": "prior_internal_role",
+            "outcome": "accepted",
+            "reason": "Claim is supported by its declared canonical citations",
+            "semantic_matching": {
+              "comparison_text": "Ms. Berres joined HCA in 1993 and served in various capacities, including as Vice President - Human Resources from April 2013 through October 2019.",
+              "method": "whitespace_typography",
+              "policy": "M3-only; no letter, digit, name, date, title or negation substitutions"
+            },
+            "statement": "Vice President \u2014 Human Resources; 2013-04 to 2019-10"
+          },
+          {
+            "citation_ids": [
+              "cite:5d94a44e1c81f297"
+            ],
+            "citation_results": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Michael S. Cuffe, M.D. 60 Executive Vice President and Chief Clinical Officer",
+                "original_source_text": "Michael S. Cuffe, M.D.\n60\nExecutive Vice President and Chief Clinical Officer",
+                "outcome": "accepted",
+                "page_char_end": 159997,
+                "page_char_start": 159920,
+                "passage_offset": 159626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Michael S. Cuffe, M.D.\n60\nExecutive Vice President and Chief Clinical Officer",
+                "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 371,
+                "span_start": 294
+              }
+            ],
+            "citations": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Michael S. Cuffe, M.D. 60 Executive Vice President and Chief Clinical Officer",
+                "original_source_text": "Michael S. Cuffe, M.D.\n60\nExecutive Vice President and Chief Clinical Officer",
+                "outcome": "accepted",
+                "page_char_end": 159997,
+                "page_char_start": 159920,
+                "passage_offset": 159626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Michael S. Cuffe, M.D.\n60\nExecutive Vice President and Chief Clinical Officer",
+                "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 371,
+                "span_start": 294
+              }
+            ],
+            "claim_id": "executive:3:identity",
+            "executive": "Michael S. Cuffe, M.D.",
+            "kind": "identity",
+            "outcome": "accepted",
+            "reason": "Claim is supported by its declared canonical citations",
+            "semantic_matching": {
+              "comparison_text": "Michael S. Cuffe, M.D. 60 Executive Vice President and Chief Clinical Officer",
+              "method": "whitespace_typography",
+              "policy": "M3-only; no letter, digit, name, date, title or negation substitutions"
+            },
+            "statement": "Michael S. Cuffe, M.D."
+          },
+          {
+            "citation_ids": [
+              "cite:5d94a44e1c81f297"
+            ],
+            "citation_results": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Michael S. Cuffe, M.D. 60 Executive Vice President and Chief Clinical Officer",
+                "original_source_text": "Michael S. Cuffe, M.D.\n60\nExecutive Vice President and Chief Clinical Officer",
+                "outcome": "accepted",
+                "page_char_end": 159997,
+                "page_char_start": 159920,
+                "passage_offset": 159626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Michael S. Cuffe, M.D.\n60\nExecutive Vice President and Chief Clinical Officer",
+                "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 371,
+                "span_start": 294
+              }
+            ],
+            "citations": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Michael S. Cuffe, M.D. 60 Executive Vice President and Chief Clinical Officer",
+                "original_source_text": "Michael S. Cuffe, M.D.\n60\nExecutive Vice President and Chief Clinical Officer",
+                "outcome": "accepted",
+                "page_char_end": 159997,
+                "page_char_start": 159920,
+                "passage_offset": 159626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Michael S. Cuffe, M.D.\n60\nExecutive Vice President and Chief Clinical Officer",
+                "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 371,
+                "span_start": 294
+              }
+            ],
+            "claim_id": "executive:3:position",
+            "executive": "Michael S. Cuffe, M.D.",
+            "kind": "identity",
+            "outcome": "accepted",
+            "reason": "Claim is supported by its declared canonical citations",
+            "semantic_matching": {
+              "comparison_text": "Michael S. Cuffe, M.D. 60 Executive Vice President and Chief Clinical Officer",
+              "method": "whitespace_typography",
+              "policy": "M3-only; no letter, digit, name, date, title or negation substitutions"
+            },
+            "statement": "Executive Vice President and Chief Clinical Officer"
+          },
+          {
+            "appointment_scope": "Executive Vice President and Chief Clinical Officer",
+            "citation_ids": [
+              "cite:08bf1723f733a2bb"
+            ],
+            "citation_results": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Michael S. Cuffe, M.D. was appointed Executive Vice President and Chief Clinical Officer effective January 1, 2022.",
+                "original_source_text": "Michael S. Cuffe, M.D. was appointed Executive Vice President and Chief Clinical Officer effective January 1, 2022.",
+                "outcome": "accepted",
+                "page_char_end": 161399,
+                "page_char_start": 161284,
+                "passage_offset": 159626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Michael S. Cuffe, M.D. was appointed Executive Vice President and Chief Clinical Officer effective January 1, 2022.",
+                "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 1773,
+                "span_start": 1658
+              }
+            ],
+            "citations": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Michael S. Cuffe, M.D. was appointed Executive Vice President and Chief Clinical Officer effective January 1, 2022.",
+                "original_source_text": "Michael S. Cuffe, M.D. was appointed Executive Vice President and Chief Clinical Officer effective January 1, 2022.",
+                "outcome": "accepted",
+                "page_char_end": 161399,
+                "page_char_start": 161284,
+                "passage_offset": 159626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Michael S. Cuffe, M.D. was appointed Executive Vice President and Chief Clinical Officer effective January 1, 2022.",
+                "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 1773,
+                "span_start": 1658
+              }
+            ],
+            "claim_id": "executive:3:appointment",
+            "executive": "Michael S. Cuffe, M.D.",
+            "kind": "appointment",
+            "outcome": "accepted",
+            "reason": "Claim is supported by its declared canonical citations",
+            "semantic_matching": {
+              "comparison_text": "Michael S. Cuffe, M.D. was appointed Executive Vice President and Chief Clinical Officer effective January 1, 2022.",
+              "method": "whitespace_typography",
+              "policy": "M3-only; no letter, digit, name, date, title or negation substitutions"
+            },
+            "statement": "Executive Vice President and Chief Clinical Officer; 2022-01-01"
+          },
+          {
+            "citation_ids": [],
+            "citation_results": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "He previously served as President - Physician Services Group from October 2011 through December 2021.",
+                "original_source_text": "He previously served as President \u2014 Physician Services Group from October 2011 through December 2021.",
+                "outcome": "accepted",
+                "page_char_end": 161501,
+                "page_char_start": 161400,
+                "passage_offset": 159626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "He previously served as President \u2014 Physician Services Group from October 2011 through December 2021.",
+                "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 1875,
+                "span_start": 1774
+              }
+            ],
+            "citations": [],
+            "claim_id": "executive:3:role:1",
+            "executive": "Michael S. Cuffe, M.D.",
+            "kind": "prior_internal_role",
+            "outcome": "unsupported",
+            "reason": "Prior-role employer attribution is ambiguous; \u0027previously served as\u0027 alone does not establish internal experience",
+            "semantic_matching": {
+              "comparison_text": "He previously served as President - Physician Services Group from October 2011 through December 2021.",
+              "method": "whitespace_typography",
+              "policy": "M3-only; no letter, digit, name, date, title or negation substitutions"
+            },
+            "statement": "President \u2014 Physician Services Group; 2011-10 to 2021-12"
+          },
+          {
+            "citation_ids": [
+              "cite:1c23b42c8b1f94d9"
+            ],
+            "citation_results": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Jon M. Foster 64 Executive Vice President and Chief Operating Officer",
+                "original_source_text": "Jon M. Foster\n64\nExecutive Vice President and Chief Operating Officer",
+                "outcome": "accepted",
+                "page_char_end": 160067,
+                "page_char_start": 159998,
+                "passage_offset": 159626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Jon M. Foster\n64\nExecutive Vice President and Chief Operating Officer",
+                "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 441,
+                "span_start": 372
+              }
+            ],
+            "citations": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Jon M. Foster 64 Executive Vice President and Chief Operating Officer",
+                "original_source_text": "Jon M. Foster\n64\nExecutive Vice President and Chief Operating Officer",
+                "outcome": "accepted",
+                "page_char_end": 160067,
+                "page_char_start": 159998,
+                "passage_offset": 159626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Jon M. Foster\n64\nExecutive Vice President and Chief Operating Officer",
+                "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 441,
+                "span_start": 372
+              }
+            ],
+            "claim_id": "executive:4:identity",
+            "executive": "Jon M. Foster",
+            "kind": "identity",
+            "outcome": "accepted",
+            "reason": "Claim is supported by its declared canonical citations",
+            "semantic_matching": {
+              "comparison_text": "Jon M. Foster 64 Executive Vice President and Chief Operating Officer",
+              "method": "whitespace_typography",
+              "policy": "M3-only; no letter, digit, name, date, title or negation substitutions"
+            },
+            "statement": "Jon M. Foster"
+          },
+          {
+            "citation_ids": [
+              "cite:1c23b42c8b1f94d9"
+            ],
+            "citation_results": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Jon M. Foster 64 Executive Vice President and Chief Operating Officer",
+                "original_source_text": "Jon M. Foster\n64\nExecutive Vice President and Chief Operating Officer",
+                "outcome": "accepted",
+                "page_char_end": 160067,
+                "page_char_start": 159998,
+                "passage_offset": 159626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Jon M. Foster\n64\nExecutive Vice President and Chief Operating Officer",
+                "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 441,
+                "span_start": 372
+              }
+            ],
+            "citations": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Jon M. Foster 64 Executive Vice President and Chief Operating Officer",
+                "original_source_text": "Jon M. Foster\n64\nExecutive Vice President and Chief Operating Officer",
+                "outcome": "accepted",
+                "page_char_end": 160067,
+                "page_char_start": 159998,
+                "passage_offset": 159626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Jon M. Foster\n64\nExecutive Vice President and Chief Operating Officer",
+                "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 441,
+                "span_start": 372
+              }
+            ],
+            "claim_id": "executive:4:position",
+            "executive": "Jon M. Foster",
+            "kind": "identity",
+            "outcome": "accepted",
+            "reason": "Claim is supported by its declared canonical citations",
+            "semantic_matching": {
+              "comparison_text": "Jon M. Foster 64 Executive Vice President and Chief Operating Officer",
+              "method": "whitespace_typography",
+              "policy": "M3-only; no letter, digit, name, date, title or negation substitutions"
+            },
+            "statement": "Executive Vice President and Chief Operating Officer"
+          },
+          {
+            "appointment_scope": "Executive Vice President and Chief Operating Officer",
+            "citation_ids": [
+              "cite:ed61fb4b8f791606"
+            ],
+            "citation_results": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Jon M. Foster was appointed Executive Vice President and Chief Operating Officer effective January 1, 2023.",
+                "original_source_text": "Jon M. Foster was appointed Executive Vice President and Chief Operating Officer effective January 1, 2023.",
+                "outcome": "accepted",
+                "page_char_end": 162373,
+                "page_char_start": 162266,
+                "passage_offset": 161626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Jon M. Foster was appointed Executive Vice President and Chief Operating Officer effective January 1, 2023.",
+                "source_id": "73a762a8c89fc539f60cb565f068dbf1f6098bf6c8ad237732f992c1749a3e13",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 747,
+                "span_start": 640
+              }
+            ],
+            "citations": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Jon M. Foster was appointed Executive Vice President and Chief Operating Officer effective January 1, 2023.",
+                "original_source_text": "Jon M. Foster was appointed Executive Vice President and Chief Operating Officer effective January 1, 2023.",
+                "outcome": "accepted",
+                "page_char_end": 162373,
+                "page_char_start": 162266,
+                "passage_offset": 161626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Jon M. Foster was appointed Executive Vice President and Chief Operating Officer effective January 1, 2023.",
+                "source_id": "73a762a8c89fc539f60cb565f068dbf1f6098bf6c8ad237732f992c1749a3e13",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 747,
+                "span_start": 640
+              }
+            ],
+            "claim_id": "executive:4:appointment",
+            "executive": "Jon M. Foster",
+            "kind": "appointment",
+            "outcome": "accepted",
+            "reason": "Claim is supported by its declared canonical citations",
+            "semantic_matching": {
+              "comparison_text": "Jon M. Foster was appointed Executive Vice President and Chief Operating Officer effective January 1, 2023.",
+              "method": "whitespace_typography",
+              "policy": "M3-only; no letter, digit, name, date, title or negation substitutions"
+            },
+            "statement": "Executive Vice President and Chief Operating Officer; 2023-01-01"
+          },
+          {
+            "citation_ids": [
+              "cite:7c662b827dfaedbd"
+            ],
+            "citation_results": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Prior to that time, he served as President - American Group from January 2013 to December 2022",
+                "original_source_text": "Prior to that time, he served as President \u2014 American Group from January 2013 to December 2022",
+                "outcome": "accepted",
+                "page_char_end": 162468,
+                "page_char_start": 162374,
+                "passage_offset": 161626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Prior to that time, he served as President \u2014 American Group from January 2013 to December 2022",
+                "source_id": "73a762a8c89fc539f60cb565f068dbf1f6098bf6c8ad237732f992c1749a3e13",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 842,
+                "span_start": 748
+              }
+            ],
+            "citations": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Prior to that time, he served as President - American Group from January 2013 to December 2022",
+                "original_source_text": "Prior to that time, he served as President \u2014 American Group from January 2013 to December 2022",
+                "outcome": "accepted",
+                "page_char_end": 162468,
+                "page_char_start": 162374,
+                "passage_offset": 161626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Prior to that time, he served as President \u2014 American Group from January 2013 to December 2022",
+                "source_id": "73a762a8c89fc539f60cb565f068dbf1f6098bf6c8ad237732f992c1749a3e13",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 842,
+                "span_start": 748
+              }
+            ],
+            "claim_id": "executive:4:role:1",
+            "context_evidence_ids": [
+              "73a762a8c89fc539f60cb565f068dbf1f6098bf6c8ad237732f992c1749a3e13"
+            ],
+            "executive": "Jon M. Foster",
+            "kind": "prior_internal_role",
+            "outcome": "accepted",
+            "reason": "Claim is supported by its declared canonical citations",
+            "semantic_matching": {
+              "comparison_text": "Prior to that time, he served as President - American Group from January 2013 to December 2022",
+              "method": "whitespace_typography",
+              "policy": "M3-only; no letter, digit, name, date, title or negation substitutions"
+            },
+            "statement": "President \u2014 American Group; 2013-01 to 2022-12"
+          },
+          {
+            "citation_ids": [
+              "cite:b65c8d8d3fd356be"
+            ],
+            "citation_results": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Michael A. Marks 56 Executive Vice President and Chief Financial Officer",
+                "original_source_text": "Michael A. Marks\n56\nExecutive Vice President and Chief Financial Officer",
+                "outcome": "accepted",
+                "page_char_end": 160140,
+                "page_char_start": 160068,
+                "passage_offset": 159626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Michael A. Marks\n56\nExecutive Vice President and Chief Financial Officer",
+                "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 514,
+                "span_start": 442
+              }
+            ],
+            "citations": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Michael A. Marks 56 Executive Vice President and Chief Financial Officer",
+                "original_source_text": "Michael A. Marks\n56\nExecutive Vice President and Chief Financial Officer",
+                "outcome": "accepted",
+                "page_char_end": 160140,
+                "page_char_start": 160068,
+                "passage_offset": 159626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Michael A. Marks\n56\nExecutive Vice President and Chief Financial Officer",
+                "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 514,
+                "span_start": 442
+              }
+            ],
+            "claim_id": "executive:5:identity",
+            "executive": "Michael A. Marks",
+            "kind": "identity",
+            "outcome": "accepted",
+            "reason": "Claim is supported by its declared canonical citations",
+            "semantic_matching": {
+              "comparison_text": "Michael A. Marks 56 Executive Vice President and Chief Financial Officer",
+              "method": "whitespace_typography",
+              "policy": "M3-only; no letter, digit, name, date, title or negation substitutions"
+            },
+            "statement": "Michael A. Marks"
+          },
+          {
+            "citation_ids": [
+              "cite:b65c8d8d3fd356be"
+            ],
+            "citation_results": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Michael A. Marks 56 Executive Vice President and Chief Financial Officer",
+                "original_source_text": "Michael A. Marks\n56\nExecutive Vice President and Chief Financial Officer",
+                "outcome": "accepted",
+                "page_char_end": 160140,
+                "page_char_start": 160068,
+                "passage_offset": 159626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Michael A. Marks\n56\nExecutive Vice President and Chief Financial Officer",
+                "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 514,
+                "span_start": 442
+              }
+            ],
+            "citations": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Michael A. Marks 56 Executive Vice President and Chief Financial Officer",
+                "original_source_text": "Michael A. Marks\n56\nExecutive Vice President and Chief Financial Officer",
+                "outcome": "accepted",
+                "page_char_end": 160140,
+                "page_char_start": 160068,
+                "passage_offset": 159626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Michael A. Marks\n56\nExecutive Vice President and Chief Financial Officer",
+                "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 514,
+                "span_start": 442
+              }
+            ],
+            "claim_id": "executive:5:position",
+            "executive": "Michael A. Marks",
+            "kind": "identity",
+            "outcome": "accepted",
+            "reason": "Claim is supported by its declared canonical citations",
+            "semantic_matching": {
+              "comparison_text": "Michael A. Marks 56 Executive Vice President and Chief Financial Officer",
+              "method": "whitespace_typography",
+              "policy": "M3-only; no letter, digit, name, date, title or negation substitutions"
+            },
+            "statement": "Executive Vice President and Chief Financial Officer"
+          },
+          {
+            "appointment_scope": "Executive Vice President and Chief Financial Officer",
+            "citation_ids": [
+              "cite:492221a3907018f9"
+            ],
+            "citation_results": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Michael A. Marks was appointed Executive Vice President and Chief Financial Officer, effective May 1, 2024.",
+                "original_source_text": "Michael A. Marks was appointed Executive Vice President and Chief Financial Officer, effective May 1, 2024.",
+                "outcome": "accepted",
+                "page_char_end": 163078,
+                "page_char_start": 162971,
+                "passage_offset": 161626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Michael A. Marks was appointed Executive Vice President and Chief Financial Officer, effective May 1, 2024.",
+                "source_id": "73a762a8c89fc539f60cb565f068dbf1f6098bf6c8ad237732f992c1749a3e13",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 1452,
+                "span_start": 1345
+              }
+            ],
+            "citations": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Michael A. Marks was appointed Executive Vice President and Chief Financial Officer, effective May 1, 2024.",
+                "original_source_text": "Michael A. Marks was appointed Executive Vice President and Chief Financial Officer, effective May 1, 2024.",
+                "outcome": "accepted",
+                "page_char_end": 163078,
+                "page_char_start": 162971,
+                "passage_offset": 161626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Michael A. Marks was appointed Executive Vice President and Chief Financial Officer, effective May 1, 2024.",
+                "source_id": "73a762a8c89fc539f60cb565f068dbf1f6098bf6c8ad237732f992c1749a3e13",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 1452,
+                "span_start": 1345
+              }
+            ],
+            "claim_id": "executive:5:appointment",
+            "executive": "Michael A. Marks",
+            "kind": "appointment",
+            "outcome": "accepted",
+            "reason": "Claim is supported by its declared canonical citations",
+            "semantic_matching": {
+              "comparison_text": "Michael A. Marks was appointed Executive Vice President and Chief Financial Officer, effective May 1, 2024.",
+              "method": "whitespace_typography",
+              "policy": "M3-only; no letter, digit, name, date, title or negation substitutions"
+            },
+            "statement": "Executive Vice President and Chief Financial Officer; 2024-05-01"
+          },
+          {
+            "citation_ids": [
+              "cite:87e1d0346fa53802"
+            ],
+            "citation_results": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "He previously served as Senior Vice President - Finance from January 2023 through April 2024.",
+                "original_source_text": "He previously served as Senior Vice President \u2014 Finance from January 2023 through April 2024.",
+                "outcome": "accepted",
+                "page_char_end": 163172,
+                "page_char_start": 163079,
+                "passage_offset": 161626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "He previously served as Senior Vice President \u2014 Finance from January 2023 through April 2024.",
+                "source_id": "73a762a8c89fc539f60cb565f068dbf1f6098bf6c8ad237732f992c1749a3e13",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 1546,
+                "span_start": 1453
+              }
+            ],
+            "citations": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "He previously served as Senior Vice President - Finance from January 2023 through April 2024.",
+                "original_source_text": "He previously served as Senior Vice President \u2014 Finance from January 2023 through April 2024.",
+                "outcome": "accepted",
+                "page_char_end": 163172,
+                "page_char_start": 163079,
+                "passage_offset": 161626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "He previously served as Senior Vice President \u2014 Finance from January 2023 through April 2024.",
+                "source_id": "73a762a8c89fc539f60cb565f068dbf1f6098bf6c8ad237732f992c1749a3e13",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 1546,
+                "span_start": 1453
+              }
+            ],
+            "claim_id": "executive:5:role:1",
+            "context_evidence_ids": [
+              "73a762a8c89fc539f60cb565f068dbf1f6098bf6c8ad237732f992c1749a3e13"
+            ],
+            "executive": "Michael A. Marks",
+            "kind": "prior_internal_role",
+            "outcome": "accepted",
+            "reason": "Claim is supported by its declared canonical citations",
+            "semantic_matching": {
+              "comparison_text": "He previously served as Senior Vice President - Finance from January 2023 through April 2024.",
+              "method": "whitespace_typography",
+              "policy": "M3-only; no letter, digit, name, date, title or negation substitutions"
+            },
+            "statement": "Senior Vice President \u2014 Finance; 2023-01 to 2024-04"
+          },
+          {
+            "citation_ids": [
+              "cite:3ff9dbedca922d45"
+            ],
+            "citation_results": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Michael R. McAlevey 62 Executive Vice President - Chief Legal and Administrative Officer",
+                "original_source_text": "Michael R. McAlevey\n62\nExecutive Vice President \u2014 Chief Legal and Administrative Officer",
+                "outcome": "accepted",
+                "page_char_end": 160229,
+                "page_char_start": 160141,
+                "passage_offset": 159626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Michael R. McAlevey\n62\nExecutive Vice President \u2014 Chief Legal and Administrative Officer",
+                "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 603,
+                "span_start": 515
+              }
+            ],
+            "citations": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Michael R. McAlevey 62 Executive Vice President - Chief Legal and Administrative Officer",
+                "original_source_text": "Michael R. McAlevey\n62\nExecutive Vice President \u2014 Chief Legal and Administrative Officer",
+                "outcome": "accepted",
+                "page_char_end": 160229,
+                "page_char_start": 160141,
+                "passage_offset": 159626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Michael R. McAlevey\n62\nExecutive Vice President \u2014 Chief Legal and Administrative Officer",
+                "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 603,
+                "span_start": 515
+              }
+            ],
+            "claim_id": "executive:6:identity",
+            "executive": "Michael R. McAlevey",
+            "kind": "identity",
+            "outcome": "accepted",
+            "reason": "Claim is supported by its declared canonical citations",
+            "semantic_matching": {
+              "comparison_text": "Michael R. McAlevey 62 Executive Vice President - Chief Legal and Administrative Officer",
+              "method": "whitespace_typography",
+              "policy": "M3-only; no letter, digit, name, date, title or negation substitutions"
+            },
+            "statement": "Michael R. McAlevey"
+          },
+          {
+            "citation_ids": [
+              "cite:3ff9dbedca922d45"
+            ],
+            "citation_results": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Michael R. McAlevey 62 Executive Vice President - Chief Legal and Administrative Officer",
+                "original_source_text": "Michael R. McAlevey\n62\nExecutive Vice President \u2014 Chief Legal and Administrative Officer",
+                "outcome": "accepted",
+                "page_char_end": 160229,
+                "page_char_start": 160141,
+                "passage_offset": 159626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Michael R. McAlevey\n62\nExecutive Vice President \u2014 Chief Legal and Administrative Officer",
+                "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 603,
+                "span_start": 515
+              }
+            ],
+            "citations": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Michael R. McAlevey 62 Executive Vice President - Chief Legal and Administrative Officer",
+                "original_source_text": "Michael R. McAlevey\n62\nExecutive Vice President \u2014 Chief Legal and Administrative Officer",
+                "outcome": "accepted",
+                "page_char_end": 160229,
+                "page_char_start": 160141,
+                "passage_offset": 159626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Michael R. McAlevey\n62\nExecutive Vice President \u2014 Chief Legal and Administrative Officer",
+                "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 603,
+                "span_start": 515
+              }
+            ],
+            "claim_id": "executive:6:position",
+            "executive": "Michael R. McAlevey",
+            "kind": "identity",
+            "outcome": "accepted",
+            "reason": "Claim is supported by its declared canonical citations",
+            "semantic_matching": {
+              "comparison_text": "Michael R. McAlevey 62 Executive Vice President - Chief Legal and Administrative Officer",
+              "method": "whitespace_typography",
+              "policy": "M3-only; no letter, digit, name, date, title or negation substitutions"
+            },
+            "statement": "Executive Vice President \u2014 Chief Legal and Administrative Officer"
+          },
+          {
+            "appointment_scope": "Executive Vice President \u2014 Chief Legal and Administrative Officer",
+            "citation_ids": [
+              "cite:c53d545cf8901b95"
+            ],
+            "citation_results": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Michael R. McAlevey was appointed Executive Vice President - Chief Legal and Administrative Officer of the Company, effective April 1, 2024.",
+                "original_source_text": "Michael R. McAlevey was appointed Executive Vice President \u2014 Chief Legal and Administrative Officer of the Company, effective April 1, 2024.",
+                "outcome": "accepted",
+                "page_char_end": 163624,
+                "page_char_start": 163484,
+                "passage_offset": 161626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Michael R. McAlevey was appointed Executive Vice President \u2014 Chief Legal and Administrative Officer of the Company, effective April 1, 2024.",
+                "source_id": "73a762a8c89fc539f60cb565f068dbf1f6098bf6c8ad237732f992c1749a3e13",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 1998,
+                "span_start": 1858
+              }
+            ],
+            "citations": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Michael R. McAlevey was appointed Executive Vice President - Chief Legal and Administrative Officer of the Company, effective April 1, 2024.",
+                "original_source_text": "Michael R. McAlevey was appointed Executive Vice President \u2014 Chief Legal and Administrative Officer of the Company, effective April 1, 2024.",
+                "outcome": "accepted",
+                "page_char_end": 163624,
+                "page_char_start": 163484,
+                "passage_offset": 161626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Michael R. McAlevey was appointed Executive Vice President \u2014 Chief Legal and Administrative Officer of the Company, effective April 1, 2024.",
+                "source_id": "73a762a8c89fc539f60cb565f068dbf1f6098bf6c8ad237732f992c1749a3e13",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 1998,
+                "span_start": 1858
+              }
+            ],
+            "claim_id": "executive:6:appointment",
+            "executive": "Michael R. McAlevey",
+            "kind": "appointment",
+            "outcome": "accepted",
+            "reason": "Claim is supported by its declared canonical citations",
+            "semantic_matching": {
+              "comparison_text": "Michael R. McAlevey was appointed Executive Vice President - Chief Legal and Administrative Officer of the Company, effective April 1, 2024.",
+              "method": "whitespace_typography",
+              "policy": "M3-only; no letter, digit, name, date, title or negation substitutions"
+            },
+            "statement": "Executive Vice President \u2014 Chief Legal and Administrative Officer; 2024-04-01"
+          },
+          {
+            "citation_ids": [],
+            "citation_results": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "found_elsewhere_ids": [],
+                "outcome": "unsupported",
+                "passage_offset": 163626,
+                "physical_page": 1,
+                "quotation_check": "failed",
+                "quote": "Mr. McAlevey previously served as Senior Vice President and Chief Legal Officer from January 2022 through March 2024.",
+                "reason": "Quotation absent from declared passage",
+                "source_id": "ff343f80e7ef1cd0d55086c5c0942a1a81c81c0865fedc0348ddb9d56859388f",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c"
+              }
+            ],
+            "citations": [],
+            "claim_id": "executive:6:role:1",
+            "executive": "Michael R. McAlevey",
+            "kind": "prior_internal_role",
+            "outcome": "unsupported",
+            "reason": "No accurate, correctly attributed declared citation survives",
+            "semantic_matching": {
+              "comparison_text": "",
+              "method": "whitespace_typography",
+              "policy": "M3-only; no letter, digit, name, date, title or negation substitutions"
+            },
+            "statement": "Senior Vice President and Chief Legal Officer; 2022-01 to 2024-03"
+          },
+          {
+            "citation_ids": [],
+            "citation_results": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Prior to joining HCA, Mr. McAlevey served in senior legal and executive roles at General Electric, most recently as Vice President, General Counsel and Business Development Leader for GE Healthcare since 2018.",
+                "original_source_text": "Prior to joining HCA, Mr. McAlevey served in senior legal and executive roles at General Electric, most recently as Vice President, General Counsel and Business Development Leader for GE Healthcare since 2018.",
+                "outcome": "accepted",
+                "page_char_end": 163952,
+                "page_char_start": 163743,
+                "passage_offset": 163626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Prior to joining HCA, Mr. McAlevey served in senior legal and executive roles at General Electric, most recently as Vice President, General Counsel and Business Development Leader for GE Healthcare since 2018.",
+                "source_id": "ff343f80e7ef1cd0d55086c5c0942a1a81c81c0865fedc0348ddb9d56859388f",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 326,
+                "span_start": 117
+              }
+            ],
+            "citations": [],
+            "claim_id": "executive:6:external",
+            "executive": "Michael R. McAlevey",
+            "kind": "external_recruitment",
+            "outcome": "unsupported",
+            "reason": "External recruitment needs an affirmative source statement",
+            "semantic_matching": {
+              "comparison_text": "Prior to joining HCA, Mr. McAlevey served in senior legal and executive roles at General Electric, most recently as Vice President, General Counsel and Business Development Leader for GE Healthcare since 2018.",
+              "method": "whitespace_typography",
+              "policy": "M3-only; no letter, digit, name, date, title or negation substitutions"
+            },
+            "statement": "Prior to joining HCA, Mr. McAlevey served in senior legal and executive roles at General Electric, most recently as Vice President, General Counsel and Business Development Leader for GE Healthcare since 2018."
+          },
+          {
+            "citation_ids": [
+              "cite:06d4d8f2ed311be1"
+            ],
+            "citation_results": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Erica L. Rossitto 48 Senior Vice President and Chief Nurse Executive",
+                "original_source_text": "Erica L. Rossitto\n48\nSenior Vice President and Chief Nurse Executive",
+                "outcome": "accepted",
+                "page_char_end": 160298,
+                "page_char_start": 160230,
+                "passage_offset": 159626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Erica L. Rossitto\n48\nSenior Vice President and Chief Nurse Executive",
+                "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 672,
+                "span_start": 604
+              }
+            ],
+            "citations": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Erica L. Rossitto 48 Senior Vice President and Chief Nurse Executive",
+                "original_source_text": "Erica L. Rossitto\n48\nSenior Vice President and Chief Nurse Executive",
+                "outcome": "accepted",
+                "page_char_end": 160298,
+                "page_char_start": 160230,
+                "passage_offset": 159626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Erica L. Rossitto\n48\nSenior Vice President and Chief Nurse Executive",
+                "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 672,
+                "span_start": 604
+              }
+            ],
+            "claim_id": "executive:7:identity",
+            "executive": "Erica L. Rossitto",
+            "kind": "identity",
+            "outcome": "accepted",
+            "reason": "Claim is supported by its declared canonical citations",
+            "semantic_matching": {
+              "comparison_text": "Erica L. Rossitto 48 Senior Vice President and Chief Nurse Executive",
+              "method": "whitespace_typography",
+              "policy": "M3-only; no letter, digit, name, date, title or negation substitutions"
+            },
+            "statement": "Erica L. Rossitto"
+          },
+          {
+            "citation_ids": [
+              "cite:06d4d8f2ed311be1"
+            ],
+            "citation_results": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Erica L. Rossitto 48 Senior Vice President and Chief Nurse Executive",
+                "original_source_text": "Erica L. Rossitto\n48\nSenior Vice President and Chief Nurse Executive",
+                "outcome": "accepted",
+                "page_char_end": 160298,
+                "page_char_start": 160230,
+                "passage_offset": 159626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Erica L. Rossitto\n48\nSenior Vice President and Chief Nurse Executive",
+                "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 672,
+                "span_start": 604
+              }
+            ],
+            "citations": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Erica L. Rossitto 48 Senior Vice President and Chief Nurse Executive",
+                "original_source_text": "Erica L. Rossitto\n48\nSenior Vice President and Chief Nurse Executive",
+                "outcome": "accepted",
+                "page_char_end": 160298,
+                "page_char_start": 160230,
+                "passage_offset": 159626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Erica L. Rossitto\n48\nSenior Vice President and Chief Nurse Executive",
+                "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 672,
+                "span_start": 604
+              }
+            ],
+            "claim_id": "executive:7:position",
+            "executive": "Erica L. Rossitto",
+            "kind": "identity",
+            "outcome": "accepted",
+            "reason": "Claim is supported by its declared canonical citations",
+            "semantic_matching": {
+              "comparison_text": "Erica L. Rossitto 48 Senior Vice President and Chief Nurse Executive",
+              "method": "whitespace_typography",
+              "policy": "M3-only; no letter, digit, name, date, title or negation substitutions"
+            },
+            "statement": "Senior Vice President and Chief Nurse Executive"
+          },
+          {
+            "appointment_scope": "Senior Vice President and Chief Nurse Executive",
+            "citation_ids": [
+              "cite:05a57aa2f5e13d17"
+            ],
+            "citation_results": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Erica L. Rossitto was appointed Senior Vice President and Chief Nurse Executive, effective February 1, 2026.",
+                "original_source_text": "Erica L. Rossitto was appointed Senior Vice President and Chief Nurse Executive, effective February 1, 2026.",
+                "outcome": "accepted",
+                "page_char_end": 164417,
+                "page_char_start": 164309,
+                "passage_offset": 163626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Erica L. Rossitto was appointed Senior Vice President and Chief Nurse Executive, effective February 1, 2026.",
+                "source_id": "ff343f80e7ef1cd0d55086c5c0942a1a81c81c0865fedc0348ddb9d56859388f",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 791,
+                "span_start": 683
+              }
+            ],
+            "citations": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Erica L. Rossitto was appointed Senior Vice President and Chief Nurse Executive, effective February 1, 2026.",
+                "original_source_text": "Erica L. Rossitto was appointed Senior Vice President and Chief Nurse Executive, effective February 1, 2026.",
+                "outcome": "accepted",
+                "page_char_end": 164417,
+                "page_char_start": 164309,
+                "passage_offset": 163626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Erica L. Rossitto was appointed Senior Vice President and Chief Nurse Executive, effective February 1, 2026.",
+                "source_id": "ff343f80e7ef1cd0d55086c5c0942a1a81c81c0865fedc0348ddb9d56859388f",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 791,
+                "span_start": 683
+              }
+            ],
+            "claim_id": "executive:7:appointment",
+            "executive": "Erica L. Rossitto",
+            "kind": "appointment",
+            "outcome": "accepted",
+            "reason": "Claim is supported by its declared canonical citations",
+            "semantic_matching": {
+              "comparison_text": "Erica L. Rossitto was appointed Senior Vice President and Chief Nurse Executive, effective February 1, 2026.",
+              "method": "whitespace_typography",
+              "policy": "M3-only; no letter, digit, name, date, title or negation substitutions"
+            },
+            "statement": "Senior Vice President and Chief Nurse Executive; 2026-02-01"
+          },
+          {
+            "citation_ids": [
+              "cite:ab282799fb6b25fd"
+            ],
+            "citation_results": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "She previously served as Senior Vice President and Assistant Chief Nurse Executive from December 2023 through January 2026.",
+                "original_source_text": "She previously served as Senior Vice President and Assistant Chief Nurse Executive from December 2023 through January 2026.",
+                "outcome": "accepted",
+                "page_char_end": 164541,
+                "page_char_start": 164418,
+                "passage_offset": 163626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "She previously served as Senior Vice President and Assistant Chief Nurse Executive from December 2023 through January 2026.",
+                "source_id": "ff343f80e7ef1cd0d55086c5c0942a1a81c81c0865fedc0348ddb9d56859388f",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 915,
+                "span_start": 792
+              }
+            ],
+            "citations": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "She previously served as Senior Vice President and Assistant Chief Nurse Executive from December 2023 through January 2026.",
+                "original_source_text": "She previously served as Senior Vice President and Assistant Chief Nurse Executive from December 2023 through January 2026.",
+                "outcome": "accepted",
+                "page_char_end": 164541,
+                "page_char_start": 164418,
+                "passage_offset": 163626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "She previously served as Senior Vice President and Assistant Chief Nurse Executive from December 2023 through January 2026.",
+                "source_id": "ff343f80e7ef1cd0d55086c5c0942a1a81c81c0865fedc0348ddb9d56859388f",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 915,
+                "span_start": 792
+              }
+            ],
+            "claim_id": "executive:7:role:1",
+            "context_evidence_ids": [
+              "ff343f80e7ef1cd0d55086c5c0942a1a81c81c0865fedc0348ddb9d56859388f"
+            ],
+            "executive": "Erica L. Rossitto",
+            "kind": "prior_internal_role",
+            "outcome": "accepted",
+            "reason": "Claim is supported by its declared canonical citations",
+            "semantic_matching": {
+              "comparison_text": "She previously served as Senior Vice President and Assistant Chief Nurse Executive from December 2023 through January 2026.",
+              "method": "whitespace_typography",
+              "policy": "M3-only; no letter, digit, name, date, title or negation substitutions"
+            },
+            "statement": "Senior Vice President and Assistant Chief Nurse Executive; 2023-12 to 2026-01"
+          },
+          {
+            "citation_ids": [],
+            "citation_results": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Samuel N. Hazen has served as Chief Executive Officer since January 2019 and was appointed as a director in September 2018.",
+                "original_source_text": "Samuel N. Hazen has served as Chief Executive Officer since January 2019 and was appointed as a director in September 2018.",
+                "outcome": "accepted",
+                "page_char_end": 160422,
+                "page_char_start": 160299,
+                "passage_offset": 159626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Samuel N. Hazen has served as Chief Executive Officer since January 2019 and was appointed as a director in September 2018.",
+                "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 796,
+                "span_start": 673
+              }
+            ],
+            "citations": [],
+            "claim_id": "f_01",
+            "executive": "Samuel N. Hazen",
+            "kind": "fact",
+            "outcome": "unsupported",
+            "reason": "Fact statement changes or exceeds its surviving quotations",
+            "semantic_matching": {
+              "comparison_text": "Samuel N. Hazen has served as Chief Executive Officer since January 2019 and was appointed as a director in September 2018.",
+              "method": "whitespace_typography",
+              "policy": "M3-only; no letter, digit, name, date, title or negation substitutions"
+            },
+            "statement": "Samuel N. Hazen has served as the Company\u0027s Chief Executive Officer since January 2019 and as a director since September 2018."
+          },
+          {
+            "citation_ids": [],
+            "citation_results": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Prior to joining HCA, Mr. McAlevey served in senior legal and executive roles at General Electric",
+                "original_source_text": "Prior to joining HCA, Mr. McAlevey served in senior legal and executive roles at General Electric",
+                "outcome": "accepted",
+                "page_char_end": 163840,
+                "page_char_start": 163743,
+                "passage_offset": 163626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Prior to joining HCA, Mr. McAlevey served in senior legal and executive roles at General Electric",
+                "source_id": "ff343f80e7ef1cd0d55086c5c0942a1a81c81c0865fedc0348ddb9d56859388f",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 214,
+                "span_start": 117
+              }
+            ],
+            "citations": [],
+            "claim_id": "f_02",
+            "executive": "Michael R. McAlevey",
+            "kind": "fact",
+            "outcome": "unsupported",
+            "reason": "Fact statement changes or exceeds its surviving quotations",
+            "semantic_matching": {
+              "comparison_text": "Prior to joining HCA, Mr. McAlevey served in senior legal and executive roles at General Electric",
+              "method": "whitespace_typography",
+              "policy": "M3-only; no letter, digit, name, date, title or negation substitutions"
+            },
+            "statement": "Michael R. McAlevey previously served in senior roles at General Electric before joining HCA."
+          },
+          {
+            "citation_ids": [],
+            "citation_results": [
+              {
+                "document_id": "9dea30b3393cd425f8aad6050585960b95ef52a28b71d56b83328cf794df2a6c",
+                "matching_method": "exact",
+                "normalized_quote": "Ms. Rossitto joined HCA in 2000 as a nurse at HCA HealthONE Swedish.",
+                "original_source_text": "Ms. Rossitto joined HCA in 2000 as a nurse at HCA HealthONE Swedish.",
+                "outcome": "accepted",
+                "page_char_end": 164897,
+                "page_char_start": 164829,
+                "passage_offset": 163626,
+                "physical_page": 1,
+                "quotation_check": "passed",
+                "quote": "Ms. Rossitto joined HCA in 2000 as a nurse at HCA HealthONE Swedish.",
+                "source_id": "ff343f80e7ef1cd0d55086c5c0942a1a81c81c0865fedc0348ddb9d56859388f",
+                "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c",
+                "span_end": 1271,
+                "span_start": 1203
+              }
+            ],
+            "citations": [],
+            "claim_id": "f_03",
+            "executive": "Erica L. Rossitto",
+            "kind": "fact",
+            "outcome": "unsupported",
+            "reason": "Fact statement changes or exceeds its surviving quotations",
+            "semantic_matching": {
+              "comparison_text": "Ms. Rossitto joined HCA in 2000 as a nurse at HCA HealthONE Swedish.",
+              "method": "whitespace_typography",
+              "policy": "M3-only; no letter, digit, name, date, title or negation substitutions"
+            },
+            "statement": "Erica L. Rossitto joined HCA in 2000 as a nurse at HCA HealthONE Swedish."
+          }
+        ],
+        "explicit_review_corrections": null,
+        "judgment_results": [
+          {
+            "judgment_id": "j_01",
+            "original_fact_ids": [
+              "f_01",
+              "f_03"
+            ],
+            "original_text": "The executive team displays high levels of institutional knowledge, with several senior leaders having multi-decade careers within the company, indicating stable internal succession pipelines and established operating expertise.",
+            "outcome": "qualified",
+            "reason": "The supporting facts f_01 and f_03 were rejected for paraphrasing; institutional knowledge is instead supported by appointment and role claim IDs.",
+            "removed_fact_ids": [
+              "f_01",
+              "f_03"
+            ],
+            "reviewed_text": "The executive team displays high levels of institutional knowledge, with several senior leaders having multi-decade careers within the company, indicating stable internal succession pipelines and established operating expertise.",
+            "supporting_claim_ids": [
+              "executive:1:appointment",
+              "executive:2:role:1",
+              "executive:4:role:1",
+              "executive:5:role:1",
+              "executive:7:role:1"
+            ]
+          },
+          {
+            "judgment_id": "j_02",
+            "original_fact_ids": [
+              "f_02"
+            ],
+            "original_text": "McAlevey was hired externally but served as Chief Legal Officer within the company for two years prior to his current promotion, suggesting successful integration into the HCA organizational culture.",
+            "outcome": "unsupported",
+            "reason": "No sufficient accepted claim basis supplied by Validator 7",
+            "removed_fact_ids": [
+              "f_02"
+            ],
+            "reviewed_text": "McAlevey was hired externally but served as Chief Legal Officer within the company for two years prior to his current promotion, suggesting successful integration into the HCA organizational culture.",
+            "supporting_claim_ids": []
+          }
+        ],
+        "overall_references_valid": true,
+        "rejected_facts": [
+          {
+            "detail": "Fact statement changes or exceeds its surviving quotations",
+            "fact_id": "f_01"
+          },
+          {
+            "detail": "Fact statement changes or exceeds its surviving quotations",
+            "fact_id": "f_02"
+          },
+          {
+            "detail": "Fact statement changes or exceeds its surviving quotations",
+            "fact_id": "f_03"
+          }
+        ],
+        "rejected_judgments": [
+          {
+            "detail": "No sufficient accepted claim basis supplied by Validator 7",
+            "judgment_id": "j_02"
+          }
+        ],
+        "validator_7": {
+          "agent_run_id": "16010750-5821-4cc5-b33f-43951c41899d",
+          "decisions": [
+            {
+              "judgment_id": "j_01",
+              "limitations": [
+                "Operational effectiveness depends on ongoing execution, which tenure alone does not guarantee."
+              ],
+              "outcome": "qualified",
+              "reason": "The supporting facts f_01 and f_03 were rejected for paraphrasing; institutional knowledge is instead supported by appointment and role claim IDs.",
+              "reviewed_text": "The executive team displays high levels of institutional knowledge, with several senior leaders having multi-decade careers within the company, indicating stable internal succession pipelines and established operating expertise.",
+              "supporting_claim_ids": [
+                "executive:1:appointment",
+                "executive:2:role:1",
+                "executive:4:role:1",
+                "executive:5:role:1",
+                "executive:7:role:1"
+              ]
+            },
+            {
+              "judgment_id": "j_02",
+              "limitations": [
+                "The impact of his transition from GE on future legal and administrative strategy remains to be proven."
+              ],
+              "outcome": "unsupported",
+              "reason": "The supporting fact f_02 was rejected and the underlying claim of two-year tenure as Chief Legal Officer was not successfully validated by an accurate citation.",
+              "reviewed_text": "McAlevey was hired externally but served as Chief Legal Officer within the company for two years prior to his current promotion, suggesting successful integration into the HCA organizational culture.",
+              "supporting_claim_ids": []
+            }
+          ],
+          "live_performance_verified": false,
+          "mode": "model_review",
+          "model": "gemini-3.1-flash-lite",
+          "overall": {
+            "judgment_ids": [
+              "j_01"
+            ],
+            "limitations": [
+              "No specific data on recent performance or turnover trends were provided, limiting the ability to assess executive impact on current financial metrics.",
+              "Operational effectiveness depends on ongoing execution, which tenure alone does not guarantee."
+            ],
+            "signal": "credit_positive",
+            "text": "The management team at HCA Healthcare exhibits strong organizational continuity, evidenced by long-tenured executives and internal promotions, which supports stable governance. The leadership structure incorporates experienced professionals with deep internal institutional knowledge as well as relevant external oversight experience, providing confidence in the leadership succession process."
+          },
+          "principal_executives": [
+            "Samuel N. Hazen",
+            "Jennifer L. Berres",
+            "Michael S. Cuffe, M.D.",
+            "Jon M. Foster",
+            "Michael A. Marks",
+            "Michael R. McAlevey",
+            "Erica L. Rossitto"
+          ],
+          "prompt_hash": "7c610168efb697e0066e2dc2ed2bc3368ded39320fbe41e7c91a50a583db4a0e",
+          "scope_limitations": [
+            "Fact-level assessments of specific prior roles for Dr. Cuffe and Mr. McAlevey were rejected due to citation failure or ambiguity.",
+            "Supporting fact statements (f_01, f_02, f_03) were rejected for paraphrasing canonical content."
+          ]
+        }
+      }
+    }
+  },
+  "hypotheses": [],
+  "id": "bo-evidence-3",
+  "parameters": [],
+  "source": {
+    "artifact_id": "management",
+    "binding": "same_run_verified",
+    "content_hash": "49b10dcad99b452977c23614740aeb8685e027c6f1d86efba5d21b369ef09e13",
+    "hash_kind": "canonical_stage",
+    "sha256": "72350f7408ac298fafe4b9e1aefae9809e86d2cf6549ff70874644f3d993dc0c",
+    "source_path": "/module_conclusions/M3/m3_rebuild/management/artifact",
+    "stage_name": "bo_audit:ar_70066e79dd954e3c"
+  },
+  "title": "Management"
+}</pre></div></details>
+
+</section></div></article></body></html>

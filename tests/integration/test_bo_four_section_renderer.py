@@ -201,6 +201,7 @@ def test_saved_real_hca_run_renders_without_analysis_or_artifact_changes(monkeyp
             run_id = 'ar_70066e79dd954e3c'
             view = load_view(session, run_id, 'HCA_2025_M3_PRESENTATION_LIVE_20261103')
             web_text, print_text = render_page(view), render_page(view, pdf=True)
+            assert sha256(web_text.encode()).hexdigest() == '0c36fb49d6905b45a20a21a9c41f65cd97f4b0e933ac97597e3b68614dca0cc5'
             web, printed = html.fromstring(web_text), html.fromstring(print_text)
             primary = printed.xpath('//*[@data-memo-section="management"]')[0]
             shown = primary.text_content()
@@ -215,6 +216,12 @@ def test_saved_real_hca_run_renders_without_analysis_or_artifact_changes(monkeyp
             assert 'page 1' not in shown.lower() and 'p. 1' not in shown
             assert not __import__('re').search(r'\b[a-f0-9]{64}\b', shown)
             assert 'Appointment:' not in shown
+            assert view['management']['pdf']['finding_count'] == 1
+            assert view['management']['pdf']['eligible_excluded_by_categorization'] == 0
+            assert len(primary.xpath('.//table[@class="bo-management-executive-table"]//tbody/tr')) == 7
+            assert '1 distinct reviewed finding' in shown
+            assert 'three to five distinct findings are not supported' in shown
+            assert 'No management-specific monitoring indicators or thresholds were recorded.' in shown
             support = web.xpath('//details[@class="bo-management-support"]')[0]
             assert support.get('open') is None
             assert 'f_01' in support.text_content()  # Original rationale remains available.

@@ -1,4 +1,4 @@
-{# Same read-only projection for interactive and print views. #}
+{% if pdf %}{% include 'bo_management_pdf.html.j2' %}{% else %}{# Same read-only projection for interactive and print views. #}
 {% set m = bo4.management %}
 {% macro references(item) %}
 {% if item.references %}<p class="source-cite">{% for ref in item.references %}{% if pdf %}<span data-source-id="{{ ref.source_id }}" data-source-sha256="{{ ref.source_sha256 }}">[{{ ref.number }}]</span>{% else %}<a href="#{{ ref.anchor }}">Source {{ ref.number }} · {{ ref.locator }}</a>{% endif %}{% if not loop.last %}; {% endif %}{% endfor %}</p>{% endif %}
@@ -88,4 +88,4 @@
   </div>{% endfor %}
 </details>
 {% endif %}
-{% else %}<p class="memo-empty">Reviewed management analysis is not available for this run.</p>{% endif %}
+{% else %}<p class="memo-empty">Reviewed management analysis is not available for this run.</p>{% endif %}{% endif %}

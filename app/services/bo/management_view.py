@@ -87,6 +87,78 @@ def _source_references(artifact, citations, documents, passages):
     return by_citation
 
 
+def _pdf_details(artifact, view, findings, references):
+    """Additional PDF context from admitted records; no new credit judgments."""
+    eligible_ids = {oid for finding in findings for oid in finding['observation_ids']}
+    observations = {o.get('observation_id'): o for o in artifact.get('observations', [])}
+    inventory = []
+    for oid, observation in observations.items():
+        inventory.append({'observation_id': oid, 'text': observation.get('text', '') if oid in eligible_ids else None,
+                          'direction': observation.get('direction'), 'review_status': observation.get('review_outcome'),
+                          'eligible': oid in eligible_ids, 'in_final_artifact': True,
+                          'citation_ids': list(observation.get('citation_ids', []))})
+    for result in artifact.get('validation', {}).get('judgment_results', []):
+        if result['judgment_id'] not in observations:
+            inventory.append({'observation_id': result['judgment_id'],
+                              'direction': None, 'review_status': result.get('outcome'), 'eligible': False,
+                              'in_final_artifact': False, 'reason': result.get('reason', '')})
+    groups = []
+    for group in view['finding_groups']:
+        entries = []
+        for finding in group['findings']:
+            original = observations.get(finding['observation_ids'][0], {})
+            topic = next((c['title'] for c in view['categories'] if finding in c['findings']),
+                         'Information Gaps' if finding in view['information_gaps'] else 'Other Reviewed Observations')
+            entries.append({**finding, 'topic': topic,
+                            'credit_implication': original.get('credit_implication') or original.get('credit_mechanism')})
+        if entries:
+            groups.append({'id': group['id'], 'title': group['title'], 'findings': entries})
+
+    citations = view['citations']
+    executives, source_ids = [], [cid for f in findings for cid in f['citation_ids']]
+    recent_labels = {'recent': 'Recent appointment', 'stable': 'Outside recent window',
+                     'boundary_uncertain': 'Review-window timing uncertain', 'unavailable': 'Timing unavailable'}
+    succession_labels = {'internal': 'Internal succession', 'confirmed_external': 'External appointment'}
+    for profile in artifact.get('profiles', []):
+        ids = profile.get('citation_ids', [])
+        if not ids or any(cid not in citations for cid in ids):
+            continue
+        # One admitted role supplies compact experience context. Original order
+        # is retained; no ranking or inference of performance is made.
+        roles = [r for r in profile.get('prior_internal_roles', [])
+                 if r.get('citation_ids') and all(cid in citations for cid in r['citation_ids'])]
+        role = deepcopy(roles[0]) if roles else None
+        row_ids = list(dict.fromkeys(ids + (role.get('citation_ids', []) if role else [])))
+        executives.append({'name': profile['name'], 'position': profile['position'], 'experience': role,
+                           'appointment_date': profile.get('appointment_date'),
+                           'transition': recent_labels.get(profile.get('recency'), 'Timing unavailable'),
+                           'succession': succession_labels.get(profile.get('succession')),
+                           'citation_ids': row_ids, 'references': references(row_ids)})
+        source_ids.extend(row_ids)
+
+    follow_up = _unique(artifact.get('model_assessment', {}).get('missing_information', []))
+    # A follow-up request is printed once on page 2. Material qualifications
+    # also attached to a reviewed observation remain beside page 1's assessment.
+    shared = {_key(q['text']) for q in view['qualifications'] if q['observation_ids']}
+    follow_up = [text for text in follow_up if _key(text) not in shared]
+    follow_up_keys = {_key(text) for text in follow_up}
+    qualifications = [q for q in view['qualifications'] if _key(q['text']) not in follow_up_keys]
+    monitoring = _unique([text for observation in artifact.get('observations', [])
+                          if observation.get('observation_id') in eligible_ids
+                          for text in observation.get('watch_triggers', [])])
+    count = len(findings)
+    return {'finding_groups': groups, 'finding_count': count,
+            'finding_limit_notice': (f'The saved assessment supports {count} distinct reviewed finding' + ('s' if count != 1 else '')
+                                    + '; three to five distinct findings are not supported by the recorded evidence.') if count < 3 else None,
+            'qualifications': qualifications, 'executives': executives, 'roster_date': artifact.get('roster_date'),
+            'review_window': deepcopy(artifact.get('review_window')), 'follow_up': follow_up,
+            'monitoring_priorities': monitoring, 'sources': references(source_ids),
+            'inventory': inventory,
+            'eligible_excluded_by_categorization': sum(o.get('review_outcome') in ('accepted', 'qualified')
+                and bool(o.get('citation_ids')) and all(cid in citations for cid in o['citation_ids'])
+                and o.get('observation_id') not in eligible_ids for o in artifact.get('observations', []))}
+
+
 def management_view(artifact, *, documents=None, passages=None, warnings=()):
     if not artifact:
         return None
@@ -222,7 +294,7 @@ def management_view(artifact, *, documents=None, passages=None, warnings=()):
     observations = deepcopy([o for o in artifact.get('observations', []) if o.get('review_outcome') in ('accepted', 'qualified')])
     for item in profiles + observations:
         item['references'] = references(item.get('citation_ids', []))
-    return {'overall_assessment': {'text': reviewed_text or overall.get('policy') or 'Management assessment unavailable.',
+    view = {'overall_assessment': {'text': reviewed_text or overall.get('policy') or 'Management assessment unavailable.',
                 'wording_label': 'Reviewed assessment' if reviewed_text else 'Recorded assessment',
                 'original_text': model.get('explanation') or overall.get('policy'), 'recorded_text': overall.get('policy'),
                 'outcome': overall.get('outcome', 'unavailable'), 'status': status, 'limitations': overall_limits},
@@ -237,3 +309,5 @@ def management_view(artifact, *, documents=None, passages=None, warnings=()):
             'recorded_limitations': deepcopy(artifact.get('limitations', [])),
             'executive_profiles': profiles, 'reviewed_observations': observations,
             'citations': deepcopy(citations), 'citation_references': citation_views, 'sources': references(source_ids)}
+    view['pdf'] = _pdf_details(artifact, view, findings, references)
+    return view

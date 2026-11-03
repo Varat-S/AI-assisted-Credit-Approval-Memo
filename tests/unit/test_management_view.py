@@ -218,3 +218,47 @@ def test_explicit_information_gap_is_separate_from_direction_groups():
          'review_outcome': 'qualified', 'text': 'Outcome evidence is missing.', 'citation_ids': ['c1']}]})
     assert [g['id'] for g in view['finding_groups'] if g['findings']] == ['information_gaps']
     assert not view['key_strengths'] and not view['key_concerns']
+
+
+def test_pdf_inventory_recovers_all_eligible_uncategorized_findings_without_padding():
+    observations = [{'observation_id': str(i), 'category': 'unknown', 'direction': 'positive',
+                     'review_outcome': 'qualified', 'text': f'Reviewed finding {i}.',
+                     'uncertainties': ['Outcome unproven.'], 'citation_ids': ['c1']} for i in range(5)]
+    source = {'citations': [{'citation_id': 'c1'}], 'observations': observations,
+              'validation': {'judgment_results': [{'judgment_id': 'withheld', 'outcome': 'unsupported',
+                                                   'original_text': 'Rejected conclusion.', 'reason': 'Unsupported.'}]}}
+    before = deepcopy(source)
+    view = management_view(source)
+    assert len(view['key_strengths']) == 3  # Existing compact web projection is unchanged.
+    assert len(view['pdf']['finding_groups'][0]['findings']) == 5
+    assert view['pdf']['finding_count'] == 5
+    assert view['pdf']['finding_limit_notice'] is None
+    assert view['pdf']['eligible_excluded_by_categorization'] == 0
+    assert [i['eligible'] for i in view['pdf']['inventory']] == [True]*5 + [False]
+    assert 'Rejected conclusion.' not in str(view['pdf']['finding_groups'])
+    assert source == before and management_view(source) == view
+
+
+def test_pdf_exec_context_selects_one_admitted_role_and_recorded_transitions_only():
+    source = {'citations': [{'citation_id': 'c1'}, {'citation_id': 'c2'}], 'roster_date': '2026-02-01',
+              'profiles': [{'name': 'Recorded CFO', 'position': 'Chief Financial Officer', 'appointment_date': '2024-05-01',
+                            'recency': 'recent', 'succession': 'internal', 'citation_ids': ['c1'],
+                            'prior_internal_roles': [{'position': 'Finance role', 'start_date': '2023-01',
+                                                      'end_date': '2024-04', 'citation_ids': ['c2']},
+                                                     {'position': 'Older role', 'citation_ids': ['c2']}]},
+                           {'name': 'Recorded legal officer', 'position': 'Legal officer', 'citation_ids': ['c1'],
+                            'prior_internal_roles': [{'position': 'Unadmitted role', 'citation_ids': ['missing']}]}],
+              'model_assessment': {'missing_information': ['Recent performance evidence.']},
+              'limitations': ['Recent performance evidence.']}
+    before = deepcopy(source)
+    pdf = management_view(source)['pdf']
+    assert pdf['executives'][0]['experience']['position'] == 'Finance role'
+    assert 'Older role' not in str(pdf['executives']) and 'Unadmitted role' not in str(pdf['executives'])
+    assert pdf['executives'][0]['transition'] == 'Recent appointment'
+    assert pdf['executives'][0]['appointment_date'] == '2024-05-01'
+    assert pdf['executives'][1]['experience'] is None
+    assert pdf['follow_up'] == ['Recent performance evidence.']
+    assert pdf['qualifications'] == []  # Printed once as a page-2 follow-up.
+    assert pdf['monitoring_priorities'] == []
+    assert '0 distinct reviewed findings' in pdf['finding_limit_notice']
+    assert source == before
