@@ -428,7 +428,7 @@ def get_bo_artifact_pdf(
             status_code=501,
             detail="No PDF backend is installed; run `pip install xhtml2pdf` and restart.")
     try:
-        if backend != "weasyprint":  # WeasyPrint resolves the page's own fonts
+        if backend == "xhtml2pdf":  # the other backends resolve the page's own fonts
             html = _with_pdf_font(html)
         pdf = _render_pdf_with(backend, html)
     except PdfBackendUnavailableError as exc:

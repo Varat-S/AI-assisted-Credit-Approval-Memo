@@ -93,7 +93,8 @@ def test_management_web_and_print_share_conservative_projection(db_session, tmp_
         assert finding['text'] in print_management[0].text_content()
     assert 'Appointment:' not in print_management[0].text_content()
     assert 'Recorded tenure:' not in print_management[0].text_content()
-    assert 'Full management records remain available in Audit' in printed.text_content()
+    assert not print_management[0].xpath('.//*[@data-source-id]')  # the PDF carries results, not evidence
+    assert 'Sources' not in [h.text_content() for h in print_management[0].xpath('.//h4')]
     for target in web_management[0].xpath('.//a[starts-with(@href,"#bo-management-citation-")]/@href'):
         assert len(web.xpath('//*[@id=$target]', target=target[1:])) == 1
     assert 'Insufficient evidence' in print_management[0].text_content()
@@ -134,7 +135,7 @@ def test_unclassified_concerns_and_qualifications_are_accessible_in_both_views(d
         assert observation['review_reason'] in page.text_content()
         assert observation['uncertainties'][0] in page.text_content()
         assert 'Recorded overall qualification.' in page.text_content()
-    assert printed.xpath('//*[@data-memo-section="management"]//*[@data-source-id]')
+    assert not printed.xpath('//*[@data-memo-section="management"]//*[@data-source-id]')
     assert bo_artifact(db_session, result.analysis_run_id, 'four_section') == frozen
     assert [(r.name, r.sha256, r.payload_json) for r in db_session.query(StageArtifact).all()] == stage_bytes
 
@@ -166,7 +167,10 @@ def test_direction_groups_and_material_qualifications_in_primary_print():
         assert 'Credit Concern · Qualified' in shown
         assert 'Mixed Finding · Qualified' in shown and 'Unassessed · Qualified' in page.text_content()
         assert 'Exact reviewed statement 5.' not in page.text_content()
-        assert 'Passage offset 600' in shown and 'Page 1' not in shown and 'p. 1' not in shown
+        if pdf:  # sources belong to the separate audit report
+            assert 'Passage offset 600' not in shown
+        else:
+            assert 'Passage offset 600' in shown and 'Page 1' not in shown and 'p. 1' not in shown
         assert 'a'*64 not in shown
     assert len(view['sources']) == 1
 
@@ -327,7 +331,7 @@ def test_current_review_overlay_and_historical_selection(db_session, tmp_path, m
     assert original['governance']['human_review_status'] == 'pending'
 
 
-def test_pdf_template_exports_all_content_and_evidence_appendix(db_session, tmp_path, monkeypatch):
+def test_pdf_template_exports_all_results_without_evidence(db_session, tmp_path, monkeypatch):
     from app.api import analysis
     from app.services.reporting import memo as pdf_backend
     result, _ = run(db_session, tmp_path, missing='industry')
@@ -336,8 +340,9 @@ def test_pdf_template_exports_all_content_and_evidence_appendix(db_session, tmp_
     page = html.fromstring(printed)
     assert len(page.xpath('//*[@data-memo-section]')) == 4
     assert not page.xpath('//details')
-    assert page.xpath('//aside[@aria-label="Business Overview evidence appendix"]')
-    assert not page.xpath('//aside//pre') and 'M1A6-H001' not in page.text_content()  # no raw evidence JSON
+    assert not page.xpath('//aside[@aria-label="Business Overview evidence appendix"]')
+    assert not page.xpath('//*[contains(@class,"bo-evidence-body")]') and not page.xpath('//*[@data-source-id]')
+    assert not page.xpath('//pre') and 'M1A6-H001' not in page.text_content()  # no raw evidence JSON
     assert len(page.xpath('//*[@data-schedule="non_note"]//tbody/tr')) == 4
     captured = []
     monkeypatch.setattr(pdf_backend, 'detect_pdf_backend', lambda: 'weasyprint')
@@ -348,7 +353,7 @@ def test_pdf_template_exports_all_content_and_evidence_appendix(db_session, tmp_
     with client_for(db_session, monkeypatch, [job(result)]) as client:
         assert client.get('/analysis/saved/memo.pdf').content.startswith(b'%PDF')
         assert client.get(f'/cases/{result.case_id}/bo/runs/{result.analysis_run_id}/memo.pdf').content.startswith(b'%PDF')
-    assert len(captured) == 2 and all('Business Overview evidence appendix' in x for x in captured)
+    assert len(captured) == 2 and not any('Business Overview evidence appendix' in x for x in captured)
     assert all('Industry analysis is not available in this version.' in x for x in captured)
 
 
@@ -458,4 +463,29 @@ def test_portrait_print_summary_and_full_schedules_preserve_sources(db_session, 
     assert bo_artifact(db_session, result.analysis_run_id, 'four_section') == original
     legacy_job = seed_run(db_session, 'layout-legacy')
     legacy = analysis_workspace.load_review(db_session, legacy_job)
-    assert '@page{size:A4;margin:16mm 14mm}' in _render_review(db_session, legacy_job, legacy, pdf=True)
+    assert '@page{size:A4;margin:12mm 12mm 13mm;' in _render_review(db_session, legacy_job, legacy, pdf=True)
+
+
+def test_pdf_omits_cross_dimensional_insights_but_screen_keeps_them(db_session, tmp_path):
+    from app.api.analysis import _render_review
+    result, _ = run(db_session, tmp_path)
+    view = analysis_workspace.load_review(db_session, job(result))
+    bo4 = view['four_section']
+    def entry(claim, topic, text):
+        e = deepcopy(claim)
+        e['claim']['text'] = text
+        return {**e, 'topic': topic, 'direction_label': 'Negative', 'source_hypothesis_id': text,
+                'pointers': [{'label': 'Finding', 'parts': [{'text': text}], 'empty_text': ''}]}
+    regular = entry(bo4['claims'][0], 'Pricing & reimbursement', 'REGULAR-FINDING')
+    insight = entry(bo4['claims'][1], 'Cross-dimensional insight', 'CROSSDIM-FINDING')
+    insight['evidence'] = {**insight['evidence'], 'title': 'Cross-dimensional insight'}
+    bo4['finding_groups'] = [{'title': 'Revenue Drivers', 'entries': [regular]}, {'title': 'Cost Drivers', 'entries': []},
+                             {'title': 'Revenue & Cost Interactions', 'entries': [insight]}]
+    bo4['evidence'] = [x for x in bo4['evidence'] if x['id'] != insight['evidence']['id']] + [insight['evidence']]
+    bo4['cross_dimensional'] = {insight['evidence']['id']}
+    printed = _render_review(db_session, job(result), view, pdf=True)
+    screen = _render_review(db_session, job(result), view)
+    assert 'REGULAR-FINDING' in printed and 'CROSSDIM-FINDING' not in printed
+    assert 'Revenue &amp; Cost Interactions' not in printed and 'Cross-dimensional insight' not in printed
+    assert 'No selected findings were recorded in this category.' in printed
+    assert 'CROSSDIM-FINDING' in screen and 'Revenue &amp; Cost Interactions' in screen

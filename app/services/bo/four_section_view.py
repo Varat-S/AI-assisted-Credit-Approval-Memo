@@ -182,8 +182,13 @@ def load_view(session, analysis_run_id, case_id=None):
                 entry['pointers'][0]['classification'] = entry['assessment']['finding']
                 entry['pointers'][1]['classification'] = entry['assessment']['implication']
                 entry['evidence']['assessment'] = entry['assessment']
+    from app.services.bo.roster_v3 import V3_AGENT_6_ID
+    # The PDF export leaves out Agent 6's cross-dimensional insights and their evidence.
+    cross_dimensional = {entry['evidence']['id'] for group in finding_groups or [] for entry in group['entries']
+                         if entry['source_agent_id'] == V3_AGENT_6_ID}
     return {'memo': artifact, 'svg': svg, 'debt_snapshot': snapshot, 'snapshot_placed': snapshot_placed,
             'claims': claims, 'finding_groups': finding_groups, 'evidence': evidence,
+            'cross_dimensional': cross_dimensional,
             'management': management_view(sections[1].get('content'), documents=documents, passages=passages,
                                           warnings=sections[1].get('visible_warnings', [])),
             'structure_tree': next(iter(structure['companies'].values()))['plain_text_tree'] if structure else None,

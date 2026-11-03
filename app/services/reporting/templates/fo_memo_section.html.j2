@@ -32,7 +32,7 @@
 <div class="memo-table-wrap"><table class="memo-table"><thead><tr><th>Check</th><th>Outcome</th><th>Finding</th><th>Effect on the scores</th></tr></thead><tbody>
 {% for p in memo.prechecks %}<tr><td>{{ p.title }}</td><td>{{ outcome(p.status) }}{% if p.decided_by %}<br><small>{{ p.decided_by|replace('_', ' ') }}</small>{% endif %}</td><td>{{ p.reason or '—' }}</td><td>{{ p.effect or '—' }}</td></tr>{% endfor %}
 </tbody></table></div>
-<p class="technical-note">The Pre-check Agent classifies the filing's passages; its quotes are verified against the filing before they count.</p>
+{% if not pdf %}<p class="technical-note">The Pre-check Agent classifies the filing's passages; its quotes are verified against the filing before they count.</p>{% endif %}
 {% else %}<p class="memo-empty">No pre-check was recorded for this run.</p>{% endif %}
 
 <h3>Financial Measures</h3>
@@ -74,5 +74,6 @@
 {% if out.data_limitations %}<p><strong>Data limitations</strong></p><ul>{% for d in out.data_limitations %}<li>{{ d }}</li>{% endfor %}</ul>{% endif %}
 {% endif %}
 
-<h3>Basis of Preparation</h3>
-<p class="technical-note">Every figure is computed by code from the {{ memo.case.form }}'s Inline XBRL facts ({{ memo.case.filing_folder }}){% if memo.case.source and memo.case.source.url %}, <a href="{{ memo.case.source.url }}">{{ memo.case.source.url }}</a>{% endif %}, for the period ending {{ memo.case.period_end or 'unknown' }} (FY{{ memo.case.fiscal_year or '?' }}); amounts are in millions of the reporting currency. Industry group: {{ memo.case.industry_group or 'not classified' }}. Run {{ memo.run.run_id }} (hash {{ (memo.run.content_hash or '')[:16] }}), engine {{ memo.run.engine_version }}{% if memo.run.agent_model %}, agent model {{ memo.run.agent_model }}{% endif %}. This section renders the recorded run; it adds no analysis of its own. Version {{ memo.version }}.</p>
+{% if pdf %}<p class="technical-note">Period ending {{ memo.case.period_end or 'unknown' }} (FY{{ memo.case.fiscal_year or '?' }}); amounts are in millions of the reporting currency. Industry group: {{ memo.case.industry_group or 'not classified' }}.</p>
+{% else %}<h3>Basis of Preparation</h3>
+<p class="technical-note">Every figure is computed by code from the {{ memo.case.form }}'s Inline XBRL facts ({{ memo.case.filing_folder }}){% if memo.case.source and memo.case.source.url %}, <a href="{{ memo.case.source.url }}">{{ memo.case.source.url }}</a>{% endif %}, for the period ending {{ memo.case.period_end or 'unknown' }} (FY{{ memo.case.fiscal_year or '?' }}); amounts are in millions of the reporting currency. Industry group: {{ memo.case.industry_group or 'not classified' }}. Run {{ memo.run.run_id }} (hash {{ (memo.run.content_hash or '')[:16] }}), engine {{ memo.run.engine_version }}{% if memo.run.agent_model %}, agent model {{ memo.run.agent_model }}{% endif %}. This section renders the recorded run; it adds no analysis of its own. Version {{ memo.version }}.</p>{% endif %}

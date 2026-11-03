@@ -1,0 +1,14 @@
+<style>
+{# One typeface and one fixed type scale for the Memo tab and its PDF. Included after every section stylesheet;
+   !important because those size text in rem, em and print-only pt. #}
+:root{--memo-font:"Segoe UI",Inter,Arial,Helvetica,sans-serif;--memo-title:28px;--memo-h2:19px;--memo-h3:16px;--memo-h4:14px;--memo-body:14px;--memo-table:12.5px;--memo-small:12px}
+body{font-family:var(--memo-font)}body :not(pre):not(code){font-family:inherit!important}
+.analysis-header h1{font-size:var(--memo-title)!important;font-weight:700!important;letter-spacing:-.01em;line-height:1.2}
+main h2{font-size:var(--memo-h2)!important;font-weight:700!important;line-height:1.3}
+main h3{font-size:var(--memo-h3)!important;font-weight:700!important;line-height:1.35}
+main h4,main summary{font-size:var(--memo-h4)!important;font-weight:700!important;line-height:1.4}
+main p,main li,main dt,main dd,main blockquote,main aside{font-size:var(--memo-body)!important;line-height:1.5}
+main table,main table p,main table li,main table th,main table td{font-size:var(--memo-table)!important;line-height:1.4}
+main .memo-scores strong,main .memo-score-table strong{font-size:var(--memo-h3)!important}
+.eyebrow,.analysis-meta,main .memo-status,main .notice-warning,main .technical-note,main .memo-empty,main .qualification,main .record-id,main small,main .source-cite,main .bo-source-index-note,main .bo-finding-badge,main .memo-scores span,main .memo-score-table span,main .memo-risk{font-size:var(--memo-small)!important;line-height:1.45}
+</style>

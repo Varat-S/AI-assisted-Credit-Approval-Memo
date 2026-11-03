@@ -476,6 +476,9 @@ def detect_pdf_backend() -> str | None:
     if os.name == "nt" and os.path.isdir(msys):
         os.environ.setdefault("WEASYPRINT_DLL_DIRECTORIES", msys)
 
+    # A headless browser prints the page exactly as the on-screen preview draws it.
+    if _find_browser() is not None:
+        return "chromium"
     for name in ("weasyprint", "xhtml2pdf"):
         if importlib.util.find_spec(name) is not None:
             try:
@@ -488,7 +491,49 @@ def detect_pdf_backend() -> str | None:
     return None
 
 
+_BROWSER_PATHS = (
+    r"C:\Program Files\Google\Chrome\Application\chrome.exe",
+    r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
+    r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
+    r"C:\Program Files\Microsoft\Edge\Application\msedge.exe",
+    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+)
+
+
+def _find_browser() -> str | None:
+    """An installed Chrome, Chromium or Edge executable for headless printing, or ``None``."""
+    import shutil
+
+    for name in ("chrome", "google-chrome", "chromium", "chromium-browser", "msedge"):
+        if found := shutil.which(name):
+            return found
+    return next((path for path in _BROWSER_PATHS if os.path.isfile(path)), None)
+
+
 def _render_pdf_with(backend: str, html: str) -> bytes:
+    if backend == "chromium":  # pragma: no cover - exercised only when a browser is installed
+        import subprocess
+        import tempfile
+
+        browser = _find_browser()
+        if browser is None:
+            raise PdfBackendUnavailableError("No Chrome or Edge executable was found.")
+        with tempfile.TemporaryDirectory() as tmp:
+            page, out = Path(tmp) / "page.html", Path(tmp) / "page.pdf"
+            page.write_text(html, encoding="utf-8")
+            try:
+                subprocess.run(
+                    [browser, "--headless", "--disable-gpu", "--no-first-run",
+                     "--no-pdf-header-footer", "--print-to-pdf-no-header",
+                     f"--user-data-dir={Path(tmp) / 'profile'}",
+                     f"--print-to-pdf={out}", page.as_uri()],
+                    capture_output=True, timeout=120, check=False)
+            except (OSError, subprocess.TimeoutExpired) as exc:
+                raise PdfBackendUnavailableError(f"The headless browser failed: {exc}") from exc
+            if not out.is_file():
+                raise PdfBackendUnavailableError("The headless browser produced no PDF.")
+            return out.read_bytes()
     if backend == "weasyprint":  # pragma: no cover - exercised only when installed
         try:
             import weasyprint

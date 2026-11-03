@@ -1,6 +1,5 @@
 {# PDF-only layout. Every analytical statement comes from the shared projection. #}
 {% set m = bo4.management %}
-{% macro refs(item) %}{% for ref in item.references %}<span data-source-id="{{ ref.source_id }}" data-source-sha256="{{ ref.source_sha256 }}">[{{ ref.number }}]</span>{% if not loop.last %}, {% endif %}{% endfor %}{% endmacro %}
 <style>
 @media print {
   .bo-memo-section[data-memo-section="management"]{break-before:page}
@@ -44,25 +43,23 @@
       <h4>{% if item.credit_implication %}Reviewed finding{% else %}Reviewed finding and credit implication{% endif %}</h4>
       <p>{{ item.text }}</p>
       {% if item.credit_implication %}<p><strong>Recorded credit implication:</strong> {{ item.credit_implication }}</p>{% endif %}
-      <p class="source-cite">{{ refs(item) }}</p>
     </div>{% endfor %}
   </section>
   {% else %}<p class="memo-empty">No eligible reviewed management findings are available.</p>{% endfor %}
   {% if m.pdf.finding_limit_notice %}<p class="bo-management-inventory-note">{{ m.pdf.finding_limit_notice }}</p>{% endif %}
-  {% if m.pdf.roster_date %}<p class="technical-note">Executive records as of {{ m.pdf.roster_date }} · {{ m.pdf.executives|length }} sourced executive profiles. Details, evidence gaps and source references follow.</p>{% endif %}
+  {% if m.pdf.roster_date %}<p class="technical-note">Executive records as of {{ m.pdf.roster_date }} · {{ m.pdf.executives|length }} sourced executive profiles. Details follow.</p>{% endif %}
 </div>
 
 <div class="bo-management-details-page">
   <h3>Management Details &amp; Monitoring</h3>
   {% if m.pdf.roster_date %}<p class="technical-note">Executive roster as of {{ m.pdf.roster_date }}{% if m.pdf.review_window %}; recorded transition review window {{ m.pdf.review_window.start }} to {{ m.pdf.review_window.end }}{% endif %}.</p>{% endif %}
   {% if m.pdf.executives %}
-  <table class="bo-management-executive-table" aria-label="Sourced key executives"><colgroup><col style="width:31%"><col style="width:32%"><col style="width:28%"><col style="width:9%"></colgroup>
-    <thead><tr><th>Executive / position</th><th>Selected relevant experience</th><th>Appointment / transition</th><th>Sources</th></tr></thead>
+  <table class="bo-management-executive-table" aria-label="Sourced key executives"><colgroup><col style="width:34%"><col style="width:35%"><col style="width:31%"></colgroup>
+    <thead><tr><th>Executive / position</th><th>Selected relevant experience</th><th>Appointment / transition</th></tr></thead>
     <tbody>{% for executive in m.pdf.executives %}<tr>
       <td><strong>{{ executive.name }}</strong><p>{{ executive.position }}</p></td>
       <td>{% if executive.experience %}{{ executive.experience.position }}<p>{{ executive.experience.start_date or 'Not recorded' }} to {{ executive.experience.end_date or 'Not recorded' }}</p>{% else %}No admitted prior-role detail.{% endif %}</td>
       <td>{{ executive.appointment_date or 'Not recorded' }}<p>{{ executive.transition }}{% if executive.succession %} · {{ executive.succession }}{% endif %}</p></td>
-      <td>{{ refs(executive) }}</td>
     </tr>{% endfor %}</tbody>
   </table>
   {% else %}<p class="memo-empty">No sourced executive profiles are available for this run.</p>{% endif %}
@@ -70,7 +67,6 @@
   {% if m.pdf.follow_up %}<h4>Follow-up evidence required</h4><ul>{% for text in m.pdf.follow_up %}<li>{{ text }}</li>{% endfor %}</ul>{% endif %}
   <h4>Management monitoring priorities</h4>
   {% if m.pdf.monitoring_priorities %}<ul>{% for text in m.pdf.monitoring_priorities %}<li>{{ text }}</li>{% endfor %}</ul>{% else %}<p class="memo-empty">No management-specific monitoring indicators or thresholds were recorded.</p>{% endif %}
-  {% if m.pdf.sources %}<div class="bo-management-sources"><h4>Sources</h4><ol>{% for ref in m.pdf.sources %}<li value="{{ ref.number }}">{{ ref.label }} · {{ ref.locator }}</li>{% endfor %}</ol><p class="technical-note">Complete observations, career histories and review rationale remain in this run's Executive Profiles &amp; Supporting Evidence and Audit &amp; Review.</p></div>{% endif %}
   {% if m.methodology_notices %}<aside class="bo-management-methodology"><h4>Methodology / demonstration notice</h4>{% for text in m.methodology_notices %}<p class="technical-note">{{ text }}</p>{% endfor %}</aside>{% endif %}
 </div>
 {% else %}<p class="memo-empty">Reviewed management analysis is not available for this run.</p>{% endif %}

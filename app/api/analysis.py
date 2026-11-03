@@ -273,7 +273,7 @@ def review_pdf(job_id: str, session: Session = Depends(get_session)):
     if backend is None:
         raise HTTPException(501, 'No PDF backend is installed; run `pip install xhtml2pdf` and restart.')
     html = _render_review(session, job, view, pdf=True)
-    if backend != 'weasyprint':  # WeasyPrint resolves the page's own fonts
+    if backend == 'xhtml2pdf':  # the other backends resolve the page's own fonts
         html = _with_pdf_font(html)
     try:
         pdf = _render_pdf_with(backend, html)

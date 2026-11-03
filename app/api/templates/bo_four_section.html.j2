@@ -24,8 +24,10 @@
 {% set bounds.right = right if bounds.right is none or right > bounds.right else bounds.right %}
 {% set bounds.bottom = bottom if bounds.bottom is none or bottom > bounds.bottom else bounds.bottom %}
 {% endfor %}
-{# Frame existing SVG geometry around the recorded nodes; never redraw the diagram. #}
-<div class="bo-print-diagram" role="img" aria-label="Recorded corporate structure diagram"><svg xmlns="http://www.w3.org/2000/svg" viewBox="{{ bounds.left - 32 }} {{ bounds.top - 32 }} {{ bounds.right - bounds.left + 64 }} {{ bounds.bottom - bounds.top + 64 }}">{{ bo4.svg }}</svg></div>
+{# Frame existing SVG geometry around the recorded nodes; never redraw the diagram. The clip keeps the legend
+   and title, which sit outside the frame, from showing where the page is wider than the frame. #}
+{% set frame = [bounds.left - 32, bounds.top - 32, bounds.right - bounds.left + 64, bounds.bottom - bounds.top + 64] %}
+<div class="bo-print-diagram" role="img" aria-label="Recorded corporate structure diagram"><svg xmlns="http://www.w3.org/2000/svg" viewBox="{{ frame|join(' ') }}"><defs><clipPath id="bo-print-frame"><rect x="{{ frame[0] }}" y="{{ frame[1] }}" width="{{ frame[2] }}" height="{{ frame[3] }}"/></clipPath></defs><g clip-path="url(#bo-print-frame)">{{ bo4.svg }}</g></svg></div>
 <p class="technical-note">Guarantor indicator: {{ artifact.visual_spec.legend.entries[-1].symbol }} ({{ artifact.visual_spec.legend.entries[-1].label }}).</p>
 {% endmacro %}
 <div class="bo-four-section" data-document="{{ bo4.memo.document }}" data-schema-version="{{ bo4.memo.schema_version }}" data-run-id="{{ bo4.memo.identity.analysis_run_id }}">
@@ -47,13 +49,13 @@
 {% else %}<p class="memo-empty">Debt obligations are not available as validated content for this run.</p>{% endif %}{{ warnings(section.debt_obligations.visible_warnings) }}{{ evidence(section.debt_obligations.evidence) }}</div>{% if not pdf %}</div>{% endif %}
 {% elif loop.index == 2 %}{% include 'bo_management.html.j2' %}{% for text in section.visible_warnings if not bo4.management or text not in bo4.management.handled_warnings %}{{ warnings([text]) }}{% endfor %}{{ evidence(section.evidence) }}
 {% elif loop.index == 3 %}{% if section.content %}{% if bo4.finding_groups is defined and bo4.finding_groups is not none %}
-{% for group in bo4.finding_groups %}<div class="bo-finding-group"><h3>{{ group.title }}</h3>{% if not group.entries %}<p class="memo-empty">No selected findings were recorded in this category.</p>{% endif %}
-{% for entry in group.entries %}<div class="memo-claim" data-claim-id="{{ entry.claim.claim_id }}" data-source-finding="{{ entry.source_hypothesis_id }}">
+{% for group in bo4.finding_groups %}{% set entries = group.entries|rejectattr('evidence.id', 'in', bo4.cross_dimensional or [])|list if pdf else group.entries %}{% if entries or not group.entries %}<div class="bo-finding-group"><h3>{{ group.title }}</h3>{% if not group.entries %}<p class="memo-empty">No selected findings were recorded in this category.</p>{% endif %}
+{% for entry in entries %}<div class="memo-claim" data-claim-id="{{ entry.claim.claim_id }}" data-source-finding="{{ entry.source_hypothesis_id }}">
 <h4>{{ entry.topic }}</h4><div class="bo-finding-badges" role="group" aria-label="Credit Direction"><span class="bo-finding-badge bo-badge-direction bo-direction-{{ entry.direction_label|lower }}"><span class="bo-direction-sign" aria-hidden="true">{% if entry.direction_label == 'Positive' %}+{% elif entry.direction_label == 'Negative' %}−{% elif entry.direction_label == 'Mixed' %}±{% else %}—{% endif %}</span><span>{{ entry.direction_label }}</span></span></div>
 {% if entry.pointers is defined %}<dl class="bo-finding-points">{% for pointer in entry.pointers %}<div class="bo-finding-point"><dt>{{ pointer.label }}{{ classification_badge(pointer.classification) }}</dt><dd>{% if pointer.parts %}{% for part in pointer.parts %}<p>{{ part.text }}</p>{% endfor %}{% else %}<p class="memo-empty">{{ pointer.empty_text }}</p>{% endif %}</dd></div>{% endfor %}</dl>{% else %}<p>{{ entry.claim.text }}</p>{% for detail in entry.details %}<p><strong>{{ detail.label }}:</strong> {{ detail.text }}</p>{% endfor %}{% endif %}
-{{ evidence(entry.evidence) }}</div>{% endfor %}</div>{% endfor %}
+{{ evidence(entry.evidence) }}</div>{% endfor %}</div>{% endif %}{% endfor %}
 {% else %}{% for entry in bo4.claims %}<div class="memo-claim" data-claim-id="{{ entry.claim.claim_id }}">{% if not loop.first %}<h3>{{ entry.category }}{% if entry.claim.title %} · {{ entry.claim.title }}{% endif %}</h3>{% endif %}<p>{{ entry.claim.text }}</p>{% if entry.claim.uncertainty %}<p class="qualification">{{ entry.claim.uncertainty }}</p>{% endif %}{{ evidence(entry.evidence) }}</div>{% endfor %}{% endif %}{% else %}<p class="memo-empty">Competitive Positioning is not available as validated content for this run.</p>{% endif %}{{ warnings(section.visible_warnings) }}{{ evidence(section.evidence) }}
 {% else %}{% if section.content and section.content.findings %}{% for finding in section.content.findings %}<div class="memo-claim"><p>{{ finding.claim }}</p>{% if finding.credit_mechanism %}<p>{{ finding.credit_mechanism }}</p>{% endif %}{% for key,text in finding.interpretation.items() if text %}<p>{{ text }}</p>{% endfor %}{% for text in finding.missing_information %}<p class="qualification">{{ text }}</p>{% endfor %}</div>{% endfor %}{% else %}<p class="memo-empty">Industry analysis is not available in this version.</p>{% endif %}{{ warnings(section.visible_warnings) }}{{ evidence(section.evidence) }}{% endif %}
 </section>{% endfor %}
-{% if pdf %}<aside class="bo-evidence-appendix" aria-label="Business Overview evidence appendix"><h2>Business Overview evidence appendix</h2><p>Static export of the selected run's supporting records. Full management records remain available in Audit &amp; Review for this run.</p>{% for item in bo4.evidence if item.id != bo4.memo.sections[1].evidence.id %}<h3>{{ item.title }}</h3>{{ evidence_body(item) }}{% endfor %}</aside>{% endif %}
+{# The PDF carries results only; evidence belongs to the separate audit report. #}
 </div>
