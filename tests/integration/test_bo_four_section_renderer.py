@@ -165,7 +165,7 @@ def test_pdf_template_exports_all_content_and_evidence_appendix(db_session, tmp_
     assert len(page.xpath('//*[@data-memo-section]')) == 4
     assert not page.xpath('//details')
     assert page.xpath('//aside[@aria-label="Business Overview evidence appendix"]')
-    assert 'M1A6-H001' in page.text_content()
+    assert not page.xpath('//aside//pre') and 'M1A6-H001' not in page.text_content()  # no raw evidence JSON
     assert len(page.xpath('//*[@data-schedule="non_note"]//tbody/tr')) == 4
     captured = []
     monkeypatch.setattr(pdf_backend, 'detect_pdf_backend', lambda: 'weasyprint')
