@@ -162,6 +162,20 @@ def load_view(session, analysis_run_id, case_id=None):
         # Both deterministic SVG renderers escape source strings; no source SVG is trusted.
         rendered, snapshot_placed = annotate_svg(render_svg(structure, show_title=False), structure, snapshot)
         svg = Markup(rendered)
+    from urllib.parse import quote
+    from app.services.bo.evidence_presentation import source_index, quotation_cards
+    selected_ids = {hid for entry in claims for hid in entry['claim'].get('hypothesis_ids', [])}
+    sections[2]['evidence']['hypotheses'] = [hypotheses[hid] for hid in sorted(selected_ids) if hid in hypotheses]
+    indexes = {did: source_index(session, doc, row.case_id) for did, doc in documents.items()}
+    source_base = '/cases/' + quote(row.case_id, safe='') + '/bo/runs/' + quote(analysis_run_id, safe='') + '/source'
+    for item in evidence:
+        item['quotations'] = quotation_cards(item, passages, documents, indexes, source_base)
+    if finding_groups is not None:
+        by_id = {item['id']: item for item in evidence}
+        for group in finding_groups:
+            for entry in group['entries']:
+                entry['evidence'] = by_id[entry['evidence']['id']]
+                entry['evidence']['assessment'] = entry['assessment']
     return {'memo': artifact, 'svg': svg, 'debt_snapshot': snapshot, 'snapshot_placed': snapshot_placed,
             'claims': claims, 'finding_groups': finding_groups, 'evidence': evidence,
             'structure_tree': next(iter(structure['companies'].values()))['plain_text_tree'] if structure else None,

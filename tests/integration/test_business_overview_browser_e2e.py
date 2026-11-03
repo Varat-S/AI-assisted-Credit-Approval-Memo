@@ -167,6 +167,23 @@ def test_actual_new_analysis_pipeline_history_and_exports(browser_env):
     assert 'Fact' in visible.text_content() and 'Inference' in visible.text_content()
     for finding in page.xpath('//*[@data-source-finding]'):
         assert finding.xpath('.//dl[@class="bo-finding-points"]/div[@class="bo-finding-point"]/dt/text()')==['Finding','Credit Implication','Watch Triggers']
+        assert finding.xpath('.//dl[@class="bo-evidence-assessment"]/div/dt/text()') == [
+            'Specialist Interpretation', 'Assumptions / Gaps', 'Validation Assessment']
+        assert finding.xpath('.//dl[@class="bo-finding-points"]//dt/span[contains(@class,"bo-badge-type")]')
+        assert not finding.xpath('./div[@class="bo-finding-badges"]/span[contains(@class,"bo-badge-type")]')
+    assert 'Source Establishes' not in review.text
+    assert page.xpath('//*[@data-source-finding]//article[@class="bo-source-quotation"]')
+    assert page.xpath('//details[@class="bo-evidence-technical" and not(@open)]/pre')
+    assert 'Open Referenced Passage' not in review.text
+    source_links = set(page.xpath('//a[normalize-space()="Open Original 10-K"]/@href'))
+    assert source_links
+    for source_link in source_links:
+        original = client.get(source_link)
+        assert original.status_code == 200, original.text
+        assert html.fromstring(original.text).xpath('//mark[@class="bo-original-highlight"]')
+        assert "default-src 'none'" in original.headers['content-security-policy']
+    bad_link = next(iter(source_links)).rsplit('/', 1)[0] + '/not-a-selected-quote'
+    assert client.get(bad_link).status_code == 404
     audit=client.get(f'/analysis/{ident}/audit');assert audit.status_code==200
     assert 'M1S2-H001' in audit.text and 'omitted' in audit.text
     assert 'Independent challenge is disabled for this workflow.' in audit.text

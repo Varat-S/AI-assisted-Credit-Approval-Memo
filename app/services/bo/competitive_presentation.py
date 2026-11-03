@@ -9,6 +9,7 @@ from app.schemas.bo import HypothesisRecord
 from app.services.bo.competitive_positioning import eligible, evidence_ids
 from app.services.bo.roster_v3 import V3_AGENT_6_ID
 from app.services.pipeline.artifacts import ArtifactIntegrityError
+from app.services.bo.finding_assessment import assessment
 
 REVENUE = 'Revenue Drivers'
 COST = 'Cost Drivers'
@@ -86,11 +87,15 @@ def grouped_findings(entries, audit, provenance):
              'empty_text': 'No specific watch trigger was recorded.'},
         ]
         entry = deepcopy(entry)
+        review = assessment(source, pointers, claim.get('uncertainty'))
+        pointers[0]['classification'] = review['finding']
+        pointers[1]['classification'] = review['implication']
         entry['evidence']['title'] = TOPICS[source['agent_id']]
         groups[group].append({**entry, 'topic': TOPICS[source['agent_id']],
                               'claim_type_label': TYPES[source['claim_type']],
                               'direction_label': source['direction'].capitalize(),
-                              'details': details, 'pointers': pointers, 'source_hypothesis_id': source['hypothesis_id'],
+                              'details': details, 'pointers': pointers, 'assessment': review,
+                              'source_hypothesis_id': source['hypothesis_id'],
                               'source_agent_id': source['agent_id']})
     for entries in groups.values():
         entries.sort(key=lambda e: (SOURCE_ORDER[e['source_agent_id']], e['source_hypothesis_id']))

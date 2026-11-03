@@ -306,6 +306,50 @@ def get_bo_artifact_json(
     return _bo_call(bo_artifact, session, analysis_run_id, kind)
 
 
+@router.get("/{case_id}/bo/runs/{analysis_run_id}/original/{document_id}/{quote_token}", response_class=HTMLResponse)
+def get_bo_original_highlight(case_id: str, analysis_run_id: str, document_id: str, quote_token: str,
+                              session: Session = Depends(get_session)):
+    from app.services.bo.four_section_view import load_view
+    from app.services.bo.four_section import load_saved_inputs
+    from app.services.bo.evidence_presentation import verified_source_bytes
+    from app.services.bo.original_highlight import highlighted_original
+    view = _bo_call(load_view, session, analysis_run_id, case_id)
+    if view is None:
+        raise HTTPException(404, 'Selected memo is unavailable.')
+    card = next((q for item in view['evidence'] for q in item.get('quotations', [])
+                 if q['document_id'] == document_id and q['quote_token'] == quote_token), None)
+    if card is None:
+        raise HTTPException(404, 'Quotation is not part of the selected memo evidence.')
+    saved = _bo_call(load_saved_inputs, session, analysis_run_id)
+    doc = next((d for d in saved.snapshot.get('documents', []) if d['document_id'] == document_id), None)
+    data = verified_source_bytes(session, doc, case_id) if doc else None
+    result = highlighted_original(data, card['quote'], doc.get('source_url')) if data else None
+    if result is None:
+        raise HTTPException(409, 'The original source or exact quotation could not be verified for highlighting.')
+    content, csp = result
+    return HTMLResponse(content, headers={'Cache-Control': 'no-store', 'Content-Security-Policy': csp,
+                                          'X-Content-Type-Options': 'nosniff'})
+
+
+@router.get("/{case_id}/bo/runs/{analysis_run_id}/source/{document_id}", response_class=HTMLResponse)
+def get_bo_source_view(case_id: str, analysis_run_id: str, document_id: str,
+                       session: Session = Depends(get_session)):
+    from app.services.bo.four_section import load_saved_inputs
+    from app.services.bo.evidence_presentation import source_index
+    from app.services.analysis_workspace import safe_url
+    _bo_run_for_case(session, case_id, analysis_run_id)
+    saved = _bo_call(load_saved_inputs, session, analysis_run_id)
+    document = next((d for d in saved.snapshot.get('documents', []) if d['document_id'] == document_id), None)
+    if document is None:
+        raise HTTPException(404, 'Source is not part of the selected run.')
+    paragraphs = source_index(session, document, case_id)
+    if not paragraphs:
+        raise HTTPException(409, 'The admitted original source is unavailable or could not be verified for indexing.')
+    return HTMLResponse(_env.get_template('bo_evidence_source.html.j2').render(
+        document=document, paragraphs=paragraphs, original=safe_url(document.get('source_url'))),
+        headers={'Cache-Control': 'no-store'})
+
+
 @router.get("/{case_id}/bo/runs/{analysis_run_id}/{kind}.html",
             response_class=HTMLResponse)
 def get_bo_artifact_html(
