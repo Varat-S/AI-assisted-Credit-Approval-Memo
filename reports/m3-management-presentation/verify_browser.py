@@ -3,10 +3,12 @@
 Uses the environment's existing websockets and pdfplumber packages.
 """
 import asyncio
+import argparse
 import base64
 import json
 from pathlib import Path
 import subprocess
+import re
 from tempfile import TemporaryDirectory
 import time
 from urllib.request import urlopen
@@ -15,8 +17,18 @@ from lxml import html
 import pdfplumber
 import websockets
 
-folder = Path(__file__).parent.resolve()
-repository = folder.parents[1]
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument('--saved-hca', action='store_true', help='Use the recorded real HCA previews, with no model calls.')
+args = parser.parse_args()
+repository = Path(__file__).resolve().parents[2]
+folder = Path(__file__).parent.resolve() / 'hca_saved' if args.saved_hca else Path(__file__).parent.resolve()
+jobs = ([('before_web.html', 'before.png', 1200, 1200), ('web.html', 'desktop.png', 1200, 1200),
+         ('web.html', 'mobile.png', 390, 844)] if args.saved_hca else
+        [('management_before_focus.html', 'management_before.png', 1200, 1200),
+         ('management_after_focus.html', 'management_after.png', 1200, 1200),
+         ('management_after_focus.html', 'management_mobile.png', 390, 844)])
+print_file = 'print.html' if args.saved_hca else 'management_print_focus.html'
+pdf_file = 'management.pdf' if args.saved_hca else 'management_sample.pdf'
 chrome = Path('C:/Program Files/Google/Chrome/Application/chrome.exe')
 
 
@@ -66,11 +78,7 @@ async def verify(port):
         await call('Page.enable')
         await asyncio.sleep(.5)
         results = []
-        for filename, output, width, height in (
-            ('management_before_focus.html', 'management_before.png', 1200, 1200),
-            ('management_after_focus.html', 'management_after.png', 1200, 1200),
-            ('management_after_focus.html', 'management_mobile.png', 390, 844),
-        ):
+        for filename, output, width, height in jobs:
             await call('Emulation.setDeviceMetricsOverride', {'width': width, 'height': height,
                        'deviceScaleFactor': 1, 'mobile': width < 500})
             await navigate(filename)
@@ -85,7 +93,7 @@ async def verify(port):
             screenshot = await call('Page.captureScreenshot', {'format': 'png', 'captureBeyondViewport': True,
                 'clip': {'x': 0, 'y': 0, 'width': width, 'height': max(height, layout['cssContentSize']['height']), 'scale': 1}})
             (folder / output).write_bytes(base64.b64decode(screenshot['data']))
-            if filename == 'management_after_focus.html':
+            if filename == jobs[1][0]:
                 await evaluate("document.querySelector('.bo-management-finding .source-cite a').click()")
                 await asyncio.sleep(.1)
                 metrics['citationOpensSupportingEvidence'] = await evaluate("document.querySelector('.bo-management-support').open")
@@ -94,10 +102,10 @@ async def verify(port):
             results.append({'file': output, **metrics})
 
         await call('Emulation.clearDeviceMetricsOverride')
-        await navigate('management_print_focus.html')
+        await navigate(print_file)
         pdf = await call('Page.printToPDF', {'printBackground': True, 'preferCSSPageSize': True,
                                            'displayHeaderFooter': False})
-        (folder / 'management_sample.pdf').write_bytes(base64.b64decode(pdf['data']))
+        (folder / pdf_file).write_bytes(base64.b64decode(pdf['data']))
         (folder / 'browser_verification.json').write_text(json.dumps(results, indent=2) + '\n', encoding='utf-8')
         await call('Browser.close')
 
@@ -121,18 +129,29 @@ with TemporaryDirectory(prefix='.chrome-verify-', dir=repository, ignore_cleanup
             process.terminate()
             process.wait(timeout=10)
 
-with pdfplumber.open(folder / 'management_sample.pdf') as pdf:
-    text = ' '.join(' '.join(page.extract_text() or '' for page in pdf.pages).split())
-    preview = html.fromstring((folder / 'management_print_focus.html').read_text(encoding='utf-8'))
-    overall = ' '.join(preview.xpath('//*[@class="memo-claim bo-management-overall"]/p[1]')[0].text_content().split())
-    qualifications = preview.xpath('//*[@class="qualification"]')
+def normalized(text):
+    return ' '.join(re.sub(r'(?<=-)\s*\n\s*(?=\w)', '', text).split())
+
+
+with pdfplumber.open(folder / pdf_file) as pdf:
+    text = normalized('\n'.join(page.extract_text() or '' for page in pdf.pages))
+    preview = html.fromstring((folder / print_file).read_text(encoding='utf-8'))
+    overall = normalized(preview.xpath('//*[@class="bo-management-assessment-text"]')[0].text_content())
+    qualifications = preview.xpath('//*[@class="bo-management-qualifications"]//li')
+    source_text = ' '.join(node.text_content() for node in preview.xpath('//*[@class="bo-management-sources"]//li'))
+    locators = re.findall(r'Passage offset \d+|Page \d+|Recorded passage', source_text)
     result = {'renderer': 'Installed Chrome via DevTools printToPDF', 'pages': len(pdf.pages),
+              'records': 'Real saved HCA run ar_70066e79dd954e3c' if args.saved_hca else 'Synthetic Northfield fixture',
               'overall_present': overall in text,
-              'qualifications_present': all(' '.join(q.text_content().split()) in text for q in qualifications),
-              'sources_present': 'mgmt-page-2' in text and 'p. 2' in text,
+              'qualifications_present': all(normalized(q.text_content()) in text for q in qualifications),
+              'sources_present': bool(locators) and all(locator in text for locator in locators),
+              'source_hashes_not_in_narrative': not bool(re.search(r'\b[a-f0-9]{64}\b', text)),
               'biographies_absent': 'Appointment:' not in text and 'Recorded tenure:' not in text,
               'assessment_gaps_present': 'Areas Requiring Further Assessment' in text}
-    assert result['pages'] == 1 and all(value for key, value in result.items() if key not in ('renderer', 'pages')), result
-    pdf.pages[0].to_image(resolution=120).save(folder / 'management_sample_page1.png')
+    if args.saved_hca:
+        result['qualified_positive_supporting_factor'] = 'Supporting Factor' in text and 'Qualified' in text and 'Credit Concerns' not in text
+        result['html_has_no_physical_page_claims'] = 'Page 1' not in text and 'p. 1' not in text
+    assert result['pages'] == 1 and all(value for key, value in result.items() if key not in ('renderer', 'pages', 'records')), result
+    pdf.pages[0].to_image(resolution=120).save(folder / ('pdf_page1.png' if args.saved_hca else 'management_sample_page1.png'))
     (folder / 'pdf_verification.json').write_text(json.dumps(result, indent=2) + '\n', encoding='utf-8')
     print(json.dumps(result))

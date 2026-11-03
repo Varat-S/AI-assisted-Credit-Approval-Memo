@@ -152,7 +152,8 @@ def load_view(session, analysis_run_id, case_id=None):
         # Only the existing deterministic, escaping SVG generator supplies Markup.
         svg = Markup(render_svg(structure))
     return {'memo': artifact, 'svg': svg, 'claims': claims, 'finding_groups': finding_groups, 'evidence': evidence,
-            'management': management_view(sections[1].get('content')),
+            'management': management_view(sections[1].get('content'), documents=documents, passages=passages,
+                                          warnings=sections[1].get('visible_warnings', [])),
             'structure_tree': next(iter(structure['companies'].values()))['plain_text_tree'] if structure else None,
             'review': public_record({'status': row.human_review_status,
                                       'reviewer': row.payload.get('reviewer'), 'reviewed_at': row.payload.get('reviewed_at')}),

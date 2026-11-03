@@ -36,7 +36,7 @@
 <h4>Creditor priority and reconciliation</h4><dl class="bo-priority">{% for field,label in bo4.priority_columns %}<dt>{{ label }}</dt><dd>{{ bo4.display(d.creditor_priority_framework[field]) }}</dd>{% endfor %}</dl>
 {% if d.reconciling_items %}<div class="memo-table-wrap" tabindex="0" role="region" aria-label="Signed reconciling items"><table class="memo-table"><thead><tr><th scope="col">Reconciling item</th><th scope="col">Signed amount (US$ m)</th></tr></thead><tbody>{% for item in d.reconciling_items %}<tr><td>{{ item.label }}</td><td>{{ item.amount_m }}</td></tr>{% endfor %}</tbody></table></div>{% endif %}
 {% else %}<p class="memo-empty">Debt obligations are not available as validated content for this run.</p>{% endif %}{{ warnings(section.debt_obligations.visible_warnings) }}{{ evidence(section.debt_obligations.evidence) }}</div>{% if not pdf %}</div>{% endif %}
-{% elif loop.index == 2 %}{% include 'bo_management.html.j2' %}{{ warnings(section.visible_warnings) }}{{ evidence(section.evidence) }}
+{% elif loop.index == 2 %}{% include 'bo_management.html.j2' %}{% for text in section.visible_warnings if not bo4.management or text not in bo4.management.handled_warnings %}{{ warnings([text]) }}{% endfor %}{{ evidence(section.evidence) }}
 {% elif loop.index == 3 %}{% if section.content %}{% if bo4.finding_groups is defined and bo4.finding_groups is not none %}
 {% for group in bo4.finding_groups %}<div class="bo-finding-group"><h3>{{ group.title }}</h3>{% if not group.entries %}<p class="memo-empty">No selected findings were recorded in this category.</p>{% endif %}
 {% for entry in group.entries %}<div class="memo-claim" data-claim-id="{{ entry.claim.claim_id }}" data-source-finding="{{ entry.source_hypothesis_id }}">

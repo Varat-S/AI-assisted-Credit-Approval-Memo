@@ -1,29 +1,66 @@
 # BO M3 management presentation refinement
 
-Branch: `feat/m3-management-presentation`. Original base: `UI_Draft_V2` at `27b5ef6cb56e6654c71d7cbe3aa376542bc9d088`. Initial implementation: `d7a6c05`.
+Branch: `feat/m3-management-presentation`. Original base: `UI_Draft_V2` at `27b5ef6cb56e6654c71d7cbe3aa376542bc9d088`. Initial implementation: `d7a6c05`; previous completed refinement: `c5460a3`. The final corrections below use the saved real HCA run without new inference.
 
 ## Changes made
 
 The web view shows the recorded overall assessment, populated credit-relevant categories, and a compact **Areas Requiring Further Assessment** list. All five categories remain in the adapter. Unclassified eligible findings appear under **Other Reviewed Observations**, which opens initially when it contains negative findings. Executive profiles, original reviewed observations, qualifications, citations, and existing audit controls remain accessible.
 
-The print view uses the same adapter. It shows up to three accepted strengths and three concerns, qualifications, or information gaps, followed by the compact assessment-gap list. Negative findings are considered before other qualified findings and gaps, retaining source order within each group. Unclassified negatives remain eligible. If the three-item limit excludes further concerns or qualifications, a count directs readers to the selected run's interactive evidence and Audit & Review. There is no inferred impact ranking or new score.
+The print view uses the same adapter with four independent direction groups: **Supporting Factors**, **Credit Concerns**, **Mixed or Uncertain Findings**, and **Information Gaps**. Only populated groups appear, with up to three findings per group and an explicit omission count pointing to complete supporting records. Positive qualified findings remain supporting factors; qualification alone never makes a concern. Neutral findings remain context, unknown directions remain unassessed, and rejected/unsupported observations are ineligible. There is no new impact ranking or numerical score.
 
-Both views retain verbatim finding text, review status, uncertainties, and source references. Effective overall qualifications use an existing explicit review correction when recorded; original review history remains in the supporting record.
+Both views retain verbatim finding text, direction, review status, and source/observation identities. The overall heading prominently identifies reviewed or recorded wording, its qualification status, and the recorded outcome. An effective reviewed correction takes priority when present; otherwise existing reviewed wording or the recorded paragraph is displayed without analytical rewriting. Original model wording and review history remain in supporting evidence.
+
+Material qualifications are displayed once beside the overall assessment. Deduplication uses exact matching after whitespace normalization, preserving first wording and every observation/origin reference. Distinct limitations are retained. Detailed rejection reasons and known processing notices remain in supporting records. Structured withheld-claim/judgment counts and an evidence-basis restriction make validation failures visible without internal fact IDs. Unknown or mixed material limitations stay in the primary view rather than being guessed away as technical. Offline/demo notices have their own labelled methodology block.
+
+Citation labels use same-run document metadata only when document identity and SHA match. HTML uses recorded passage offsets, never the synthetic page-1 value retained by older citation contracts. PDF pages are shown only for an identifiable PDF source. Duplicate quotes from one passage share a displayed source location while retaining all original citation IDs; each finding's web anchor points to one of its own supporting quotations. Missing metadata uses a neutral label. Full identities/hashes remain in the source records and HTML metadata.
 
 | Modified file | Purpose |
 | --- | --- |
-| `app/services/bo/management_view.py` | Assessment gaps, unclassified concerns in print selection, and effective overall qualifications. |
+| `app/services/bo/management_view.py` | Independent direction groups, effective overall wording, exact qualification deduplication/origin links, readable source locations and print limits. |
+| `app/services/bo/four_section_view.py` | Supply already verified same-run documents, passages and warnings to the read-only adapter. |
 | `app/api/templates/bo_management.html.j2` | Shared management markup, dynamic cards, sources, expandable records, and compact print narrative. |
-| `app/api/templates/bo_four_section.html.j2` | Include the shared management template. |
+| `app/api/templates/bo_four_section.html.j2` | Reuse projected management notices rather than repeat raw processing warnings in the PDF. Unknown new warnings remain visible. |
 | `app/api/templates/bo_four_section_style.html.j2` | Scoped spacing and source wrapping. |
-| `tests/conftest.py` | Temporary valid `DEBUG=false`, restored by monkeypatch. |
-| `tests/integration/test_bo_four_section.py` | Explicit UTF-8 read without weakening equality assertions. |
-| `tests/integration/test_bo_four_section_independent.py` | Isolated `tmp_path` proof outputs and explicit UTF-8; original assertions preserved. |
 | `tests/unit/test_management_view.py` | Categorization, review eligibility, qualifications, deduplication, selection limits, unavailable states, corrections, and immutability. |
 | `tests/integration/test_bo_four_section_renderer.py` | Dynamic categories, web/print parity, unclassified concerns, source targets, and frozen stage integrity. |
 | This report directory | Diagnostics, test results, previews, screenshots, and sample PDF. |
 
-**Analytical behavior changed: none.** The specialist, Validator 7, prompts, M3 contracts, frozen assembly/persistence, canonical artifacts/hashes, FO, RMS, and human-review rules were not modified. All generation used offline fixtures; no paid model calls were made. The branch was not pushed or merged.
+The earlier portable-directory, UTF-8 and temporary `DEBUG=false` fixes in `tests/conftest.py`, `test_bo_four_section.py` and `test_bo_four_section_independent.py` are retained without modification in this pass.
+
+**Analytical behavior changed in these corrections: none.** The specialist, Validator 7, prompts/model settings, M3 contracts, frozen assembly/persistence, canonical artifacts/hashes, FO, SO, RMS, and approval rules were not modified. This pass used synthetic tests and the existing real HCA saved records; it made zero model calls and did not regenerate an analysis. The branch was not pushed or merged.
+
+## Real HCA before/after verification
+
+Exact saved run: **`ar_70066e79dd954e3c`**, case `HCA_2025_M3_PRESENTATION_LIVE_20261103`, FY2025 Form 10-K. The original run contains 14 model records, seven admitted executive profiles, one qualified positive continuity observation and a withheld judgment. It remains partial and pending human review.
+
+| Item | Previous saved HCA presentation | Corrected presentation |
+| --- | --- | --- |
+| Positive + Qualified | Under concerns | **Supporting Factor · Qualified** |
+| Negative + Qualified | Concern | **Credit Concern · Qualified**, with limitations retained |
+| Mixed / neutral / unknown | Could be omitted or treated as a concern due to qualification | Mixed findings, context or unassessed entries; original direction retained |
+| Overall wording | Qualification shown after broad positive narrative | Prominent **Reviewed assessment · Qualified** before unchanged wording, with material caveats alongside |
+| Sources | Full hexadecimal passage IDs and HTML page 1 | Three readable Form 10-K references at passage offsets **159626, 161626, 163626** |
+| Limitations | Repeated caveats plus technical second page | Exact duplicates consolidated; detailed processing explanations retained in supporting evidence |
+| Management PDF | Two pages | **One page**, preserving the assessment, finding and material qualifications |
+
+Updated **real saved HCA** artifacts: [web section](hca_saved/web.html), [print section](hca_saved/print.html), [full web preview](hca_saved/web_full.html), [full print preview](hca_saved/print_full.html), [before screenshot](hca_saved/before.png), [desktop screenshot](hca_saved/desktop.png), [mobile screenshot](hca_saved/mobile.png), [PDF](hca_saved/management.pdf), and [PDF page image](hca_saved/pdf_page1.png).
+
+[Recorded-run integrity checks](hca_saved/verification.json) verify all **70** saved canonical input/result files against their original hashes, all **29** frozen stage payloads/hashes, unchanged reviewer decisions, and **14** model records before/after rendering. No model call or ingestion is allowed by this gate. [Browser checks](hca_saved/browser_verification.json) verify no horizontal overflow at 1200/390 pixels and that source links expand the supporting evidence. [PDF checks](hca_saved/pdf_verification.json) verify one page, original assessment and qualifications preserved, correct supporting-factor classification, readable sources, and no unsupported physical-page claims, long source hashes or biographies in the narrative.
+
+The original HCA database, source responses, frozen artifacts, previous presentations and durable archive were not overwritten. The overall text still contains the live review's broad governance/succession wording: this presentation change labels and qualifies it, rather than issuing a new analytical correction. Governance remains insufficiently evidenced in the category model.
+
+### Classification examples
+
+| Recorded direction | Recorded review | Presentation |
+| --- | --- | --- |
+| Positive | Accepted | Supporting Factor · Accepted |
+| Positive | Qualified | Supporting Factor · Qualified, with visible material qualifications |
+| Negative | Accepted | Credit Concern · Accepted |
+| Negative | Qualified | Credit Concern · Qualified, with visible material qualifications |
+| Mixed | Accepted / Qualified | Mixed Finding, with its independent review status |
+| Neutral | Accepted / Qualified | Context, or an explicitly recorded information gap |
+| Missing / unknown | Accepted / Qualified | Unassessed; remains uncategorized |
+| Any | Rejected / Unsupported | Excluded from affirmative findings |
 
 ## Six original regression failures
 
@@ -66,17 +103,39 @@ Installed Chrome worked with an isolated profile outside the restricted sandbox.
 
 ## Automated results
 
-Final broader run: **308 passed, 0 failed, 1 skipped**. This includes the final focused subset of **77 passed out of 77**, including all six original failures. The earlier standalone focused run had **76 passed**; the final broader run also includes the added print-selection-cap test. Machine-readable counts and original-test statuses are in [test summary](test_summary.json).
+The complete repository suite was executed on the final application code. Its focused/broader subsets were selected from the same JUnit results; they were not inferred from a shorter run.
 
-Final results are in [broader test output](broader_tests.txt) and [JUnit results](broader_tests.xml). Coverage includes management, M3 integration/Validator 7, four-section assembly/integrity, historical and foreign-run isolation, BO governance/workbench/review, unified memo review, and BO/FO integration/provenance. The standalone focused run is in [focused output](focused_tests.txt).
+| Selection | Passed | Failed | Skipped |
+| --- | ---: | ---: | ---: |
+| Focused management/four-section checks, including all previous 77 and the new cases | **93** | **0** | **0** |
+| Broader relevant M3, Validator 7, BO assembly/rendering/review/governance, BO/FO and historical/evidence-isolation selection | **324** | **0** | **1** |
+| Full repository | **2,559** | **36** | **136** |
 
-The remaining skip is `test_completed_memo_downloads_as_pdf_of_the_same_run`: the application's WeasyPrint backend lacks native libraries on this host. The Chrome sample verifies a binary print result, but does not turn that skipped application-backend test into a pass. An existing Starlette/httpx deprecation warning remains.
+The initial focused run passed 91 tests; the full run includes the two subsequently added conservative-processing and explicit-gap tests. The preview-export test also passed separately. [Final test summary](final_test_summary.json), [full output](final_full_tests.txt), and [full JUnit results](final_full_tests.xml) contain exact counts, skip reasons and every failing node. Previous `c5460a3` results remain in the historical [test summary](test_summary.json).
+
+**All 36 full-suite failures reproduce individually on an untouched export of `c5460a3`; there are zero newly introduced failures.** Baseline probes used the same interpreter and temporary test configuration. [Baseline reproduction output](final_baseline_failures.txt) records the original assertions; the machine-readable summary maps every failed node to its baseline reproduction.
+
+| Baseline failure family | Count | Observed failure on both revisions |
+| --- | ---: | --- |
+| M2 synthetic comparison harness | 25 | Generation governance rejects unresolved evidence IDs, leaving missing hypotheses/validation stages; expected four calls become one. |
+| M2 saved HCA comparison | 2 | Existing expected single-pass/investigation results differ. |
+| M4 dual-specialist acceptance | 2 | Expected accepted governance/advisory labels differ from recorded results. |
+| BO browser tests | 2 | Windows refuses deletion of an open SQLite database; another assertion expects an executive name visible after removing all expandable profiles. |
+| FO home navigation | 1 | Home page no longer has the historical `/fo` link expected by the test. |
+| Upload preview | 2 | Historical home-page text expectation and passage-count expectation (157 versus 167). |
+| Validator-node identity | 1 | Missing expected `validator.v7` node in that test's run. |
+| Agent 6 prompt byte comparison | 1 | Windows CRLF versus normalized LF bytes. No prompt was edited. |
+
+These tests/engines were not changed to conceal baseline results or to alter analytical behavior. All six earlier portable-path/UTF-8 regressions still pass.
+
+The relevant subset's skip is `test_completed_memo_downloads_as_pdf_of_the_same_run`: the application's WeasyPrint backend lacks native libraries. Full-suite skips comprise 114 missing benchmark-workbook cases, 14 missing historical HCA R5 cases, two native-PDF cases, an explicitly disabled paid live-model test and five other optional source/manifest/artifact cases. Chrome binary PDFs were verified separately; skipped native-backend tests are not reported as passing. An existing Starlette/httpx deprecation warning remains.
 
 ## Limitations and merge recommendation
 
 - The verified M3 schema supports only a conservative subset of the five categories. Missing categories remain assessment gaps; no FO/M4 judgments or unsupported governance/expertise conclusions are imported.
 - Print selection preserves reviewed direction and source order because the contract supplies no reliable materiality ranking. Complete observations remain in the existing selected-run evidence and audit views.
 - The native application PDF endpoint was not verified end to end. Chrome binary printing and template behavior were verified separately.
-- The relevant broader regression selection was run; the entire repository suite was not run.
+- Unknown limitations or mixed technical/material review reasons are retained verbatim in the primary view. A future record can therefore legitimately require more than one page; material content is not truncated to satisfy a page target.
+- The full suite has the 36 reproduced baseline failures listed above; it is not a green repository-wide merge gate.
 
-**Recommendation: ready for review and merge with the documented native-PDF environment limitation.** All six original failures are explained and fixed in tests. No unresolved presentation or artifact-integrity regression remains. No merge was performed.
+**Recommendation: ready for review with documented baseline/environment limitations.** The presentation's focused and broader regressions pass, and the saved real HCA PDF is one page. A team policy requiring a completely green repository suite still requires separate resolution of the baseline failures. No merge or push was performed.

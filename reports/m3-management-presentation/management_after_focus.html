@@ -345,6 +345,8 @@
 @media screen and (max-width:760px){.bo-management-grid{grid-template-columns:minmax(0,1fr)}}
 .bo-management-other{margin:16px 0}.bo-management-other summary{cursor:pointer;font-weight:600;color:var(--c-315e62)}.bo-management-assessment-gaps{margin:16px 0;padding:12px 16px;border-left:2px solid var(--c-c7d5d4)}.bo-management-assessment-gaps ul{margin:6px 0;padding-left:20px;font-size:.84rem}.bo-management-assessment-gaps li{margin:4px 0}.bo-management-overall .technical-note,.bo-management-finding .technical-note{margin:4px 0}.bo-management-finding .source-cite{overflow-wrap:anywhere}
 .bo-management-support .source-cite,.bo-management-finding .source-cite{white-space:normal;overflow-wrap:anywhere}
+.bo-management-classification{font-size:.8rem;font-weight:700;color:var(--c-315e62)}.bo-management-qualifications ul{margin:6px 0;padding-left:20px}.bo-management-qualifications li{margin:5px 0}.bo-management-sources ol{padding-left:22px;font-size:.76rem;overflow-wrap:anywhere}.bo-management-methodology{border-left:2px solid var(--c-c7d5d4);padding-left:12px;margin:14px 0}
+@media print{.bo-management-overall h3,.bo-management-print h3,.bo-management-sources h3{font-size:11pt}.bo-management-overall h4,.bo-management-direction-group h4{font-size:10pt;margin:8px 0 4px}.bo-management-overall p,.bo-management-print p{font-size:10pt;line-height:1.35}.bo-management-qualifications li{font-size:9pt!important;line-height:1.3;margin:4px 0}.bo-management-print .memo-claim{margin:6px 0;padding:0;border:0}.bo-management-finding .source-cite{margin:2px 0;font-size:8pt}.bo-management-assessment-gaps{padding:6px 10px;margin:10px 0}.bo-management-assessment-gaps ul{font-size:9pt;line-height:1.3}.bo-management-sources ol{font-size:8pt;line-height:1.3;margin:5px 0}.bo-management-sources .technical-note{font-size:8pt;line-height:1.3}}
 </style></head><body style="max-width:1050px;margin:0 auto;padding:24px"><div class="bo-four-section"><section class="bo-memo-section" data-memo-section="management" data-status="complete" aria-labelledby="bo-section-2">
 <h2 id="bo-section-2"><span class="bo-section-number">02</span> Management</h2>
 
@@ -354,10 +356,10 @@
 
 
 <div class="memo-claim bo-management-overall">
-  <p>Offline authored assessment: continuity benefits and potential transition uncertainty require outcome evidence.</p>
-  <p class="technical-note">Recorded outcome: Mixed · Review status: Qualified</p>
-
-  <p class="qualification">The recorded assessment has qualifications or incomplete coverage; inspect the supporting evidence before relying on it.</p>
+  <h3>Overall assessment</h3>
+  <p class="bo-management-classification">Reviewed assessment · Qualified · Recorded outcome: Mixed</p>
+  <p class="bo-management-assessment-text">Offline authored assessment: continuity benefits and potential transition uncertainty require outcome evidence.</p>
+  <div class="bo-management-qualifications"><h4>Material qualifications</h4><ul><li class="qualification">Biography does not demonstrate realized financial effects.</li></ul></div>
 </div>
 
 
@@ -366,28 +368,25 @@
 
   <section class="bo-management-card" data-management-category="leadership_stability">
     <h3>Leadership Stability and Succession</h3>
-    <p class="technical-note">Medium · Credit Concern</p>
 
-<div class="memo-claim bo-management-finding" data-review-status="accepted">
-  <p>Recent significant appointment creates potential transition uncertainty; it does not establish a departure, repeated turnover or disruption.</p>
-  <p class="technical-note">Review: Accepted</p>
-  <p class="qualification">Biography does not demonstrate realized financial effects.</p>
+    <div data-finding-group="supporting_factors"><h4>Supporting Factors</h4>
+<div class="memo-claim bo-management-finding" data-review-status="accepted" data-direction="positive">
+  <p class="bo-management-classification">Supporting Factor · Accepted</p>
+  <p>Supported internal experience mitigates potential transition uncertainty.</p>
 
-<p class="source-cite">
-<a href="#bo-management-citation-cite-50bfb6838269bf06">Source 1 · p. 2</a>
-</p>
+<p class="source-cite"><a href="#bo-management-citation-cite-50bfb6838269bf06">Source 1 · Page 2</a></p>
 
 </div>
+</div>
 
-<div class="memo-claim bo-management-finding" data-review-status="accepted">
-  <p>Supported internal experience mitigates potential transition uncertainty.</p>
-  <p class="technical-note">Review: Accepted</p>
-  <p class="qualification">Biography does not demonstrate realized financial effects.</p>
+    <div data-finding-group="credit_concerns"><h4>Credit Concerns</h4>
+<div class="memo-claim bo-management-finding" data-review-status="accepted" data-direction="negative">
+  <p class="bo-management-classification">Credit Concern · Accepted</p>
+  <p>Recent significant appointment creates potential transition uncertainty; it does not establish a departure, repeated turnover or disruption.</p>
 
-<p class="source-cite">
-<a href="#bo-management-citation-cite-50bfb6838269bf06">Source 1 · p. 2</a>
-</p>
+<p class="source-cite"><a href="#bo-management-citation-cite-50bfb6838269bf06">Source 1 · Page 2</a></p>
 
+</div>
 </div>
 
   </section>
@@ -398,18 +397,20 @@
 
 
 
-<div class="bo-management-assessment-gaps">
-  <h3>Areas Requiring Further Assessment</h3>
+<div class="bo-management-assessment-gaps"><h3>Areas Requiring Further Assessment</h3>
   <ul><li>Financial Stewardship — Insufficient evidence.</li><li>Operational Execution Capability — Insufficient evidence.</li><li>Governance and Integrity — Insufficient evidence.</li><li>Relevant Expertise — Insufficient evidence.</li></ul>
 
 </div>
 
 
+<div class="bo-management-sources"><h3>Sources</h3><ol><li value="1">management.pdf · Page 2</li></ol></div>
+<aside class="bo-management-methodology"><h4>Methodology / demonstration notice</h4><p class="technical-note">Offline fixture; qualitative model performance not tested.</p><p class="technical-note">Validator 7 used a saved/offline reviewer response; this execution does not verify live reviewer model performance.</p></aside>
 
-<details class="bo-management-support" data-run-id="ar_8ead780b7b9543fe">
+
+<details class="bo-management-support" data-run-id="ar_a13c50d240e94082">
   <summary>Executive Profiles &amp; Supporting Evidence</summary>
+  <h3>Original model assessment</h3><p>Offline authored assessment: continuity benefits and potential transition uncertainty require outcome evidence.</p>
   <h3>Executive profiles</h3>
-
   <div class="memo-claim">
     <h4>Alex Sample · Chief Executive Officer</h4>
     <p>Appointment: 2025-05-01 (day)</p>
@@ -417,64 +418,44 @@
     <p>Succession: Internal</p>
     <p>President of the Company · 2020-01 to 2025-04</p>
 
-<p class="source-cite">
-<a href="#bo-management-citation-cite-8e9ee6d05e466337">Source 1 · p. 2</a>;
-
-<a href="#bo-management-citation-cite-50bfb6838269bf06">Source 2 · p. 2</a>;
-
-<a href="#bo-management-citation-cite-73c999c99921cf3a">Source 3 · p. 2</a>
-</p>
+<p class="source-cite"><a href="#bo-management-citation-cite-8e9ee6d05e466337">Source 1 · Page 2</a></p>
 
   </div>
-
-  <h3>Reviewed observations</h3>
-
-  <div class="memo-claim">
-    <p>Recent significant appointment creates potential transition uncertainty; it does not establish a departure, repeated turnover or disruption.</p>
-    <p class="technical-note">Review: Accepted</p>
+  <h3>Original reviewed observations</h3>
+  <div class="memo-claim"><p>Recent significant appointment creates potential transition uncertainty; it does not establish a departure, repeated turnover or disruption.</p>
+    <p class="technical-note">Recorded direction: negative · Review: Accepted</p>
 
     <p class="qualification">Biography does not demonstrate realized financial effects.</p>
 
-<p class="source-cite">
-<a href="#bo-management-citation-cite-50bfb6838269bf06">Source 1 · p. 2</a>
-</p>
+<p class="source-cite"><a href="#bo-management-citation-cite-50bfb6838269bf06">Source 1 · Page 2</a></p>
 
-  </div>
-
-  <div class="memo-claim">
-    <p>Supported internal experience mitigates potential transition uncertainty.</p>
-    <p class="technical-note">Review: Accepted</p>
+  </div><div class="memo-claim"><p>Supported internal experience mitigates potential transition uncertainty.</p>
+    <p class="technical-note">Recorded direction: positive · Review: Accepted</p>
 
     <p class="qualification">Biography does not demonstrate realized financial effects.</p>
 
-<p class="source-cite">
-<a href="#bo-management-citation-cite-50bfb6838269bf06">Source 1 · p. 2</a>
-</p>
+<p class="source-cite"><a href="#bo-management-citation-cite-50bfb6838269bf06">Source 1 · Page 2</a></p>
 
   </div>
-
-  <h3>Recorded qualifications and limitations</h3><p class="qualification">Offline fixture; qualitative model performance not tested.</p><p class="qualification">Validator 7 used a saved/offline reviewer response; this execution does not verify live reviewer model performance.</p>
+  <h3>Original qualifications and limitations</h3><p class="qualification">Offline fixture; qualitative model performance not tested.</p><p class="qualification">Validator 7 used a saved/offline reviewer response; this execution does not verify live reviewer model performance.</p>
+  <h3>Processing and detailed review records</h3><p class="technical-note">Educational structure is not a verified legal/obligor assessment. Management observations are bounded continuity rules, not competence/governance ratings.</p>
   <h3>Recorded source citations</h3>
 
-  <div class="bo-management-citation" id="bo-management-citation-cite-c7d78932446c27cf" data-source-sha256="661a57cf2de5c7204c1e532faa00ba073b03d28fcb03aedf8b609f6c1bcef376">
-    <p class="source-cite">mgmt-page-2 · page 2</p><blockquote>As of January 10, 2026, our executive officers were as follows:</blockquote>
+  <div class="bo-management-citation" id="bo-management-citation-cite-c7d78932446c27cf" data-source-id="mgmt-page-2" data-source-sha256="661a57cf2de5c7204c1e532faa00ba073b03d28fcb03aedf8b609f6c1bcef376">
+    <p class="source-cite">Source 1 · management.pdf · Page 2</p><blockquote>As of January 10, 2026, our executive officers were as follows:</blockquote>
   </div>
-
-  <div class="bo-management-citation" id="bo-management-citation-cite-8e9ee6d05e466337" data-source-sha256="661a57cf2de5c7204c1e532faa00ba073b03d28fcb03aedf8b609f6c1bcef376">
-    <p class="source-cite">mgmt-page-2 · page 2</p><blockquote>Alex Sample........ 50 Chief Executive Officer</blockquote>
+  <div class="bo-management-citation" id="bo-management-citation-cite-8e9ee6d05e466337" data-source-id="mgmt-page-2" data-source-sha256="661a57cf2de5c7204c1e532faa00ba073b03d28fcb03aedf8b609f6c1bcef376">
+    <p class="source-cite">Source 1 · management.pdf · Page 2</p><blockquote>Alex Sample........ 50 Chief Executive Officer</blockquote>
   </div>
-
-  <div class="bo-management-citation" id="bo-management-citation-cite-50bfb6838269bf06" data-source-sha256="661a57cf2de5c7204c1e532faa00ba073b03d28fcb03aedf8b609f6c1bcef376">
-    <p class="source-cite">mgmt-page-2 · page 2</p><blockquote>Alex Sample was appointed Chief Executive Officer effective May 1, 2025.</blockquote>
+  <div class="bo-management-citation" id="bo-management-citation-cite-50bfb6838269bf06" data-source-id="mgmt-page-2" data-source-sha256="661a57cf2de5c7204c1e532faa00ba073b03d28fcb03aedf8b609f6c1bcef376">
+    <p class="source-cite">Source 1 · management.pdf · Page 2</p><blockquote>Alex Sample was appointed Chief Executive Officer effective May 1, 2025.</blockquote>
   </div>
-
-  <div class="bo-management-citation" id="bo-management-citation-cite-73c999c99921cf3a" data-source-sha256="661a57cf2de5c7204c1e532faa00ba073b03d28fcb03aedf8b609f6c1bcef376">
-    <p class="source-cite">mgmt-page-2 · page 2</p><blockquote>Alex Sample previously served as President of the Company from January 2020 through April 2025.</blockquote>
+  <div class="bo-management-citation" id="bo-management-citation-cite-73c999c99921cf3a" data-source-id="mgmt-page-2" data-source-sha256="661a57cf2de5c7204c1e532faa00ba073b03d28fcb03aedf8b609f6c1bcef376">
+    <p class="source-cite">Source 1 · management.pdf · Page 2</p><blockquote>Alex Sample previously served as President of the Company from January 2020 through April 2025.</blockquote>
   </div>
-
 </details>
 
-<p class="qualification notice-warning">Educational structure is not a verified legal/obligor assessment. Management observations are bounded continuity rules, not competence/governance ratings.</p><p class="qualification notice-warning">Offline fixture; qualitative model performance not tested.</p><p class="qualification notice-warning">Validator 7 used a saved/offline reviewer response; this execution does not verify live reviewer model performance.</p><details class="bo-evidence" data-run-id="ar_8ead780b7b9543fe"><summary>Evidence · Management</summary><div class="bo-evidence-body" id="bo-evidence-3"><p class="record-id">Analysis run: ar_8ead780b7b9543fe · Evidence snapshot: 1</p><pre>{
+<details class="bo-evidence" data-run-id="ar_a13c50d240e94082"><summary>Evidence · Management</summary><div class="bo-evidence-body" id="bo-evidence-3"><p class="record-id">Analysis run: ar_a13c50d240e94082 · Evidence snapshot: 1</p><pre>{
   "calculation_traces": [],
   "citations": [],
   "claim": null,
@@ -1054,7 +1035,7 @@
         "rejected_facts": [],
         "rejected_judgments": [],
         "validator_7": {
-          "agent_run_id": "e8b1660a-7221-4b4c-8cff-1c756d9ef10b",
+          "agent_run_id": "db6b222a-4e25-4c62-99c8-3d79519940ca",
           "decisions": [
             {
               "judgment_id": "A:1",
@@ -1106,11 +1087,11 @@
   "source": {
     "artifact_id": "management",
     "binding": "same_run_verified",
-    "content_hash": "2aec81dca98fc7d21cab318863c12f1c33cf6f2a2085fda67aae83222d7ecd13",
+    "content_hash": "7fb6442437cf20567dc2e2df3583511cbbf5b7de16c31d935ca44969b7c4ce73",
     "hash_kind": "canonical_stage",
-    "sha256": "8a101f13fee7f4a25527aa737043e517f2e2469673c9903c2d0437512e9b500a",
+    "sha256": "db7d6402faabb588a8a37c001b23472404bd2718e372bd08f70da64f78ba8a3a",
     "source_path": "/module_conclusions/M3/m3_rebuild/management/artifact",
-    "stage_name": "bo_audit:ar_8ead780b7b9543fe"
+    "stage_name": "bo_audit:ar_a13c50d240e94082"
   },
   "title": "Management"
 }</pre></div></details>
