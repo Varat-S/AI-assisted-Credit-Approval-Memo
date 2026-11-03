@@ -162,6 +162,11 @@ def test_actual_new_analysis_pipeline_history_and_exports(browser_env):
     for d in visible.xpath('//details'):d.getparent().remove(d)
     assert 'Industry analysis is not available in this version.' in visible.text_content()
     assert 'Admissions were stable during the year.' not in visible.text_content()
+    assert 'Revenue Drivers' in visible.text_content() and 'Cost Drivers' in visible.text_content()
+    assert 'Business driver' not in visible.text_content()
+    assert 'Fact' in visible.text_content() and 'Inference' in visible.text_content()
+    for finding in page.xpath('//*[@data-source-finding]'):
+        assert finding.xpath('.//dl[@class="bo-finding-points"]/dt/text()')==['Finding','Credit Implication','Watch Triggers']
     audit=client.get(f'/analysis/{ident}/audit');assert audit.status_code==200
     assert 'M1S2-H001' in audit.text and 'omitted' in audit.text
     assert 'Independent challenge is disabled for this workflow.' in audit.text

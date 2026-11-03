@@ -135,13 +135,22 @@ def load_view(session, analysis_run_id, case_id=None):
             if claim:
                 claims.append({'category': category, 'claim': claim,
                                'evidence': add(category, None, claim=claim, source=sections[2]['source_ref'])})
+    finding_groups = None
+    selection = sections[2].get('editorial_selection') or {}
+    if selection.get('schema_version') in {'bo-source-selection-output-1.0.0', 'bo-source-selection-output-1.1.0'}:
+        from app.services.bo.competitive_presentation import grouped_findings
+        finding_groups = grouped_findings(claims, saved.audit, saved.provenance)
+        titles = {entry['evidence']['id']: entry['topic'] for group in finding_groups for entry in group['entries']}
+        for item in evidence:
+            if item['id'] in titles:
+                item['title'] = titles[item['id']]
     svg = None
     structure = sections[0]['structure']['content']
     if structure:
         from app.services.bo.m3_rebuild.structure import render_svg
         # Only the existing deterministic, escaping SVG generator supplies Markup.
         svg = Markup(render_svg(structure))
-    return {'memo': artifact, 'svg': svg, 'claims': claims, 'evidence': evidence,
+    return {'memo': artifact, 'svg': svg, 'claims': claims, 'finding_groups': finding_groups, 'evidence': evidence,
             'structure_tree': next(iter(structure['companies'].values()))['plain_text_tree'] if structure else None,
             'review': public_record({'status': row.human_review_status,
                                       'reviewer': row.payload.get('reviewer'), 'reviewed_at': row.payload.get('reviewed_at')}),
