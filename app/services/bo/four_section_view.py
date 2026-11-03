@@ -171,10 +171,15 @@ def load_view(session, analysis_run_id, case_id=None):
     for item in evidence:
         item['quotations'] = quotation_cards(item, passages, documents, indexes, source_base)
     if finding_groups is not None:
+        from app.services.bo.finding_assessment import assessment
         by_id = {item['id']: item for item in evidence}
         for group in finding_groups:
             for entry in group['entries']:
                 entry['evidence'] = by_id[entry['evidence']['id']]
+                entry['assessment'] = assessment(hypotheses[entry['source_hypothesis_id']], entry['pointers'],
+                    entry['claim'].get('uncertainty'), verified_quotes=entry['evidence']['quotations'])
+                entry['pointers'][0]['classification'] = entry['assessment']['finding']
+                entry['pointers'][1]['classification'] = entry['assessment']['implication']
                 entry['evidence']['assessment'] = entry['assessment']
     return {'memo': artifact, 'svg': svg, 'debt_snapshot': snapshot, 'snapshot_placed': snapshot_placed,
             'claims': claims, 'finding_groups': finding_groups, 'evidence': evidence,

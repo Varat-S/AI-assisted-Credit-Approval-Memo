@@ -1,0 +1,99 @@
+{
+  "runs": [
+    {
+      "run_id": "ar_6a53acf3438544ef",
+      "before": {
+        "Fact": 9,
+        "Inference": 3,
+        "Assumption": 1
+      },
+      "after": {
+        "Fact": 9,
+        "Inference": 4
+      },
+      "support": {
+        "Supported": 10,
+        "Unsupported": 1,
+        "Qualified": 2
+      }
+    },
+    {
+      "run_id": "ar_888bced33fbd43b9",
+      "before": {
+        "Assumption": 4,
+        "Fact": 1,
+        "Inference": 2
+      },
+      "after": {
+        "Inference": 5,
+        "Fact": 2
+      },
+      "support": {
+        "Unsupported": 2,
+        "Qualified": 4,
+        "Supported": 1
+      }
+    },
+    {
+      "run_id": "ar_8ec1650cef6e4fef",
+      "before": {
+        "Fact": 3,
+        "Inference": 2
+      },
+      "after": {
+        "Fact": 3,
+        "Inference": 2
+      },
+      "support": {
+        "Supported": 3,
+        "Qualified": 2
+      }
+    },
+    {
+      "run_id": "ar_5bc3ad27773348ff",
+      "before": {
+        "Fact": 3,
+        "Inference": 4,
+        "Assumption": 1
+      },
+      "after": {
+        "Fact": 3,
+        "Inference": 5
+      },
+      "support": {
+        "Supported": 4,
+        "Qualified": 4
+      }
+    },
+    {
+      "run_id": "ar_2a34d91490944089",
+      "before": {
+        "Inference": 5,
+        "Fact": 1
+      },
+      "after": {
+        "Inference": 5,
+        "Fact": 1
+      },
+      "support": {
+        "Supported": 4,
+        "Qualified": 2
+      }
+    }
+  ],
+  "total_before": {
+    "Fact": 17,
+    "Inference": 16,
+    "Assumption": 6
+  },
+  "total_after": {
+    "Fact": 18,
+    "Inference": 21
+  },
+  "total_support": {
+    "Supported": 22,
+    "Unsupported": 3,
+    "Qualified": 14
+  },
+  "inference_calls": 0
+}
