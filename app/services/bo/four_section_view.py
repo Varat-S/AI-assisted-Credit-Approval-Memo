@@ -145,12 +145,25 @@ def load_view(session, analysis_run_id, case_id=None):
             if item['id'] in titles:
                 item['title'] = titles[item['id']]
     svg = None
+    from app.services.bo.debt_snapshot import build_snapshot, annotate_svg, format_date
     structure = sections[0]['structure']['content']
+    snapshot = build_snapshot(structure, sections[0]['debt_obligations']['content'])
+    snapshot_placed = False
+    if snapshot:
+        snapshot['as_of'] = artifact['identity']['as_of_date']
+        snapshot['display_date'] = format_date(snapshot['as_of'])
+        sections[0]['debt_obligations']['evidence']['snapshot_metadata'] = {
+            'entity': snapshot['entity'], 'diagram_entity': snapshot['borrower']['display_name'],
+            'mapping': snapshot['note'], 'scope': snapshot['scope_note'],
+            'capacity_note': 'Facility limits are capacity, not additional debt.',
+            'excluded_obligation_rows': snapshot['excluded_count']}
     if structure:
         from app.services.bo.m3_rebuild.structure import render_svg
-        # Only the existing deterministic, escaping SVG generator supplies Markup.
-        svg = Markup(render_svg(structure, show_title=False))
-    return {'memo': artifact, 'svg': svg, 'claims': claims, 'finding_groups': finding_groups, 'evidence': evidence,
+        # Both deterministic SVG renderers escape source strings; no source SVG is trusted.
+        rendered, snapshot_placed = annotate_svg(render_svg(structure, show_title=False), structure, snapshot)
+        svg = Markup(rendered)
+    return {'memo': artifact, 'svg': svg, 'debt_snapshot': snapshot, 'snapshot_placed': snapshot_placed,
+            'claims': claims, 'finding_groups': finding_groups, 'evidence': evidence,
             'structure_tree': next(iter(structure['companies'].values()))['plain_text_tree'] if structure else None,
             'review': public_record({'status': row.human_review_status,
                                       'reviewer': row.payload.get('reviewer'), 'reviewed_at': row.payload.get('reviewed_at')}),
