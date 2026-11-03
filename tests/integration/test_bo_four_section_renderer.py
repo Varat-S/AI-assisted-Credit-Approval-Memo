@@ -1,6 +1,8 @@
 """Saved four-section presentation: real frozen runs, no models on reads."""
 from copy import deepcopy
 import json
+import os
+from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
@@ -69,6 +71,32 @@ def visible(page):
     for node in root.xpath('//details'):
         node.getparent().remove(node)
     return root.text_content()
+
+
+def test_management_web_and_print_share_conservative_projection(db_session, tmp_path):
+    result, _ = run(db_session, tmp_path)
+    view = load_view(db_session, result.analysis_run_id)
+    web = html.fromstring(render_page(view))
+    printed = html.fromstring(render_page(view, pdf=True))
+    web_management = web.xpath('//*[@data-memo-section="management"]')
+    print_management = printed.xpath('//*[@data-memo-section="management"]')
+    assert len(web_management) == len(print_management) == 1
+    assert len(web_management[0].xpath('.//section[contains(@class,"bo-management-card")]')) == 5
+    assert web_management[0].xpath('.//details[contains(@class,"bo-management-support") and not(@open)]')
+    assert not print_management[0].xpath('.//details[contains(@class,"bo-management-support")]')
+    assert view['management']['overall_assessment']['text'] in web_management[0].text_content()
+    assert view['management']['overall_assessment']['text'] in print_management[0].text_content()
+    for finding in view['management']['key_strengths'] + view['management']['key_concerns']:
+        assert finding['text'] in print_management[0].text_content()
+    assert 'Appointment:' not in print_management[0].text_content()
+    assert 'Recorded tenure:' not in print_management[0].text_content()
+    assert 'Full management records remain available in Audit' in printed.text_content()
+    preview_dir = os.environ.get('BO_M3_PREVIEW_DIR')
+    if preview_dir:
+        folder = Path(preview_dir)
+        folder.mkdir(parents=True, exist_ok=True)
+        (folder / 'management_web_preview.html').write_text(render_page(view), encoding='utf-8')
+        (folder / 'management_print_preview.html').write_text(render_page(view, pdf=True), encoding='utf-8')
 
 
 def test_populated_review_routes_debt_and_closed_evidence(db_session, tmp_path, monkeypatch):

@@ -1,0 +1,442 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Business Overview · Northfield Health Systems</title>
+<script>
+  (function () {
+    var saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (e) {}
+    var dark = saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+  })();
+  document.addEventListener('DOMContentLoaded', function () {
+    var root = document.documentElement;
+    var button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'theme-toggle';
+    function label() {
+      var dark = root.dataset.theme === 'dark';
+      button.textContent = dark ? '☀ Light mode' : '☾ Dark mode';
+      button.setAttribute('aria-pressed', String(dark));
+    }
+    button.addEventListener('click', function () {
+      root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+      try { localStorage.setItem('theme', root.dataset.theme); } catch (e) {}
+      label();
+    });
+    // Without a saved choice, keep following the operating system setting.
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (event) {
+      var saved = null;
+      try { saved = localStorage.getItem('theme'); } catch (e) {}
+      if (!saved) { root.dataset.theme = event.matches ? 'dark' : 'light'; label(); }
+    });
+    label();
+    document.body.appendChild(button);
+  });
+</script>
+<style>
+  :root {
+    color-scheme: light;
+    --c-007b77:#007b77;
+    --c-093264:#093264;
+    --c-10b981:#10b981;
+    --c-155cb7:#155cb7;
+    --c-183f43:#183f43;
+    --c-192b3b:#192b3b;
+    --c-1d39460a:#1d39460a;
+    --c-1d3e42:#1d3e42;
+    --c-1e5d60:#1e5d60;
+    --c-205537:#205537;
+    --c-22334a:#22334a;
+    --c-226c67:#226c67;
+    --c-254c50:#254c50;
+    --c-284f53:#284f53;
+    --c-285d5e:#285d5e;
+    --c-294f53:#294f53;
+    --c-2f6b45:#2f6b45;
+    --c-2f6fb0:#2f6fb0;
+    --c-315e62:#315e62;
+    --c-344955:#344955;
+    --c-386963:#386963;
+    --c-395c5b:#395c5b;
+    --c-397477:#397477;
+    --c-397b77:#397b77;
+    --c-3a6949:#3a6949;
+    --c-488c8c:#488c8c;
+    --c-497578:#497578;
+    --c-517273:#517273;
+    --c-518587:#518587;
+    --c-56687e:#56687e;
+    --c-586e71:#586e71;
+    --c-5b6c80:#5b6c80;
+    --c-5c7175:#5c7175;
+    --c-61717d:#61717d;
+    --c-61757b:#61757b;
+    --c-62707b:#62707b;
+    --c-64727b:#64727b;
+    --c-64748b:#64748b;
+    --c-687780:#687780;
+    --c-6a7b7d:#6a7b7d;
+    --c-6e684e:#6e684e;
+    --c-70808b:#70808b;
+    --c-718087:#718087;
+    --c-719596:#719596;
+    --c-72808a:#72808a;
+    --c-74808a:#74808a;
+    --c-775700:#775700;
+    --c-789b99:#789b99;
+    --c-78b58c:#78b58c;
+    --c-7f8999:#7f8999;
+    --c-836328:#836328;
+    --c-849097:#849097;
+    --c-84cc16:#84cc16;
+    --c-8a6d1c:#8a6d1c;
+    --c-8a94a0:#8a94a0;
+    --c-934a42:#934a42;
+    --c-942d29:#942d29;
+    --c-9a3324:#9a3324;
+    --c-9e483e:#9e483e;
+    --c-a2473b:#a2473b;
+    --c-a3adb3:#a3adb3;
+    --c-aacac1:#aacac1;
+    --c-b26e61:#b26e61;
+    --c-b42318:#b42318;
+    --c-b47b72:#b47b72;
+    --c-c69a44:#c69a44;
+    --c-c7d5d4:#c7d5d4;
+    --c-c8d7e9:#c8d7e9;
+    --c-c9d1da:#c9d1da;
+    --c-c9d9d3:#c9d9d3;
+    --c-c9dcd3:#c9dcd3;
+    --c-d49b25:#d49b25;
+    --c-d4aa39:#d4aa39;
+    --c-d58880:#d58880;
+    --c-d7b9b4:#d7b9b4;
+    --c-d8dfdf:#d8dfdf;
+    --c-d8e0df:#d8e0df;
+    --c-d8e2df:#d8e2df;
+    --c-d9dfdf:#d9dfdf;
+    --c-dce2e1:#dce2e1;
+    --c-dce4e3:#dce4e3;
+    --c-dce4ee:#dce4ee;
+    --c-dfe5ec:#dfe5ec;
+    --c-e1cbb7:#e1cbb7;
+    --c-e1e6ed:#e1e6ed;
+    --c-e1eeea:#e1eeea;
+    --c-e1f3e7:#e1f3e7;
+    --c-e2e8e5:#e2e8e5;
+    --c-e3e8ee:#e3e8ee;
+    --c-e4e9e7:#e4e9e7;
+    --c-e5eaea:#e5eaea;
+    --c-e7ebeb:#e7ebeb;
+    --c-e7ecf2:#e7ecf2;
+    --c-e9efed:#e9efed;
+    --c-eab308:#eab308;
+    --c-eaf4f2:#eaf4f2;
+    --c-edf0ef:#edf0ef;
+    --c-edf4ef:#edf4ef;
+    --c-edf4f2:#edf4f2;
+    --c-edf5f1:#edf5f1;
+    --c-eef3f8:#eef3f8;
+    --c-eef3fb:#eef3fb;
+    --c-ef4444:#ef4444;
+    --c-f0f6f4:#f0f6f4;
+    --c-f1f6f4:#f1f6f4;
+    --c-f1f6f5:#f1f6f5;
+    --c-f3f6fa:#f3f6fa;
+    --c-f4f7e9:#f4f7e9;
+    --c-f59e0b:#f59e0b;
+    --c-f5f6f4:#f5f6f4;
+    --c-f5f8f7:#f5f8f7;
+    --c-f8fafd:#f8fafd;
+    --c-f97316:#f97316;
+    --c-faf3e4:#faf3e4;
+    --c-fbefec:#fbefec;
+    --c-fbf7ed:#fbf7ed;
+    --c-fcf3f1:#fcf3f1;
+    --c-fcf8f3:#fcf8f3;
+    --c-fde5e2:#fde5e2;
+    --c-fdf1f0:#fdf1f0;
+    --c-fff3bf:#fff3bf;
+    --c-fff6ee:#fff6ee;
+    --c-fff8e5:#fff8e5;
+    --c-fff9ec:#fff9ec;
+    --c-ffffff:#ffffff;
+  }
+  /* Screen only: printed and PDF output stays light. */
+  @media screen {
+    :root[data-theme=dark] {
+      color-scheme: dark;
+      --c-007b77:#8ce4e1;
+      --c-093264:#96bae6;
+      --c-10b981:#10b981;
+      --c-155cb7:#568fd7;
+      --c-183f43:#aadbe1;
+      --c-192b3b:#b2c9de;
+      --c-1d39460a:#a9cbdb0a;
+      --c-1d3e42:#add6db;
+      --c-1e5d60:#91d9dd;
+      --c-205537:#9cdab7;
+      --c-22334a:#a6bbd6;
+      --c-226c67:#87d9d4;
+      --c-254c50:#a2cfd4;
+      --c-284f53:#9fccd1;
+      --c-285d5e:#95d1d2;
+      --c-294f53:#a0cbd0;
+      --c-2f6b45:#8bcca3;
+      --c-2f6fb0:#4e8fd0;
+      --c-315e62:#93c5c9;
+      --c-344955:#a0b7c5;
+      --c-386963:#8ec3bc;
+      --c-395c5b:#9ac1c0;
+      --c-397477:#82c0c3;
+      --c-397b77:#7ec3bf;
+      --c-3a6949:#8fc19f;
+      --c-488c8c:#71b6b6;
+      --c-497578:#83b1b4;
+      --c-517273:#89abac;
+      --c-518587:#77abad;
+      --c-56687e:#7f92a8;
+      --c-586e71:#8ba2a5;
+      --c-5b6c80:#7e8fa3;
+      --c-5c7175:#889ea2;
+      --c-61717d:#82929e;
+      --c-61757b:#83979d;
+      --c-62707b:#83919d;
+      --c-64727b:#84929b;
+      --c-64748b:#75859c;
+      --c-687780:#808e97;
+      --c-6a7b7d:#829395;
+      --c-6e684e:#aea88d;
+      --c-70808b:#768691;
+      --c-718087:#7a8990;
+      --c-719596:#6c9192;
+      --c-72808a:#77858f;
+      --c-74808a:#78838d;
+      --c-775700:#e5ce8f;
+      --c-789b99:#688c8a;
+      --c-78b58c:#4f9064;
+      --c-7f8999:#6a7585;
+      --c-836328:#d5b374;
+      --c-849097:#6d7980;
+      --c-84cc16:#84cc16;
+      --c-8a6d1c:#ddc070;
+      --c-8a94a0:#656f7c;
+      --c-934a42:#bc726a;
+      --c-942d29:#d56a66;
+      --c-9a3324:#da6f60;
+      --c-9e483e:#c16a60;
+      --c-a2473b:#c4685c;
+      --c-a3adb3:#556167;
+      --c-aacac1:#3f655a;
+      --c-b26e61:#a45d50;
+      --c-b42318:#d76056;
+      --c-b47b72:#95594f;
+      --c-c69a44:#c0933b;
+      --c-c7d5d4:#3d4746;
+      --c-c8d7e9:#2c3847;
+      --c-c9d1da:#383e45;
+      --c-c9d9d3:#394541;
+      --c-c9dcd3:#37453e;
+      --c-d49b25:#d49b25;
+      --c-d4aa39:#d4aa39;
+      --c-d58880:#8e382f;
+      --c-d7b9b4:#55403c;
+      --c-d8dfdf:#343a3a;
+      --c-d8e0df:#333a39;
+      --c-d8e2df:#313a37;
+      --c-d9dfdf:#343939;
+      --c-dce2e1:#313636;
+      --c-dce4e3:#2f3736;
+      --c-dce4ee:#262e38;
+      --c-dfe5ec:#282e35;
+      --c-e1cbb7:#534334;
+      --c-e1e6ed:#272c33;
+      --c-e1eeea:#26342f;
+      --c-e1f3e7:#213527;
+      --c-e2e8e5:#2c322f;
+      --c-e3e8ee:#262b32;
+      --c-e4e9e7:#2b302e;
+      --c-e5eaea:#2a2f2f;
+      --c-e7ebeb:#292e2e;
+      --c-e7ecf2:#22282f;
+      --c-e9efed:#262d2a;
+      --c-eab308:#eab308;
+      --c-eaf4f2:#202d2b;
+      --c-edf0ef:#252928;
+      --c-edf4ef:#202a23;
+      --c-edf4f2:#202a28;
+      --c-edf5f1:#1f2b25;
+      --c-eef3f8:#1b232b;
+      --c-eef3fb:#161f2e;
+      --c-ef4444:#ef4444;
+      --c-f0f6f4:#1e2825;
+      --c-f1f6f4:#1f2724;
+      --c-f1f6f5:#1f2725;
+      --c-f3f6fa:#191f28;
+      --c-f4f7e9:#2b301c;
+      --c-f59e0b:#f59e0b;
+      --c-f5f6f4:#222420;
+      --c-f5f8f7:#1d2422;
+      --c-f8fafd:#141b26;
+      --c-f97316:#f97316;
+      --c-faf3e4:#352c18;
+      --c-fbefec:#2f1b16;
+      --c-fbf7ed:#2f2816;
+      --c-fcf3f1:#2c1915;
+      --c-fcf8f3:#2a2115;
+      --c-fde5e2:#391814;
+      --c-fdf1f0:#2e1513;
+      --c-fff3bf:#504617;
+      --c-fff6ee:#321f0f;
+      --c-fff8e5:#382d10;
+      --c-fff9ec:#34280f;
+      --c-ffffff:#262b31;
+    }
+  }
+  .theme-toggle { position: fixed; right: 18px; bottom: 18px; z-index: 1000; border: 1px solid var(--c-c8d7e9); border-radius: 20px; padding: 7px 14px; background: var(--c-ffffff); color: var(--c-22334a); font-size: .82rem; box-shadow: 0 4px 14px var(--c-1d39460a); }
+  .theme-toggle:hover { border-color: var(--c-719596); }
+  @media print { .theme-toggle { display: none; } }
+</style>
+<style>
+  :root { font-family: system-ui, sans-serif; color: var(--c-22334a); background: var(--c-f3f6fa); }
+  * { box-sizing: border-box; }
+  body { max-width: 1200px; margin: 0 auto; padding: 32px 24px; line-height: 1.55; }
+  h1, h2, h3 { line-height: 1.2; } h1 { margin-bottom: 12px; }
+  a { color: var(--c-155cb7); } a:hover { color: var(--c-093264); }
+  header, main > section, .workbench-counts, nav { background: var(--c-ffffff); border: 1px solid var(--c-dce4ee); border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+  .subtle { color: var(--c-5b6c80); } .notice { background: var(--c-fff8e5); border-left: 4px solid var(--c-d49b25); padding: 14px 18px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 18px; }
+  .actions a { display: inline-block; border: 1px solid var(--c-c8d7e9); border-radius: 6px; padding: 7px 12px; text-decoration: none; }
+  .badge { display: inline-block; background: var(--c-eef3fb); padding: 2px 10px; border-radius: 20px; font-size: .9rem; }
+  dl { display: grid; grid-template-columns: minmax(130px, 180px) 1fr; gap: 6px 16px; } dt { color: var(--c-5b6c80); } dd { margin: 0; overflow-wrap: anywhere; }
+  nav ul { display: flex; flex-wrap: wrap; gap: 10px 22px; list-style: none; padding: 0; }
+  .table-wrap { overflow-x: auto; } table { width: 100%; border-collapse: collapse; font-size: .93rem; }
+  th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--c-e7ecf2); vertical-align: top; } th { color: var(--c-56687e); background: var(--c-f8fafd); }
+  pre { white-space: pre-wrap; overflow-wrap: anywhere; background: var(--c-f8fafd); padding: 16px; max-height: 500px; overflow-y: auto; font-size: .82rem; }
+  details { margin-top: 14px; } summary { cursor: pointer; color: var(--c-155cb7); } section { scroll-margin-top: 20px; }
+  fieldset { border: 1px solid var(--c-dce4ee); border-radius: 8px; margin: 0 0 24px; padding: 20px; } legend { font-weight: 600; padding: 0 8px; }
+  label { display: block; font-weight: 600; margin: 0 0 6px; } input, select, button { font: inherit; }
+  input:not([type=file]), select { width: 100%; padding: 9px 11px; border: 1px solid var(--c-c8d7e9); border-radius: 6px; background: var(--c-ffffff); } input[type=file] { max-width: 100%; }
+  small { color: var(--c-5b6c80); overflow-wrap: anywhere; } .form-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 20px; }
+  button { border: 1px solid var(--c-c8d7e9); border-radius: 6px; padding: 8px 12px; cursor: pointer; background: var(--c-eef3fb); color: var(--c-155cb7); } button:disabled { cursor: default; opacity: .6; } .primary-button { background: var(--c-155cb7); color: var(--c-ffffff); padding: 12px 18px; }
+  .workflow { display: flex; flex-wrap: wrap; gap: 12px 28px; padding-left: 24px; } .workflow .current { font-weight: 700; } .workflow .pending { color: var(--c-7f8999); }
+  .hash { max-width: 230px; overflow-wrap: anywhere; font: .8rem ui-monospace,monospace; } .facts-scroll { max-height: 650px; } .facts-scroll thead { position: sticky; top: 0; background: var(--c-f8fafd); }
+  .filter-row { display: grid; grid-template-columns: 1fr; gap: 8px; margin-bottom: 20px; } [hidden] { display: none !important; }
+  @media (max-width: 650px) { .form-grid { grid-template-columns: 1fr; } fieldset { padding: 14px; } }
+  @media (max-width: 650px) { body { padding: 16px 12px; } header, main > section, nav { padding: 18px; } dl { grid-template-columns: 1fr; } }
+</style>
+<style>
+  :root{color:var(--c-192b3b);background:var(--c-f5f6f4);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+  body{max-width:1120px;padding:42px 28px 30px;line-height:1.55}h1{font-family:Georgia,serif;font-size:2.8rem;font-weight:500;letter-spacing:-.03em;margin:14px 0}h2{font-size:1.18rem}a{color:var(--c-1e5d60)}a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--c-488c8c);outline-offset:4px}
+  .eyebrow{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--c-517273);font-weight:700}.workspace-header{background:transparent;border:0;padding:20px 0 32px;margin:0}.workspace-header p{max-width:650px;color:var(--c-62707b)}.workspace-cards{display:grid;grid-template-columns:1fr 1fr;gap:24px;border:0;padding:0;background:transparent;margin:0}.workspace-card{position:relative;display:block;min-height:245px;padding:32px;border:1px solid var(--c-d8dfdf);border-radius:12px;background:var(--c-ffffff);text-decoration:none;color:var(--c-192b3b);transition:border-color .15s,box-shadow .15s}.workspace-card:hover{color:var(--c-192b3b);border-color:var(--c-719596);box-shadow:0 8px 24px var(--c-1d39460a)}.workspace-card h2{font-size:1.45rem;margin:24px 0 10px}.workspace-card p{max-width:330px;color:var(--c-62707b);margin:0}.card-icon{display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;border-radius:10px;background:var(--c-edf4f2);color:var(--c-285d5e)}.card-arrow{position:absolute;right:30px;top:38px;color:var(--c-497578)}.workspace-footer{margin-top:34px;font-size:.8rem;color:var(--c-74808a)}
+  .workspace-nav{display:flex;align-items:center;justify-content:space-between;padding:0 0 22px;border:0;border-bottom:1px solid var(--c-dce2e1);border-radius:0;background:transparent;margin-bottom:24px;gap:16px}.workspace-nav .brand{color:var(--c-344955);text-decoration:none;font-size:.8rem;letter-spacing:.08em;font-weight:700}.workspace-nav ul{margin:0;gap:22px}.workspace-nav a{text-decoration:none;font-size:.9rem}.workspace-nav a[aria-current=page]{color:var(--c-183f43);font-weight:700;border-bottom:2px solid var(--c-397477);padding-bottom:7px}
+  .setup-header{padding:0;border:0;background:transparent;margin-bottom:28px}.setup-header h1{font-size:2.3rem;margin:8px 0 10px}.setup-header>p{color:var(--c-62707b);margin:0}.stepper{display:flex;list-style:none;padding:18px 22px;margin:26px 0 0;background:var(--c-ffffff);border:1px solid var(--c-dce2e1);border-radius:10px;gap:36px}.stepper li{display:flex;align-items:center;gap:10px;color:var(--c-849097)}.step-number{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;border:1px solid var(--c-d9dfdf);font-size:.8rem}.stepper [aria-current=step]{color:var(--c-254c50);font-weight:700}.stepper [aria-current=step] .step-number{background:var(--c-284f53);color:var(--c-ffffff);border-color:var(--c-284f53)}
+  .setup-layout{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(270px,1fr);gap:24px;align-items:start}.setup-panel,.evidence-panel{background:var(--c-ffffff);border:1px solid var(--c-dce2e1);border-radius:12px;padding:28px}.setup-panel h2,.evidence-panel h2{margin:0 0 20px}.setup-panel fieldset{margin:24px 0 0;padding:0;border:0}.setup-panel legend{padding:0;font-size:.94rem;margin-bottom:10px}.setup-panel select{margin-bottom:0;padding:12px}.choice{display:flex;align-items:flex-start;gap:12px;padding:14px;border:1px solid var(--c-dce2e1);border-radius:8px;margin:0 0 10px;font-weight:400;cursor:pointer}.choice:has(input:checked){border-color:var(--c-518587);background:var(--c-f0f6f4)}.choice input{width:17px;height:17px;padding:0;flex-shrink:0;margin:3px 0 0;accent-color:var(--c-315e62)}.choice strong{display:block;font-size:.91rem}.choice small{display:block;margin-top:3px;line-height:1.5;font-size:.8rem}.setup-panel details{border-top:1px solid var(--c-e7ebeb);padding-top:18px;margin-top:22px}.setup-panel details label{margin-top:15px;font-size:.88rem}.setup-panel .hint{font-size:.8rem;color:var(--c-687780);margin:8px 0}.mode-note{font-size:.82rem;border-left:3px solid var(--c-c69a44);background:var(--c-fbf7ed);padding:12px 14px;margin:12px 0}.setup-actions{display:flex;justify-content:space-between;gap:16px;align-items:center;border-top:1px solid var(--c-e7ebeb);margin-top:24px;padding-top:22px}.primary-button{background:var(--c-294f53);border-color:var(--c-294f53);color:var(--c-ffffff);border-radius:7px;padding:12px 20px}.primary-button:disabled{background:var(--c-dce4e3);color:var(--c-6a7b7d);border-color:var(--c-dce4e3);opacity:1}.secondary-button{background:var(--c-ffffff);border-color:var(--c-c7d5d4);color:var(--c-315e62);padding:11px 16px}.execution-note{font-size:.8rem;color:var(--c-687780);margin:12px 0 0}.evidence-panel .evidence-name{font-family:Georgia,serif;font-size:1.25rem;margin:5px 0 20px}.evidence-panel dl{display:block;margin:0}.evidence-panel dt{font-size:.76rem;color:var(--c-718087);margin-top:17px}.evidence-panel dd{font-size:.88rem;margin-top:4px;overflow-wrap:anywhere}.evidence-tag{display:inline-block;font-size:.72rem;padding:3px 9px;border-radius:20px;color:var(--c-386963);background:var(--c-edf5f1)}.readiness{margin-top:24px;padding-top:18px;border-top:1px solid var(--c-e5eaea);font-size:.8rem;color:var(--c-687780)}.readiness strong{display:block;color:var(--c-395c5b);margin-bottom:4px}.setup-errors{margin-bottom:20px;padding:15px 18px;border:1px solid var(--c-e1cbb7);background:var(--c-fcf8f3);border-radius:8px;font-size:.9rem}.setup-errors ul{margin:6px 0;padding-left:20px}.setup-checked{padding:12px 16px;background:var(--c-edf5f1);border:1px solid var(--c-c9dcd3);border-radius:8px;margin-bottom:20px;font-size:.88rem}.placeholder{padding:32px;background:var(--c-ffffff);border:1px solid var(--c-dce2e1);border-radius:12px}.placeholder p{color:var(--c-62707b);max-width:620px}
+  #add-evidence{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:28px 40px;align-items:start}#add-evidence>h2,#add-evidence>.hint{grid-column:1/-1;margin:0}#add-evidence>h2{margin-bottom:-14px}#add-evidence form{margin:0;min-width:0}#add-evidence fieldset{margin:0}#add-evidence legend{font-weight:600;font-size:1rem;margin-bottom:14px}#add-evidence label:not(.choice){display:block;margin:16px 0 6px;font-size:.88rem;font-weight:600}#add-evidence legend+label{margin-top:0}#add-evidence input:not([type=radio]):not([type=checkbox]){width:100%;box-sizing:border-box;padding:11px 12px}#add-evidence input[type=radio],#add-evidence input[type=checkbox]{width:17px;height:17px;padding:0;margin:0;accent-color:var(--c-315e62)}#add-evidence .choice{margin:14px 0 0}#add-evidence .hint{margin:6px 0 0}#add-evidence .setup-actions{justify-content:flex-start;margin-top:20px;padding-top:0;border-top:0}#add-evidence form[action$="/fetch"]{grid-column:1/-1;order:3;padding-top:24px;border-top:1px solid var(--c-e7ebeb)}#add-evidence .table-wrap{margin-top:4px}#add-evidence table{font-size:.86rem}#add-evidence th,#add-evidence td{padding:9px 12px;vertical-align:middle}#add-evidence td:nth-child(n+3):nth-child(-n+5){white-space:nowrap}#add-evidence th:first-child,#add-evidence td:first-child{width:36px}#add-evidence td input[type=radio]{display:block;margin:0 auto}#add-evidence td label{margin:0!important;font-weight:400!important}
+  @media(max-width:800px){ #add-evidence{grid-template-columns:1fr}}
+  @media(max-width:800px){.setup-layout{grid-template-columns:1fr}.workspace-nav{align-items:flex-start}.workspace-nav .brand{max-width:150px}.workspace-cards{gap:16px}.workspace-card{padding:24px}.card-arrow{right:22px;top:30px}}
+  @media(max-width:560px){body{padding:22px 16px}.workspace-header h1{font-size:2.1rem}.workspace-cards{grid-template-columns:1fr}.workspace-card{min-height:205px}.setup-panel,.evidence-panel{padding:22px}.stepper{gap:18px;padding:14px;font-size:.84rem}.step-number{width:24px;height:24px}.workspace-nav ul{gap:14px}.setup-actions{flex-wrap:wrap}.workspace-nav .brand{font-size:.7rem}}
+  @media(prefers-reduced-motion:reduce){.workspace-card{transition:none}}
+</style><style>
+.memo-header{display:flex;align-items:flex-start;justify-content:space-between;gap:24px}.memo-actions{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 24px}.memo-button{display:inline-flex;align-items:center;box-sizing:border-box;background:var(--c-ffffff);border:1px solid var(--c-c7d5d4);border-radius:7px;padding:11px 16px;text-decoration:none;font-size:.9rem;font-weight:600;color:var(--c-315e62)}.memo-button.primary{background:var(--c-294f53);border-color:var(--c-294f53);color:var(--c-ffffff);padding:12px 20px}.memo-meta{display:flex;flex-wrap:wrap;gap:10px 24px;font-size:.88rem;color:var(--c-62707b)}.memo-meta span{display:inline-block}.memo-scores{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:16px 0}.memo-scores>div{padding:12px 14px;border:1px solid var(--c-dce2e1);border-left:4px solid var(--c-397477);border-radius:8px;background:var(--c-f5f8f7)}.memo-scores span{display:block;font-size:.75rem;color:var(--c-62707b)}.memo-scores strong{font-size:1.15rem}.memo-scores.rms-approve>div:first-child{border-left-color:var(--c-2f6b45)}.memo-scores.rms-refer>div:first-child,.memo-scores.rms-counter_offer>div:first-child{border-left-color:var(--c-d49b25)}.memo-scores.rms-decline>div:first-child{border-left-color:var(--c-9a3324)}.memo-status{font-size:.88rem;padding:12px 16px;background:var(--c-edf5f1);border:1px solid var(--c-c9dcd3);border-radius:8px;margin:18px 0}.memo-paper{padding:28px;background:var(--c-ffffff);border:1px solid var(--c-dce2e1);border-radius:12px}.memo-paper h2{font-size:1.18rem;border-top:1px solid var(--c-e4e9e7);padding-top:22px;margin:28px 0 16px}.memo-paper h2:first-child{border:0;padding-top:0;margin-top:0}.memo-paper h3{font-size:1rem;margin:18px 0 8px}.memo-paper p,.memo-paper li{font-size:.9rem;line-height:1.6}.memo-claim{margin:14px 0 20px}.memo-claim p{margin:4px 0}.memo-claim .qualification{color:var(--c-6e684e);font-size:.8rem}.memo-empty{color:var(--c-72808a);font-size:.85rem}.source-list{list-style:none;padding:0}.source-list li{padding:14px 0;border-bottom:1px solid var(--c-edf0ef);overflow-wrap:anywhere}.source-list small{display:block;color:var(--c-687780)}.memo-columns{display:grid;grid-template-columns:1fr 1fr;gap:30px}.memo-table-wrap{overflow-x:auto}.memo-table{width:100%;font-size:.82rem;border-collapse:collapse}.memo-table th,.memo-table td{padding:10px;text-align:left;border-bottom:1px solid var(--c-e2e8e5)}.memo-table th{color:var(--c-5c7175);background:var(--c-f5f8f7)}.record-id{font-size:.73rem;color:var(--c-70808b);overflow-wrap:anywhere}.notice-warning{padding:12px 16px;border-left:3px solid var(--c-c69a44);background:var(--c-fbf7ed);font-size:.85rem}.audit-tabs{display:flex;gap:12px;flex-wrap:wrap;margin:20px 0}.audit-tabs a{font-size:.8rem;text-decoration:none;padding:7px 10px;border:1px solid var(--c-d8e2df);border-radius:6px}.audit-record{padding:16px 0;border-bottom:1px solid var(--c-e2e8e5)}.audit-record pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:480px;overflow-y:auto;background:var(--c-f5f8f7);padding:14px;font-size:.75rem}.audit-record details{margin:12px 0}.audit-record summary{font-size:.82rem}.audit-record dl{display:block;font-size:.82rem}.audit-record dt{color:var(--c-61717d);margin-top:8px}.audit-record dd{margin:3px 0}.audit-record blockquote{border-left:3px solid var(--c-c9d9d3);padding-left:14px;color:var(--c-586e71);font-size:.85rem}.audit-record:target,.source-list li:target,.memo-claim:target{background:var(--c-f4f7e9);scroll-margin-top:20px}.audit-link{font-size:.78rem}.source-cite{font-size:.75rem;white-space:nowrap}.memo-risk{display:inline-block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.03em;padding:1px 6px;border-radius:4px;border:1px solid var(--c-c9d1da);color:var(--c-62707b);white-space:nowrap}.memo-risk.very-low,.memo-risk.low{border-color:var(--c-2f6b45);color:var(--c-2f6b45)}.memo-risk.moderate{border-color:var(--c-8a6d1c);color:var(--c-8a6d1c)}.memo-risk.elevated,.memo-risk.high,.memo-risk.very-high{border-color:var(--c-9a3324);color:var(--c-9a3324)}.memo-table td{vertical-align:top}.memo-table small{color:var(--c-62707b)}.memo-table tr.memo-note-row td{padding-top:0;background:var(--c-f5f8f7)}.memo-paper .notice-warning ul{margin:6px 0 0}.memo-score-table{width:100%;border-collapse:separate;margin:12px 0}.memo-score-table td{width:25%;padding:8px 10px;border:1px solid var(--c-dce2e1);border-left:4px solid var(--c-397477);background:var(--c-f5f8f7)}.memo-score-table span{font-size:.75rem;color:var(--c-62707b)}.memo-score-table strong{font-size:1.1rem}@media(max-width:760px){.memo-columns{grid-template-columns:1fr;gap:0}.memo-paper{padding:22px}.memo-header{flex-direction:column;gap:0}.memo-header h1{font-size:1.8rem}}
+</style><style>
+.bo-four-section{min-width:0}.bo-finding-group{margin-top:24px}.bo-four-section .memo-claim[data-claim-id]{border-bottom:1px solid var(--c-dce2e1);padding-bottom:18px;margin-bottom:24px}.bo-four-section .memo-claim[data-claim-id]>.bo-evidence{border-top:0;margin:12px 0 0;padding-top:0}.bo-finding-badges{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:8px 0 12px}.bo-finding-badge{display:inline-flex;align-items:center;gap:6px;padding:3px 8px;border:1px solid var(--c-c7d5d4);border-radius:.3rem;background:var(--c-f5f8f7);color:var(--c-315e62);font-size:.72rem;font-weight:700;letter-spacing:.02em;line-height:1.35;white-space:nowrap}.bo-type-fact,.bo-type-calculated_fact{color:var(--c-205537);background:var(--c-e1f3e7);border-color:var(--c-78b58c)}.bo-type-inference,.bo-type-management_claim{color:var(--c-775700);background:var(--c-fff3bf);border-color:var(--c-d4aa39)}.bo-type-assumption{color:var(--c-942d29);background:var(--c-fde5e2);border-color:var(--c-d58880)}.bo-badge-icon{width:15px;height:15px;flex:none}.bo-direction-sign{font-size:1.15em;font-weight:700;line-height:1;min-width:12px;text-align:center}.bo-direction-positive{background:var(--c-e1f3e7);border-color:var(--c-78b58c);color:var(--c-205537)}.bo-direction-negative{background:var(--c-fde5e2);border-color:var(--c-d58880);color:var(--c-942d29)}.bo-competitive-positioning{text-align:justify;text-justify:inter-word}.bo-finding-points{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;margin:16px 0}.bo-finding-point{display:grid;grid-template-columns:minmax(110px,170px) minmax(0,1fr);gap:24px;padding:16px 18px;border:1px solid var(--c-c7d5d4);border-radius:.3rem;background:var(--c-f5f8f7)}.bo-finding-points dt{align-self:start;font-weight:600;margin:0;padding-top:2px}.bo-finding-points dd{min-width:0;margin:0}.bo-finding-points dd p{margin:0 0 8px}.bo-finding-points dd p:last-child{margin-bottom:0}.bo-four-section .bo-section-number{color:var(--c-517273);font-size:.8em;margin-right:10px}.bo-four-section .memo-columns{grid-template-columns:minmax(0,1fr);gap:24px}.bo-structure,.bo-debt{min-width:0}.bo-tree{font:inherit;font-size:.8rem;white-space:pre-wrap;overflow-wrap:anywhere;background:transparent;padding:0;max-height:none}.bo-diagram-zoom summary{cursor:pointer;font-size:.8rem;color:var(--c-315e62)}.bo-diagram-full{overflow:auto;max-height:650px}.bo-diagram-full svg{width:1440px;max-width:none;height:auto}.bo-diagram svg{width:100%;height:auto;display:block}.bo-debt-table{min-width:1080px}.bo-four-section .memo-table-wrap{max-width:100%;overflow-x:auto}.bo-four-section .memo-table td{vertical-align:top;overflow-wrap:anywhere;min-width:90px}.bo-four-section h4{font-size:.88rem;margin:18px 0 10px}.bo-priority{font-size:.84rem}.bo-priority dt{color:var(--c-62707b);margin-top:10px}.bo-priority dd{margin:2px 0 10px;overflow-wrap:anywhere}.bo-evidence{border-top:1px solid var(--c-dce2e1);margin:12px 0 20px;padding-top:10px}.bo-evidence summary{cursor:pointer;font-size:.8rem;color:var(--c-315e62);padding:5px 0}.bo-evidence-body pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:.72rem;background:var(--c-f5f8f7);padding:14px;max-height:420px;overflow:auto}.bo-evidence-appendix{break-before:page}.bo-four-section .bo-memo-section .qualification{font-size:.82rem}.bo-four-section .memo-claim p{white-space:pre-line}
+@media screen and (max-width:760px){.bo-four-section .bo-finding-point{grid-template-columns:minmax(0,1fr);gap:8px;padding:14px}.bo-finding-points dt{margin:0}.bo-four-section .memo-columns{grid-template-columns:minmax(0,1fr)}.bo-four-section .bo-structure{margin-bottom:18px}}
+@media print{body .analysis-header{margin-bottom:10px}body .analysis-header h1{font-size:24px;margin:4px 0 6px}body .analysis-meta{font-size:9pt}.memo-status{font-size:9pt;line-height:1.35;padding:6px 10px;margin:8px 0}.bo-four-section h2{font-size:14pt;margin:14px 0 10px;padding-top:12px}.theme-toggle{display:none}.bo-four-section h2,.bo-four-section h3,.bo-four-section h4{break-after:avoid}.bo-four-section .notice-warning{break-inside:avoid;font-size:9pt;line-height:1.35;padding:7px 10px;margin:8px 0}.bo-four-section h3{margin:8px 0}.bo-four-section .technical-note{font-size:9pt;line-height:1.35}.bo-four-section .bo-tree{font-size:9.5pt;line-height:1.35}.bo-four-section .bo-structure-debt{display:block;width:100%;break-inside:auto}.bo-four-section .bo-structure,.bo-four-section .bo-debt-summary{display:block;width:100%}.bo-four-section .bo-structure{padding-right:0}.bo-four-section .bo-debt-summary{padding-left:0;margin-top:18px}.bo-print-diagram{width:100%;max-width:760px;margin:4px auto;break-inside:avoid}.bo-print-diagram>svg{width:100%;height:auto;display:block}.bo-print-diagram>svg>svg{max-width:none}.bo-print-schedules{break-before:page}.bo-four-section .bo-debt-summary-table{font-size:10pt}.bo-four-section .bo-debt-summary-table th{background:transparent;font-weight:400}.bo-four-section .bo-debt-summary-table th:first-child{width:76%}.bo-four-section .memo-table-wrap{overflow:visible}.bo-four-section .bo-debt-table{min-width:0;table-layout:fixed}.bo-four-section .memo-table{font-size:9pt}.bo-four-section .memo-table td,.bo-four-section .memo-table th{padding:5px;min-width:0;overflow-wrap:anywhere}.bo-four-section thead{display:table-header-group}.bo-four-section tr{break-inside:avoid}.bo-diagram{max-width:440px}.bo-evidence-body pre{max-height:none;overflow:visible;font-size:8pt}.bo-evidence{display:none}.bo-four-section .bo-memo-section{break-inside:auto}}
+.bo-management-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin:18px 0}.bo-management-card{border:1px solid var(--c-c7d5d4);border-radius:.3rem;background:var(--c-f5f8f7);padding:14px;min-width:0}.bo-management-card h3{margin:0 0 5px}.bo-management-card .technical-note{margin:0 0 10px}.bo-management-finding{border-top:1px solid var(--c-dce2e1);padding-top:10px}.bo-management-gaps{margin:18px 0}.bo-management-support{border-top:1px solid var(--c-dce2e1);padding:14px 0}.bo-management-support summary{cursor:pointer;font-weight:600;color:var(--c-315e62)}.bo-management-citation{overflow-wrap:anywhere}.bo-management-print .memo-claim{margin-bottom:8px;padding-bottom:5px}.bo-management-print h3{margin-top:12px}
+@media screen and (max-width:760px){.bo-management-grid{grid-template-columns:minmax(0,1fr)}}
+</style><style>@page{size:A4;margin:12mm 14mm}body{padding:0;max-width:none;background:var(--c-ffffff)}.memo-paper{padding:0;border:0}</style></head><body><header class="analysis-header"><span class="eyebrow">Credit Memo · Business Overview</span><h1>Northfield Health Systems</h1><p class="memo-meta">Reporting period: 2025-12-31 · Evidence cutoff: 2026-03-01T00:00:00+00:00</p></header><main><article class="memo-paper" aria-label="Selected run credit memo">
+
+
+
+
+
+
+<div class="bo-four-section" data-document="business_overview_four_section_memo" data-schema-version="bo-four-section-memo-1.0.0" data-run-id="ar_5b77234e6aaf4c65">
+<div class="memo-status">Business Overview completeness: <strong>Complete</strong> · Recorded outcome: <strong>accepted</strong> · Current human review: <strong>Pending</strong></div>
+<p class="notice-warning">Offline / scripted execution. This does not establish live analytical quality.</p>
+<section class="bo-memo-section" data-memo-section="corporate_structure_debt_obligations" data-status="complete" aria-labelledby="bo-section-1">
+<h2 id="bo-section-1"><span class="bo-section-number">01</span> Corporate Structure &amp; Debt Obligations</h2>
+<div class="memo-columns bo-structure-debt">
+<div class="bo-structure"><h3>Corporate Structure</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="bo-print-diagram" role="img" aria-label="Recorded corporate structure diagram"><svg xmlns="http://www.w3.org/2000/svg" viewBox="578.0 268 284.0 376"><svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1080" viewBox="0 0 1440 1080">
+<rect width="100%" height="100%" fill="white"/>
+<text x="32" y="68" font-family="Arial, sans-serif" font-size="53" fill="#142340" text-anchor="start" font-weight="bold">Corporate Structure</text>
+<text x="34" y="116" font-family="Arial, sans-serif" font-size="26" fill="#142340" text-anchor="start" font-weight="normal">Northfield Health Systems (Illustrative / Simulated)</text>
+<polyline points="720.0,412 720.0,500" fill="none" stroke="#141414" stroke-width="3"/>
+<text x="728.0" y="484" font-family="Arial, sans-serif" font-size="19" fill="#111111" text-anchor="start" font-weight="normal">100%</text>
+<rect x="610.0" y="300" width="220" height="112" rx="18" fill="#C25A13"/>
+<text x="720.0" y="341.5" font-family="Arial, sans-serif" font-size="19" fill="white" text-anchor="middle" font-weight="bold">Northfield Health</text>
+<text x="720.0" y="362.5" font-family="Arial, sans-serif" font-size="19" fill="white" text-anchor="middle" font-weight="bold">Systems</text>
+<text x="720.0" y="386.5" font-family="Arial, sans-serif" font-size="17" fill="white" text-anchor="middle" font-weight="normal">(Borrower)</text>
+<rect x="610.0" y="500" width="220" height="112" rx="18" fill="#D99337"/>
+<text x="720.0" y="541.5" font-family="Arial, sans-serif" font-size="19" fill="white" text-anchor="middle" font-weight="bold">Northfield</text>
+<text x="720.0" y="562.5" font-family="Arial, sans-serif" font-size="19" fill="white" text-anchor="middle" font-weight="bold">Operating Company</text>
+<text x="720.0" y="586.5" font-family="Arial, sans-serif" font-size="17" fill="white" text-anchor="middle" font-weight="normal">(OpCo)</text>
+<path d="M 799.0,577 l 12.5,-5 l 12.5,5 v 12 q 0,10 -12.5,17 q -12.5,-7 -12.5,-17 Z" fill="none" stroke="black" stroke-width="2"/>
+<path d="M 804.0,587 l 5,5 l 10,-12" fill="none" stroke="black" stroke-width="2"/>
+<rect x="1155" y="25" width="255" height="250" rx="8" fill="#F7F9FB" stroke="#C8D4DF"/>
+<rect x="1170" y="38" width="23" height="23" rx="4" fill="#74150F"/>
+<text x="1202" y="55" font-family="Arial, sans-serif" font-size="17" fill="#142340" text-anchor="start" font-weight="normal">Parent Co</text>
+<rect x="1170" y="75" width="23" height="23" rx="4" fill="#B34B08"/>
+<text x="1202" y="92" font-family="Arial, sans-serif" font-size="17" fill="#142340" text-anchor="start" font-weight="normal">HoldCo</text>
+<rect x="1170" y="112" width="23" height="23" rx="4" fill="#C25A13"/>
+<text x="1202" y="129" font-family="Arial, sans-serif" font-size="17" fill="#142340" text-anchor="start" font-weight="normal">Borrower</text>
+<rect x="1170" y="149" width="23" height="23" rx="4" fill="#D99337"/>
+<text x="1202" y="166" font-family="Arial, sans-serif" font-size="17" fill="#142340" text-anchor="start" font-weight="normal">Operating Co</text>
+<rect x="1170" y="186" width="23" height="23" rx="4" fill="#A7A7A7"/>
+<text x="1202" y="203" font-family="Arial, sans-serif" font-size="17" fill="#142340" text-anchor="start" font-weight="normal">Other / JV</text>
+<path d="M 1170,224 l 11.5,-5 l 11.5,5 v 12 q 0,10 -11.5,17 q -11.5,-7 -11.5,-17 Z" fill="none" stroke="black" stroke-width="2"/>
+<path d="M 1175,234 l 5,5 l 10,-12" fill="none" stroke="black" stroke-width="2"/>
+<text x="1202" y="240" font-family="Arial, sans-serif" font-size="17" fill="#142340" text-anchor="start" font-weight="normal">Illustrative guarantor</text>
+<text x="30" y="1038" font-family="Arial, sans-serif" font-size="16" fill="#6A6A6A" text-anchor="start" font-weight="normal">Illustrative only — simulated legal entities, ownership stakes and guarantor assignments; not actual corporate information.</text>
+</svg></svg></div>
+<p class="technical-note">Guarantor indicator: outlined shield with checkmark (Illustrative guarantor).</p>
+<p class="qualification notice-warning">THIS NORTHFIELD HEALTH SYSTEMS ORGANISATION CHART IS A SIMULATED EDUCATIONAL EXAMPLE. Listed legal entities, ownership percentages, borrower designation and guarantor assignments are authoritative educational case assumptions and must not be described as verified actual corporate structure.</p></div>
+<div class="bo-debt-summary"><h3>Debt Obligations</h3>
+<p class="technical-note">Recorded debt figures. Complete instrument schedules, guarantees, security and creditor-priority detail follow on subsequent pages.</p>
+<table class="memo-table bo-debt-summary-table"><thead><tr><th scope="col">Recorded measure</th><th scope="col">Value</th></tr></thead><tbody><tr><th scope="row">Direct operating company secured (US$ m)</th><td>1021.0</td></tr><tr><th scope="row">Senior unsecured guaranteed (US$ m)</th><td>45471.0</td></tr><tr><th scope="row">Unguaranteed holding company (US$ m)</th><td>0.0</td></tr><tr><th scope="row">Consolidated indebtedness (US$ m)</th><td>46492.0</td></tr><tr><th scope="row">Structural subordination drag ratio</th><td>0.022</td></tr><tr><th scope="row">Debt issuance costs and discounts (US$ m, signed)</th><td>-436.0</td></tr></tbody></table>
+<p class="qualification notice-warning">Debt population is preserved as supplied; recorded validation does not establish completeness beyond source scope.</p></div></div>
+<div class="bo-debt bo-print-schedules"><h3>Complete Debt Obligations</h3><p class="qualification notice-warning">Educational structure is not a verified legal/obligor assessment. Management observations are bounded continuity rules, not competence/governance ratings.</p><p class="qualification notice-warning">THIS NORTHFIELD HEALTH SYSTEMS ORGANISATION CHART IS A SIMULATED EDUCATIONAL EXAMPLE. Listed legal entities, ownership percentages, borrower designation and guarantor assignments are authoritative educational case assumptions and must not be described as verified actual corporate structure.</p>
+<h4>Senior notes</h4><div class="memo-table-wrap" tabindex="0" role="region" aria-label="Senior notes"><table class="memo-table bo-debt-table" data-schedule="senior_notes"><thead><tr><th scope="col">Senior note / series</th><th scope="col">Legal borrower</th><th scope="col">Principal (US$ m)</th><th scope="col">Coupon / rate</th><th scope="col">Maturity</th><th scope="col">Security</th><th scope="col">Guarantors / credit support</th><th scope="col">Priority tier</th></tr></thead><tbody><tr><td>5.000% Senior Notes</td><td>Northfield Operating Company</td><td>700.0</td><td>5.000% fixed</td><td>2028</td><td>Unsecured</td><td>Fully and unconditionally guaranteed on an unsecured basis by Northfield Health Systems</td><td>Tier 2 · Senior unsecured guaranteed</td></tr><tr><td>5.250% Senior Notes</td><td>Northfield Operating Company</td><td>750.0</td><td>5.250% fixed</td><td>2030</td><td>Unsecured</td><td>Fully and unconditionally guaranteed on an unsecured basis by Northfield Health Systems</td><td>Tier 2 · Senior unsecured guaranteed</td></tr><tr><td>5.750% Senior Notes</td><td>Northfield Operating Company</td><td>1500.0</td><td>5.750% fixed</td><td>2035</td><td>Unsecured</td><td>Fully and unconditionally guaranteed on an unsecured basis by Northfield Health Systems</td><td>Tier 2 · Senior unsecured guaranteed</td></tr><tr><td>6.200% Senior Notes</td><td>Northfield Operating Company</td><td>1250.0</td><td>6.200% fixed</td><td>2055</td><td>Unsecured</td><td>Fully and unconditionally guaranteed on an unsecured basis by Northfield Health Systems</td><td>Tier 2 · Senior unsecured guaranteed</td></tr><tr><td>Other senior unsecured notes (2026-2064)</td><td>Northfield Operating Company</td><td>39050.0</td><td>various fixed, 5.1% effective</td><td>2064</td><td>Unsecured</td><td>Fully and unconditionally guaranteed on an unsecured basis by Northfield Health Systems</td><td>Tier 2 · Senior unsecured guaranteed</td></tr><tr><td>Debentures (maturities through 2095)</td><td>Northfield Operating Company</td><td>450.0</td><td>7.19% weighted average</td><td>2095</td><td>Unsecured</td><td>Fully and unconditionally guaranteed on an unsecured basis by Northfield Health Systems</td><td>Tier 2 · Senior unsecured guaranteed</td></tr></tbody></table></div>
+<h4>Non-note obligations and facilities</h4><div class="memo-table-wrap" tabindex="0" role="region" aria-label="Non-note obligations and facilities"><table class="memo-table bo-debt-table" data-schedule="non_note"><thead><tr><th scope="col">Obligation / facility</th><th scope="col">Legal borrower</th><th scope="col">Drawn (US$ m)</th><th scope="col">Facility limit (US$ m)</th><th scope="col">Interest terms</th><th scope="col">Maturity</th><th scope="col">Security</th><th scope="col">Guarantors / credit support</th><th scope="col">Priority tier</th></tr></thead><tbody><tr><td>Commercial paper program</td><td>Northfield Operating Company</td><td>2207.0</td><td>4000.0</td><td>4.3% weighted average; 18-day average life</td><td>Short-term</td><td>Unsecured</td><td>Northfield Health Systems guarantee</td><td>Tier 2 · Senior unsecured guaranteed</td></tr><tr><td>Other senior secured debt (finance leases + other)</td><td>Northfield Operating Company</td><td>1021.0</td><td>Not recorded</td><td>4.6% effective</td><td>Various</td><td>Secured</td><td>Secured at operating subsidiary level</td><td>Tier 1 · Direct operating company secured</td></tr><tr><td>Senior unsecured revolving credit facility (5-year)</td><td>Northfield Operating Company</td><td>0.0</td><td>8000.0</td><td>SOFR + 1.125%</td><td>2030</td><td>Unsecured</td><td>Northfield Health Systems guarantee</td><td>Tier 2 · Senior unsecured guaranteed</td></tr><tr><td>Additional receivables credit facility</td><td>Northfield Operating Company</td><td>0.0</td><td>1000.0</td><td>SOFR + 1.25%</td><td>2030</td><td>Unsecured</td><td>Northfield Health Systems guarantee</td><td>Tier 2 · Senior unsecured guaranteed</td></tr></tbody></table></div>
+<h4>Creditor priority and reconciliation</h4><dl class="bo-priority"><dt>Direct operating company secured (US$ m)</dt><dd>1021.0</dd><dt>Senior unsecured guaranteed (US$ m)</dt><dd>45471.0</dd><dt>Unguaranteed holding company (US$ m)</dt><dd>0.0</dd><dt>Consolidated indebtedness (US$ m)</dt><dd>46492.0</dd><dt>Structural subordination drag ratio</dt><dd>0.022</dd><dt>Prospective secured loan placement</dt><dd>A secured bank loan would rank in Tier 1 ahead of the $43.7B senior unsecured notes, benefiting from direct OpCo collateral.</dd><dt>Prospective unsecured loan placement</dt><dd>A senior unsecured bank loan would rank pari passu with the existing Tier 2 senior unsecured notes, sharing the Northfield Health Systems upstream guarantee.</dd></dl>
+<div class="memo-table-wrap" tabindex="0" role="region" aria-label="Signed reconciling items"><table class="memo-table"><thead><tr><th scope="col">Reconciling item</th><th scope="col">Signed amount (US$ m)</th></tr></thead><tbody><tr><td>Debt issuance costs and discounts</td><td>-436.0</td></tr></tbody></table></div>
+<p class="qualification notice-warning">Debt population is preserved as supplied; recorded validation does not establish completeness beyond source scope.</p></div>
+
+</section><section class="bo-memo-section" data-memo-section="management" data-status="complete" aria-labelledby="bo-section-2">
+<h2 id="bo-section-2"><span class="bo-section-number">02</span> Management</h2>
+
+<div class="memo-claim bo-management-overall"><p>Offline authored assessment: continuity benefits and potential transition uncertainty require outcome evidence.</p><p class="technical-note">Recorded outcome: Mixed · Review status: Qualified</p><p class="qualification">The recorded assessment has qualifications or incomplete coverage; inspect the supporting evidence before relying on it.</p></div>
+
+<div class="bo-management-print"><h3>Key strengths</h3><div class="memo-claim"><p>Supported internal experience mitigates potential transition uncertainty.</p><p class="qualification">Biography does not demonstrate realized financial effects.</p></div>
+<h3>Key concerns and information gaps</h3><div class="memo-claim"><p>Recent significant appointment creates potential transition uncertainty; it does not establish a departure, repeated turnover or disruption.</p><p class="qualification">Biography does not demonstrate realized financial effects.</p></div></div>
+
+<p class="qualification notice-warning">Educational structure is not a verified legal/obligor assessment. Management observations are bounded continuity rules, not competence/governance ratings.</p><p class="qualification notice-warning">Offline fixture; qualitative model performance not tested.</p><p class="qualification notice-warning">Validator 7 used a saved/offline reviewer response; this execution does not verify live reviewer model performance.</p>
+
+</section><section class="bo-memo-section bo-competitive-positioning" data-memo-section="competitive_positioning" data-status="complete" aria-labelledby="bo-section-3">
+<h2 id="bo-section-3"><span class="bo-section-number">03</span> Competitive Positioning</h2>
+<div class="memo-claim" data-claim-id="cp-lead"><p>Managed-care contracts set negotiated rates and can be terminated on notice.</p><p class="qualification">Contract terms do not guarantee patient volumes; renewal outcomes are not established.</p></div><div class="memo-claim" data-claim-id="cp-contracts"><h3>Business driver</h3><p>Multi-year managed-care agreements set negotiated rates.</p></div><div class="memo-claim" data-claim-id="cp-workforce-interaction"><h3>Material risk</h3><p>Competition for scarce clinical staff can raise costs and constrain service capacity.</p><p class="qualification">Qualified interaction: competitor staffing data are unavailable.</p></div><p class="qualification notice-warning">Competitor staffing data are unavailable.</p><p class="qualification notice-warning">Competitor staffing data</p>
+
+</section><section class="bo-memo-section" data-memo-section="industry" data-status="complete" aria-labelledby="bo-section-4">
+<h2 id="bo-section-4"><span class="bo-section-number">04</span> Industry</h2>
+<div class="memo-claim"><p>The industry is extensively regulated and exposed to legislative reimbursement reductions.</p></div><p class="qualification notice-warning">preserve qualified narrative qualification/attribution.</p>
+</section>
+<aside class="bo-evidence-appendix" aria-label="Business Overview evidence appendix"><h2>Business Overview evidence appendix</h2><p>Static export of the selected run's supporting records. Full management records remain available in Audit &amp; Review for this run.</p><h3>Corporate Structure</h3><div class="bo-evidence-body" id="bo-evidence-1"><p class="record-id">Analysis run: ar_5b77234e6aaf4c65 · Evidence snapshot: 1</p></div><h3>Debt Obligations</h3><div class="bo-evidence-body" id="bo-evidence-2"><p class="record-id">Analysis run: ar_5b77234e6aaf4c65 · Evidence snapshot: 1</p><p class="technical-note">nfh-10k.htm · Item 7</p><blockquote>The senior notes have staggered maturities; the revolving credit facility is undrawn. Refinancing of maturing tranches occurred during the year.</blockquote><p class="technical-note">nfh-10k.htm · Item 8</p><blockquote>Our long-term debt consists of senior unsecured notes with principal of $43,700 million issued by the operating company and guaranteed by the parent. Total indebtedness was $46,492 million at year end.</blockquote><p class="technical-note">nfh-10k.htm · Item 8</p><blockquote>Debt issuance costs and discounts (436). The additional receivables credit facility is undrawn.</blockquote></div><h3>Competitive Positioning</h3><div class="bo-evidence-body" id="bo-evidence-4"><p class="record-id">Analysis run: ar_5b77234e6aaf4c65 · Evidence snapshot: 1</p></div><h3>Industry</h3><div class="bo-evidence-body" id="bo-evidence-5"><p class="record-id">Analysis run: ar_5b77234e6aaf4c65 · Evidence snapshot: 1</p></div><h3>Assessment</h3><div class="bo-evidence-body" id="bo-evidence-6"><p class="record-id">Analysis run: ar_5b77234e6aaf4c65 · Evidence snapshot: 1</p><p class="technical-note">nfh-10k.htm · Item 1</p><blockquote>Medicare and Medicaid accounted for 45% of our revenues. Our managed care contracts are generally multi-year agreements that set negotiated rates; the contracts do not guarantee minimum volumes of patients. Either party may terminate an agreement on notice.</blockquote></div><h3>Business driver</h3><div class="bo-evidence-body" id="bo-evidence-7"><p class="record-id">Analysis run: ar_5b77234e6aaf4c65 · Evidence snapshot: 1</p><p class="technical-note">nfh-10k.htm · Item 1</p><blockquote>Medicare and Medicaid accounted for 45% of our revenues. Our managed care contracts are generally multi-year agreements that set negotiated rates; the contracts do not guarantee minimum volumes of patients. Either party may terminate an agreement on notice.</blockquote></div><h3>Material risk</h3><div class="bo-evidence-body" id="bo-evidence-8"><p class="record-id">Analysis run: ar_5b77234e6aaf4c65 · Evidence snapshot: 1</p><p class="technical-note">nfh-10k.htm · Item 1A</p><blockquote>We face a nursing shortage and rising contract labor costs. We operate a College of Nursing to expand our training pipeline, which we believe will improve recruitment and retention. There is no assurance these initiatives will be successful.</blockquote><p class="technical-note">nfh-10k.htm · Item 1</p><blockquote>We compete with other hospitals, including not-for-profit systems, and with ambulatory surgery centers. Competitors may have greater market share in certain markets. Revenue per equivalent admission increased 4.1% due to pricing, payer mix and case mix acuity. In 2025 we operated the largest hospital network by licensed beds in most of our markets.</blockquote></div></aside>
+</div></article><p class="record-id">Selected analysis run: ar_5b77234e6aaf4c65</p></main></body></html>

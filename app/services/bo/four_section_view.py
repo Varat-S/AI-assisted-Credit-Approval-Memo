@@ -10,6 +10,7 @@ from app.models.orm import AcceptedBusinessOverviewRow
 from app.services.analysis_audit import public_record
 from app.services.analysis_workspace import safe_url
 from app.services.bo.four_section import load_saved_inputs
+from app.services.bo.management_view import management_view
 from app.services.bo.handoff import read_handoff
 from app.services.bo.workbench import bo_artifact, BoRunNotFoundError
 from app.services.pipeline.artifacts import ArtifactIntegrityError
@@ -151,6 +152,7 @@ def load_view(session, analysis_run_id, case_id=None):
         # Only the existing deterministic, escaping SVG generator supplies Markup.
         svg = Markup(render_svg(structure))
     return {'memo': artifact, 'svg': svg, 'claims': claims, 'finding_groups': finding_groups, 'evidence': evidence,
+            'management': management_view(sections[1].get('content')),
             'structure_tree': next(iter(structure['companies'].values()))['plain_text_tree'] if structure else None,
             'review': public_record({'status': row.human_review_status,
                                       'reviewer': row.payload.get('reviewer'), 'reviewed_at': row.payload.get('reviewed_at')}),
