@@ -81,7 +81,10 @@ def test_management_web_and_print_share_conservative_projection(db_session, tmp_
     web_management = web.xpath('//*[@data-memo-section="management"]')
     print_management = printed.xpath('//*[@data-memo-section="management"]')
     assert len(web_management) == len(print_management) == 1
-    assert len(web_management[0].xpath('.//section[contains(@class,"bo-management-card")]')) == 5
+    assert len(web_management[0].xpath('.//section[contains(@class,"bo-management-card")]')) == 1
+    assert len(web_management[0].xpath('.//div[@class="bo-management-assessment-gaps"]//li')) == 4
+    assert not print_management[0].xpath('.//section[contains(@class,"bo-management-card")]')
+    assert len(print_management[0].xpath('.//div[@class="bo-management-assessment-gaps"]//li')) == 4
     assert web_management[0].xpath('.//details[contains(@class,"bo-management-support") and not(@open)]')
     assert not print_management[0].xpath('.//details[contains(@class,"bo-management-support")]')
     assert view['management']['overall_assessment']['text'] in web_management[0].text_content()
@@ -91,12 +94,49 @@ def test_management_web_and_print_share_conservative_projection(db_session, tmp_
     assert 'Appointment:' not in print_management[0].text_content()
     assert 'Recorded tenure:' not in print_management[0].text_content()
     assert 'Full management records remain available in Audit' in printed.text_content()
+    for target in web_management[0].xpath('.//a[starts-with(@href,"#bo-management-citation-")]/@href'):
+        assert len(web.xpath('//*[@id=$target]', target=target[1:])) == 1
+    assert 'Insufficient evidence' in print_management[0].text_content()
     preview_dir = os.environ.get('BO_M3_PREVIEW_DIR')
     if preview_dir:
         folder = Path(preview_dir)
         folder.mkdir(parents=True, exist_ok=True)
         (folder / 'management_web_preview.html').write_text(render_page(view), encoding='utf-8')
         (folder / 'management_print_preview.html').write_text(render_page(view, pdf=True), encoding='utf-8')
+
+
+def test_unclassified_concerns_and_qualifications_are_accessible_in_both_views(db_session, tmp_path):
+    from app.services.bo.management_view import management_view
+
+    result, _ = run(db_session, tmp_path)
+    frozen = deepcopy(bo_artifact(db_session, result.analysis_run_id, 'four_section'))
+    stage_bytes = [(r.name, r.sha256, r.payload_json) for r in db_session.query(StageArtifact).all()]
+    view = load_view(db_session, result.analysis_run_id)
+    artifact = deepcopy(frozen['sections'][1]['content'])
+    observation = deepcopy(artifact['observations'][0])
+    observation.update(observation_id='unclassified-reviewed', category='unclassified',
+                       direction='negative', review_outcome='qualified',
+                       text='Recorded concern without a reliable category.',
+                       review_reason='Scope remains limited.', uncertainties=['Outcome evidence is unavailable.'])
+    artifact['observations'] = [observation]
+    artifact['validation']['validator_7']['overall']['limitations'] = ['Recorded overall qualification.']
+    view['management'] = management_view(artifact)
+    web = html.fromstring(render_page(view))
+    printed = html.fromstring(render_page(view, pdf=True))
+    section = web.xpath('//*[@data-memo-section="management"]')[0]
+    other = section.xpath('.//details[@class="bo-management-other"]')[0]
+    assert other.get('open') is not None  # Negative findings are visible by default.
+    assert 'Other Reviewed Observations' in other.text_content()
+    assert not section.xpath('.//section[@class="bo-management-card"]')
+    assert len(section.xpath('.//div[@class="bo-management-assessment-gaps"]//li')) == 5
+    for page in (web, printed):
+        assert observation['text'] in page.text_content()
+        assert observation['review_reason'] in page.text_content()
+        assert observation['uncertainties'][0] in page.text_content()
+        assert 'Recorded overall qualification.' in page.text_content()
+    assert printed.xpath('//*[@data-memo-section="management"]//*[@data-source-id]')
+    assert bo_artifact(db_session, result.analysis_run_id, 'four_section') == frozen
+    assert [(r.name, r.sha256, r.payload_json) for r in db_session.query(StageArtifact).all()] == stage_bytes
 
 
 def test_populated_review_routes_debt_and_closed_evidence(db_session, tmp_path, monkeypatch):

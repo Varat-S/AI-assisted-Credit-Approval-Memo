@@ -2,8 +2,6 @@
 from copy import deepcopy
 from dataclasses import replace
 import json
-import os
-from pathlib import Path
 
 import pytest
 from sqlalchemy import update
@@ -22,10 +20,9 @@ from tests.four_section_helpers import evidence, debt_output, ManagementExtracto
 from tests.m3_rebuild.review_fixtures import FixtureReviewerBackend
 
 
-def record(name, value):
-    directory = Path(os.environ.get('BO_INDEPENDENT_PROOFS', '/private/tmp/bo-independent-proofs'))
+def record(directory, name, value):
     directory.mkdir(parents=True, exist_ok=True)
-    (directory / (name + '.json')).write_text(json.dumps(value, indent=2) + '\n')
+    (directory / (name + '.json')).write_text(json.dumps(value, indent=2) + '\n', encoding='utf-8')
 
 
 def pointer(value, path):
@@ -121,9 +118,9 @@ def test_independent_proof1_lossless_persisted_roundtrip(db_session, tmp_path):
     stage = persist(db_session, saved, memo, path=path)
     assert persist(db_session, saved, memo, path=path).sha256 == stage.sha256
     reread = bo_artifact(db_session, result.analysis_run_id, kind='four_section')
-    assert json.loads(path.read_text()) == reread == memo
+    assert json.loads(path.read_text(encoding='utf-8')) == reread == memo
     assert before == copied_sources(db_session, saved, reread)
-    record('proof1', {**before, 'stage_sha256': stage.sha256, 'before_and_after_persistence': 'PASS'})
+    record(tmp_path / 'proofs', 'proof1', {**before, 'stage_sha256': stage.sha256, 'before_and_after_persistence': 'PASS'})
 
 
 def test_independent_proof2_missing_industry_producer_persists(db_session, tmp_path):
@@ -174,7 +171,7 @@ def test_independent_proof2_missing_industry_producer_persists(db_session, tmp_p
     assert memo['sections'][2]['content']['challenge_status'] == 'escalated'
     assert memo['governance']['human_review_status'] == full_before['governance']['human_review_status'] == 'pending'
     assert bo_artifact(db_session, full.analysis_run_id, kind='four_section') == full_before
-    record('proof2', {**proof, 'full_run_proof': full_proof, 'industry': memo['sections'][3],
+    record(tmp_path / 'proofs', 'proof2', {**proof, 'full_run_proof': full_proof, 'industry': memo['sections'][3],
                      'full_run_id': full.analysis_run_id, 'human_review_status': 'pending',
                      'memo_completeness': 'incomplete', 'producer_only_unavailability': 'PASS',
                      'substantive_content_unchanged': True,
@@ -210,7 +207,7 @@ def test_independent_proof3a_same_company_foreign_component(db_session, tmp_path
     assert contaminated['sections'][0]['structure'] == original['sections'][0]['structure']
     assert contaminated['sections'][1:] == original['sections'][1:]
     assert bo_artifact(db_session, ra.analysis_run_id, kind='four_section') == original
-    record('proof3a', {'run_a': ra.analysis_run_id, 'run_b': rb.analysis_run_id,
+    record(tmp_path / 'proofs', 'proof3a', {'run_a': ra.analysis_run_id, 'run_b': rb.analysis_run_id,
                       'foreign_debt_binding': binding, 'rejected_debt': debt,
                       'memo_completeness': contaminated['governance']['memo_completeness']})
 
@@ -234,7 +231,7 @@ def test_independent_proof3b_root_chain_tamper(db_session, tmp_path):
     assert not (tmp_path / 'must-not-publish.json').exists()
     assert db_session.query(StageArtifact).count() == count
     assert db_session.query(StageArtifact).filter_by(name=frozen.name).one().payload_json == frozen_bytes
-    record('proof3b', {'run_id': result.analysis_run_id, 'errors': errors,
+    record(tmp_path / 'proofs', 'proof3b', {'run_id': result.analysis_run_id, 'errors': errors,
                       'new_file_published': False, 'existing_memo_overwritten': False})
 
 
@@ -258,6 +255,6 @@ def test_independent_proof3c_persistence_reloads_authority(db_session, tmp_path)
     assert not (tmp_path / 'rejected.json').exists()
     assert (stage.payload_json, stage.sha256, stage.chain_hash) == before
     assert bo_artifact(db_session, ra.analysis_run_id, kind='four_section') == original
-    record('proof3c', {'run_id': ra.analysis_run_id, 'modified_error': str(modified_exc.value),
+    record(tmp_path / 'proofs', 'proof3c', {'run_id': ra.analysis_run_id, 'modified_error': str(modified_exc.value),
                       'detached_error': str(detached_exc.value), 'existing_stage_sha256': stage.sha256,
                       'no_overwrite': True, 'no_detached_stage_created': True})

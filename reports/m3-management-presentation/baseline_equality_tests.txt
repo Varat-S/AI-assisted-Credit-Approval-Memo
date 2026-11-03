@@ -1,0 +1,24 @@
+FF                                                                       [100%]
+================================== FAILURES ===================================
+________ test_populated_deep_equality_order_omissions_and_persistence _________
+tests\integration\test_bo_four_section.py:77: in test_populated_deep_equality_order_omissions_and_persistence
+    assert json.loads(result.output_paths[FILENAME].read_text()) == memo
+E   AssertionError: assert {'content_has...se, ...}, ...} == {'document': ...y': True, ...}
+E
+E     Omitting 9 identical items, use -vv to show
+E     Differing items:
+E     {'sections': [{'debt_obligations': {'content': {'creditor_priority_framework': {'consolidated_total_indebtedness_m': 4...ions.', 'claim_type': 'fact', ...}]}, 'id': 'industry', 'recorded_status': 'complete', 'source_ref': 'industry', ...}]} != {'sections': [{'id': 'corporate_structure_debt_obligations', 'title': 'Corporate Structure & Debt Obligations', 'statu...: 'accepted', ...}, {'id': 'industry', 'title': 'Industry', 'status': 'complete', 'recorded_status': 'complete', ...}]}
+E     Use -v to get more diff
+____________ test_independent_proof1_lossless_persisted_roundtrip _____________
+tests\integration\test_bo_four_section_independent.py:124: in test_independent_proof1_lossless_persisted_roundtrip
+    assert json.loads(path.read_text()) == reread == memo
+E   AssertionError: assert {'content_has...se, ...}, ...} == {'content_has...se, ...}, ...}
+E
+E     Omitting 9 identical items, use -vv to show
+E     Differing items:
+E     {'sections': [{'debt_obligations': {'content': {'creditor_priority_framework': {'consolidated_total_indebtedness_m': 4...ions.', 'claim_type': 'fact', ...}]}, 'id': 'industry', 'recorded_status': 'complete', 'source_ref': 'industry', ...}]} != {'sections': [{'debt_obligations': {'content': {'creditor_priority_framework': {'consolidated_total_indebtedness_m': 4...ions.', 'claim_type': 'fact', ...}]}, 'id': 'industry', 'recorded_status': 'complete', 'source_ref': 'industry', ...}]}
+E     Use -v to get more diff
+=========================== short test summary info ===========================
+FAILED tests/integration/test_bo_four_section.py::test_populated_deep_equality_order_omissions_and_persistence
+FAILED tests/integration/test_bo_four_section_independent.py::test_independent_proof1_lossless_persisted_roundtrip
+2 failed in 5.60s

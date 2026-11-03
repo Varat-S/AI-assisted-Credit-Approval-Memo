@@ -31,6 +31,9 @@ def no_local_env_file(monkeypatch):
     from app.core.config import Settings, get_settings
 
     monkeypatch.setitem(Settings.model_config, "env_file", None)
+    # Host shells may export non-boolean values such as DEBUG=release.
+    # Keep the test default valid; monkeypatch restores the host environment.
+    monkeypatch.setenv("DEBUG", "false")
     get_settings.cache_clear()
     yield
     get_settings.cache_clear()

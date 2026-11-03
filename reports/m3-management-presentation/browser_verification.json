@@ -1,0 +1,28 @@
+[
+  {
+    "file": "management_before.png",
+    "viewport": 1200,
+    "documentWidth": 1200,
+    "profileCollapsed": true,
+    "categoryCards": 0,
+    "assessmentGaps": 0
+  },
+  {
+    "file": "management_after.png",
+    "viewport": 1200,
+    "documentWidth": 1200,
+    "profileCollapsed": true,
+    "categoryCards": 1,
+    "assessmentGaps": 4,
+    "citationOpensSupportingEvidence": true
+  },
+  {
+    "file": "management_mobile.png",
+    "viewport": 390,
+    "documentWidth": 390,
+    "profileCollapsed": true,
+    "categoryCards": 1,
+    "assessmentGaps": 4,
+    "citationOpensSupportingEvidence": true
+  }
+]

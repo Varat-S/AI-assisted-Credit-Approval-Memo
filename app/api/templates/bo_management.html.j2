@@ -1,0 +1,96 @@
+{# Both renderers consume the same read-only management projection. #}
+{% set m = bo4.management %}
+{% macro references(item) %}
+{% if item.citation_ids %}<p class="source-cite">{% for cid in item.citation_ids if cid in m.citations %}{% set citation = m.citations[cid] %}
+{% if pdf %}<span data-source-id="{{ citation.source_id }}" data-source-sha256="{{ citation.source_sha256 }}">{{ citation.source_id }} · p. {{ citation.physical_page }}</span>{% else %}<a href="#bo-management-citation-{{ cid|replace(':', '-') }}">Source {{ loop.index }} · p. {{ citation.physical_page }}</a>{% endif %}{% if not loop.last %}; {% endif %}
+{% endfor %}</p>{% endif %}
+{% endmacro %}
+{% macro finding(item) %}
+<div class="memo-claim bo-management-finding" data-review-status="{{ item.review_status }}">
+  <p>{{ item.text }}</p>
+  <p class="technical-note">Review: {{ item.review_status|title }}</p>
+  {% for limitation in item.limitations %}<p class="qualification">{{ limitation }}</p>{% endfor %}
+  {{ references(item) }}
+</div>
+{% endmacro %}
+
+{% if m %}
+<div class="memo-claim bo-management-overall">
+  <p>{{ m.overall_assessment.text }}</p>
+  <p class="technical-note">Recorded outcome: {{ m.overall_assessment.outcome|replace('_', ' ')|title }} · Review status: {{ m.overall_assessment.status|title }}</p>
+  {% for limitation in m.overall_assessment.limitations %}<p class="qualification">{{ limitation }}</p>{% endfor %}
+  {% if m.overall_assessment.status == 'qualified' %}<p class="qualification">The recorded assessment has qualifications or incomplete coverage; inspect the supporting evidence before relying on it.</p>{% endif %}
+</div>
+
+{% if pdf %}
+<div class="bo-management-print">
+  <h3>Key strengths</h3>
+  {% for item in m.key_strengths %}{{ finding(item) }}{% else %}<p class="memo-empty">No unqualified supporting findings are available.</p>{% endfor %}
+  <h3>Key concerns and information gaps</h3>
+  {% for item in m.key_concerns %}{{ finding(item) }}{% else %}<p class="memo-empty">No reviewed concerns or information-gap observations are available.</p>{% endfor %}
+  {% if m.additional_concerns %}<p class="technical-note">{{ m.additional_concerns }} additional reviewed concerns, qualifications or information gaps are available in this run's interactive evidence and Audit &amp; Review.</p>{% endif %}
+</div>
+{% else %}
+<h3>Credit-Relevant Findings</h3>
+<div class="bo-management-grid">
+{% for category in m.categories if category.findings %}
+  <section class="bo-management-card" data-management-category="{{ category.id }}">
+    <h3>{{ category.title }}</h3>
+    <p class="technical-note">{{ category.priority }} · {{ category.status|replace('_', ' ')|title }}</p>
+    {% for item in category.findings %}{{ finding(item) }}{% endfor %}
+  </section>
+{% else %}<p class="memo-empty">No reviewed findings can be reliably assigned to a management category.</p>{% endfor %}
+</div>
+{% if m.uncategorized %}
+<details class="bo-management-other" data-run-id="{{ bo4.memo.identity.analysis_run_id }}"{% if m.uncategorized_concerns %} open{% endif %}>
+  <summary>Other Reviewed Observations ({{ m.uncategorized|length }}){% if m.uncategorized_concerns %} · Includes reviewed credit concerns{% endif %}</summary>
+  {% for item in m.uncategorized %}{{ finding(item) }}{% endfor %}
+</details>
+{% endif %}
+{% if m.information_gaps %}
+<div class="bo-management-gaps"><h3>Information gaps</h3>{% for item in m.information_gaps %}{{ finding(item) }}{% endfor %}</div>
+{% endif %}
+{% endif %}
+
+{% if m.assessment_gaps or m.coverage_missing %}
+<div class="bo-management-assessment-gaps">
+  <h3>Areas Requiring Further Assessment</h3>
+  {% if m.assessment_gaps %}<ul>{% for category in m.assessment_gaps %}<li>{{ category.title }} — {{ category.status|replace('_', ' ')|capitalize }}.</li>{% endfor %}</ul>{% endif %}
+  {% if m.coverage_missing %}<p class="qualification">Missing management coverage: {{ m.coverage_missing|join(', ') }}</p>{% endif %}
+</div>
+{% endif %}
+
+{% if not pdf %}
+<details class="bo-management-support" data-run-id="{{ bo4.memo.identity.analysis_run_id }}">
+  <summary>Executive Profiles &amp; Supporting Evidence</summary>
+  <h3>Executive profiles</h3>
+  {% for profile in m.executive_profiles %}
+  <div class="memo-claim">
+    <h4>{{ profile.name }} · {{ profile.position }}</h4>
+    <p>Appointment: {{ profile.appointment_date or 'Not recorded' }}{% if profile.appointment_precision %} ({{ profile.appointment_precision }}){% endif %}</p>
+    {% if profile.tenure %}<p>Recorded tenure: {{ profile.tenure.minimum_days }} to {{ profile.tenure.maximum_days }} days as of {{ profile.tenure.as_of }}</p>{% endif %}
+    {% if profile.succession %}<p>Succession: {{ profile.succession|replace('_',' ')|capitalize }}</p>{% endif %}
+    {% for role in profile.prior_internal_roles %}<p>{{ role.position }} · {{ role.start_date or 'Not recorded' }} to {{ role.end_date or 'Not recorded' }}</p>{% endfor %}
+    {{ references(profile) }}
+  </div>
+  {% endfor %}
+  <h3>Reviewed observations</h3>
+  {% for observation in m.reviewed_observations %}
+  <div class="memo-claim">
+    <p>{{ observation.text }}</p>
+    <p class="technical-note">Review: {{ observation.review_outcome|title }}</p>
+    {% if observation.review_outcome == 'qualified' %}<p class="qualification">{{ observation.review_reason }}</p>{% endif %}
+    {% for limitation in observation.uncertainties %}<p class="qualification">{{ limitation }}</p>{% endfor %}
+    {{ references(observation) }}
+  </div>
+  {% endfor %}
+  {% if m.recorded_limitations %}<h3>Recorded qualifications and limitations</h3>{% for limitation in m.recorded_limitations %}<p class="qualification">{{ limitation }}</p>{% endfor %}{% endif %}
+  <h3>Recorded source citations</h3>
+  {% for cid, citation in m.citations.items() %}
+  <div class="bo-management-citation" id="bo-management-citation-{{ cid|replace(':', '-') }}" data-source-sha256="{{ citation.source_sha256 }}">
+    <p class="source-cite">{{ citation.source_id }} · page {{ citation.physical_page }}</p><blockquote>{{ citation.quote }}</blockquote>
+  </div>
+  {% endfor %}
+</details>
+{% endif %}
+{% else %}<p class="memo-empty">Reviewed management analysis is not available for this run.</p>{% endif %}
