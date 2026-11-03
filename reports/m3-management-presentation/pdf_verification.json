@@ -1,0 +1,11 @@
+{
+  "renderer": "Installed Chrome via DevTools printToPDF",
+  "pages": 1,
+  "records": "Synthetic Northfield fixture",
+  "overall_present": true,
+  "qualifications_present": true,
+  "sources_present": true,
+  "source_hashes_not_in_narrative": true,
+  "biographies_absent": true,
+  "assessment_gaps_present": true
+}

@@ -1,0 +1,96 @@
+FFFF                                                                     [100%]
+================================== FAILURES ===================================
+_________ test_independent_proof2_missing_industry_producer_persists __________
+..\..\..\..\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py:722: in mkdir
+    os.mkdir(self, mode)
+E   FileNotFoundError: [WinError 3] The system cannot find the path specified: '\\private\\tmp\\bo-independent-proofs'
+
+During handling of the above exception, another exception occurred:
+..\..\..\..\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py:722: in mkdir
+    os.mkdir(self, mode)
+E   FileNotFoundError: [WinError 3] The system cannot find the path specified: '\\private\\tmp'
+
+During handling of the above exception, another exception occurred:
+tests\integration\test_bo_four_section_independent.py:177: in test_independent_proof2_missing_industry_producer_persists
+    record('proof2', {**proof, 'full_run_proof': full_proof, 'industry': memo['sections'][3],
+tests\integration\test_bo_four_section_independent.py:27: in record
+    directory.mkdir(parents=True, exist_ok=True)
+..\..\..\..\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py:726: in mkdir
+    self.parent.mkdir(parents=True, exist_ok=True)
+..\..\..\..\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py:726: in mkdir
+    self.parent.mkdir(parents=True, exist_ok=True)
+..\..\..\..\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py:722: in mkdir
+    os.mkdir(self, mode)
+E   PermissionError: [WinError 5] Access is denied: '\\private'
+___________ test_independent_proof3a_same_company_foreign_component ___________
+..\..\..\..\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py:722: in mkdir
+    os.mkdir(self, mode)
+E   FileNotFoundError: [WinError 3] The system cannot find the path specified: '\\private\\tmp\\bo-independent-proofs'
+
+During handling of the above exception, another exception occurred:
+..\..\..\..\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py:722: in mkdir
+    os.mkdir(self, mode)
+E   FileNotFoundError: [WinError 3] The system cannot find the path specified: '\\private\\tmp'
+
+During handling of the above exception, another exception occurred:
+tests\integration\test_bo_four_section_independent.py:213: in test_independent_proof3a_same_company_foreign_component
+    record('proof3a', {'run_a': ra.analysis_run_id, 'run_b': rb.analysis_run_id,
+tests\integration\test_bo_four_section_independent.py:27: in record
+    directory.mkdir(parents=True, exist_ok=True)
+..\..\..\..\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py:726: in mkdir
+    self.parent.mkdir(parents=True, exist_ok=True)
+..\..\..\..\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py:726: in mkdir
+    self.parent.mkdir(parents=True, exist_ok=True)
+..\..\..\..\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py:722: in mkdir
+    os.mkdir(self, mode)
+E   PermissionError: [WinError 5] Access is denied: '\\private'
+_________________ test_independent_proof3b_root_chain_tamper __________________
+..\..\..\..\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py:722: in mkdir
+    os.mkdir(self, mode)
+E   FileNotFoundError: [WinError 3] The system cannot find the path specified: '\\private\\tmp\\bo-independent-proofs'
+
+During handling of the above exception, another exception occurred:
+..\..\..\..\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py:722: in mkdir
+    os.mkdir(self, mode)
+E   FileNotFoundError: [WinError 3] The system cannot find the path specified: '\\private\\tmp'
+
+During handling of the above exception, another exception occurred:
+tests\integration\test_bo_four_section_independent.py:237: in test_independent_proof3b_root_chain_tamper
+    record('proof3b', {'run_id': result.analysis_run_id, 'errors': errors,
+tests\integration\test_bo_four_section_independent.py:27: in record
+    directory.mkdir(parents=True, exist_ok=True)
+..\..\..\..\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py:726: in mkdir
+    self.parent.mkdir(parents=True, exist_ok=True)
+..\..\..\..\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py:726: in mkdir
+    self.parent.mkdir(parents=True, exist_ok=True)
+..\..\..\..\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py:722: in mkdir
+    os.mkdir(self, mode)
+E   PermissionError: [WinError 5] Access is denied: '\\private'
+___________ test_independent_proof3c_persistence_reloads_authority ____________
+..\..\..\..\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py:722: in mkdir
+    os.mkdir(self, mode)
+E   FileNotFoundError: [WinError 3] The system cannot find the path specified: '\\private\\tmp\\bo-independent-proofs'
+
+During handling of the above exception, another exception occurred:
+..\..\..\..\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py:722: in mkdir
+    os.mkdir(self, mode)
+E   FileNotFoundError: [WinError 3] The system cannot find the path specified: '\\private\\tmp'
+
+During handling of the above exception, another exception occurred:
+tests\integration\test_bo_four_section_independent.py:261: in test_independent_proof3c_persistence_reloads_authority
+    record('proof3c', {'run_id': ra.analysis_run_id, 'modified_error': str(modified_exc.value),
+tests\integration\test_bo_four_section_independent.py:27: in record
+    directory.mkdir(parents=True, exist_ok=True)
+..\..\..\..\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py:726: in mkdir
+    self.parent.mkdir(parents=True, exist_ok=True)
+..\..\..\..\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py:726: in mkdir
+    self.parent.mkdir(parents=True, exist_ok=True)
+..\..\..\..\AppData\Local\Programs\Python\Python313\Lib\pathlib\_local.py:722: in mkdir
+    os.mkdir(self, mode)
+E   PermissionError: [WinError 5] Access is denied: '\\private'
+=========================== short test summary info ===========================
+FAILED tests/integration/test_bo_four_section_independent.py::test_independent_proof2_missing_industry_producer_persists
+FAILED tests/integration/test_bo_four_section_independent.py::test_independent_proof3a_same_company_foreign_component
+FAILED tests/integration/test_bo_four_section_independent.py::test_independent_proof3b_root_chain_tamper
+FAILED tests/integration/test_bo_four_section_independent.py::test_independent_proof3c_persistence_reloads_authority
+4 failed in 6.60s

@@ -1,0 +1,98 @@
+{
+  "repository": "C:\\Users\\pearn\\NTU\\BU5203\\.worktrees\\m3-management-presentation",
+  "default_encoding": "cp1252",
+  "records": [
+    {
+      "repeat": 1,
+      "producer": "four_section",
+      "differences": [
+        {
+          "pointer": "/sections/0/structure/content/companies/Northfield_Health_Systems/plain_text_tree",
+          "expected": "Northfield Health Systems (Borrower)\n\u2514\u2500\u2500 100% \u2192 Northfield Operating Company (OpCo) [GUARANTOR SHIELD]",
+          "default_decoded": "Northfield Health Systems (Borrower)\n\u00e2\u201d\u201d\u00e2\u201d\u20ac\u00e2\u201d\u20ac 100% \u00e2\u2020\u2019 Northfield Operating Company (OpCo) [GUARANTOR SHIELD]"
+        },
+        {
+          "pointer": "/sections/0/structure/content/visual_spec/footer/text",
+          "expected": "Illustrative only \u2014 simulated legal entities, ownership stakes and guarantor assignments; not actual corporate information.",
+          "default_decoded": "Illustrative only \u00e2\u20ac\u201d simulated legal entities, ownership stakes and guarantor assignments; not actual corporate information."
+        }
+      ],
+      "utf8_equals_database_and_original": true,
+      "recorded_hash_unchanged": true,
+      "utf8_content_hash": "bd79dbd731277a5eb77e4e07b01b333517737903495056f143225620598e5d0f",
+      "original_content_hash": "bd79dbd731277a5eb77e4e07b01b333517737903495056f143225620598e5d0f",
+      "adapter_available": true,
+      "file_sha256_unchanged_after_render": true,
+      "stage_bytes_and_hashes_unchanged_after_render": true
+    },
+    {
+      "repeat": 1,
+      "producer": "independent",
+      "differences": [
+        {
+          "pointer": "/sections/0/structure/content/companies/Northfield_Health_Systems/plain_text_tree",
+          "expected": "Northfield Health Systems (Borrower)\n\u2514\u2500\u2500 100% \u2192 Northfield Operating Company (OpCo) [GUARANTOR SHIELD]",
+          "default_decoded": "Northfield Health Systems (Borrower)\n\u00e2\u201d\u201d\u00e2\u201d\u20ac\u00e2\u201d\u20ac 100% \u00e2\u2020\u2019 Northfield Operating Company (OpCo) [GUARANTOR SHIELD]"
+        },
+        {
+          "pointer": "/sections/0/structure/content/visual_spec/footer/text",
+          "expected": "Illustrative only \u2014 simulated legal entities, ownership stakes and guarantor assignments; not actual corporate information.",
+          "default_decoded": "Illustrative only \u00e2\u20ac\u201d simulated legal entities, ownership stakes and guarantor assignments; not actual corporate information."
+        }
+      ],
+      "utf8_equals_database_and_original": true,
+      "recorded_hash_unchanged": true,
+      "utf8_content_hash": "7dd59aafc714abc624c7be069f46dd1d6e0ed0c791ccd62e07cd96c13b318477",
+      "original_content_hash": "7dd59aafc714abc624c7be069f46dd1d6e0ed0c791ccd62e07cd96c13b318477",
+      "adapter_available": true,
+      "file_sha256_unchanged_after_render": true,
+      "stage_bytes_and_hashes_unchanged_after_render": true
+    },
+    {
+      "repeat": 2,
+      "producer": "four_section",
+      "differences": [
+        {
+          "pointer": "/sections/0/structure/content/companies/Northfield_Health_Systems/plain_text_tree",
+          "expected": "Northfield Health Systems (Borrower)\n\u2514\u2500\u2500 100% \u2192 Northfield Operating Company (OpCo) [GUARANTOR SHIELD]",
+          "default_decoded": "Northfield Health Systems (Borrower)\n\u00e2\u201d\u201d\u00e2\u201d\u20ac\u00e2\u201d\u20ac 100% \u00e2\u2020\u2019 Northfield Operating Company (OpCo) [GUARANTOR SHIELD]"
+        },
+        {
+          "pointer": "/sections/0/structure/content/visual_spec/footer/text",
+          "expected": "Illustrative only \u2014 simulated legal entities, ownership stakes and guarantor assignments; not actual corporate information.",
+          "default_decoded": "Illustrative only \u00e2\u20ac\u201d simulated legal entities, ownership stakes and guarantor assignments; not actual corporate information."
+        }
+      ],
+      "utf8_equals_database_and_original": true,
+      "recorded_hash_unchanged": true,
+      "utf8_content_hash": "44b2747aad434d33bca447d4b7d1697fc26ab696779185b29543d24ec62daf78",
+      "original_content_hash": "44b2747aad434d33bca447d4b7d1697fc26ab696779185b29543d24ec62daf78",
+      "adapter_available": true,
+      "file_sha256_unchanged_after_render": true,
+      "stage_bytes_and_hashes_unchanged_after_render": true
+    },
+    {
+      "repeat": 2,
+      "producer": "independent",
+      "differences": [
+        {
+          "pointer": "/sections/0/structure/content/companies/Northfield_Health_Systems/plain_text_tree",
+          "expected": "Northfield Health Systems (Borrower)\n\u2514\u2500\u2500 100% \u2192 Northfield Operating Company (OpCo) [GUARANTOR SHIELD]",
+          "default_decoded": "Northfield Health Systems (Borrower)\n\u00e2\u201d\u201d\u00e2\u201d\u20ac\u00e2\u201d\u20ac 100% \u00e2\u2020\u2019 Northfield Operating Company (OpCo) [GUARANTOR SHIELD]"
+        },
+        {
+          "pointer": "/sections/0/structure/content/visual_spec/footer/text",
+          "expected": "Illustrative only \u2014 simulated legal entities, ownership stakes and guarantor assignments; not actual corporate information.",
+          "default_decoded": "Illustrative only \u00e2\u20ac\u201d simulated legal entities, ownership stakes and guarantor assignments; not actual corporate information."
+        }
+      ],
+      "utf8_equals_database_and_original": true,
+      "recorded_hash_unchanged": true,
+      "utf8_content_hash": "a05dbd67cfa3c44bb3fd87f36c76812df311d0ec9ee6e1b0a12b7035b2e60083",
+      "original_content_hash": "a05dbd67cfa3c44bb3fd87f36c76812df311d0ec9ee6e1b0a12b7035b2e60083",
+      "adapter_available": true,
+      "file_sha256_unchanged_after_render": true,
+      "stage_bytes_and_hashes_unchanged_after_render": true
+    }
+  ]
+}

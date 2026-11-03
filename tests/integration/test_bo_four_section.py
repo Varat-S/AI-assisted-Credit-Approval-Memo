@@ -74,7 +74,7 @@ def test_populated_deep_equality_order_omissions_and_persistence(populated, db_s
     assert 'Admissions were stable during the year.' not in narrative
     assert any(h['hypothesis_id'] == 'M1S2-H001' for h in saved.audit['hypotheses']['records'])
     assert not any(c['claim_id'].startswith('COV-') for c in cp['key_drivers'] + cp['material_risks'])
-    assert json.loads(result.output_paths[FILENAME].read_text()) == memo
+    assert json.loads(result.output_paths[FILENAME].read_text(encoding='utf-8')) == memo
     assert result.handoff['canonical_references']['four_section_memo']['content_hash'] == memo['content_hash']
     before = deepcopy(saved)
     assert assemble(saved) == assemble(saved) == memo

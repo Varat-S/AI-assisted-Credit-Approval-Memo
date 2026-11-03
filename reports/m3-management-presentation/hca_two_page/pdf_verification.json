@@ -1,0 +1,27 @@
+{
+  "renderer": "Installed Chrome via DevTools printToPDF",
+  "pages": 2,
+  "records": "Real saved HCA run ar_70066e79dd954e3c",
+  "overall_present": true,
+  "qualifications_present": true,
+  "sources_present": true,
+  "source_hashes_not_in_narrative": true,
+  "biographies_absent": true,
+  "assessment_gaps_present": true,
+  "qualified_positive_supporting_factor": true,
+  "html_has_no_physical_page_claims": true,
+  "assessment_on_page_1": true,
+  "details_on_page_2": true,
+  "all_seven_executives_on_page_2": true,
+  "inventory_limitation_visible": true,
+  "no_invented_monitoring": true,
+  "no_internal_fact_ids": true,
+  "a4_portrait_pages": true,
+  "text_within_page_bounds": true,
+  "management_is_two_consecutive_pages_in_full_memo": true,
+  "full_memo_management_pages": [
+    4,
+    5
+  ],
+  "full_memo_pages": 36
+}

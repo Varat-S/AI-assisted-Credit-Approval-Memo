@@ -1,6 +1,8 @@
 """Saved four-section presentation: real frozen runs, no models on reads."""
 from copy import deepcopy
 import json
+import os
+from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
@@ -69,6 +71,176 @@ def visible(page):
     for node in root.xpath('//details'):
         node.getparent().remove(node)
     return root.text_content()
+
+
+def test_management_web_and_print_share_conservative_projection(db_session, tmp_path):
+    result, _ = run(db_session, tmp_path)
+    view = load_view(db_session, result.analysis_run_id)
+    web = html.fromstring(render_page(view))
+    printed = html.fromstring(render_page(view, pdf=True))
+    web_management = web.xpath('//*[@data-memo-section="management"]')
+    print_management = printed.xpath('//*[@data-memo-section="management"]')
+    assert len(web_management) == len(print_management) == 1
+    assert len(web_management[0].xpath('.//section[contains(@class,"bo-management-card")]')) == 1
+    assert len(web_management[0].xpath('.//div[@class="bo-management-assessment-gaps"]//li')) == 4
+    assert not print_management[0].xpath('.//section[contains(@class,"bo-management-card")]')
+    assert len(print_management[0].xpath('.//div[@class="bo-management-assessment-gaps"]//li')) == 4
+    assert web_management[0].xpath('.//details[contains(@class,"bo-management-support") and not(@open)]')
+    assert not print_management[0].xpath('.//details[contains(@class,"bo-management-support")]')
+    assert view['management']['overall_assessment']['text'] in web_management[0].text_content()
+    assert view['management']['overall_assessment']['text'] in print_management[0].text_content()
+    for finding in view['management']['key_strengths'] + view['management']['key_concerns']:
+        assert finding['text'] in print_management[0].text_content()
+    assert 'Appointment:' not in print_management[0].text_content()
+    assert 'Recorded tenure:' not in print_management[0].text_content()
+    assert 'Full management records remain available in Audit' in printed.text_content()
+    for target in web_management[0].xpath('.//a[starts-with(@href,"#bo-management-citation-")]/@href'):
+        assert len(web.xpath('//*[@id=$target]', target=target[1:])) == 1
+    assert 'Insufficient evidence' in print_management[0].text_content()
+    preview_dir = os.environ.get('BO_M3_PREVIEW_DIR')
+    if preview_dir:
+        folder = Path(preview_dir)
+        folder.mkdir(parents=True, exist_ok=True)
+        (folder / 'management_web_preview.html').write_text(render_page(view), encoding='utf-8')
+        (folder / 'management_print_preview.html').write_text(render_page(view, pdf=True), encoding='utf-8')
+
+
+def test_unclassified_concerns_and_qualifications_are_accessible_in_both_views(db_session, tmp_path):
+    from app.services.bo.management_view import management_view
+
+    result, _ = run(db_session, tmp_path)
+    frozen = deepcopy(bo_artifact(db_session, result.analysis_run_id, 'four_section'))
+    stage_bytes = [(r.name, r.sha256, r.payload_json) for r in db_session.query(StageArtifact).all()]
+    view = load_view(db_session, result.analysis_run_id)
+    artifact = deepcopy(frozen['sections'][1]['content'])
+    observation = deepcopy(artifact['observations'][0])
+    observation.update(observation_id='unclassified-reviewed', category='unclassified',
+                       direction='negative', review_outcome='qualified',
+                       text='Recorded concern without a reliable category.',
+                       review_reason='Scope remains limited.', uncertainties=['Outcome evidence is unavailable.'])
+    artifact['observations'] = [observation]
+    artifact['validation']['validator_7']['overall']['limitations'] = ['Recorded overall qualification.']
+    view['management'] = management_view(artifact)
+    web = html.fromstring(render_page(view))
+    printed = html.fromstring(render_page(view, pdf=True))
+    section = web.xpath('//*[@data-memo-section="management"]')[0]
+    other = section.xpath('.//details[@class="bo-management-other"]')[0]
+    assert other.get('open') is not None  # Negative findings are visible by default.
+    assert 'Other Reviewed Observations' in other.text_content()
+    assert not section.xpath('.//section[@class="bo-management-card"]')
+    assert len(section.xpath('.//div[@class="bo-management-assessment-gaps"]//li')) == 5
+    for page in (web, printed):
+        assert observation['text'] in page.text_content()
+        assert observation['review_reason'] in page.text_content()
+        assert observation['uncertainties'][0] in page.text_content()
+        assert 'Recorded overall qualification.' in page.text_content()
+    assert printed.xpath('//*[@data-memo-section="management"]//*[@data-source-id]')
+    assert bo_artifact(db_session, result.analysis_run_id, 'four_section') == frozen
+    assert [(r.name, r.sha256, r.payload_json) for r in db_session.query(StageArtifact).all()] == stage_bytes
+
+
+def test_direction_groups_and_material_qualifications_in_primary_print():
+    from app.services.bo.four_section_view import _env
+    from app.services.bo.management_view import management_view
+
+    observations = [dict(observation_id=str(i), category='continuity', direction=direction,
+                         review_outcome=status, text=f'Exact reviewed statement {i}.',
+                         review_reason='Material scope limitation.', uncertainties=['Performance remains unverified.'],
+                         citation_ids=['c1']) for i, (direction, status) in enumerate([
+                             ('positive', 'qualified'), ('negative', 'qualified'), ('mixed', 'qualified'),
+                             ('neutral', 'accepted'), (None, 'qualified'), ('positive', 'unsupported')])]
+    artifact = {'company': 'Recorded Company', 'source': {'path': 'sec-inline-xbrl:d1'},
+                'overall_assessment': {'policy': 'Recorded overall statement.', 'outcome': 'mixed', 'information_gaps': True},
+                'citations': [{'citation_id': 'c1', 'document_id': 'd1', 'source_id': 'a'*64,
+                               'source_sha256': 'h', 'physical_page': 1, 'passage_offset': 600}],
+                'observations': observations}
+    view = management_view(artifact, documents={'d1': {'document_id': 'd1', 'sha256': 'h', 'filename': 'filing.htm',
+                                                     'parser': 'inline_xbrl', 'form': '10-K', 'report_date': '2025-12-31'}})
+    for pdf in (False, True):
+        page = html.fromstring(_env.get_template('bo_management.html.j2').render(
+            bo4={'management': view, 'memo': {'identity': {'analysis_run_id': 'recorded-run'}}}, pdf=pdf))
+        shown = visible(page)
+        assert shown.count('Performance remains unverified.') == 1
+        assert shown.count('Material scope limitation.') == 1
+        assert 'Supporting Factor · Qualified' in shown
+        assert 'Credit Concern · Qualified' in shown
+        assert 'Mixed Finding · Qualified' in shown and 'Unassessed · Qualified' in page.text_content()
+        assert 'Exact reviewed statement 5.' not in page.text_content()
+        assert 'Passage offset 600' in shown and 'Page 1' not in shown and 'p. 1' not in shown
+        assert 'a'*64 not in shown
+    assert len(view['sources']) == 1
+
+
+def test_saved_real_hca_run_renders_without_analysis_or_artifact_changes(monkeypatch):
+    """Optional local recorded-run gate; never obtains a replacement from a model."""
+    from hashlib import sha256
+    from app.models.base import create_engine_and_session
+    from app.models.orm import ModelRun
+    from app.services.llm.providers_vertex import VertexProviderBackend
+    from app.services.llm.providers import RealProviderBackend
+    from app.services.pipeline.runner import CreditMemoPipeline
+
+    folder = Path(__file__).parents[2] / 'output/hca_live_saved/20261103_management'
+    if not (folder / 'case.db').exists():
+        pytest.skip('Saved real HCA run is not installed; no live analysis is permitted in this test.')
+    def forbidden(*args, **kwargs):
+        pytest.fail('Saved HCA presentation must not invoke a model or re-ingest evidence.')
+    monkeypatch.setattr(VertexProviderBackend, 'generate', forbidden)
+    monkeypatch.setattr(RealProviderBackend, 'generate', forbidden)
+    monkeypatch.setattr(CreditMemoPipeline, 'prepare_case', forbidden)
+    manifest = json.loads((folder / 'saved_result_manifest.json').read_text(encoding='utf-8'))
+    def unchanged():
+        return all(sha256((folder / item['path']).read_bytes()).hexdigest() == item['sha256'] for item in manifest['files'])
+    assert unchanged()
+    engine, factory = create_engine_and_session('sqlite:///' + (folder / 'case.db').as_posix())
+    try:
+        with factory() as session:
+            before = [(r.name, r.sha256, r.payload_json) for r in session.query(StageArtifact).all()]
+            count = session.query(ModelRun).count()
+            assert count == 14
+            run_id = 'ar_70066e79dd954e3c'
+            view = load_view(session, run_id, 'HCA_2025_M3_PRESENTATION_LIVE_20261103')
+            web_text, print_text = render_page(view), render_page(view, pdf=True)
+            assert sha256(web_text.encode()).hexdigest() == '0c36fb49d6905b45a20a21a9c41f65cd97f4b0e933ac97597e3b68614dca0cc5'
+            web, printed = html.fromstring(web_text), html.fromstring(print_text)
+            primary = printed.xpath('//*[@data-memo-section="management"]')[0]
+            shown = primary.text_content()
+            assert primary.xpath('.//*[@data-finding-group="supporting_factors"]//*[@data-review-status="qualified"]')
+            assert not primary.xpath('.//*[@data-finding-group="credit_concerns"]')
+            assert 'Reviewed assessment · Qualified' in shown
+            assert view['management']['overall_assessment']['text'] in shown
+            qualifier = 'Operational effectiveness depends on ongoing execution, which tenure alone does not guarantee.'
+            assert shown.count(qualifier) == 1
+            assert 'Form 10-K' in shown and 'Passage offset' in shown
+            assert 'f_01' not in shown and 'f_03' not in shown
+            assert 'page 1' not in shown.lower() and 'p. 1' not in shown
+            assert not __import__('re').search(r'\b[a-f0-9]{64}\b', shown)
+            assert 'Appointment:' not in shown
+            assert view['management']['pdf']['finding_count'] == 1
+            assert view['management']['pdf']['eligible_excluded_by_categorization'] == 0
+            assert len(primary.xpath('.//table[@class="bo-management-executive-table"]//tbody/tr')) == 7
+            assert '1 distinct reviewed finding' in shown
+            assert 'three to five distinct findings are not supported' in shown
+            assert 'No management-specific monitoring indicators or thresholds were recorded.' in shown
+            support = web.xpath('//details[@class="bo-management-support"]')[0]
+            assert support.get('open') is None
+            assert 'f_01' in support.text_content()  # Original rationale remains available.
+            assert len(view['management']['sources']) == 3
+            assert session.query(ModelRun).count() == count
+            assert [(r.name, r.sha256, r.payload_json) for r in session.query(StageArtifact).all()] == before
+            output = os.environ.get('BO_M3_HCA_PREVIEW_DIR')
+            if output:
+                target = Path(output)
+                target.mkdir(parents=True, exist_ok=True)
+                for name, text in [('web_full.html', web_text), ('print_full.html', print_text)]:
+                    (target / name).write_text(text, encoding='utf-8')
+                (target / 'verification.json').write_text(json.dumps({'run_id': run_id, 'new_model_calls': 0,
+                    'frozen_stage_count': len(before), 'model_runs_before_and_after': count,
+                    'canonical_files_verified': len(manifest['files']), 'canonical_files_unchanged': unchanged(),
+                    'qualified_positive_group': 'supporting_factors', 'sources': view['management']['sources']}, indent=2), encoding='utf-8')
+    finally:
+        engine.dispose()
+    assert unchanged()
 
 
 def test_populated_review_routes_debt_and_closed_evidence(db_session, tmp_path, monkeypatch):

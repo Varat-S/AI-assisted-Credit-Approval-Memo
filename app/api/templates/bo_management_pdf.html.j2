@@ -1,0 +1,76 @@
+{# PDF-only layout. Every analytical statement comes from the shared projection. #}
+{% set m = bo4.management %}
+{% macro refs(item) %}{% for ref in item.references %}<span data-source-id="{{ ref.source_id }}" data-source-sha256="{{ ref.source_sha256 }}">[{{ ref.number }}]</span>{% if not loop.last %}, {% endif %}{% endfor %}{% endmacro %}
+<style>
+@media print {
+  .bo-memo-section[data-memo-section="management"]{break-before:page}
+  .bo-management-credit-page{break-before:auto}
+  .bo-management-details-page{break-before:page;break-after:page}
+  .bo-management-credit-page h3,.bo-management-details-page h3{font-size:13pt;margin:12px 0 8px}
+  .bo-management-credit-page h4,.bo-management-details-page h4{font-size:11pt;margin:12px 0 6px}
+  .bo-management-credit-page p{font-size:11pt;line-height:1.5;margin:7px 0}
+  .bo-management-credit-page .bo-management-qualifications li{font-size:10pt!important;line-height:1.4;margin:7px 0}
+  .bo-management-credit-page .bo-management-finding{margin:12px 0;padding-top:10px}
+  .bo-management-credit-page .bo-management-finding p{font-size:11pt;line-height:1.5}
+  .bo-management-credit-page .bo-management-classification{font-size:10pt;font-weight:700}
+  .bo-management-credit-page .bo-management-inventory-note{font-size:9.5pt;border-left:2px solid var(--c-c7d5d4);padding-left:10px;margin-top:16px}
+  .bo-management-details-page p,.bo-management-details-page li{font-size:9pt;line-height:1.35}
+  .bo-management-executive-table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:9pt;line-height:1.25;margin:8px 0 12px}
+  .bo-management-executive-table th,.bo-management-executive-table td{padding:7px 6px;border-bottom:1px solid var(--c-dce2e1);vertical-align:top;overflow-wrap:anywhere}
+  .bo-management-executive-table th{text-align:left;font-size:8.5pt;font-weight:600}
+  .bo-management-executive-table td p{font-size:8.5pt;line-height:1.25;margin:3px 0 0}
+  .bo-management-executive-table tr{break-inside:avoid}
+  .bo-management-executive-table thead{display:table-header-group}
+  .bo-management-details-page .bo-management-assessment-gaps{padding:6px 10px;margin:10px 0}
+  .bo-management-details-page .bo-management-assessment-gaps li{font-size:9pt;line-height:1.3;margin:3px 0}
+  .bo-management-details-page .bo-management-sources li{font-size:8pt;line-height:1.3;margin:3px 0}
+  .bo-management-details-page .bo-management-sources .technical-note{font-size:8pt;line-height:1.3}
+}
+</style>
+{% if m %}
+<div class="bo-management-credit-page">
+  <h3>Management Credit Assessment</h3>
+  <div class="memo-claim bo-management-overall">
+    <h4>Overall assessment</h4>
+    <p class="bo-management-classification">{{ m.overall_assessment.wording_label }} · {{ m.overall_assessment.status|title }} · Recorded outcome: {{ m.overall_assessment.outcome|replace('_',' ')|title }}</p>
+    <p class="bo-management-assessment-text">{{ m.overall_assessment.text }}</p>
+    {% if m.pdf.qualifications %}<div class="bo-management-qualifications"><h4>Material qualifications</h4><ul>{% for qualification in m.pdf.qualifications %}<li class="qualification">{{ qualification.text }}</li>{% endfor %}</ul></div>{% endif %}
+  </div>
+  <h3>Key credit considerations</h3>
+  {% for group in m.pdf.finding_groups %}
+  <section class="bo-management-direction-group" data-finding-group="{{ group.id }}"><h4>{{ group.title }}</h4>
+    {% for item in group.findings %}<div class="memo-claim bo-management-finding" data-direction="{{ item.direction or 'unassessed' }}" data-review-status="{{ item.review_status }}">
+      <p class="bo-management-classification">{{ item.topic }} · {{ item.direction_label }} · {{ item.review_status|title }}</p>
+      <h4>{% if item.credit_implication %}Reviewed finding{% else %}Reviewed finding and credit implication{% endif %}</h4>
+      <p>{{ item.text }}</p>
+      {% if item.credit_implication %}<p><strong>Recorded credit implication:</strong> {{ item.credit_implication }}</p>{% endif %}
+      <p class="source-cite">{{ refs(item) }}</p>
+    </div>{% endfor %}
+  </section>
+  {% else %}<p class="memo-empty">No eligible reviewed management findings are available.</p>{% endfor %}
+  {% if m.pdf.finding_limit_notice %}<p class="bo-management-inventory-note">{{ m.pdf.finding_limit_notice }}</p>{% endif %}
+  {% if m.pdf.roster_date %}<p class="technical-note">Executive records as of {{ m.pdf.roster_date }} · {{ m.pdf.executives|length }} sourced executive profiles. Details, evidence gaps and source references follow.</p>{% endif %}
+</div>
+
+<div class="bo-management-details-page">
+  <h3>Management Details &amp; Monitoring</h3>
+  {% if m.pdf.roster_date %}<p class="technical-note">Executive roster as of {{ m.pdf.roster_date }}{% if m.pdf.review_window %}; recorded transition review window {{ m.pdf.review_window.start }} to {{ m.pdf.review_window.end }}{% endif %}.</p>{% endif %}
+  {% if m.pdf.executives %}
+  <table class="bo-management-executive-table" aria-label="Sourced key executives"><colgroup><col style="width:31%"><col style="width:32%"><col style="width:28%"><col style="width:9%"></colgroup>
+    <thead><tr><th>Executive / position</th><th>Selected relevant experience</th><th>Appointment / transition</th><th>Sources</th></tr></thead>
+    <tbody>{% for executive in m.pdf.executives %}<tr>
+      <td><strong>{{ executive.name }}</strong><p>{{ executive.position }}</p></td>
+      <td>{% if executive.experience %}{{ executive.experience.position }}<p>{{ executive.experience.start_date or 'Not recorded' }} to {{ executive.experience.end_date or 'Not recorded' }}</p>{% else %}No admitted prior-role detail.{% endif %}</td>
+      <td>{{ executive.appointment_date or 'Not recorded' }}<p>{{ executive.transition }}{% if executive.succession %} · {{ executive.succession }}{% endif %}</p></td>
+      <td>{{ refs(executive) }}</td>
+    </tr>{% endfor %}</tbody>
+  </table>
+  {% else %}<p class="memo-empty">No sourced executive profiles are available for this run.</p>{% endif %}
+  {% if m.assessment_gaps or m.coverage_missing %}<div class="bo-management-assessment-gaps"><h4>Areas Requiring Further Assessment</h4><ul>{% for category in m.assessment_gaps %}<li>{{ category.title }} — {{ category.status|replace('_',' ')|capitalize }}.</li>{% endfor %}</ul>{% if m.coverage_missing %}<p class="qualification">Missing management coverage: {{ m.coverage_missing|join(', ') }}</p>{% endif %}</div>{% endif %}
+  {% if m.pdf.follow_up %}<h4>Follow-up evidence required</h4><ul>{% for text in m.pdf.follow_up %}<li>{{ text }}</li>{% endfor %}</ul>{% endif %}
+  <h4>Management monitoring priorities</h4>
+  {% if m.pdf.monitoring_priorities %}<ul>{% for text in m.pdf.monitoring_priorities %}<li>{{ text }}</li>{% endfor %}</ul>{% else %}<p class="memo-empty">No management-specific monitoring indicators or thresholds were recorded.</p>{% endif %}
+  {% if m.pdf.sources %}<div class="bo-management-sources"><h4>Sources</h4><ol>{% for ref in m.pdf.sources %}<li value="{{ ref.number }}">{{ ref.label }} · {{ ref.locator }}</li>{% endfor %}</ol><p class="technical-note">Complete observations, career histories and review rationale remain in this run's Executive Profiles &amp; Supporting Evidence and Audit &amp; Review.</p></div>{% endif %}
+  {% if m.methodology_notices %}<aside class="bo-management-methodology"><h4>Methodology / demonstration notice</h4>{% for text in m.methodology_notices %}<p class="technical-note">{{ text }}</p>{% endfor %}</aside>{% endif %}
+</div>
+{% else %}<p class="memo-empty">Reviewed management analysis is not available for this run.</p>{% endif %}

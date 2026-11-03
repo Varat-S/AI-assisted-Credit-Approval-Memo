@@ -1,0 +1,28 @@
+[
+  {
+    "file": "before.png",
+    "viewport": 1200,
+    "documentWidth": 1185,
+    "profileCollapsed": true,
+    "categoryCards": 1,
+    "assessmentGaps": 4
+  },
+  {
+    "file": "desktop.png",
+    "viewport": 1200,
+    "documentWidth": 1185,
+    "profileCollapsed": true,
+    "categoryCards": 1,
+    "assessmentGaps": 4,
+    "citationOpensSupportingEvidence": true
+  },
+  {
+    "file": "mobile.png",
+    "viewport": 390,
+    "documentWidth": 390,
+    "profileCollapsed": true,
+    "categoryCards": 1,
+    "assessmentGaps": 4,
+    "citationOpensSupportingEvidence": true
+  }
+]

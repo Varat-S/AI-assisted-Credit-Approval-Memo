@@ -1,0 +1,46 @@
+{
+  "run_id": "ar_70066e79dd954e3c",
+  "new_model_calls": 0,
+  "frozen_stage_count": 29,
+  "model_runs_before_and_after": 14,
+  "canonical_files_verified": 70,
+  "canonical_files_unchanged": true,
+  "qualified_positive_group": "supporting_factors",
+  "sources": [
+    {
+      "number": 1,
+      "label": "HCA Healthcare, Inc. \u00b7 Form 10-K \u00b7 2025-12-31",
+      "locator": "Passage offset 159626",
+      "citation_ids": [
+        "cite:3a4643a70b852db1",
+        "cite:1774df4345abec50"
+      ],
+      "anchor": "bo-management-citation-cite-3a4643a70b852db1",
+      "source_id": "05d0bd8694bed4ee93abf70a880abc51d94197bd894d12f61d187a183158406e",
+      "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c"
+    },
+    {
+      "number": 2,
+      "label": "HCA Healthcare, Inc. \u00b7 Form 10-K \u00b7 2025-12-31",
+      "locator": "Passage offset 161626",
+      "citation_ids": [
+        "cite:7c662b827dfaedbd",
+        "cite:87e1d0346fa53802"
+      ],
+      "anchor": "bo-management-citation-cite-7c662b827dfaedbd",
+      "source_id": "73a762a8c89fc539f60cb565f068dbf1f6098bf6c8ad237732f992c1749a3e13",
+      "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c"
+    },
+    {
+      "number": 3,
+      "label": "HCA Healthcare, Inc. \u00b7 Form 10-K \u00b7 2025-12-31",
+      "locator": "Passage offset 163626",
+      "citation_ids": [
+        "cite:ab282799fb6b25fd"
+      ],
+      "anchor": "bo-management-citation-cite-ab282799fb6b25fd",
+      "source_id": "ff343f80e7ef1cd0d55086c5c0942a1a81c81c0865fedc0348ddb9d56859388f",
+      "source_sha256": "2043cd0346a1ca36748348b6bef4bdf02385ee772eb241794fcffc98c8c6ba8c"
+    }
+  ]
+}

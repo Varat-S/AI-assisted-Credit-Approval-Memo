@@ -1,0 +1,19 @@
+{
+  "broader": {
+    "passed": 308,
+    "skipped": 1,
+    "failed": 0
+  },
+  "focused_subset": {
+    "passed": 77,
+    "total": 77
+  },
+  "original_failures": {
+    "test_populated_deep_equality_order_omissions_and_persistence": true,
+    "test_independent_proof1_lossless_persisted_roundtrip": true,
+    "test_independent_proof2_missing_industry_producer_persists": true,
+    "test_independent_proof3a_same_company_foreign_component": true,
+    "test_independent_proof3b_root_chain_tamper": true,
+    "test_independent_proof3c_persistence_reloads_authority": true
+  }
+}

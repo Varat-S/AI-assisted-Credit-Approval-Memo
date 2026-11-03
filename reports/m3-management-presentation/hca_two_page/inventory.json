@@ -1,0 +1,43 @@
+{
+  "run_id": "ar_70066e79dd954e3c",
+  "finding_count": 1,
+  "eligible_excluded_by_categorization": 0,
+  "eligible_review_statuses": {
+    "qualified": 1
+  },
+  "eligible_directions": {
+    "positive": 1
+  },
+  "entries": [
+    {
+      "observation_id": "j_01",
+      "text": "The executive team displays high levels of institutional knowledge, with several senior leaders having multi-decade careers within the company, indicating stable internal succession pipelines and established operating expertise.",
+      "direction": "positive",
+      "review_status": "qualified",
+      "eligible": true,
+      "in_final_artifact": true,
+      "citation_ids": [
+        "cite:3a4643a70b852db1",
+        "cite:1774df4345abec50",
+        "cite:7c662b827dfaedbd",
+        "cite:87e1d0346fa53802",
+        "cite:ab282799fb6b25fd"
+      ]
+    },
+    {
+      "observation_id": "j_02",
+      "direction": null,
+      "review_status": "unsupported",
+      "eligible": false,
+      "in_final_artifact": false,
+      "reason": "No sufficient accepted claim basis supplied by Validator 7"
+    }
+  ],
+  "sourced_executives": 7,
+  "monitoring_priorities": [],
+  "follow_up": [
+    "Details on specific management turnover events or recent organizational performance results."
+  ],
+  "web_render_byte_identical": true,
+  "web_sha256": "0c36fb49d6905b45a20a21a9c41f65cd97f4b0e933ac97597e3b68614dca0cc5"
+}
