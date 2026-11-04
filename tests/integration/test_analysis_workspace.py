@@ -39,6 +39,11 @@ def evidence(tmp_path, monkeypatch):
                'sec_bundles':[{'bundle':'bundle.json','entity_id':'HCA'}]}
     (folder/'package.json').write_text(json.dumps(package))
     monkeypatch.setattr(loader, 'FILINGS_ROOT', root)
+    registry=tmp_path/'analysis_companies.json'
+    registry.write_text(json.dumps({'version':1,'companies':[{
+        'id':'hca','label':'HCA Healthcare (HCA)','ticker':'HCA','cik':'860730',
+        'report_date':'2024-12-31','filing_folder':folder.name,'source_package':'package.json'}]}))
+    monkeypatch.setattr(analysis_setup,'REGISTRY_PATH',registry)
     return folder
 
 

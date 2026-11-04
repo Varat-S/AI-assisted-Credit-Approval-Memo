@@ -33,9 +33,13 @@ def _configured_companies():
         if data['version'] != 1 or len({r['id'] for r in rows}) != len(rows):
             raise ValueError('Invalid registry')
         for row in rows:
-            for key in ('id', 'label', 'ticker', 'cik', 'report_date', 'filing_folder', 'source_package'):
+            for key in ('id', 'label', 'ticker', 'cik', 'report_date', 'filing_folder'):
                 if not isinstance(row[key], str) or not row[key].strip():
                     raise ValueError('Invalid registry entry')
+            if row.get('source_package') is not None and (
+                    not isinstance(row['source_package'], str) or not row['source_package'].strip()):
+                raise ValueError('Invalid source package')
+            row.setdefault('source_package', None)
         return rows
     except (OSError, ValueError, KeyError, TypeError) as exc:
         raise SetupError('Company setup is unavailable. Ask the administrator to check the company registry.') from exc
