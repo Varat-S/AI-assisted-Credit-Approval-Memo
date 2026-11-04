@@ -1,8 +1,7 @@
 {% if pdf %}{% include 'bo_management_pdf.html.j2' %}{% else %}{# Same read-only projection for interactive and print views. #}
 {% set m = bo4.management %}
-{% macro references(item) %}
-{% if item.references %}<p class="source-cite">{% for ref in item.references %}{% if pdf %}<span data-source-id="{{ ref.source_id }}" data-source-sha256="{{ ref.source_sha256 }}">[{{ ref.number }}]</span>{% else %}<a href="#{{ ref.anchor }}">Source {{ ref.number }} · {{ ref.locator }}</a>{% endif %}{% if not loop.last %}; {% endif %}{% endfor %}</p>{% endif %}
-{% endmacro %}
+{% from 'bo_evidence.html.j2' import evidence with context %}
+{% macro references(item) %}{% if item.evidence %}{{ evidence(item.evidence) }}{% endif %}{% endmacro %}
 {% macro finding(item) %}
 <div class="memo-claim bo-management-finding" data-review-status="{{ item.review_status }}" data-direction="{{ item.direction or 'unassessed' }}">
   <p class="bo-management-classification">{{ item.direction_label }} · {{ item.review_status|title }}</p>
@@ -56,7 +55,6 @@
 </div>
 {% endif %}
 
-{% if m.sources %}<div class="bo-management-sources"><h3>Sources</h3><ol>{% for ref in m.sources %}<li value="{{ ref.number }}">{{ ref.label }} · {{ ref.locator }}</li>{% endfor %}</ol>{% if pdf %}<p class="technical-note">Complete observations, source records and validation rationale: selected-run Audit &amp; Review.</p>{% endif %}</div>{% endif %}
 {% if m.methodology_notices %}<aside class="bo-management-methodology"><h4>Methodology / demonstration notice</h4>{% for text in m.methodology_notices %}<p class="technical-note">{{ text }}</p>{% endfor %}</aside>{% endif %}
 
 {% if not pdf %}
@@ -81,11 +79,6 @@
   </div>{% endfor %}
   {% if m.recorded_limitations %}<h3>Original qualifications and limitations</h3>{% for text in m.recorded_limitations %}<p class="qualification">{{ text }}</p>{% endfor %}{% endif %}
   {% if m.technical_notes %}<h3>Processing and detailed review records</h3>{% for text in m.technical_notes %}<p class="technical-note">{{ text }}</p>{% endfor %}{% endif %}
-  <h3>Recorded source citations</h3>
-  {% for cid, citation in m.citations.items() %}{% set ref = m.citation_references[cid] %}
-  <div class="bo-management-citation" id="bo-management-citation-{{ cid|replace(':', '-') }}" data-source-id="{{ citation.source_id }}" data-source-sha256="{{ citation.source_sha256 }}">
-    <p class="source-cite">Source {{ ref.number }} · {{ ref.label }} · {{ ref.locator }}</p><blockquote>{{ citation.quote }}</blockquote>
-  </div>{% endfor %}
 </details>
 {% endif %}
 {% else %}<p class="memo-empty">Reviewed management analysis is not available for this run.</p>{% endif %}{% endif %}

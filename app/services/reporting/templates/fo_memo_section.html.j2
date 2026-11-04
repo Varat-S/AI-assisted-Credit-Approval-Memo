@@ -19,14 +19,6 @@
 <section><h3>Financial weaknesses</h3>{% if ex.weaknesses %}<ul>{% for s in ex.weaknesses %}<li>{{ s.text }}</li>{% endfor %}</ul>{% else %}<p class="memo-empty">No measure scores above moderate risk.</p>{% endif %}
 {% if ex.watch %}<h3>Moderate risk</h3><ul>{% for s in ex.watch %}<li>{{ s.text }}</li>{% endfor %}</ul>{% endif %}</section>
 </div>
-{% if out.run_decision or out.pending_overrides or out.unresolved_triggers %}
-<div class="notice-warning"><strong>Requires an analyst.</strong><ul>
-{% for e in out.run_decision %}<li>Going concern: {{ e.reason }}</li>{% endfor %}
-{% for e in out.pending_overrides %}<li>{{ e.measure }} ({{ e.title }}): engine score {{ e.engine_score if e.engine_score is not none else 'none' }}. {{ e.reason }}</li>{% endfor %}
-{% for t in out.unresolved_triggers %}<li>Trigger {{ t.trigger }}: {{ t.reason }}</li>{% endfor %}
-</ul></div>
-{% endif %}
-
 <h3>Pre-checks</h3>
 {% if memo.prechecks %}
 <div class="memo-table-wrap"><table class="memo-table"><thead><tr><th>Check</th><th>Outcome</th><th>Finding</th><th>Effect on the scores</th></tr></thead><tbody>
