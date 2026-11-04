@@ -64,6 +64,27 @@ def test_missing_values_do_not_become_zero_or_partial_totals():
     assert 'stroke-dasharray' not in annotate_svg('<svg></svg>', structure('HCA Inc.'), snapshot)[0]
 
 
+def test_slash_in_borrower_legal_name_is_not_group_debt():
+    name = 'CHS/Community Health Systems, Inc.'
+    d = {'senior_notes_schedule': [
+        {'legal_borrower': name, 'principal_amount_m': n,
+         'priority_ranking_tier': 'tier_1_direct_opco_secured'} for n in (644, 1244)] + [
+        {'legal_borrower': name, 'principal_amount_m': 42,
+         'priority_ranking_tier': 'tier_2_senior_unsecured_guaranteed'}],
+        'non_note_obligations_schedule': [
+            {'legal_borrower': name + ' and subsidiaries', 'principal_drawn_m': 345,
+             'available_facility_limit_m': None, 'obligation_facility': 'Finance lease and financing obligations',
+             'priority_ranking_tier': 'tier_1_direct_opco_secured'},
+            {'legal_borrower': 'CHS / Subsidiaries', 'principal_drawn_m': 10,
+             'available_facility_limit_m': None, 'obligation_facility': 'Other debt',
+             'priority_ranking_tier': 'tier_1_direct_opco_secured'}]}
+    snapshot = build_snapshot(structure(name), d)
+    assert snapshot['entity'] == name and snapshot['matched']
+    assert [r['amount'] for r in snapshot['rows']] == ['1.89', '0.04']
+    assert snapshot['excluded_count'] == 2
+    assert snapshot['scope_note'] == 'Recorded borrower obligations'
+
+
 def test_ambiguous_issuer_and_missing_source_are_not_guessed():
     d = debt()
     d['senior_notes_schedule'].append({**d['senior_notes_schedule'][0], 'legal_borrower': 'Another issuer'})

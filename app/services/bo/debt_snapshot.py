@@ -2,7 +2,9 @@
 
 No obligor inference: exact names are preferred; an unmatched, unique note
 issuer is explicitly provisional. Shared slash-delimited obligations stay in
-the complete schedules rather than being assigned to the diagram borrower.
+the complete schedules rather than being assigned to the diagram borrower;
+a slash inside the diagram borrower's own legal name (CHS/Community Health
+Systems, Inc.) is not a delimiter.
 """
 from datetime import date
 from decimal import Decimal
@@ -19,6 +21,10 @@ def format_date(value):
 
 def _name(value):
     return re.sub(r'[^a-z0-9]', '', (value or '').lower())
+
+
+# "X and subsidiaries" is group debt like "X / Subsidiaries", not a co-borrower.
+_GROUP_SUFFIX = re.compile(r'\s+and\s+(its\s+)?(consolidated\s+)?(subsidiaries|affiliates)\b', re.I)
 
 
 def _amount(rows):
@@ -41,8 +47,10 @@ def build_snapshot(structure, debt):
     borrower = borrowers[0]
     notes = debt.get('senior_notes_schedule', [])
     facilities = debt.get('non_note_obligations_schedule', [])
+    def shared(legal):
+        return '/' in legal and _name(legal) != _name(borrower['display_name'])
     names = {r['legal_borrower'] for r in [*notes, *facilities]
-             if r.get('legal_borrower') and '/' not in r['legal_borrower']
+             if r.get('legal_borrower') and not shared(r['legal_borrower'])
              and not re.search(r'\band\b', r['legal_borrower'], re.I)}
     exact = [n for n in names if _name(n) == _name(borrower['display_name'])]
     issuers = {r['legal_borrower'] for r in notes if r.get('legal_borrower') in names}
@@ -52,9 +60,10 @@ def build_snapshot(structure, debt):
     matched = _name(name) == _name(borrower['display_name'])
     def belongs(row):
         legal = row.get('legal_borrower') or ''
-        # Explicit co-borrowers are included, never slash-delimited group debt.
+        # Explicit co-borrowers are included, never slash-delimited or "and subsidiaries" group debt.
         return (_name(legal) == _name(name) or
-                ('/' not in legal and re.match(re.escape(name) + r'\s+and\b', legal, re.I)))
+                (not shared(legal) and not _GROUP_SUFFIX.search(legal)
+                 and re.match(re.escape(name) + r'\s+and\b', legal, re.I)))
     scoped_notes = [r for r in notes if belongs(r)]
     scoped_facilities = [r for r in facilities if belongs(r)]
     tiers = [
