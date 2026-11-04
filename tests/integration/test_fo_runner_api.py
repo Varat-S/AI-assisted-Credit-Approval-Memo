@@ -883,8 +883,10 @@ def test_browser_agent_run_escalates_and_the_analyst_stops_it(client, auditor_do
     assert "Not scored: going-concern fail" in client.get("/fo").text  # the run list too
 
 
-def test_home_page_links_to_financial_overview(client):
-    assert 'href="/fo"' in client.get("/").text
+def test_home_page_links_to_analysis_workspace(client):
+    page = client.get("/").text
+    assert 'href="/analysis/new"' in page
+    assert 'href="/credit-memos"' in page
 
 
 def test_cli_run_fo_case_needs_the_agent(tmp_path, capsys):
