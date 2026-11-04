@@ -11,6 +11,7 @@ from sqlalchemy.orm import Session
 from app.api.deps import get_session
 from app.services import analysis_workspace
 from fastapi.responses import HTMLResponse, RedirectResponse, Response
+from starlette.concurrency import run_in_threadpool
 from app.core.config import get_settings
 from app.services import bo_fo
 from app.services.acquisition import shared_filing
@@ -50,20 +51,57 @@ def _setup_page(*, values, check="", extra_errors=(), notice=None, reports=None,
         values=values, companies=companies, selection=selection, errors=errors,
         providers=providers, checked=bool(check), execution_enabled=selection is not None and not errors,
         submission_key=uuid.uuid4().hex, notice=notice, reports=reports, edgar=edgar or {},
+        folder_ids={c["filing_folder"]: c["id"] for c in companies}, saved_extras=_saved_extras(companies),
+        max_file_bytes=MAX_FILE_BYTES,
+        supporting_suffixes=shared_filing.SUPPORTING_SUFFIXES,
         sec_env=bool(get_settings().sec_user_agent)), status_code=status_code)
 
 
 @router.get("/analysis/new", response_class=HTMLResponse)
 def new_analysis(company: str = "", sections: str = "both", validation_mode: str = "standard",
-                 cutoff: str = "", case_id: str = "", check: str = "", added: str = ""):
+                 cutoff: str = "", case_id: str = "", check: str = "", added: str = "", updated: str = "",
+                 add_folder: str = ""):
     values = dict(company=company, sections=sections, validation_mode=validation_mode,
                   cutoff=cutoff, case_id=case_id)
-    return _setup_page(values=values, check=check,
-                       notice=f"Added {added} to edgar_filings/ with its bundle.json. It is selected below." if added else None)
+    edgar = {"mode": "add", "folder": add_folder} if add_folder else None
+    notice = None
+    if added:
+        notice = f"Saved {added} to edgar_filings/. It is selected below." + _extras_notice(added)
+    elif updated:
+        notice = f"Added your files to {updated}." + _extras_notice(updated)
+    return _setup_page(values=values, check=check, notice=notice, edgar=edgar)
+
+
+def _saved_extras(companies):
+    """Each saved filing's corporate-structure JSON and supporting files, for the setup page's hints."""
+    saved = {}
+    for company in companies:
+        try:
+            saved[company["filing_folder"]] = shared_filing.supporting_summary(company["filing_folder"])
+        except ValueError:
+            continue  # e.g. two corporate-structure JSONs; the run itself reports that
+    return saved
+
+
+def _extras_notice(folder):
+    try:
+        saved = shared_filing.supporting_summary(folder)
+    except ValueError:
+        return ""
+    parts = []
+    if saved["structure"]:
+        parts.append(f"Corporate structure: {saved['structure']} (used by Module 3).")
+    if saved["supporting"]:
+        parts.append(f"Supporting files in {shared_filing.SUPPORTING_DIR}/: {', '.join(saved['supporting'])}.")
+    return "".join(" " + part for part in parts)
 
 
 def _added_company_id(folder_name):
-    return re.sub(r"[^a-z0-9]+", "-", folder_name.lower()).strip("-")
+    """The company list's id for a filing folder; a configured company may use its own id."""
+    try:
+        return next(c["id"] for c in company_registry() if c["filing_folder"] == folder_name)
+    except (SetupError, StopIteration):
+        return re.sub(r"[^a-z0-9]+", "-", folder_name.lower()).strip("-")
 
 
 def _contact(user_agent):
@@ -79,66 +117,126 @@ _NO_SEC_CONTACT = "Enter your email (e.g. you@example.com) so SEC EDGAR can iden
 
 
 def _edgar_failure(message, edgar, status_code=400, reports=None):
+    """Re-show the "Add a 10-K" panel the user was on, with the problem shown inside it."""
     values = dict(company="", sections="both", validation_mode="standard", cutoff="", case_id="")
-    return _setup_page(values=values, extra_errors=[message], edgar=edgar, status_code=status_code)
+    edgar = {**edgar, "errors": [*edgar.get("errors", ()), message]}
+    return _setup_page(values=values, reports=reports, edgar=edgar, status_code=status_code)
+
+
+async def _read_uploads(uploads, limit=MAX_FILE_BYTES + 1):
+    """{filename: bytes} for the files a browser sent; an empty file input sends a nameless part."""
+    files: dict[str, bytes] = {}
+    for upload in uploads or ():
+        name = Path(upload.filename or "").name
+        if not name:
+            continue
+        if name in files:
+            raise shared_filing.SharedFilingError(f"{name!r} was selected twice.")
+        files[name] = await upload.read(limit)
+    return files
 
 
 @router.get("/analysis/new/reports", response_class=HTMLResponse)
 def list_edgar_reports(ticker: str = "", amendments: str = "", user_agent: str = "", session: Session = Depends(get_session)):
     """Step 1 of a download: the ticker's 10-Ks on SEC EDGAR, newest first."""
-    edgar = {"ticker": ticker, "amendments": amendments, "user_agent": user_agent}
+    ticker = ticker.strip().upper()
+    edgar = {"mode": "download", "ticker": ticker, "amendments": amendments, "user_agent": user_agent}
+    if not ticker:
+        return _edgar_failure("Enter a ticker, for example HCA.", edgar)
     if not _contact(user_agent):
         return _edgar_failure(_NO_SEC_CONTACT, edgar)
     try:
         company, reports = shared_filing.annual_reports(
-            _edgar_client(session, user_agent), ticker.strip(), include_amendments=bool(amendments))
+            _edgar_client(session, user_agent), ticker, include_amendments=bool(amendments))
     except (EdgarError, ValueError) as exc:
-        return _edgar_failure(f"Could not list {ticker.strip().upper()}'s 10-Ks: {exc}", edgar)
+        return _edgar_failure(f"Could not list {ticker}'s 10-Ks: {exc}", edgar)
     if not reports:
         return _edgar_failure(f"SEC EDGAR lists no 10-K for {company['name']} ({company['ticker']}).", edgar, 404)
     values = dict(company="", sections="both", validation_mode="standard", cutoff="", case_id="")
-    return _setup_page(values=values, reports=reports, edgar={**edgar, "company": company})
+    return _setup_page(values=values, reports=reports, edgar={**edgar, "company": company}, status_code=200)
 
 
 @router.post("/analysis/new/fetch")
-def fetch_edgar_filing(ticker: str = Form(...), accession: str = Form(...), with_proxy: str = Form(""),
-                       user_agent: str = Form(""), session: Session = Depends(get_session)):
-    """Step 2: download the chosen 10-K into edgar_filings/ with its bundle.json and company.json."""
+async def fetch_edgar_filing(ticker: str = Form(...), accession: str = Form(""), with_proxy: str = Form(""),
+                             user_agent: str = Form(""), structure: list[UploadFile] | None = File(None),
+                             supporting: list[UploadFile] | None = File(None), session: Session = Depends(get_session)):
+    """Step 2: download the chosen 10-K, plus any files the user adds, into one new edgar_filings/ folder."""
+    edgar = {"mode": "download", "ticker": ticker, "user_agent": user_agent, "accession": accession,
+             "with_proxy": with_proxy or "", "fetch_attempted": True}
+
+    def failure(message):
+        # Show the year list again so the user can fix the problem and retry without searching again.
+        try:
+            company, reports = shared_filing.annual_reports(_edgar_client(session, user_agent), ticker.strip())
+            return _edgar_failure(message, {**edgar, "company": company}, reports=reports)
+        except (EdgarError, ValueError):
+            return _edgar_failure(message, edgar)
+
+    if not accession.strip():
+        return failure("Pick the fiscal year to download.")
     if not _contact(user_agent):
-        return _edgar_failure(_NO_SEC_CONTACT, {"ticker": ticker, "user_agent": user_agent})
+        return _edgar_failure(_NO_SEC_CONTACT, edgar)
     try:
-        filing = shared_filing.fetch_filing(
-            _edgar_client(session, user_agent), ticker.strip(), accession=accession.strip(), with_proxy=bool(with_proxy))
+        # Added files are checked before anything is downloaded, so a bad file never leaves a half-made folder.
+        extras = shared_filing.extra_files(await _read_uploads(supporting),
+                                           structure=await _read_uploads(structure))
+    except shared_filing.SharedFilingError as exc:
+        return failure(f"{exc} Nothing was downloaded. Choose your files again and retry.")
+    try:
+        filing = await run_in_threadpool(
+            shared_filing.fetch_filing, _edgar_client(session, user_agent), ticker.strip(),
+            accession=accession.strip(), with_proxy=bool(with_proxy), extras=extras)
     except (shared_filing.SharedFilingError, EdgarError, ValueError) as exc:
-        return _edgar_failure(f"Download failed: {exc}", {"ticker": ticker, "user_agent": user_agent})
+        return failure(f"Download failed: {exc}")
     return RedirectResponse(f"/analysis/new?company={quote(_added_company_id(filing.name))}&added={quote(filing.name)}",
                             status_code=303)
 
 
 @router.post("/analysis/new/import")
-async def import_edgar_filing(files: list[UploadFile] = File(...), accession: str = Form(""),
+async def import_edgar_filing(files: list[UploadFile] | None = File(None), accession: str = Form(""),
                               filing_date: str = Form(""), ticker: str = Form(""), user_agent: str = Form(""),
+                              structure: list[UploadFile] | None = File(None),
+                              supporting: list[UploadFile] | None = File(None),
                               session: Session = Depends(get_session)):
-    """Upload a 10-K's files (or a .zip) into edgar_filings/."""
-    edgar = {"accession": accession, "filing_date": filing_date, "import_ticker": ticker, "user_agent": user_agent}
-    uploads: dict[str, bytes] = {}
-    for upload in files:
-        name = Path(upload.filename or "").name
-        if not name:
-            continue
-        data = await upload.read(MAX_FILE_BYTES * 4 + 1)  # a .zip may hold several files
-        if name in uploads:
-            return _edgar_failure(f"{name!r} was selected twice.", edgar)
-        uploads[name] = data
+    """Upload a 10-K's files (or a .zip), plus any supporting files, into edgar_filings/."""
+    edgar = {"mode": "upload", "accession": accession, "filing_date": filing_date, "import_ticker": ticker,
+             "user_agent": user_agent}
     try:
+        uploads = await _read_uploads(files, MAX_FILE_BYTES * 4 + 1)  # a .zip may hold several files
+        # A corporate-structure JSON or a PDF picked into the filing box is treated as an added file, not dropped.
+        sec = {n: d for n, d in uploads.items()
+               if n.lower().endswith((*shared_filing.SEC_SUFFIXES, ".zip")) or n == shared_filing.COMPANY}
+        others = {n: d for n, d in uploads.items() if n not in sec}
+        if not sec:
+            raise shared_filing.SharedFilingError(
+                "Choose the filing itself: a .zip from EDGAR, or the 10-K's .htm with its .xsd and linkbase files.")
+        extras = shared_filing.extra_files({**others, **await _read_uploads(supporting)},
+                                           structure=await _read_uploads(structure))
         parsed_date = date.fromisoformat(filing_date) if filing_date.strip() else None
         client = _edgar_client(session, user_agent) if _contact(user_agent) else None
-        filing = shared_filing.import_filing(
-            uploads, accession=accession.strip() or None, filing_date=parsed_date,
-            ticker=ticker.strip() or None, client=client)
+        filing = await run_in_threadpool(
+            shared_filing.import_filing, sec, accession=accession.strip() or None, filing_date=parsed_date,
+            ticker=ticker.strip() or None, client=client, extras=extras)
     except (shared_filing.SharedFilingError, EdgarError, ValueError) as exc:
         return _edgar_failure(f"Import failed: {exc}", edgar)
     return RedirectResponse(f"/analysis/new?company={quote(_added_company_id(filing.name))}&added={quote(filing.name)}",
+                            status_code=303)
+
+
+@router.post("/analysis/new/add-files")
+async def add_filing_files(folder: str = Form(""), replace_structure: str = Form(""),
+                           structure: list[UploadFile] | None = File(None),
+                           supporting: list[UploadFile] | None = File(None)):
+    """Add a corporate-structure JSON or supporting files to a filing that is already saved."""
+    edgar = {"mode": "add", "folder": folder, "replace_structure": replace_structure}
+    try:
+        if not folder:
+            raise shared_filing.SharedFilingError("Choose which saved 10-K to add the files to.")
+        extras = shared_filing.extra_files(await _read_uploads(supporting), structure=await _read_uploads(structure))
+        shared_filing.add_files(folder, extras, replace_structure=bool(replace_structure))
+    except (shared_filing.SharedFilingError, ValueError) as exc:
+        return _edgar_failure(f"Could not add the files: {exc}", edgar)
+    return RedirectResponse(f"/analysis/new?company={quote(_added_company_id(folder))}&updated={quote(folder)}",
                             status_code=303)
 
 

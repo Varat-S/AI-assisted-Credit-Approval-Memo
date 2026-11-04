@@ -45,6 +45,9 @@ MANIFEST = "bundle.json"
 COMPANY = "company.json"
 # Optional Module 3 corporate-structure onboarding JSON kept with the filing; not SEC evidence.
 M3_STRUCTURE = "m3_corporate_structure.json"
+# Other files the user keeps with a filing: stored apart from the SEC evidence and never read as evidence.
+SUPPORTING_DIR = "supporting"
+SUPPORTING_SUFFIXES = (".json", ".pdf", ".csv", ".txt", ".md", ".xlsx", ".xls", ".docx", ".doc", ".png", ".jpg", ".jpeg")
 PROXY_DIR = "proxy"
 # Saved beside a proxy statement: its form, accession, filing date and primary document.
 PROXY_META = "filing.json"
@@ -146,8 +149,10 @@ def annual_reports(client, ticker: str, *, include_amendments: bool = False) -> 
 
 
 def fetch_filing(client, ticker: str, *, fy: int | None = None, accession: str | None = None,
-                 with_proxy: bool = False, name: str | None = None) -> SharedFiling:
-    """Download a 10-K from SEC EDGAR into a new shared folder in ``edgar_filings/``."""
+                 with_proxy: bool = False, name: str | None = None, extras: dict[str, bytes] | None = None) -> SharedFiling:
+    """Download a 10-K from SEC EDGAR into a new shared folder in ``edgar_filings/``.
+
+    ``extras`` (from :func:`extra_files`) are written into the same folder before it appears."""
     company, filings, filing = select_annual_filing(client, ticker, fy=fy, accession=accession)
     proxy = client.proxy_for(filings, filing) if with_proxy else None
     bundle = client.fetch_bundle(company, filing, proxy=proxy)
@@ -160,11 +165,97 @@ def fetch_filing(client, ticker: str, *, fy: int | None = None, accession: str |
         "sic_description": profile.get("sic_description"),
     }
     name = name or folder_name(bundle.ticker, bundle.cik, bundle.form, filing.fiscal_year)
-    return _write_new(bundle, name, identity)
+    return _write_new(bundle, name, identity, extras)
+
+
+def extra_files(files: dict[str, bytes], *, structure: dict[str, bytes] | None = None) -> dict[str, bytes]:
+    """Check files the user adds beside a filing; returns each one's path in the folder.
+
+    The corporate-structure JSON (given as ``structure``, or recognised among ``files`` by its name or
+    ``document_type``) is validated and saved as ``m3_corporate_structure.json``. Anything else goes in
+    ``supporting/``. Run this before downloading so a bad file never leaves a half-finished folder."""
+    out: dict[str, bytes] = {}
+
+    def add_structure(filename, data):
+        from app.services.bo.m3_rebuild.structure import validate_structure_input
+        if M3_STRUCTURE in out:
+            raise SharedFilingError("More than one corporate-structure JSON was given. Add only one.")
+        try:
+            document = json.loads(data)
+        except ValueError as exc:
+            raise SharedFilingError(f"{filename} is not valid JSON.") from exc
+        try:
+            validate_structure_input(document)
+        except ValueError as exc:
+            raise SharedFilingError(f"{filename} is not a usable corporate-structure JSON: {exc}.") from exc
+        out[M3_STRUCTURE] = data
+
+    for filename, data in (structure or {}).items():
+        _check_size(filename, data)
+        add_structure(filename, data)
+    for filename, data in files.items():
+        name = Path(filename).name
+        lower = name.lower()
+        _check_size(name, data)
+        if lower in (MANIFEST, COMPANY):
+            raise SharedFilingError(f"{name} is written by the app. Leave it out.")
+        if lower.endswith(SEC_SUFFIXES) or lower.endswith(".zip"):
+            raise SharedFilingError(
+                f"{name} looks like part of an SEC filing. Filing files go in through \"Upload files I have\"; "
+                f"supporting files are kept apart from the SEC evidence.")
+        if not lower.endswith(SUPPORTING_SUFFIXES):
+            raise SharedFilingError(
+                f"{name}: this file type cannot be added. Supporting files can be {', '.join(SUPPORTING_SUFFIXES)}.")
+        if lower == M3_STRUCTURE or lower.endswith(".json") and _declares_structure(data):
+            add_structure(name, data)
+            continue
+        path = f"{SUPPORTING_DIR}/{_safe_name(name)}"
+        if path in out:
+            raise SharedFilingError(f"Two supporting files are named {name!r}.")
+        out[path] = data
+    if sum(len(d) for d in out.values()) > MAX_TOTAL_BYTES:
+        raise SharedFilingError("The added files are over the 128 MiB limit.")
+    return out
+
+
+def add_files(name: str, extras: dict[str, bytes], *, replace_structure: bool = False) -> list[str]:
+    """Add checked ``extras`` (from :func:`extra_files`) to a saved filing folder; returns their paths.
+
+    A replaced corporate-structure JSON is moved to ``supporting/superseded/``, never deleted."""
+    if not extras:
+        raise SharedFilingError("Choose at least one file to add.")
+    folder = fo_loader.resolve_folder(name)
+    if not (folder / MANIFEST).is_file():
+        raise SharedFilingError(f"{name!r} is not a prepared filing folder (it has no {MANIFEST}).")
+    existing = m3_structure_path(name) if M3_STRUCTURE in extras else None
+    if existing is not None and not replace_structure:
+        raise SharedFilingError(
+            f"{name} already has a corporate-structure JSON ({existing.name}). Tick \"Replace the existing "
+            f"corporate structure\" to swap it; the old file is kept in {SUPPORTING_DIR}/superseded/.")
+    clashes = [path for path in extras if path != M3_STRUCTURE and (folder / path).exists()]
+    if clashes:
+        raise SharedFilingError(f"{name} already has {', '.join(clashes)}. Rename the file and try again.")
+    if existing is not None:
+        from datetime import datetime, timezone
+        stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+        superseded = folder / SUPPORTING_DIR / "superseded" / f"{stamp}-{_safe_name(existing.name)}"
+        superseded.parent.mkdir(parents=True, exist_ok=True)
+        existing.rename(superseded)
+    _write_extras(folder, extras)
+    return sorted(extras)
+
+
+def supporting_summary(name: str) -> dict:
+    """What a saved folder holds beside its SEC files: its corporate-structure JSON and supporting files."""
+    folder = fo_loader.resolve_folder(name)
+    structure = m3_structure_path(name)
+    supporting = sorted(p.name for p in (folder / SUPPORTING_DIR).glob("*") if p.is_file())
+    return {"structure": structure.name if structure else None, "supporting": supporting}
 
 
 def import_filing(sources, *, accession: str | None = None, filing_date: date | None = None,
-                  ticker: str | None = None, name: str | None = None, client=None) -> SharedFiling:
+                  ticker: str | None = None, name: str | None = None, client=None,
+                  extras: dict[str, bytes] | None = None) -> SharedFiling:
     """Turn files the user has into a shared folder.
 
     ``sources`` is a list of paths (a folder, files, or ``.zip`` archives) or a ``{filename: bytes}``
@@ -183,7 +274,10 @@ def import_filing(sources, *, accession: str | None = None, filing_date: date | 
     else:
         files = _checked(dict(sources))
     identity = _identity(files.pop(COMPANY, None))
+    extras = dict(extras or {})
     m3_structure = files.pop(M3_STRUCTURE, None)
+    if m3_structure is not None:
+        extras.setdefault(M3_STRUCTURE, m3_structure)
     files = {k: v for k, v in files.items() if k.lower().endswith(SEC_SUFFIXES)}
     if not files:
         raise SharedFilingError("No .htm/.xsd/.xml filing files were given.")
@@ -246,13 +340,10 @@ def import_filing(sources, *, accession: str | None = None, filing_date: date | 
         _write_manifest(bundle, in_place)
         if not (in_place / COMPANY).exists():
             _write_company(in_place, identity)
-        shared = _shared(in_place, bundle)
-    else:
-        fiscal_year = meta.get("fiscal_year") or filing.fiscal_year
-        shared = _write_new(bundle, name or folder_name(ticker, cik, form, fiscal_year), identity)
-    if m3_structure is not None:
-        (shared.folder / M3_STRUCTURE).write_bytes(m3_structure)
-    return shared
+        _write_extras(in_place, extras)
+        return _shared(in_place, bundle)
+    fiscal_year = meta.get("fiscal_year") or filing.fiscal_year
+    return _write_new(bundle, name or folder_name(ticker, cik, form, fiscal_year), identity, extras)
 
 
 def load_bundle(name: str) -> SecFilingBundle:
@@ -485,7 +576,7 @@ def _proxy_files(folder: Path, client, cik: str, filing) -> list[SecFilingFile]:
     ) for n, content in sorted(data.items())]
 
 
-def _write_new(bundle: SecFilingBundle, name: str, identity: dict) -> SharedFiling:
+def _write_new(bundle: SecFilingBundle, name: str, identity: dict, extras: dict[str, bytes] | None = None) -> SharedFiling:
     root = filings_root()
     if not name or name != name.strip() or any(c in name for c in "/\\:\0") or name in {".", ".."}:
         raise SharedFilingError(f"Invalid folder name {name!r}.")
@@ -502,11 +593,38 @@ def _write_new(bundle: SecFilingBundle, name: str, identity: dict) -> SharedFili
             path.write_bytes(file.content)
         _write_manifest(bundle, staging)
         _write_company(staging, identity)
+        _write_extras(staging, extras or {})
         staging.rename(target)
     except BaseException:
         shutil.rmtree(staging, ignore_errors=True)
         raise
     return _shared(target, bundle)
+
+
+def _write_extras(folder: Path, extras: dict[str, bytes]) -> None:
+    for path, data in extras.items():
+        target = folder / path
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(data)
+
+
+def _check_size(filename: str, data: bytes) -> None:
+    if len(data) > MAX_FILE_BYTES:
+        raise SharedFilingError(f"{filename} is over the {MAX_FILE_BYTES // (1024 * 1024)} MiB limit.")
+
+
+def _declares_structure(data: bytes) -> bool:
+    try:
+        document = json.loads(data)
+    except ValueError:
+        return False
+    return isinstance(document, dict) and document.get("document_type") == "corporate_structure_onboarding"
+
+
+def _safe_name(filename: str) -> str:
+    """A browser file name made safe to save: letters, digits, '_', '.', '-'; spaces become '_'."""
+    stem = re.sub(r"[^A-Za-z0-9_.-]+", "_", Path(filename).name).strip("._") or "file"
+    return stem[:150]
 
 
 def _relative(bundle, file) -> str:
