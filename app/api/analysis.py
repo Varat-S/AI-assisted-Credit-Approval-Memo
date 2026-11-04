@@ -6,7 +6,7 @@ import re
 import uuid
 from datetime import date
 from urllib.parse import quote
-from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, Request
 from sqlalchemy.orm import Session
 from app.api.deps import get_session
 from app.services import analysis_workspace
@@ -64,6 +64,40 @@ def new_analysis(company: str = "", sections: str = "both", validation_mode: str
 
 def _added_company_id(folder_name):
     return re.sub(r"[^a-z0-9]+", "-", folder_name.lower()).strip("-")
+
+
+def _file_request(request):
+    if request.headers.get('X-Requested-With') != 'setup-files':
+        raise HTTPException(403, 'Use the file controls on New Analysis.')
+
+
+@router.post('/analysis/new/download-files')
+def download_setup_files(request: Request, user_agent: str = Form(''), session: Session = Depends(get_session)):
+    from app.services.setup_files import download_files, ContactRequired
+    _file_request(request)
+    def client():
+        if not _contact(user_agent):
+            raise ContactRequired('Enter a contact email to download from SEC EDGAR.')
+        return _edgar_client(session, user_agent)
+    try:
+        return download_files(client)
+    except ContactRequired as exc:
+        return Response(json.dumps({'needs_contact': True, 'detail': str(exc)}),
+                        status_code=422, media_type='application/json')
+    except (SetupError, ValueError) as exc:
+        raise HTTPException(409, str(exc)) from exc
+
+
+@router.post('/analysis/new/corporate-structure')
+async def upload_corporate_structure(request: Request, company: str = Form(...), file: UploadFile = File(...)):
+    from app.services.setup_files import save_structure, MAX_STRUCTURE_BYTES
+    _file_request(request)
+    try:
+        if not (file.filename or '').lower().endswith('.json'):
+            raise ValueError('Choose a corporate structure .json file.')
+        return save_structure(company, await file.read(MAX_STRUCTURE_BYTES + 1))
+    except (ValueError, OSError, SetupError) as exc:
+        raise HTTPException(400, str(exc)) from exc
 
 
 def _contact(user_agent):

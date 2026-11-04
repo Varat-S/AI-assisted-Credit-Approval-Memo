@@ -3,7 +3,7 @@
 <main>{% if errors %}<div class="setup-errors" role="alert"><strong>Setup needs attention</strong><ul>{% for error in errors %}<li>{{ error }}</li>{% endfor %}</ul></div>{% elif checked %}<div class="setup-checked" role="status">Configuration checked. Your selections map to the existing analysis workflow. No analysis has been started.</div>{% endif %}
 {% if notice %}<div class="setup-checked" role="status">{{ notice }}</div>{% endif %}
 <div class="setup-layout"><section class="setup-panel"><h2>Analysis configuration</h2><form method="get" action="/analysis/new" id="setup-form"><input type="hidden" name="submission_key" value="{{ submission_key }}"><input type="hidden" name="check" value="1">
-<label for="company">Hospital company</label><select id="company" name="company" required>{% for company in companies %}<option value="{{ company.id }}"{% if company.id == values.company %} selected{% endif %}>{{ company.label }}</option>{% endfor %}</select><p class="hint">Every 10-K filing folder in <code>edgar_filings/</code> is listed.</p>
+<label for="company">Hospital company</label><select id="company" name="company" required>{% for company in companies %}<option value="{{ company.id }}"{% if company.id == values.company %} selected{% endif %}>{{ company.label }}</option>{% endfor %}</select><p class="hint">Select a company to analyze its configured annual report.</p>
 <fieldset><legend>Analysis scope</legend><label class="choice"><input type="radio" name="sections" value="both"{% if values.sections == 'both' %} checked{% endif %}><span><strong>Business + Financial Overview</strong><small>Prepare both sections using the same evidence package.</small></span></label><label class="choice"><input type="radio" name="sections" value="bo"{% if values.sections == 'bo' %} checked{% endif %}><span><strong>Business Overview Only</strong><small>Specialist analysis and source-only Competitive Positioning selection.</small></span></label><label class="choice"><input type="radio" name="sections" value="fo"{% if values.sections == 'fo' %} checked{% endif %}><span><strong>Financial Overview Only</strong><small>Financial pre-checks, ratios and scoring from the filing's Inline XBRL.</small></span></label></fieldset>
 <fieldset><legend>Validation safeguards</legend><label class="choice"><input type="radio" name="validation_mode" value="standard"{% if values.validation_mode == 'standard' %} checked{% endif %}><span><strong>Standard Mode — Safeguards On</strong><small>Existing evidence-grounding and deterministic validations remain enforced.</small></span></label><label class="choice"><input type="radio" name="validation_mode" value="exploratory"{% if values.validation_mode == 'exploratory' %} checked{% endif %}><span><strong>Exploratory Mode — Safeguards Relaxed</strong><small>Specialist validation findings are advisory. Finding selection and source integrity remain enforced.</small></span></label></fieldset>
 <p class="hint">This setting applies to Business Overview only. Financial Overview checks, source provenance and integrity protections remain unchanged.</p>
@@ -14,24 +14,67 @@
 
 <aside class="evidence-panel" aria-label="Selected evidence package"><span class="eyebrow">Selected evidence</span>{% if selection %}<p class="evidence-name">{{ selection.company.label }}</p><span class="evidence-tag">FY{{ selection.evidence.report_date.year }} annual report</span><dl><dt>Financial reporting period</dt><dd>Year ended {{ selection.evidence.report_date.strftime('%d %B %Y') }}</dd><dt>Filing date</dt><dd>{{ selection.evidence.filing_date.strftime('%d %B %Y') }}</dd><dt>Evidence cutoff · UTC</dt><dd>{{ selection.evidence.cutoff.strftime('%d %b %Y, %H:%M:%S') }}</dd><dt>Evidence package</dt><dd>{{ selection.evidence.folder }}</dd><dt>Source identifier</dt><dd>{{ selection.evidence.accession }}</dd><dt>Annual report source</dt><dd>{{ selection.evidence.primary_document }}</dd><dt>Package sources</dt><dd>{{ selection.evidence.sources }} files</dd></dl>{% else %}<p class="evidence-name">Evidence unavailable</p><p class="hint">The required company package must be restored or corrected before it can be used.</p>{% endif %}
 <div class="readiness">{% if providers.configured %}<strong>Provider settings present</strong>Live connectivity and credentials have not been tested. Readiness is checked again when you submit; model access is confirmed by execution.{% else %}<strong>Provider configuration needed</strong>Review the setup message before live execution is connected.{% endif %}</div></aside>
-<section class="setup-panel" id="add-evidence"><h2>Add a 10-K</h2><p class="hint">Download a filing from SEC EDGAR, or upload its files. It is saved to <code>edgar_filings/</code> with its <code>bundle.json</code> and <code>company.json</code>, then appears in the company list above.</p>
-<form method="get" action="/analysis/new/reports#add-evidence"><fieldset><legend>Download from SEC EDGAR</legend>
-<label for="user_agent">Your email</label><input id="user_agent" name="user_agent" type="email" autocomplete="email" placeholder="you@example.com" value="{{ edgar.user_agent or '' }}"{% if not sec_env %} required{% endif %}><p class="hint">SEC EDGAR asks requests to identify a contact. {% if sec_env %}Leave blank to use the contact configured on the server.{% else %}No API key is needed. Used only for this request; it is not saved.{% endif %}</p>
-<label for="ticker">Ticker</label><input id="ticker" name="ticker" required placeholder="e.g. HCA" value="{{ edgar.ticker or '' }}">
-<label class="choice"><input type="checkbox" name="amendments" value="1"{% if edgar.amendments %} checked{% endif %}><span><small>Include amended 10-Ks (10-K/A)</small></span></label>
-<div class="setup-actions"><button class="secondary-button" type="submit">Find 10-Ks</button></div></fieldset></form>
-{% if reports %}<form method="post" action="/analysis/new/fetch"><fieldset><legend>{{ edgar.company.name }} ({{ edgar.company.ticker }}): choose a 10-K to download</legend><input type="hidden" name="ticker" value="{{ edgar.company.ticker }}"><input type="hidden" name="user_agent" value="{{ edgar.user_agent or '' }}">
-<div class="table-wrap"><table><thead><tr><th></th><th>Fiscal year</th><th>Form</th><th>Period ending</th><th>Filed</th><th>Proxy</th><th></th></tr></thead><tbody>{% set ns = namespace(first=true) %}
-{% for r in reports %}{% set usable = not r.problem and not r.downloaded %}<tr><td><input type="radio" name="accession" id="acc-{{ loop.index }}" value="{{ r.accession }}"{% if not usable %} disabled{% elif ns.first %} checked{% set ns.first = false %}{% endif %}></td><td><label for="acc-{{ loop.index }}">FY{{ r.fiscal_year }}</label></td><td>{{ r.form }}</td><td>{{ r.report_date }}</td><td>{{ r.filing_date }}</td><td>{{ r.proxy or '—' }}</td><td>{% if r.downloaded %}already in <code>edgar_filings/{{ r.folder }}</code>{% elif r.problem %}{{ r.problem }}{% endif %}</td></tr>{% endfor %}</tbody></table></div>
-<label class="choice"><input type="checkbox" name="with_proxy" value="1" checked><span><small>Also download the proxy statement (better management, governance and related-party evidence)</small></span></label>
-<div class="setup-actions"><button class="primary-button" type="submit"{% if ns.first %} disabled{% endif %}>Download the selected 10-K</button></div></fieldset></form>{% endif %}
-<form method="post" action="/analysis/new/import" enctype="multipart/form-data"><fieldset><legend>Upload a filing's files</legend>
-<label for="files">Inline XBRL 10-K (.htm), its .xsd and linkbases, or a .zip</label><input id="files" name="files" type="file" multiple required accept=".zip,.htm,.html,.xhtml,.xml,.xsd,.json">
-<label for="import-accession">Accession</label><input id="import-accession" name="accession" placeholder="0001193125-26-044769" value="{{ edgar.accession or '' }}">
-<label for="filing_date">Filing date</label><input id="filing_date" name="filing_date" type="date" value="{{ edgar.filing_date or '' }}">
-<p class="hint">Optional: the accession and date are looked up and checked on SEC EDGAR when an email is entered{% if sec_env %} (or configured on the server){% endif %}; otherwise they are recorded as declared by you.</p>
-<label for="import-user-agent">Your email (optional)</label><input id="import-user-agent" name="user_agent" type="email" placeholder="you@example.com" value="{{ edgar.user_agent or '' }}">
-<label for="import-ticker">Ticker (optional)</label><input id="import-ticker" name="ticker" value="{{ edgar.import_ticker or '' }}">
-<div class="setup-actions"><button class="secondary-button" type="submit">Upload</button></div></fieldset></form></section></div></main>
-<script>(function(){const note=document.getElementById('exploratory-note');document.querySelectorAll('input[name="validation_mode"]').forEach(function(input){input.addEventListener('change',function(){note.hidden=document.querySelector('input[name="validation_mode"]:checked').value!=='exploratory';});});})();document.getElementById('company').addEventListener('change',function(){var form=document.getElementById('setup-form'),q=new URLSearchParams();q.set('company',this.value);['sections','validation_mode'].forEach(function(n){var c=form.querySelector('input[name="'+n+'"]:checked');if(c)q.set(n,c.value);});window.location.href='/analysis/new?'+q.toString();});document.getElementById('setup-form').addEventListener('submit',function(event){if(event.submitter && event.submitter.id==='run-analysis'){this.action='/analysis/start';this.method='post';event.submitter.disabled=true;event.submitter.textContent='Starting analysis…';}});</script>
+<div class="file-tools">
+<section class="setup-panel file-card" id="add-evidence"><h2>Download Files</h2>
+<p class="file-intro">Download the configured companies’ 10-K filings and supporting documents directly from SEC EDGAR. Files are saved to the application’s filing library automatically.</p>
+<div class="setup-actions"><button class="secondary-button" id="download-files" type="button">Download Files</button></div>
+<p class="hint" id="download-location">Saved directly into the application’s filing folder.</p>
+<p class="hint">Includes HCA’s FY2025 filing. A contact email is requested only when needed. No SEC API key is required.</p>
+<p id="download-status" role="status" aria-live="polite"></p><ul id="download-results"></ul>
+</section>
+<section class="setup-panel file-card" id="corporate-upload"><h2>Upload Documents</h2>
+<p class="file-intro">Upload a corporate structure JSON for the company selected above. The file supplies the ownership and guarantor information used by Module 3.</p>
+<form id="structure-form" enctype="multipart/form-data">
+<input type="hidden" name="company" value="{{ values.company }}">
+<input id="structure-file" name="file" type="file" accept=".json,application/json" hidden>
+<div class="setup-actions"><button class="secondary-button" id="choose-structure" type="button">Choose File</button><button class="secondary-button" id="upload-structure" type="submit" disabled>Upload</button></div>
+<p class="hint" id="structure-filename">No file selected.</p>
+</form>
+<p class="hint" id="structure-company">{% if selection %}For {{ selection.company.label }} · FY{{ selection.evidence.report_date.year }}. Existing versions are backed up when replaced.{% else %}Download a filing and select its company before uploading.{% endif %}</p>
+<p id="structure-status" role="status" aria-live="polite"></p>
+</section></div>
+<dialog id="sec-contact-dialog" aria-labelledby="sec-contact-title"><form id="sec-contact-form"><h2 id="sec-contact-title">SEC download contact</h2><p>Enter a contact email to identify this request to SEC EDGAR. It is used for this download and is not saved to your settings.</p><label for="sec-contact">Email address</label><input id="sec-contact" type="email" autocomplete="email" required placeholder="you@example.com"><div class="setup-actions"><button class="secondary-button" id="cancel-contact" type="button">Cancel</button><button class="primary-button" type="submit">Download Files</button></div></form></dialog>
+</div></main>
+<script>(function(){const note=document.getElementById('exploratory-note');document.querySelectorAll('input[name="validation_mode"]').forEach(function(input){input.addEventListener('change',function(){note.hidden=document.querySelector('input[name="validation_mode"]:checked').value!=='exploratory';});});})();document.getElementById('company').addEventListener('change',function(){var form=document.getElementById('setup-form'),q=new URLSearchParams();q.set('company',this.value);['sections','validation_mode'].forEach(function(n){var c=form.querySelector('input[name="'+n+'"]:checked');if(c)q.set(n,c.value);});window.location.href='/analysis/new?'+q.toString();});document.getElementById('setup-form').addEventListener('submit',function(event){if(event.submitter && event.submitter.id==='run-analysis'){this.action='/analysis/start';this.method='post';event.submitter.disabled=true;event.submitter.textContent='Starting analysis…';}});
+(function(){
+const download=document.getElementById('download-files'),status=document.getElementById('download-status'),results=document.getElementById('download-results'),dialog=document.getElementById('sec-contact-dialog');
+async function refreshSelection(){
+ const select=document.getElementById('company'),q=new URLSearchParams({company:select.value,sections:document.querySelector('input[name="sections"]:checked').value,validation_mode:document.querySelector('input[name="validation_mode"]:checked').value});
+ const response=await fetch('/analysis/new?'+q),doc=new DOMParser().parseFromString(await response.text(),'text/html');
+ select.replaceChildren(...Array.from(doc.getElementById('company').options).map(o=>o.cloneNode(true)));
+ const aside=doc.querySelector('.evidence-panel');if(aside)document.querySelector('.evidence-panel').replaceWith(aside);
+ document.querySelector('#structure-form input[name="company"]').value=select.value;
+ document.getElementById('structure-company').textContent=doc.getElementById('structure-company').textContent;
+ const run=doc.getElementById('run-analysis');document.getElementById('run-analysis').disabled=run.disabled;
+ const previous=document.querySelector('.setup-errors'),updated=doc.querySelector('.setup-errors');
+ if(previous){if(updated)previous.replaceWith(updated);else previous.remove();}else if(updated)document.querySelector('.setup-layout').before(updated);
+}
+async function downloadFiles(contact){
+ download.disabled=true;download.textContent='Downloading…';status.textContent='Checking filings and downloading missing documents from SEC…';results.replaceChildren();
+ try{
+ const form=new FormData();if(contact)form.set('user_agent',contact);
+ const response=await fetch('/analysis/new/download-files',{method:'POST',body:form,headers:{'X-Requested-With':'setup-files'}}),data=await response.json();
+ if(data.needs_contact){status.textContent='A contact email is needed to download from SEC.';dialog.showModal();document.getElementById('sec-contact').focus();return;}
+ if(!response.ok)throw new Error(data.detail||'Download failed.');
+ status.textContent=data.message;
+ data.results.forEach(item=>{const row=document.createElement('li');row.textContent=item.folder+': '+item.status+(item.error?' — '+item.error:'');results.appendChild(row);});
+ await refreshSelection();
+ }catch(error){status.textContent=error.message||'Unable to download files. Please try again.';}
+ finally{download.disabled=false;download.textContent='Download Files';}
+}
+download.addEventListener('click',()=>downloadFiles(''));
+document.getElementById('cancel-contact').addEventListener('click',()=>{dialog.close();document.getElementById('sec-contact').value='';status.textContent='Download cancelled.';});
+dialog.addEventListener('cancel',()=>{document.getElementById('sec-contact').value='';status.textContent='Download cancelled.';});
+document.getElementById('sec-contact-form').addEventListener('submit',event=>{event.preventDefault();const contact=document.getElementById('sec-contact').value;dialog.close();document.getElementById('sec-contact').value='';downloadFiles(contact);});
+const input=document.getElementById('structure-file'),upload=document.getElementById('upload-structure'),uploadStatus=document.getElementById('structure-status');
+document.getElementById('choose-structure').addEventListener('click',()=>input.click());
+input.addEventListener('change',()=>{document.getElementById('structure-filename').textContent=input.files[0]?.name||'No file selected.';upload.disabled=!input.files.length;uploadStatus.textContent='';});
+document.getElementById('structure-form').addEventListener('submit',async function(event){
+ event.preventDefault();if(!input.files.length)return;upload.disabled=true;upload.textContent='Uploading…';uploadStatus.textContent='Validating corporate structure…';
+ try{const response=await fetch('/analysis/new/corporate-structure',{method:'POST',body:new FormData(this),headers:{'X-Requested-With':'setup-files'}}),data=await response.json();if(!response.ok)throw new Error(data.detail||'Upload failed.');uploadStatus.textContent=data.message+' Data status: '+data.data_status+(data.simulated?' — simulated example, not verified corporate information.':'');input.value='';document.getElementById('structure-filename').textContent='No file selected.';}
+ catch(error){uploadStatus.textContent=error.message||'Unable to upload this file.';}
+ finally{upload.disabled=!input.files.length;upload.textContent='Upload';}
+});
+})();
+</script>
 </body></html>
