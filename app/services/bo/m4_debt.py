@@ -25,7 +25,7 @@ Design constraints honoured:
 
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, replace
 from typing import Any, Optional
 
 from app.services.modules.module4.specialist import (
@@ -56,8 +56,17 @@ _DEBT_FACT_CUES = (
     "seniornotes", "senior notes", "debtmaturit", "debt maturit",
     "revolvingcredit", "revolving credit", "termloan", "term loan",
     "financelease", "finance lease", "interestexpense", "interest expense",
-    "principal",
+    "principal", "scheduleofdebt", "debtinstrument",
 )
+
+
+def _first_present(fact: dict, *keys: str):
+    """The first of ``keys`` the fact carries a value for (snapshot facts and
+    test fixtures name the same field differently)."""
+    for k in keys:
+        if fact.get(k) is not None:
+            return fact[k]
+    return None
 
 
 @dataclass
@@ -79,6 +88,8 @@ class M4DebtResult:
     reconciliation_followup: Optional[dict[str, Any]] = None
     # Reconciling items dropped because the instruments already matched the total.
     dropped_reconciling_items: list[dict[str, Any]] = None  # type: ignore[assignment]
+    # The failed first attempt (status, issues fed back), when a retry was made.
+    first_attempt: Optional[dict[str, Any]] = None
 
     def __post_init__(self) -> None:
         if self.evidence_ids is None:
@@ -105,6 +116,7 @@ class M4DebtResult:
             "model_invoked": self.model_invoked,
             "reconciliation_followup": self.reconciliation_followup,
             "dropped_reconciling_items": self.dropped_reconciling_items,
+            "first_attempt": self.first_attempt,
         }
 
 
@@ -150,13 +162,32 @@ def build_debt_inputs(
         if not fid:
             continue
         concept = str(fact.get("concept") or fact.get("name") or fact.get("metric") or "")
-        label = str(fact.get("label") or "")
+        label = str(fact.get("label") or fact.get("source_label") or "")
         blob = f"{concept} {label}"
-        if _contains_cue(blob, _DEBT_FACT_CUES):
-            entry = {"fact_id": fid, "concept": concept, "value": fact.get("value"),
-                     "unit": fact.get("unit"), "period": fact.get("period")}
-            debt_facts.append(entry)
-            structured.append(entry)
+        if not _contains_cue(blob, _DEBT_FACT_CUES):
+            continue
+        # A debt text block (e.g. the debt note's schedule of instruments) is
+        # filing text, not a number: hand it over as a quotable snippet so the
+        # model can read the schedule and Validator 8 can verify quotes from it.
+        if concept.endswith("TextBlock"):
+            text = fact.get("raw_value") or fact.get("value")
+            if isinstance(text, str) and text.strip():
+                refs = fact.get("source_refs") or []
+                snippets.append({
+                    "fact_id": fid,
+                    "text": text,
+                    "document_id": refs[0].get("document_id")
+                    if refs and isinstance(refs[0], dict) else None,
+                    "section": f"XBRL {concept.rsplit('}', 1)[-1]}",
+                    "page": None,
+                })
+            continue
+        entry = {"fact_id": fid, "concept": concept,
+                 "value": _first_present(fact, "value", "normalized_value", "raw_value"),
+                 "unit": _first_present(fact, "unit", "normalized_unit", "raw_unit"),
+                 "period": _first_present(fact, "period", "period_end")}
+        debt_facts.append(entry)
+        structured.append(entry)
 
     missing: list[str] = []
     if not snippets:
@@ -217,18 +248,28 @@ def run_debt_specialist(
             model_invoked=False,
         )
 
-    specialist = Module4Specialist(
-        client, escalation_engine=escalation_engine, case_id=case_id,
-        enforce_validator=enforce_validator)
+    def attempt(feedback, engine):
+        specialist = Module4Specialist(
+            client, escalation_engine=engine, case_id=case_id,
+            enforce_validator=enforce_validator)
+        return specialist.run(replace(inputs, validation_feedback=feedback),
+                              case_version=snapshot_version, key=key)
+
+    # A failed answer gets one retry with its issues fed back; a provider
+    # failure (no answer at all) does not. The first attempt raises no
+    # escalation, since only the final answer's Validator-8 failure stands.
+    first = None
     try:
-        result = specialist.run(inputs, case_version=snapshot_version, key=key)
+        first = attempt([], None)
     except Module4RejectedError as exc:
-        return M4DebtResult(
-            status="rejected",
-            evidence_ids=inputs.evidence_ids(),
-            reason=str(exc),
-            model_invoked=True,
-        )
+        if exc.error_type == "ProviderCallError":
+            return M4DebtResult(
+                status="rejected",
+                evidence_ids=inputs.evidence_ids(),
+                reason=str(exc),
+                model_invoked=True,
+            )
+        first_attempt = {"status": "rejected", "issues": [str(exc)]}
     except Exception as exc:  # a provider/call failure fails this specialist, not the whole BO
         return M4DebtResult(
             status="error",
@@ -236,6 +277,35 @@ def run_debt_specialist(
             reason=type(exc).__name__,
             model_invoked=True,
         )
+    if first is not None:
+        if first.validated or not enforce_validator:
+            return _governed(first, inputs, enforce_validator)
+        first_attempt = {
+            "status": "failed", "run_id": getattr(first.run, "run_id", None),
+            "issues": [f"[{c.check_id}] {c.detail}" for c in first.validator8.failures]}
+    try:
+        result = attempt(first_attempt["issues"], escalation_engine)
+    except Exception as exc:
+        if first is None:
+            return M4DebtResult(
+                status="rejected" if isinstance(exc, Module4RejectedError) else "error",
+                evidence_ids=inputs.evidence_ids(),
+                reason=str(exc) if isinstance(exc, Module4RejectedError) else type(exc).__name__,
+                model_invoked=True,
+                first_attempt=first_attempt,
+            )
+        # The retry gave no answer, so the first answer and its failure stand.
+        result = first
+        result.escalation_id = Module4Specialist(
+            client, escalation_engine=escalation_engine, case_id=case_id,
+        ).escalate_validator_failure(first.validator8)
+    governed = _governed(result, inputs, enforce_validator)
+    governed.first_attempt = first_attempt
+    return governed
+
+
+def _governed(result, inputs: Module4Inputs, enforce_validator: bool) -> M4DebtResult:
+    """The governed outcome of one completed specialist attempt."""
 
     # DebtStructureValidatorReport / ...Check are frozen dataclasses -> asdict.
     report_json = {

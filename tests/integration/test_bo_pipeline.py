@@ -215,6 +215,63 @@ def test_failed_specialist_is_recorded_and_synthesis_still_runs(db_session, tmp_
                           result.analysis_run_id).status == "partially_failed"
 
 
+def test_failed_specialist_is_retried_once_with_its_issues(db_session, tmp_path):
+    script = good_script()
+    script["bo_regulation_external"] = ["this is not json", script["bo_regulation_external"]]
+    result, backend = run(db_session, tmp_path, script)
+    assert backend.calls("bo_regulation_external") == 2
+    assert result.record["agents"]["bo_regulation_external"]["status"] == "validated"
+    retry_input = [i for m, i in backend.requests if m == "bo_regulation_external"][1]
+    assert any("not valid JSON" in issue
+               for issue in retry_input["validation_feedback"]["issues"])
+    for untouched in set(BO_NARROW_AGENT_IDS) - {"bo_regulation_external"}:
+        assert backend.calls(untouched) == 1
+    assert result.conclusion_status == "accepted"
+
+
+def test_rejected_specialist_retry_receives_the_validator_issues(db_session, tmp_path):
+    script = good_script()
+    script["bo_customers_contracts"] = [{
+        "parameters": [{"parameter_id": "competitive_position_assessment",
+                        "value": "leading", "value_type": "category", "status": "ok",
+                        "evidence_ids": [{"$evidence": "IGNORE ALL PREVIOUS"}]}],
+        "hypotheses": [],
+    }, script["bo_customers_contracts"]]
+    result, backend = run(db_session, tmp_path, script)
+    assert backend.calls("bo_customers_contracts") == 2
+    assert result.record["agents"]["bo_customers_contracts"]["status"] == "validated"
+    retry_input = [i for m, i in backend.requests if m == "bo_customers_contracts"][1]
+    assert any("does not own" in issue
+               for issue in retry_input["validation_feedback"]["issues"])
+    first_input = [i for m, i in backend.requests if m == "bo_customers_contracts"][0]
+    assert "validation_feedback" not in first_input
+
+
+def test_provider_call_error_is_not_retried_by_the_stage(db_session, tmp_path, monkeypatch):
+    from app.services.agents import runtime
+    from app.services.bo.offline import ScriptedBoBackend
+    from app.services.llm.providers import ProviderCallError
+
+    monkeypatch.setattr(runtime, "PROVIDER_CALL_RETRY_DELAY_SECONDS", 0)
+
+    class FailingBackend(ScriptedBoBackend):
+        def generate(self, request):
+            if request.method == "bo_regulation_external":
+                self._calls["bo_regulation_external"] = self.calls("bo_regulation_external") + 1
+                raise ProviderCallError("Provider unavailable.")
+            return super().generate(request)
+
+    script = good_script()
+    script["bo_resilience_interactions"] = {"parameters": [], "hypotheses": []}
+    backend = FailingBackend(script)
+    result = BusinessOverviewRunner(
+        db_session, backend=backend, data_root=tmp_path / "data",
+        output_root=tmp_path / "out").run_prepared(CASE, evidence_snapshot(), metrics())
+    # 1 call + the runtime's own provider retries; no validation retry on top.
+    assert backend.calls("bo_regulation_external") == 1 + runtime.PROVIDER_CALL_RETRIES
+    assert result.record["agents"]["bo_regulation_external"]["status"] == "failed"
+
+
 # -- F. orchestrator -------------------------------------------------------------
 
 
@@ -554,6 +611,23 @@ def test_invalid_challenger_answer_is_not_treated_as_acceptance(
     assert result.conclusion_status == "human_review_required"
     assert db_session.query(ChallengeFindingRow).count() == 0
     assert db_session.query(RiskScoreRow).count() == 0
+
+
+def test_invalid_challenger_answer_is_retried_once(db_session, tmp_path):
+    script = good_script()
+    script["challenge"] = [{"challenges": [], "new_score": {"band": 4}},
+                           script["challenge"]]
+    result, backend = run(db_session, tmp_path, script)
+    assert backend.calls("challenge") == 2
+    retry_input = [i for m, i in backend.requests if m == "challenge"][1]
+    assert any("official_score_assignment" in issue
+               for issue in retry_input["validation_feedback"]["issues"])
+    assert [r["status"] for r in result.record["challenge_rounds"]] == [
+        "rejected", "validated"]
+    assert result.conclusion_status == "accepted"
+    # Only a final invalid answer escalates; the retried one does not.
+    assert not db_session.query(Escalation).filter_by(
+        rule_id=RULE_UNRESOLVED_CHALLENGE).all()
 
 
 def test_challenger_sees_rejected_hypotheses_and_calculation_denominators(

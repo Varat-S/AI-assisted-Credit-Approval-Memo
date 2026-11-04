@@ -91,19 +91,41 @@ def analysis_for(job_id, case_id, run_id, current, session=None):
 
 
 def report_available(session, bo, fo):
-    from app.services.bo.workbench import bo_artifact, BoRunNotFoundError
+    """Cheap presence check for history rows: reads only the run's own memo stage row and checks its hash.
+    The full chain and source-reassembly verification runs when the memo is opened (load_review)."""
+    from app.services.bo.four_section import stage_name
+    from app.services.bo.workbench import verify_report_identity
+    from app.services.pipeline.artifacts import ArtifactIntegrityError
+    if not bo:
+        return bool(fo)
+    binding = (bo.payload.get('canonical_references') or {}).get('four_section_memo')
+    if binding is not None:
+        if not isinstance(binding, dict) or binding.get('stage') != stage_name(bo.analysis_run_id):
+            raise ArtifactIntegrityError('This run has no valid four-section memo binding.')
+        row = _stage_row(session, bo, binding['stage'])
+        if row is None or row.sha256 != binding.get('sha256'):
+            raise ArtifactIntegrityError('Four-section memo differs from its exact-run handoff binding.')
+        return True
+    import json
     memo = None
-    if bo:
-        if 'four_section_memo' in (bo.payload.get('canonical_references') or {}):
-            return bool(bo_artifact(session, bo.analysis_run_id, 'four_section'))
-        for kind in ('memo', 'audit'):
-            try:
-                report = bo_artifact(session, bo.analysis_run_id, kind)
-            except BoRunNotFoundError:
-                continue  # Absence is safe; identity/integrity errors must propagate.
-            if kind == 'memo':
-                memo = report
+    for kind in ('memo', 'audit'):
+        row = _stage_row(session, bo, f'bo_{kind}:{bo.analysis_run_id}')
+        if row is None:
+            continue  # Absence is safe; identity/integrity errors must propagate.
+        verify_report_identity(session, bo, kind, json.loads(row.payload_json))
+        if kind == 'memo':
+            memo = row
     return bool(memo or fo)
+
+
+def _stage_row(session, bo, name):
+    from hashlib import sha256
+    from app.models.orm import StageArtifact
+    from app.services.pipeline.artifacts import ArtifactIntegrityError
+    row = session.get(StageArtifact, (bo.case_id, bo.snapshot_version, name))
+    if row is not None and sha256(row.payload_json.encode('utf-8')).hexdigest() != row.sha256:
+        raise ArtifactIntegrityError(f'Recorded artifact integrity check failed: {name}')
+    return row
 
 
 def governance(session, job, bo, fo, available):

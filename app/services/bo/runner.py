@@ -559,7 +559,8 @@ class _BoRun:
         self.conclusion_row_id: str | None = None
         self.orchestrator_output: dict | None = None
         self.orchestrator_history: list[dict] = []
-        self.orchestrator_validation_feedback: list[str] = []
+        # agent_id -> issues of its failed attempt, set only during its retry.
+        self.validation_feedback: dict[str, list[str]] = {}
         self.editorial_input: dict | None = None
         self.editorial_selection: dict | None = None
         self.challenge_rounds: list[dict] = []
@@ -592,20 +593,9 @@ class _BoRun:
         if self.roster_version == "v3":
             self._build_module_conclusions()
         self._observed("reconciliation", self._reconcile)
+        # A rejected synthesis gets its one repair attempt inside _stage;
+        # specialists and their governed findings are unchanged by it.
         self._stage("orchestrator", {BO_ORCHESTRATOR_ID})
-        if (self.conclusion is None
-                and self.agents[BO_ORCHESTRATOR_ID].status == "rejected"):
-            # A structurally valid synthesis can still violate a deterministic
-            # claim-level rule. Give only the orchestrator one bounded chance to
-            # correct the exact errors; specialists and their governed findings
-            # are unchanged. A second invalid answer remains rejected.
-            self.orchestrator_validation_feedback = list(
-                self.agents[BO_ORCHESTRATOR_ID].issues)
-            self.rerun_reason = "orchestrator_validation_repair"
-            self._stage("orchestrator_validation_repair",
-                        {BO_ORCHESTRATOR_ID}, force=True)
-            self.rerun_reason = None
-            self.orchestrator_validation_feedback = []
         self._challenge_phase()
         self._finalize()
 
@@ -932,6 +922,53 @@ class _BoRun:
         self.session.flush()
 
     def _stage(self, name: str, only: set[str], *, force: bool = False) -> None:
+        report = self._run_stage(name, only, force=force)
+        again = self._retryable(only, report)
+        if not again:
+            return
+        # Every agent whose answer failed gets one more attempt with the exact
+        # issues fed back. A ProviderCallError was already retried by the
+        # runtime, so it is not retried here. A second failure stands.
+        challenger_rejected = (BO_CHALLENGER_ID in again
+                               and self.agents[BO_CHALLENGER_ID].status == "rejected")
+        self.validation_feedback = {
+            a: issues for a in again if (issues := self._failure_issues(a, report))}
+        previous_reason = self.rerun_reason
+        retry_name = ("orchestrator_validation_repair" if name == "orchestrator"
+                      else f"{name}_validation_retry")
+        self.rerun_reason = ("orchestrator_validation_repair" if name == "orchestrator"
+                             else "validation_retry")
+        try:
+            retry = self._run_stage(retry_name, again, force=True)
+        finally:
+            self.rerun_reason = previous_reason
+            self.validation_feedback = {}
+        if challenger_rejected and BO_CHALLENGER_ID in retry.failed:
+            # The retry never answered, so the first invalid answer stands.
+            self._escalate_invalid_challenge(self._latest_run_id(BO_CHALLENGER_ID))
+
+    def _retryable(self, only: set[str], report) -> set[str]:
+        """Agents in ``only`` whose attempt failed for a reason other than the provider."""
+        ran = set(report.executed) | set(report.failed)
+        failed = {a for a in only & ran
+                  if report.failed.get(a) != "ProviderCallError"
+                  and self.agents[a].status in ("rejected", "failed")}
+        if not failed:
+            return set()
+        # Agents skipped only because a failed agent blocked them run again too.
+        return failed | {a for a, reason in report.skipped.items()
+                         if a in only and reason == "upstream_failed_or_skipped"}
+
+    def _failure_issues(self, agent_id: str, report) -> list[str]:
+        """What was wrong with the failed attempt, as fed back to the agent."""
+        if agent_id not in report.failed:
+            return list(self.agents[agent_id].issues)
+        run_id = self._latest_run_id(agent_id)
+        row = self.session.get(AgentRunRow, run_id) if run_id else None
+        detail = getattr(row, "validation_detail", None)
+        return [detail or f"The previous attempt failed ({report.failed[agent_id]})."]
+
+    def _run_stage(self, name: str, only: set[str], *, force: bool = False):
         self.runner.check_stop(name.replace("_", " "))
         self.runner.on_stage(name, "running")
         start = self.work_done
@@ -972,6 +1009,7 @@ class _BoRun:
         # Agents that failed or were skipped are done too; _on_result counted only those that returned.
         self.work_done = start
         self.work(len(only))
+        return report
 
     def _latest_run_id(self, agent_id: str) -> str | None:
         row = self.session.execute(
@@ -1100,6 +1138,15 @@ class _BoRun:
             inputs["challenge_feedback"] = self.feedback[agent.agent_id]
         if agent.agent_id in self.followups:
             inputs["follow_up_note"] = self.followups[agent.agent_id]
+        if self.validation_feedback.get(agent.agent_id):
+            inputs["validation_feedback"] = {
+                "instruction": (
+                    "Your previous answer failed validation and was rejected. "
+                    "Return your COMPLETE answer again after correcting every "
+                    "listed issue. Cite only passages in your evidence packet and "
+                    "quote them verbatim. This is the only retry."),
+                "issues": list(self.validation_feedback[agent.agent_id]),
+            }
         if self.coverage_requests.get(agent.agent_id):
             inputs["coverage_follow_up"] = {
                 "instruction": (
@@ -1297,13 +1344,13 @@ class _BoRun:
                     "missing modules; never treat incomplete as neutral risk."))
         if self.feedback.get(agent.agent_id):
             extras["challenge_feedback"] = self.feedback[agent.agent_id]
-        if self.orchestrator_validation_feedback:
+        if self.validation_feedback.get(agent.agent_id):
             extras["validation_feedback"] = {
                 "instruction": (
                     "Your previous synthesis failed deterministic validation. "
                     "Return the complete synthesis again after correcting every "
                     "listed issue. Do not change or invent source findings."),
-                "issues": list(self.orchestrator_validation_feedback),
+                "issues": list(self.validation_feedback[agent.agent_id]),
             }
         orchestrator_input = build_business_orchestrator_input(
             analysis_run_id=self.analysis_run_id,
@@ -1360,7 +1407,7 @@ class _BoRun:
                             if a in M1_IDS and o.status == "validated" and o.run_ids},
             coverage=self._coverage(), data_limitations=limitations,
             challenge_feedback=self.feedback.get(agent.agent_id, []),
-            validation_feedback=self.orchestrator_validation_feedback)
+            validation_feedback=self.validation_feedback.get(agent.agent_id, []))
         ids = {h["hypothesis_id"] for h in self.editorial_input["hypotheses"]}
         if not ids:
             self.agents[agent.agent_id].detail = "No eligible validated Module 1 findings for Competitive Positioning."
@@ -1405,6 +1452,14 @@ class _BoRun:
                 self.orchestrator_output, by_id),
             "coverage": self._coverage(),
         }
+        if self.validation_feedback.get(agent.agent_id):
+            inputs["validation_feedback"] = {
+                "instruction": (
+                    "Your previous review failed validation and was rejected. "
+                    "Return your complete review again after correcting every "
+                    "listed issue. This is the only retry."),
+                "issues": list(self.validation_feedback[agent.agent_id]),
+            }
         schema = BO_CHALLENGE_JSON_SCHEMA
         if self.business_orchestrator_contract:
             from app.prompts.competitive_positioning import CHALLENGER_SCHEMA
@@ -1899,7 +1954,7 @@ class _BoRun:
                 governed_quotes=module_quotes)
             issues = validate_orchestrator_output(parsed, **checks)
         canonicalized_claims: list[str] = []
-        if not self.business_orchestrator_contract and self.rerun_reason == "orchestrator_validation_repair" and any(
+        if not self.business_orchestrator_contract and agent.agent_id in self.validation_feedback and any(
                 issue.startswith("evidence_exists:") for issue in issues):
             repaired = copy.deepcopy(parsed)
             evidence_issue_ids = {
@@ -2030,13 +2085,9 @@ class _BoRun:
         }
         if issues:
             self._reject(agent.agent_id, run_id, issues)
-            self.escalation.raise_escalation(
-                rule_id=RULE_UNRESOLVED_CHALLENGE,
-                category=EscalationCategory.AI_DETERMINISTIC_CONFLICT,
-                severity=Severity.MANDATORY,
-                reason="The Business Challenger returned an invalid answer; the "
-                       "conclusion has not been independently challenged.",
-                evidence_refs=[run_id], case_id=self.case_id)
+            if agent.agent_id in self.validation_feedback:
+                # Only the retry's invalid answer is final; the first is retried.
+                self._escalate_invalid_challenge(run_id)
             entry.update(status="rejected", issues=issues, findings=[],
                          outcome="human_review_required", decision=None)
             self.challenge_rounds.append(entry)
@@ -2066,6 +2117,15 @@ class _BoRun:
                 "escalated": decision.escalated,
             })
         self.challenge_rounds.append(entry)
+
+    def _escalate_invalid_challenge(self, run_id: str | None) -> None:
+        self.escalation.raise_escalation(
+            rule_id=RULE_UNRESOLVED_CHALLENGE,
+            category=EscalationCategory.AI_DETERMINISTIC_CONFLICT,
+            severity=Severity.MANDATORY,
+            reason="The Business Challenger returned an invalid answer; the "
+                   "conclusion has not been independently challenged.",
+            evidence_refs=[run_id] if run_id else [], case_id=self.case_id)
 
     # -- challenge + bounded remediation --------------------------------------
 

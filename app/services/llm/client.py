@@ -170,6 +170,8 @@ class ModelRunResult:
     raw_response: str
     prompt_id: str
     model_id: str
+    # The provider exception's type name when the call itself failed.
+    error_type: str | None = None
 
     @property
     def is_valid(self) -> bool:
@@ -324,6 +326,7 @@ class LLMClient:
             raw_response=raw.raw_response,
             prompt_id=prompt.prompt_id,
             model_id=raw.model_id,
+            error_type=raw.model_config.get("error_type"),
         )
 
     # -- DB-free provider path (Milestone 2.1) --------------------------------

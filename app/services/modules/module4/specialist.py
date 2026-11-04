@@ -44,6 +44,11 @@ RULE_VALIDATOR8_FAILURE = "R-MODULE4-VALIDATOR8-01"
 class Module4RejectedError(ValueError):
     """Raised when the Module 4 LLM output fails schema validation."""
 
+    def __init__(self, message: str, *, error_type: str | None = None) -> None:
+        super().__init__(message)
+        # Set when the provider call itself failed, so there was no answer at all.
+        self.error_type = error_type
+
 
 @dataclass
 class Module4Inputs:
@@ -58,14 +63,29 @@ class Module4Inputs:
     structured_financials: list[dict] = field(default_factory=list)
     debt_schedule_facts: list[dict] = field(default_factory=list)
     missing_critical_evidence: list[str] = field(default_factory=list)
+    # Issues of a failed first attempt; set only on its one retry.
+    validation_feedback: list[str] = field(default_factory=list)
 
     def to_payload(self) -> dict[str, Any]:
-        return {
+        payload: dict[str, Any] = {
             "sec_filing_snippets": self.sec_filing_snippets,
             "structured_financials": self.structured_financials,
             "debt_schedule_facts": self.debt_schedule_facts,
             "missing_critical_evidence": self.missing_critical_evidence,
         }
+        if self.validation_feedback:
+            payload["validation_feedback"] = {
+                "instruction": (
+                    "Your previous answer failed validation and was rejected. "
+                    "Return your COMPLETE answer again after correcting every "
+                    "listed issue, using only the filing passages and facts "
+                    "provided. This is the only retry. If the schedule did not "
+                    "reconcile, rebuild it row by row from the debt note's "
+                    "schedule of instruments (not the fair value table) and "
+                    "take the total from that same table."),
+                "issues": list(self.validation_feedback),
+            }
+        return payload
 
     def filing_passages(self) -> dict[str, str]:
         """The filing text reconciling items are checked against (evidence id -> text)."""
@@ -149,7 +169,8 @@ class Module4Specialist:
         if not run.is_valid or run.parsed is None:
             raise Module4RejectedError(
                 "Module 4 LLM output failed schema validation and was rejected "
-                "before use."
+                "before use.",
+                error_type=run.error_type,
             )
 
         output = _in_maturity_order(Module4Output.model_validate(run.parsed))
@@ -160,7 +181,7 @@ class Module4Specialist:
         if self._enforce and not report.check(CHECK_RECONCILIATION).passed and passages:
             output, report, followup = self._reconcile(
                 inputs, output, report, case_version=case_version, key=key)
-        escalation_id = self._handle_validator_failure(report) if self._enforce else None
+        escalation_id = self.escalate_validator_failure(report) if self._enforce else None
         return Module4Result(
             output=output,
             validator8=report,
@@ -236,7 +257,7 @@ class Module4Specialist:
                       gap_after_m=after.observed["gap_m"])
         return output, report, record
 
-    def _handle_validator_failure(
+    def escalate_validator_failure(
         self, report: DebtStructureValidatorReport
     ) -> str | None:
         """Raise a mandatory escalation when Validator 8 fails (explicit rule id)."""

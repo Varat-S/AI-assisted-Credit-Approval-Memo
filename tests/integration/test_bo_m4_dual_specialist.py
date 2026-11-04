@@ -116,11 +116,14 @@ def test_debt_validator_failure_escalates_and_forces_human_review(db_session, tm
     broken = copy.deepcopy(hca_module4_output())
     # Break reconciliation so Validator 8 fails.
     broken["deliverable_1"]["senior_notes_schedule"][0]["principal_amount_m"] += 5000.0
-    result, _ = _run(db_session, tmp_path,
-                     script=_script_with_debt(debt_output=broken))
+    result, backend = _run(db_session, tmp_path,
+                           script=_script_with_debt(debt_output=broken))
 
     m4 = result.memo["module_conclusions"]["M4"]
     debt = m4["m4_debt_assessment"]
+    # The retry failed the same way, so the failure stands.
+    assert backend.calls("m4_debt") == 2
+    assert debt["first_attempt"]["status"] == "failed"
     assert debt["status"] == "failed"
     assert debt["validated"] is False
     assert debt["validator_report"]["passed"] is False
@@ -131,6 +134,29 @@ def test_debt_validator_failure_escalates_and_forces_human_review(db_session, tm
     assert result.conclusion_status == "human_review_required"
     # The mandatory escalation remains unresolved and visible downstream.
     assert result.handoff["module_conclusions"]["M4"]["m4_debt_status"] == "failed"
+
+
+def test_debt_validator_failure_is_retried_once_with_its_issues(db_session, tmp_path):
+    from app.models.orm import Escalation
+    from app.services.modules.module4.specialist import RULE_VALIDATOR8_FAILURE
+
+    broken = copy.deepcopy(hca_module4_output())
+    broken["deliverable_1"]["senior_notes_schedule"][0]["principal_amount_m"] += 5000.0
+    script = _script_with_debt()
+    script["m4_debt"] = [broken, hca_module4_output()]
+    result, backend = _run(db_session, tmp_path, script=script)
+
+    assert backend.calls("m4_debt") == 2
+    debt = result.memo["module_conclusions"]["M4"]["m4_debt_assessment"]
+    assert debt["status"] == "validated" and debt["escalation_id"] is None
+    assert debt["first_attempt"]["status"] == "failed"
+    assert any("V8-01" in issue for issue in debt["first_attempt"]["issues"])
+    retry_input = [i for m, i in backend.requests
+                   if "debt_schedule_facts" in i][-1]
+    assert retry_input["validation_feedback"]["issues"] == debt["first_attempt"]["issues"]
+    # The retried failure raised no escalation.
+    assert not db_session.query(Escalation).filter_by(
+        rule_id=RULE_VALIDATOR8_FAILURE).all()
 
 
 def test_validators_off_reports_validator8_without_escalating(db_session, tmp_path):
