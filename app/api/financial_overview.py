@@ -188,6 +188,7 @@ def review_financial_overview_run(
     reason: str = Form(default=""),
     credit: str = Form(default=""),
     bo_run: str = Form(default=""),
+    job: str = Form(default=""),
     session: Session = Depends(get_session),
 ):
     """Record the analyst's continue / stop decision on a going-concern fail."""
@@ -196,8 +197,8 @@ def review_financial_overview_run(
         review_run(session, run_id, decision=decision, reviewer=reviewer, reason=reason,
                    output_root=get_settings().output_dir)
     except FoReviewError as exc:
-        return _decision_error(session, case_id, run_id, exc, credit, bo_run)
-    return _after_decision(session, case_id, run_id, credit, bo_run)
+        return _decision_error(session, case_id, run_id, exc, credit, bo_run, job)
+    return _after_decision(session, case_id, run_id, credit, bo_run, job)
 
 
 @router.post("/cases/{case_id}/fo/runs/{run_id}/override")
@@ -211,6 +212,7 @@ def override_financial_overview_measure(
     reason: str = Form(default=""),
     credit: str = Form(default=""),
     bo_run: str = Form(default=""),
+    job: str = Form(default=""),
     session: Session = Depends(get_session),
 ):
     """Record the analyst's score for an escalated measure: accept the engine's, or override it."""
@@ -219,23 +221,27 @@ def override_financial_overview_measure(
         override_measure(session, run_id, measure=measure, decision=decision, reviewer=reviewer, reason=reason,
                          score=score.strip() or None, output_root=get_settings().output_dir)
     except FoReviewError as exc:
-        return _decision_error(session, case_id, run_id, exc, credit, bo_run)
-    return _after_decision(session, case_id, run_id, credit, bo_run)
+        return _decision_error(session, case_id, run_id, exc, credit, bo_run, job)
+    return _after_decision(session, case_id, run_id, credit, bo_run, job)
 
 
-def _after_decision(session, case_id, run_id, credit, bo_run):
+def _after_decision(session, case_id, run_id, credit, bo_run, job=""):
     """Back to where the analyst came from: the credit view (re-assessed for its run pair) when the workbench
-    was opened from it, else this run's workbench."""
+    was opened from it, else this run's workbench (with its analysis's tabs when opened from one)."""
     if credit:
         return back_to_credit(case_id, run_id, bo_run,
                               reassess_for_credit(session, case_id, run_id, bo_run))
     _reassess_rms(session, run_id)
-    return RedirectResponse(f"/cases/{quote(case_id)}/fo.html?run_id={quote(run_id)}", status_code=303)
+    url = f"/cases/{quote(case_id)}/fo.html?run_id={quote(run_id)}"
+    if job:
+        url += f"&job={quote(job, safe='')}"
+    return RedirectResponse(url, status_code=303)
 
 
-def _decision_error(session, case_id, run_id, exc, credit, bo_run):
+def _decision_error(session, case_id, run_id, exc, credit, bo_run, job=""):
     return _page(session, view=fo_view(session, run_id), runs=fo_runs(session, case_id), error=str(exc),
-                 credit=credit_context(case_id, run_id, bo_run) if credit else None, status_code=400)
+                 credit=credit_context(case_id, run_id, bo_run) if credit else None,
+                 analysis=analysis_for(job, case_id, run_id, 'fo', session), status_code=400)
 
 
 @router.get("/cases/{case_id}/fo/runs")
