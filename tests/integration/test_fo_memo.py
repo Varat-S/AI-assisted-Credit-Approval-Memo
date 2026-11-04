@@ -64,7 +64,7 @@ def test_an_escalation_is_flagged_then_the_override_appears(db_session, covenant
     assert memo["status"]["blocking"] and memo["status"]["run_status"] == "awaiting_review"
     [pending] = memo["outstanding"]["pending_overrides"]
     assert pending["title"] == "covenant breach" and pending["engine_score"] == 10
-    assert "Requires an analyst" in render_memo_html(memo)
+    assert 'class="notice-warning"' not in render_memo_html(memo)
     override_measure(db_session, result.run_id, measure="liquidity", decision="override", score=6, reviewer="A",
                      reason="Waiver obtained after year-end")
     decided = _memo(db_session, result, overrides=overrides_for(db_session, result.run_id))

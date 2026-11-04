@@ -117,6 +117,7 @@ def load_view(session, analysis_run_id, case_id=None):
     for key, title in [('structure', 'Corporate Structure'), ('debt_obligations', 'Debt Obligations')]:
         block = sections[0][key]
         block['evidence'] = add(title, block['content'], source=block['source_ref'])
+        block['evidence']['notices'] = list(block.get('visible_warnings', []))
     for index in (1, 2, 3):
         block = sections[index]
         details = {'artifact': block['content']}
@@ -128,6 +129,40 @@ def load_view(session, analysis_run_id, case_id=None):
         if index == 3:
             details['recorded_module_status'] = saved.audit.get('module_conclusions', {}).get('M2', {})
         block['evidence'] = add(block['title'], details, source=block['source_ref'])
+        block['evidence']['notices'] = list(block.get('visible_warnings', []))
+    management = management_view(sections[1].get('content'), documents=documents, passages=passages,
+                                 warnings=sections[1].get('visible_warnings', []))
+    if management:
+        # Project each selected item's saved citations through the same evidence
+        # pipeline as Competitive Position; never substitute another finding's sources.
+        collections = [g['findings'] for g in management['finding_groups']]
+        collections += [management['executive_profiles'], management['reviewed_observations']]
+        for collection in collections:
+            for entry in collection:
+                selected = [management['citations'][cid] for cid in entry.get('citation_ids', [])
+                            if cid in management['citations']]
+                quotes = []
+                for citation in selected:
+                    doc = documents.get(citation.get('document_id'), {})
+                    passage = passages.get(citation.get('source_id'), {})
+                    if (doc and passage and doc.get('sha256') == citation.get('source_sha256')
+                            and doc.get('document_id') == passage.get('document_id')):
+                        quotes.append({**citation, 'evidence_id': citation['source_id']})
+                title = entry.get('name') or 'Management Finding'
+                panel = add(title, {'citations': quotes},
+                            claim={'evidence_ids': list(dict.fromkeys(c['evidence_id'] for c in quotes))},
+                            source=sections[1]['source_ref'])
+                panel['reviewed_record'] = deepcopy(entry)
+                panel['assessment'] = {
+                    'specialist_interpretation': [entry.get('text') or
+                        (entry.get('name', '') + ' · ' + entry.get('position', ''))],
+                    'gaps': entry.get('limitations', entry.get('uncertainties', [])),
+                    'finding': {'label': 'Reviewed Management Finding',
+                                'support': (entry.get('review_status') or entry.get('review_outcome') or 'Recorded').title(),
+                                'reason': entry.get('review_reason') or 'See the saved reviewed statement above.',
+                                'support_reason': 'The quotations shown are limited to this record’s saved citations.'},
+                    'scope_note': 'Saved management review; no new assessment was performed.'}
+                entry['evidence'] = panel
     cp = sections[2]['content'] or {}
     claims = []
     for category, group in [('Assessment', [cp.get('overall_assessment')]),
@@ -189,8 +224,7 @@ def load_view(session, analysis_run_id, case_id=None):
     return {'memo': artifact, 'svg': svg, 'debt_snapshot': snapshot, 'snapshot_placed': snapshot_placed,
             'claims': claims, 'finding_groups': finding_groups, 'evidence': evidence,
             'cross_dimensional': cross_dimensional,
-            'management': management_view(sections[1].get('content'), documents=documents, passages=passages,
-                                          warnings=sections[1].get('visible_warnings', [])),
+            'management': management,
             'structure_tree': next(iter(structure['companies'].values()))['plain_text_tree'] if structure else None,
             'review': public_record({'status': row.human_review_status,
                                       'reviewer': row.payload.get('reviewer'), 'reviewed_at': row.payload.get('reviewed_at')}),

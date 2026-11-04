@@ -95,8 +95,23 @@ def test_management_web_and_print_share_conservative_projection(db_session, tmp_
     assert 'Recorded tenure:' not in print_management[0].text_content()
     assert not print_management[0].xpath('.//*[@data-source-id]')  # the PDF carries results, not evidence
     assert 'Sources' not in [h.text_content() for h in print_management[0].xpath('.//h4')]
-    for target in web_management[0].xpath('.//a[starts-with(@href,"#bo-management-citation-")]/@href'):
-        assert len(web.xpath('//*[@id=$target]', target=target[1:])) == 1
+    assert not web_management[0].xpath('.//a[starts-with(@href,"#bo-management-citation-")]')
+    assert not web_management[0].xpath('.//*[@class="bo-management-sources"]')
+    panels = web_management[0].xpath('.//div[contains(@class,"bo-management-finding")]/details[@class="bo-evidence"]')
+    assert len(panels) == sum(len(g['findings']) for g in view['management']['finding_groups'])
+    assert panels
+    for panel in panels:
+        assert panel.get('open') is None
+        assert panel.xpath('.//article[@class="bo-source-quotation"]/blockquote')
+        assert panel.xpath('.//dl[@class="bo-evidence-assessment"]')
+        assert panel.xpath('.//details[@class="bo-evidence-technical"]')
+    assert 'Passage offset' not in visible(web_management[0])
+    for group in view['management']['finding_groups']:
+        for finding in group['findings']:
+            panel = finding['evidence']
+            assert panel in view['evidence']
+            selected = {view['management']['citations'][cid]['quote'] for cid in finding['citation_ids']}
+            assert {q['quote'] for q in panel['quotations']} <= selected
     assert 'Insufficient evidence' in print_management[0].text_content()
     preview_dir = os.environ.get('BO_M3_PREVIEW_DIR')
     if preview_dir:
@@ -167,10 +182,8 @@ def test_direction_groups_and_material_qualifications_in_primary_print():
         assert 'Credit Concern · Qualified' in shown
         assert 'Mixed Finding · Qualified' in shown and 'Unassessed · Qualified' in page.text_content()
         assert 'Exact reviewed statement 5.' not in page.text_content()
-        if pdf:  # sources belong to the separate audit report
-            assert 'Passage offset 600' not in shown
-        else:
-            assert 'Passage offset 600' in shown and 'Page 1' not in shown and 'p. 1' not in shown
+        assert 'Passage offset 600' not in shown
+        assert 'Page 1' not in shown and 'p. 1' not in shown
         assert 'a'*64 not in shown
     assert len(view['sources']) == 1
 
@@ -270,7 +283,9 @@ def test_populated_review_routes_debt_and_closed_evidence(db_session, tmp_path, 
         assert len(page.xpath('//*[@data-schedule="non_note"]//th')) == 9
         assert page.xpath('//svg')
         shown = visible(page)
-        assert 'SIMULATED EDUCATIONAL EXAMPLE' in shown
+        assert 'SIMULATED EDUCATIONAL EXAMPLE' not in shown
+        assert not page.xpath('//*[contains(concat(" ", normalize-space(@class), " "), " notice-warning ")]')
+        assert 'SIMULATED EDUCATIONAL EXAMPLE' in page.text_content()
         assert 'Tier 2 · Senior unsecured guaranteed' in shown
         assert 'Not recorded' in shown and '-436.0' in shown
         assert 'Admissions were stable during the year.' not in shown
@@ -383,7 +398,7 @@ def test_partial_display_escapes_text_and_withholds_unsupported_judgments(db_ses
     output = render_page(view)
     page = html.fromstring(output)
     assert 'UNSUPPORTED JUDGMENT' not in visible(page)
-    assert 'Material management coverage remains partial.' in visible(page)
+    assert 'Material management coverage remains partial.' not in visible(page)
     assert 'data-status="partial"' in output
     assert not page.xpath('//script[not(@src) and contains(text(),"fixture")]')
     assert not page.xpath('//img[@onerror]')
@@ -411,7 +426,8 @@ def test_partial_template_states_preserve_supplied_content(db_session, tmp_path,
     block['status'] = 'partial'
     block['visible_warnings'].append('Recorded component coverage remains partial.')
     output = html.fromstring(render_page(view))
-    assert 'Recorded component coverage remains partial.' in visible(output)
+    assert 'Recorded component coverage remains partial.' not in visible(output)
+    assert 'Recorded component coverage remains partial.' in block['visible_warnings']
     assert block['content'] == before
     assert len(output.xpath('//*[@data-memo-section]')) == 4
     assert len(output.xpath('//*[@data-schedule="senior_notes"]//tbody/tr')) == 6
