@@ -22,7 +22,7 @@ NOTE_COLUMNS = [('senior_note_series', 'Senior note / series'), ('legal_borrower
                 ('maturity_year', 'Maturity'), ('collateral_security_status', 'Security'),
                 ('guarantors_credit_support', 'Guarantors / credit support'), ('priority_ranking_tier', 'Priority tier')]
 FACILITY_COLUMNS = [('obligation_facility', 'Obligation / facility'), ('legal_borrower', 'Legal borrower'),
-                    ('principal_drawn_m', 'Drawn (US$ m)'), ('available_facility_limit_m', 'Facility limit (US$ m)'),
+                    ('principal_drawn_m', 'Drawn (US$ m)'), ('available_facility_limit_m', 'Undrawn availability (US$ m)'),
                     ('interest_rate_terms', 'Interest terms'), ('maturity', 'Maturity'),
                     ('collateral_security_status', 'Security'), ('guarantors_credit_support', 'Guarantors / credit support'),
                     ('priority_ranking_tier', 'Priority tier')]
@@ -191,7 +191,7 @@ def load_view(session, analysis_run_id, case_id=None):
         sections[0]['debt_obligations']['evidence']['snapshot_metadata'] = {
             'entity': snapshot['entity'], 'diagram_entity': snapshot['borrower']['display_name'],
             'mapping': snapshot['note'], 'scope': snapshot['scope_note'],
-            'capacity_note': 'Facility limits are capacity, not additional debt.',
+            'capacity_note': 'Undrawn availability is capacity, not additional debt.',
             'excluded_obligation_rows': snapshot['excluded_count']}
     if structure:
         from app.services.bo.m3_rebuild.structure import render_svg

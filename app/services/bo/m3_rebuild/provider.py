@@ -77,12 +77,15 @@ class SharedManagementSpecialist:
     """One task, one shared backend call, persistent prompt/raw/parsed/audit records."""
 
     extraction_mode = "shared_bo_specialist"
+    # An answer that fails validation gets one more attempt with its issues fed
+    # back; a ProviderCallError is retried by the runtime instead.
+    validation_retries = 1
 
     def __init__(self, session, registry, packet, backend, directory):
         self.session, self.registry, self.packet = session, registry, packet
         self.backend, self.directory = backend, Path(directory)
 
-    def extract(self, sources, diagnostics):
+    def extract(self, sources, diagnostics, feedback=()):
         from .management import assess_management
 
         prompts = PromptRegistry(self.session)
@@ -94,6 +97,15 @@ class SharedManagementSpecialist:
         runtime = AgentRuntime(client)
         packet = self.packet
         inputs = packet.model_dump(mode="json")
+        if feedback:
+            inputs["validation_feedback"] = {
+                "instruction": (
+                    "Your previous answer failed validation and was rejected. "
+                    "Return your complete answer again after correcting every "
+                    "listed issue. Cite only passages in your evidence packet and "
+                    "quote them verbatim. This is the only retry."),
+                "issues": list(feedback),
+            }
         system = PROMPT
         from app.services.llm.providers_vertex import VertexProviderBackend
         if isinstance(self.backend, VertexProviderBackend) or getattr(
@@ -127,6 +139,7 @@ class SharedManagementSpecialist:
             prompt_id=prompt.prompt_id, prompt_hash=prompt.content_hash,
             token_usage={k: config[k] for k in ("input_tokens", "output_tokens", "thinking_tokens", "total_tokens") if k in config} or None,
             http_status=config.get("http_status"), configuration=config,
+            provider_call_error=config.get("error_type") == "ProviderCallError",
         )
         validation = {"schema": result.validation_outcome,
                       "detail": result.validation_detail, "evidence": "not_attempted"}

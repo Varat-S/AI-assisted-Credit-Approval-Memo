@@ -4,7 +4,9 @@ No obligor inference: exact names are preferred; an unmatched, unique note
 issuer is explicitly provisional. Shared slash-delimited obligations stay in
 the complete schedules rather than being assigned to the diagram borrower;
 a slash inside the diagram borrower's own legal name (CHS/Community Health
-Systems, Inc.) is not a delimiter.
+Systems, Inc.) is not a delimiter. Role notes the model adds to a legal name
+('HCA Inc. (OpCo)', 'HCA Inc. (Issuer); HCA Healthcare, Inc. (Guarantor)')
+are removed before names are compared.
 """
 from datetime import date
 from decimal import Decimal
@@ -23,8 +25,26 @@ def _name(value):
     return re.sub(r'[^a-z0-9]', '', (value or '').lower())
 
 
-# "X and subsidiaries" is group debt like "X / Subsidiaries", not a co-borrower.
-_GROUP_SUFFIX = re.compile(r'\s+and\s+(its\s+)?(consolidated\s+)?(subsidiaries|affiliates)\b', re.I)
+# "X and subsidiaries" (or "and operating affiliates") is group debt like
+# "X / Subsidiaries", not a co-borrower.
+_GROUP_SUFFIX = re.compile(r'\s+and\s+(its\s+)?([a-z]+\s+)?(subsidiaries|affiliates)\b', re.I)
+_ANNOTATION = re.compile(r'\s*\([^)]*\)')
+# Committed facilities with availability: revolvers and asset-based (ABL) lines.
+_BORROWING_BASE = re.compile(r'\bABL\b|asset[- ]based', re.I)
+_REVOLVER = re.compile(r'revolv|\bABL\b|asset[- ]based', re.I)
+
+
+def _legal(value):
+    """The bare legal name: parenthesised role notes and a guarantor tail removed.
+
+    'X (Issuer) / Y (Guarantor)' and 'X; Y (Guarantor)' name X's credit support,
+    not a co-borrower, so they are X. Any other slash is left for ``shared``.
+    """
+    value = value or ''
+    head, *rest = re.split(r'\s*[;/]\s*', value)
+    if rest and all(re.search(r'guarant', part, re.I) for part in rest):
+        value = head
+    return _ANNOTATION.sub('', value).strip()
 
 
 def _amount(rows):
@@ -49,17 +69,19 @@ def build_snapshot(structure, debt):
     facilities = debt.get('non_note_obligations_schedule', [])
     def shared(legal):
         return '/' in legal and _name(legal) != _name(borrower['display_name'])
-    names = {r['legal_borrower'] for r in [*notes, *facilities]
-             if r.get('legal_borrower') and not shared(r['legal_borrower'])
-             and not re.search(r'\band\b', r['legal_borrower'], re.I)}
+    def legal_of(row):
+        return _legal(row.get('legal_borrower'))
+    names = {legal_of(r) for r in [*notes, *facilities]
+             if legal_of(r) and not shared(legal_of(r))
+             and not re.search(r'\band\b', legal_of(r), re.I)}
     exact = [n for n in names if _name(n) == _name(borrower['display_name'])]
-    issuers = {r['legal_borrower'] for r in notes if r.get('legal_borrower') in names}
+    issuers = {legal_of(r) for r in notes if legal_of(r) in names}
     name = exact[0] if len(exact) == 1 else next(iter(issuers)) if len(issuers) == 1 else None
     if not name:
         return None
     matched = _name(name) == _name(borrower['display_name'])
     def belongs(row):
-        legal = row.get('legal_borrower') or ''
+        legal = legal_of(row)
         # Explicit co-borrowers are included, never slash-delimited or "and subsidiaries" group debt.
         return (_name(legal) == _name(name) or
                 (not shared(legal) and not _GROUP_SUFFIX.search(legal)
@@ -77,16 +99,20 @@ def build_snapshot(structure, debt):
         amounts += [(r, r.get('principal_drawn_m')) for r in scoped_facilities if r.get('priority_ranking_tier') == tier]
         if amounts:
             rows.append({'label': label, 'detail': detail, 'amount': _amount(amounts)})
+    # Undrawn availability as the filing states it; a backstopped program
+    # (commercial paper) carries none, so it is never counted twice.
     limits = [r for r in scoped_facilities if r.get('available_facility_limit_m') is not None
-              or 'revolv' in r.get('obligation_facility', '').lower()]
+              or _REVOLVER.search(r.get('obligation_facility', ''))]
     if limits:
-        rows.append({'label': 'Facility Limits', 'detail': '',
+        based = any(_BORROWING_BASE.search(r.get('obligation_facility', '')) for r in limits)
+        rows.append({'label': 'Undrawn Availability',
+                     'detail': 'Subject to borrowing base' if based else '',
                      'amount': _amount([(r, r.get('available_facility_limit_m')) for r in limits])})
     if not rows:
         return None
     return {'entity': name, 'matched': matched, 'borrower': borrower,
             'rows': rows, 'note': 'Exact entity match' if matched else 'Entity mapping pending',
-            'scope_note': 'Co-borrower facilities included' if any(_name(r['legal_borrower']) != _name(name) for r in scoped_facilities)
+            'scope_note': 'Co-borrower facilities included' if any(_name(legal_of(r)) != _name(name) for r in scoped_facilities)
                           else 'Recorded borrower obligations',
             'excluded_count': len(notes) + len(facilities) - len(scoped_notes) - len(scoped_facilities)}
 

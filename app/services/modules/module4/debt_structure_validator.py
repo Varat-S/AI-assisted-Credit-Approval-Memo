@@ -5,7 +5,7 @@ Module 4 specialist's numerical and structural claims against the reported
 figures and the internal consistency of the deliverables. Same input always
 yields the same report.
 
-The six checks (per the Module 4 methodology):
+The seven checks (per the Module 4 methodology):
 
 1. **Reconciliation.** The sum of the itemized debt tranches (senior notes +
    non-note obligations, drawn principal only) plus the VERIFIED reconciling
@@ -19,14 +19,18 @@ The six checks (per the Module 4 methodology):
    vs HoldCo guarantor split is coherent (e.g. ``HCA Inc.`` issuer vs
    ``HCA Healthcare, Inc.`` guarantor) -- a tranche cannot name the same entity
    as both its sole borrower and its only credit support.
-5. **Double-Counting.** Undrawn revolver limits (available facility limit, not
-   drawn) and any intercompany borrowings are NOT folded into the reconciled
-   total.
+5. **Double-Counting.** Undrawn availability (``available_facility_limit_m``)
+   and any intercompany borrowings are NOT folded into the reconciled total.
 6. **Reconciling Items.** Every reconciling item (e.g. debt issuance costs and
    discounts) is shown by the filing itself: its quote appears verbatim in the
    supplied filing passages and states its amount, and its sign fits its kind.
    An item that fails is not counted in check 1. Verified items above
    ``RECONCILING_ITEMS_REVIEW_SHARE`` of the total also fail, for a reviewer.
+7. **Filed Amounts.** Every amount reported -- the total, each instrument's
+   principal, each drawn balance and each undrawn availability -- is a figure
+   the filing states, in the supplied passages or admitted structured facts.
+   Checks 1-6 test the schedule against itself; this one ties it to the filing,
+   so a figure derived or adjusted to make the schedule reconcile fails.
 
 Each check produces a :class:`DebtStructureValidatorCheck`; the aggregate
 :class:`DebtStructureValidatorReport` is ``passed`` only when every check passes.
@@ -35,6 +39,7 @@ Each check produces a :class:`DebtStructureValidatorCheck`; the aggregate
 from __future__ import annotations
 
 import re
+from bisect import bisect_left
 from dataclasses import dataclass, field
 
 from app.schemas.module4 import (
@@ -55,6 +60,7 @@ CHECK_MATURITY_ORDER = "V8-03-MATURITY-ORDER"
 CHECK_LEGAL_ENTITY = "V8-04-LEGAL-ENTITY"
 CHECK_DOUBLE_COUNTING = "V8-05-DOUBLE-COUNTING"
 CHECK_RECONCILING_ITEMS = "V8-06-RECONCILING-ITEMS"
+CHECK_FILED_AMOUNTS = "V8-07-FILED-AMOUNTS"
 
 # Verified reconciling items larger than this share of total indebtedness fail
 # check 6 so a reviewer looks at them (HCA FY2025's $436M is 0.9%).
@@ -66,6 +72,10 @@ _QUOTE_TRANSLATE = str.maketrans({
     "–": "-", "—": "-", " ": " ",
 })
 _NUMBER = re.compile(r"\d[\d,]*(?:\.\d+)?")
+# A stated figure: debt tables are in millions; prose says "$5.779 billion".
+_STATED_AMOUNT = re.compile(r"(\d[\d,]*(?:\.\d+)?)\s*(billion|million)?", re.I)
+# A reported amount matches a stated one within this many $M.
+FILED_AMOUNT_TOLERANCE_M = 0.5
 
 # Marker substrings that flag an obligation as an intercompany borrowing, which
 # must be excluded from consolidated total indebtedness.
@@ -161,6 +171,23 @@ def verify_reconciling_items(
     return checks
 
 
+def stated_amounts_m(
+    filing_passages: dict[str, str] | None, filed_values_m=(),
+) -> list[float]:
+    """Every figure the filing states, in $M, sorted: admitted facts plus passage numbers."""
+    amounts = [float(v) for v in filed_values_m or ()]
+    for text in (filing_passages or {}).values():
+        for number, scale in _STATED_AMOUNT.findall(_normalise_quote(text)):
+            value = float(number.replace(",", ""))
+            amounts.append(value * 1000 if scale.lower() == "billion" else value)
+    return sorted(amounts)
+
+
+def _is_stated(amount: float, stated: list[float]) -> bool:
+    i = bisect_left(stated, amount - FILED_AMOUNT_TOLERANCE_M)
+    return i < len(stated) and stated[i] <= amount + FILED_AMOUNT_TOLERANCE_M
+
+
 def _is_intercompany(description: str) -> bool:
     text = description.lower()
     return any(marker in text for marker in _INTERCOMPANY_MARKERS)
@@ -186,8 +213,11 @@ class DebtStructureValidator:
 
     def validate(
         self, output: Module4Output, *, filing_passages: dict[str, str] | None = None,
+        filed_values_m=(),
     ) -> DebtStructureValidatorReport:
-        """``filing_passages`` (evidence id -> text) is what reconciling items are checked against."""
+        """``filing_passages`` (evidence id -> text) is what reconciling items and
+        reported amounts are checked against; ``filed_values_m`` are admitted
+        structured figures in $M that reported amounts may also match."""
         d1 = output.deliverable_1
         items = verify_reconciling_items(d1.reconciling_items, filing_passages)
         adjustment = sum(c.item.amount_m for c in items if c.verified)
@@ -198,6 +228,7 @@ class DebtStructureValidator:
             self._check_legal_entity(d1),
             self._check_double_counting(d1, adjustment),
             self._check_reconciling_items(d1, items),
+            self._check_filed_amounts(d1, stated_amounts_m(filing_passages, filed_values_m)),
         ]
         return DebtStructureValidatorReport(checks=checks)
 
@@ -458,16 +489,56 @@ class DebtStructureValidator:
         )
 
 
+    # -- check 7: filed amounts ----------------------------------------------
+
+    def _check_filed_amounts(
+        self, d1: Deliverable1, stated: list[float],
+    ) -> DebtStructureValidatorCheck:
+        """Every reported amount is a figure the filing states; nothing derived."""
+        if not stated:
+            return DebtStructureValidatorCheck(
+                check_id=CHECK_FILED_AMOUNTS,
+                name="Reported amounts stated by the filing",
+                passed=True,
+                detail="No filing passages or facts were supplied; amounts not checked.",
+                observed={"checked": 0, "unstated": []},
+            )
+        figures = [("consolidated total indebtedness",
+                    d1.creditor_priority_framework.consolidated_total_indebtedness_m)]
+        figures += [(f"{t.senior_note_series!r} principal", t.principal_amount_m)
+                    for t in d1.senior_notes_schedule]
+        figures += [(f"{o.obligation_facility!r} drawn", o.principal_drawn_m)
+                    for o in d1.non_note_obligations_schedule]
+        figures += [(f"{o.obligation_facility!r} undrawn availability", o.available_facility_limit_m)
+                    for o in d1.non_note_obligations_schedule
+                    if o.available_facility_limit_m is not None]
+        # A zero (undrawn facility, repaid line) is not a figure to look up.
+        checked = [(label, amount) for label, amount in figures if amount]
+        unstated = [(label, amount) for label, amount in checked if not _is_stated(amount, stated)]
+        passed = not unstated
+        return DebtStructureValidatorCheck(
+            check_id=CHECK_FILED_AMOUNTS,
+            name="Reported amounts stated by the filing",
+            passed=passed,
+            detail=(
+                f"All {len(checked)} reported amount(s) are figures the filing states."
+                if passed
+                else "Not stated anywhere in the filing passages or facts: "
+                + "; ".join(f"{label} {amount:,.3f}M" for label, amount in unstated)
+                + ". Report each amount exactly as the filing states it, from the "
+                "debt note's schedule of instruments; never derive, net or combine "
+                "figures, and never adjust an amount to make the schedule reconcile."
+            ),
+            observed={"checked": len(checked),
+                      "unstated": [{"figure": label, "amount_m": amount}
+                                   for label, amount in unstated]},
+        )
+
+
 def _undrawn_headroom(obligations: list[NonNoteDebtObligation]) -> float:
-    """Sum of available (undrawn) facility limit above drawn principal."""
-    total = 0.0
-    for o in obligations:
-        if o.available_facility_limit_m is None:
-            continue
-        headroom = o.available_facility_limit_m - o.principal_drawn_m
-        if headroom > 0:
-            total += headroom
-    return total
+    """Sum of undrawn availability (already net of draws, so nothing is subtracted)."""
+    return sum(o.available_facility_limit_m or 0.0 for o in obligations
+               if (o.available_facility_limit_m or 0.0) > 0)
 
 
 def _distinct_entities(credit_support: str) -> set[str]:

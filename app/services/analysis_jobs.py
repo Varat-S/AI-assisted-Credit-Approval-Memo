@@ -305,6 +305,19 @@ class JobStore:
             con.execute('UPDATE analysis_jobs SET payload=? WHERE job_id=?', (json.dumps(job), job_id))
             return True
 
+    def delete(self, job_id):
+        """Remove a finished analysis's record; None when unknown, False while it is still active."""
+        if not self.path.exists():
+            return None
+        with self._connect() as con:
+            row = con.execute('SELECT payload FROM analysis_jobs WHERE job_id=?', (job_id,)).fetchone()
+            if not row:
+                return None
+            if json.loads(row[0]).get('execution_status') in ACTIVE:
+                return False
+            con.execute('DELETE FROM analysis_jobs WHERE job_id=?', (job_id,))
+            return True
+
 
 class StoredStop(threading.Event):
     def __init__(self, store, job_id):

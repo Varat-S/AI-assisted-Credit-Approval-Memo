@@ -10,7 +10,9 @@ Ties the three pieces together:
    which validates the raw output against the fixed
    :data:`app.schemas.module4.MODULE4_JSON_SCHEMA` BEFORE use.
 3. Run the deterministic :class:`DebtStructureValidator` over the parsed output
-   and attach the report. Reconciling items are dropped first when the
+   and attach the report; its check 7 ties every reported amount to a figure
+   the filing passages or admitted facts state. Reconciling items are dropped
+   first when the
    instruments alone already match the reported total (they would double-count).
    When its reconciliation leaves a gap, ask the model
    ONCE to explain the gap from the filing passages it was given; each item it
@@ -91,6 +93,19 @@ class Module4Inputs:
         """The filing text reconciling items are checked against (evidence id -> text)."""
         return {str(s["fact_id"]): s["text"] for s in self.sec_filing_snippets
                 if s.get("fact_id") and s.get("text")}
+
+    def filed_values_m(self) -> list[float]:
+        """Admitted structured debt figures in $M, which reported amounts may also match."""
+        values: list[float] = []
+        for fact in self.structured_financials:
+            value, unit = fact.get("value"), str(fact.get("unit") or "").lower()
+            if isinstance(value, bool) or not isinstance(value, (int, float)):
+                continue
+            if "million" in unit:
+                values.append(float(value))
+            elif unit in ("usd", "iso4217:usd"):
+                values.append(value / 1e6)
+        return values
 
     def evidence_ids(self) -> list[str]:
         ids: list[str] = []
@@ -176,7 +191,8 @@ class Module4Specialist:
         output = _in_maturity_order(Module4Output.model_validate(run.parsed))
         output, dropped = self._without_unneeded_items(output)
         passages = inputs.filing_passages()
-        report = self._validator.validate(output, filing_passages=passages)
+        report = self._validator.validate(output, filing_passages=passages,
+                                          filed_values_m=inputs.filed_values_m())
         followup = None
         if self._enforce and not report.check(CHECK_RECONCILIATION).passed and passages:
             output, report, followup = self._reconcile(
@@ -250,7 +266,8 @@ class Module4Specialist:
         d1 = d1.model_copy(update={"reconciling_items": [*d1.reconciling_items,
                                                          *answer.reconciling_items]})
         output = output.model_copy(update={"deliverable_1": d1})
-        report = self._validator.validate(output, filing_passages=inputs.filing_passages())
+        report = self._validator.validate(output, filing_passages=inputs.filing_passages(),
+                                          filed_values_m=inputs.filed_values_m())
         after = report.check(CHECK_RECONCILIATION)
         record.update(status="answered", proposed_items=len(answer.reconciling_items),
                       unexplained=answer.unexplained, reconciled=after.passed,

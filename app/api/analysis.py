@@ -241,13 +241,24 @@ async def add_filing_files(folder: str = Form(""), replace_structure: str = Form
 
 
 @router.get("/credit-memos", response_class=HTMLResponse)
-def credit_memos(search: str = "", status: str = "", mode: str = "", session: Session = Depends(get_session)):
+def credit_memos(search: str = "", status: str = "", mode: str = "", deleted: str = "",
+                 session: Session = Depends(get_session)):
     if status and status not in analysis_workspace.EXECUTION_STATES or mode and mode not in {'standard','exploratory'}:
         raise HTTPException(400, 'Unknown history filter.')
     rows = analysis_workspace.history(session, bo_fo.jobs.recent(), search=search, status=status, mode=mode)
     return HTMLResponse(_env.get_template("credit_memos.html.j2").render(
-        rows=rows, search=search, selected_status=status, selected_mode=mode,
+        rows=rows, search=search, selected_status=status, selected_mode=mode, deleted=deleted,
         statuses=analysis_workspace.EXECUTION_STATES), headers={'Cache-Control':'no-store'})
+
+
+@router.post('/analysis/{job_id}/delete')
+def delete_analysis(job_id: str):
+    deleted = bo_fo.jobs.delete(job_id)
+    if deleted is None:
+        raise HTTPException(404, 'Unknown analysis.')
+    if not deleted:
+        raise HTTPException(409, 'Stop the analysis before deleting it.')
+    return RedirectResponse(f'/credit-memos?deleted={quote(job_id, safe="")}', status_code=303)
 
 
 def execution_backends(sections):

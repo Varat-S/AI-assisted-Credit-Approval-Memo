@@ -620,6 +620,22 @@ class Jobs:
             self._stops[job_id].set()
             return True
 
+    def delete(self, job_id):
+        """Drop a finished analysis from the history. Its BO/FO runs and artifacts are kept for audit.
+        None when unknown, False while the analysis is still pending or running."""
+        deleted = self._store().delete(job_id)
+        with self._lock:
+            job = self._jobs.get(job_id)
+            if job is not None and job_id not in self._persistent:
+                if job['execution_status'] in {'pending', 'running'}:
+                    return False
+                deleted = True
+            if deleted:
+                for registry in (self._jobs, self._meters, self._stops, self._job_stores):
+                    registry.pop(job_id, None)
+                self._persistent.discard(job_id)
+        return deleted
+
     def get(self, job_id):
         store = self._store()
         saved = store.get(job_id)

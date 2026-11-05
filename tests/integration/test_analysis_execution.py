@@ -220,3 +220,25 @@ def test_worker_thread_termination_is_not_left_running(execution_env,monkeypatch
     job=wait_for(jobs,ident,'interrupted')
     assert 'SystemExit' in job['error']
     assert ident in client.get('/credit-memos').text
+
+
+def test_delete_finished_run_from_history(execution_env):
+    client,jobs,release,started,calls=execution_env
+    ident=submit(client).headers['location'].split('/')[2]
+    assert started.wait(2)
+    page=html.fromstring(client.get('/credit-memos').text)
+    assert not page.xpath(f'//article[@data-job-id="{ident}"]//form')  # no delete while running
+    assert not page.xpath(f'//article[@data-job-id="{ident}"]//input[@class="select-run"]')
+    assert client.post(f'/analysis/{ident}/delete',follow_redirects=False).status_code==409
+    release.set()
+    wait_for(jobs,ident,'completed')
+    page=html.fromstring(client.get('/credit-memos').text)
+    assert page.xpath(f'//article[@data-job-id="{ident}"]//form/@action')==[f'/analysis/{ident}/delete']
+    assert page.xpath(f'//article[@data-job-id="{ident}"]//input[@class="select-run"]')
+    assert page.xpath('//div[@class="bulk-bar"]//button[contains(@class,"delete-selected")]')
+    response=client.post(f'/analysis/{ident}/delete',follow_redirects=False)
+    assert response.status_code==303 and response.headers['location']==f'/credit-memos?deleted={ident}'
+    page=client.get(response.headers['location']).text
+    assert f'Deleted run {ident}' in page and f'data-job-id="{ident}"' not in page
+    assert jobs.get(ident) is None and bo_fo.Jobs(jobs._store_path).get(ident) is None
+    assert client.post(f'/analysis/{ident}/delete',follow_redirects=False).status_code==404

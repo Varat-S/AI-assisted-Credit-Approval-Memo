@@ -57,6 +57,9 @@ _DEBT_FACT_CUES = (
     "revolvingcredit", "revolving credit", "termloan", "term loan",
     "financelease", "finance lease", "interestexpense", "interest expense",
     "principal", "scheduleofdebt", "debtinstrument",
+    # Tagged totals and facility capacity, so Validator 8 can match them.
+    "debtlongtermandshortterm", "debtandcapitallease", "lineofcreditfacility",
+    "commercialpaper",
 )
 
 

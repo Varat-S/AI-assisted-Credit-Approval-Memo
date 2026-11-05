@@ -1,6 +1,91 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Credit Memos</title>{% include 'workspace_style.html.j2' %}<style>
-.history-filters{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:14px;align-items:end;margin-bottom:24px}.history-filters label{font-size:.78rem;margin:0}.history-filters input,.history-filters select{margin:6px 0 0;min-height:42px;box-sizing:border-box;width:100%}.history-filters button{margin:0;min-height:42px}.history-row{display:flex;justify-content:space-between;gap:22px;padding:22px 0;border-bottom:1px solid var(--c-e1e6ed)}.history-row h3{font-size:1rem;margin:0}.history-row h3 a{text-decoration:none}.history-row p{margin:6px 0;font-size:.84rem;color:var(--c-64727b)}.history-row small{font-size:.73rem;overflow-wrap:anywhere}.history-status{text-align:right;min-width:160px;font-size:.78rem}.status-pill{display:inline-block;padding:4px 11px;border-radius:20px;background:var(--c-eef3f8);white-space:nowrap;font-size:.75rem}.status-pill.running,.status-pill.pending{background:var(--c-eaf4f2);color:var(--c-226c67)}.status-pill.completed{background:var(--c-edf4ef);color:var(--c-3a6949)}.status-pill.failed{background:var(--c-fbefec);color:var(--c-9e483e)}.status-pill.interrupted,.status-pill.stopped{background:var(--c-faf3e4);color:var(--c-836328)}.history-status p{font-size:.76rem}.history-row .issue{color:var(--c-9e483e)}@media(max-width:760px){.history-filters{grid-template-columns:1fr 1fr}.history-row{flex-direction:column;gap:8px}.history-status{text-align:left}.history-filters .search-field{grid-column:1/-1}}
+.history-filters{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:14px;align-items:end;margin-bottom:24px}.history-filters label{font-size:.78rem;margin:0}.history-filters input,.history-filters select{margin:6px 0 0;min-height:42px;box-sizing:border-box;width:100%}.history-filters button{margin:0;min-height:42px}.history-row{display:flex;justify-content:space-between;gap:22px;padding:22px 0;border-bottom:1px solid var(--c-e1e6ed)}.history-row h3{font-size:1rem;margin:0}.history-row h3 a{text-decoration:none}.history-row p{margin:6px 0;font-size:.84rem;color:var(--c-64727b)}.history-row small{font-size:.73rem;overflow-wrap:anywhere}.history-status{text-align:right;min-width:160px;font-size:.78rem}.status-pill{display:inline-block;padding:4px 11px;border-radius:20px;background:var(--c-eef3f8);white-space:nowrap;font-size:.75rem}.status-pill.running,.status-pill.pending{background:var(--c-eaf4f2);color:var(--c-226c67)}.status-pill.completed{background:var(--c-edf4ef);color:var(--c-3a6949)}.status-pill.failed{background:var(--c-fbefec);color:var(--c-9e483e)}.status-pill.interrupted,.status-pill.stopped{background:var(--c-faf3e4);color:var(--c-836328)}.history-status p{font-size:.76rem}.history-row .issue{color:var(--c-9e483e)}.history-status form{margin:8px 0 0}.delete-button{background:none;border:1px solid var(--c-e1cbb7);color:var(--c-9e483e);border-radius:6px;padding:5px 12px;font-size:.75rem;margin:0;cursor:pointer}.delete-button:hover{background:var(--c-fbefec)}.delete-button:disabled{opacity:.45;cursor:default;background:none}#delete-dialog{border:1px solid var(--c-dce2e1);border-radius:12px;padding:26px 28px;max-width:440px;width:calc(100% - 32px);box-sizing:border-box;background:var(--c-ffffff);color:inherit;box-shadow:0 18px 48px rgba(20,40,45,.18)}#delete-dialog::backdrop{background:rgba(20,32,36,.42)}#delete-dialog h2{margin:0 0 10px;font-size:1.1rem}#delete-dialog p{margin:8px 0;font-size:.86rem;color:var(--c-64727b)}#delete-dialog .dialog-run{color:inherit;overflow-wrap:anywhere}#delete-dialog .dialog-run:empty{display:none}#delete-dialog .dialog-list{max-height:220px;overflow:auto;margin:8px 0;padding-left:20px;font-size:.84rem;overflow-wrap:anywhere}#delete-dialog .dialog-list:empty{display:none}#delete-dialog .dialog-error{color:var(--c-9e483e)}#delete-dialog .dialog-error:empty{display:none}#delete-dialog .dialog-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:22px}#delete-dialog .dialog-actions button{margin:0}#delete-dialog .confirm-delete{background:var(--c-9e483e);border-color:var(--c-9e483e);color:var(--c-ffffff);border-radius:7px;padding:10px 18px}#delete-dialog .confirm-delete:disabled{opacity:.6;cursor:progress}.history-row.deleted{padding:14px 0;font-size:.84rem;color:var(--c-64727b)}.history-main{display:flex;gap:14px;align-items:flex-start;min-width:0}.history-main input[type=checkbox],.bulk-bar input[type=checkbox]{width:17px;height:17px;padding:0;margin:3px 0 0;flex-shrink:0;accent-color:var(--c-315e62);cursor:pointer}.select-spacer{width:17px;flex-shrink:0}.history-row:has(.select-run:checked){background:var(--c-f0f6f4)}.bulk-bar{display:flex;align-items:center;gap:16px;padding:10px 0 12px;border-bottom:1px solid var(--c-e1e6ed);font-size:.82rem}.bulk-bar[hidden],.select-run[hidden],.select-spacer[hidden]{display:none}.bulk-bar label{display:flex;align-items:center;gap:10px;margin:0;font-weight:400;cursor:pointer}.bulk-bar label input{margin:0}.bulk-bar .bulk-count{color:var(--c-64727b)}.bulk-bar .delete-button{margin-left:auto}@media(max-width:760px){.history-filters{grid-template-columns:1fr 1fr}.history-row{flex-direction:column;gap:8px}.history-status{text-align:left}.history-filters .search-field{grid-column:1/-1}}
 </style></head><body>{% set active='memos' %}{% include 'analysis_nav.html.j2' %}<header class="setup-header"><span class="eyebrow">Your analysis workspace</span><h1>Credit Memos</h1><p>Find an analysis, follow its progress or open its memo.</p></header><main><section class="setup-panel"><h2>Analysis history</h2>
+{% if deleted %}<p class="setup-checked" role="status">Deleted run {{ deleted }} from the history.</p>{% endif %}
 <form class="history-filters" method="get" action="/credit-memos" aria-label="Filter analysis history"><label class="search-field" for="search">Company or run ID<input type="search" name="search" id="search" value="{{ search }}" placeholder="Search analyses"></label><label for="status">Execution status<select id="status" name="status"><option value="">All statuses</option>{% for status in statuses %}<option value="{{ status }}"{% if selected_status == status %} selected{% endif %}>{{ status|title }}</option>{% endfor %}</select></label><label for="mode">Validation mode<select id="mode" name="mode"><option value="">All modes</option><option value="standard"{% if selected_mode == 'standard' %} selected{% endif %}>Standard</option><option value="exploratory"{% if selected_mode == 'exploratory' %} selected{% endif %}>Exploratory</option></select></label><button class="primary-button" type="submit">Apply</button></form>
 {% if not rows %}<p>No analyses match your search.</p><a href="/analysis/new">Set up a new analysis</a>{% endif %}
-{% for row in rows %}<article class="history-row" data-job-id="{{ row.job.job_id }}"><div><h3><a href="{{ row.href }}" aria-label="{{ row.company }} — run {{ row.job.job_id }}">{{ row.company }}</a></h3><p>{{ 'Business Overview Only' if row.job.bo_only else 'Business + Financial Overview' }} · {{ row.mode|title }}</p><small>{{ row.date }} · {{ row.job.job_id }}</small>{% if row.issue %}<p class="issue">{{ row.issue }}</p>{% endif %}</div><div class="history-status"><span class="status-pill {{ row.execution }}">{{ 'Stopping' if row.job.stop_requested and row.execution in ['pending','running'] else row.execution|title }}</span><p>Credit memo: {{ row.governance }}</p></div></article>{% endfor %}</section></main></body></html>
+{% if rows %}<div class="bulk-bar" hidden><label><input type="checkbox" class="select-all">Select all</label><span class="bulk-count" aria-live="polite"></span><button type="button" class="delete-button delete-selected" disabled>Delete selected</button></div>{% endif %}
+{% for row in rows %}{% set deletable = row.execution not in ['pending','running'] %}<article class="history-row" data-job-id="{{ row.job.job_id }}"><div class="history-main">{% if deletable %}<input type="checkbox" class="select-run" hidden aria-label="Select run {{ row.job.job_id }}">{% else %}<span class="select-spacer" hidden></span>{% endif %}<div><h3><a href="{{ row.href }}" aria-label="{{ row.company }} — run {{ row.job.job_id }}">{{ row.company }}</a></h3><p>{{ 'Business Overview Only' if row.job.bo_only else 'Business + Financial Overview' }} · {{ row.mode|title }}</p><small>{{ row.date }} · {{ row.job.job_id }}</small>{% if row.issue %}<p class="issue">{{ row.issue }}</p>{% endif %}</div></div><div class="history-status"><span class="status-pill {{ row.execution }}">{{ 'Stopping' if row.job.stop_requested and row.execution in ['pending','running'] else row.execution|title }}</span><p>Credit memo: {{ row.governance }}</p>{% if deletable %}<form method="post" action="/analysis/{{ row.job.job_id|urlencode }}/delete" class="delete-run" data-company="{{ row.company }}" data-job-id="{{ row.job.job_id }}"><button class="delete-button" type="submit" aria-label="Delete run {{ row.job.job_id }}">Delete</button></form>{% endif %}</div></article>{% endfor %}</section></main><dialog id="delete-dialog" aria-labelledby="delete-dialog-title"><h2 id="delete-dialog-title">Delete this run?</h2><p class="dialog-run"></p><ul class="dialog-list"></ul><p>Deleted runs are removed from the analysis history. Their Business and Financial Overview records are kept for audit. This cannot be undone.</p><p class="dialog-error" role="alert"></p><div class="dialog-actions"><button type="button" class="secondary-button cancel-delete">Cancel</button><button type="button" class="confirm-delete">Delete</button></div></dialog>
+<script>
+(() => {
+  const dialog = document.getElementById('delete-dialog');
+  if (!dialog || !dialog.showModal || !window.fetch) return;  // the plain per-row form post still works
+  const title = dialog.querySelector('h2'), runText = dialog.querySelector('.dialog-run');
+  const list = dialog.querySelector('.dialog-list'), error = dialog.querySelector('.dialog-error');
+  const confirmButton = dialog.querySelector('.confirm-delete');
+  const bar = document.querySelector('.bulk-bar'), selectAll = bar && bar.querySelector('.select-all');
+  const count = bar && bar.querySelector('.bulk-count'), deleteSelected = bar && bar.querySelector('.delete-selected');
+  const label = form => form.dataset.company + ' — run ' + form.dataset.jobId;
+  const boxes = () => [...document.querySelectorAll('.select-run')];
+  const items = lines => lines.map(text => { const item = document.createElement('li'); item.textContent = text; return item; });
+  let targets = [];
+
+  function refresh() {
+    if (!bar) return;
+    const all = boxes(), chosen = all.filter(box => box.checked).length;
+    bar.hidden = !all.length;
+    selectAll.checked = all.length > 0 && chosen === all.length;
+    selectAll.indeterminate = chosen > 0 && chosen < all.length;
+    count.textContent = chosen ? chosen + ' selected' : '';
+    deleteSelected.disabled = !chosen;
+    deleteSelected.textContent = chosen ? 'Delete selected (' + chosen + ')' : 'Delete selected';
+  }
+
+  function open(forms) {
+    targets = forms;
+    const single = forms.length === 1;
+    title.textContent = single ? 'Delete this run?' : 'Delete ' + forms.length + ' runs?';
+    runText.textContent = single ? label(forms[0]) : '';
+    list.replaceChildren(...(single ? [] : items(forms.map(label))));
+    error.textContent = '';
+    confirmButton.disabled = false;
+    confirmButton.textContent = single ? 'Delete' : 'Delete ' + forms.length + ' runs';
+    dialog.showModal();
+  }
+
+  async function remove(form) {
+    const response = await fetch(form.action, {method: 'POST'});
+    if (response.ok) return null;
+    try { return (await response.json()).detail || 'The run could not be deleted.'; }
+    catch (_) { return 'The run could not be deleted.'; }
+  }
+
+  boxes().forEach(box => { box.hidden = false; box.addEventListener('change', refresh); });
+  document.querySelectorAll('.select-spacer').forEach(spacer => { spacer.hidden = false; });
+  document.querySelectorAll('form.delete-run').forEach(form => form.addEventListener('submit', event => {
+    event.preventDefault();
+    open([form]);
+  }));
+  if (bar) {
+    selectAll.addEventListener('change', () => { boxes().forEach(box => { box.checked = selectAll.checked; }); refresh(); });
+    deleteSelected.addEventListener('click', () => open(boxes().filter(box => box.checked)
+      .map(box => box.closest('article').querySelector('form.delete-run'))));
+  }
+  dialog.querySelector('.cancel-delete').addEventListener('click', () => dialog.close());
+  confirmButton.addEventListener('click', async () => {
+    confirmButton.disabled = true;
+    const failed = [];
+    for (const form of targets) {
+      let problem;
+      try { problem = await remove(form); } catch (_) { problem = 'The server could not be reached.'; }
+      if (problem) { failed.push([form, problem]); continue; }
+      const note = document.createElement('p');
+      note.className = 'history-row deleted';
+      note.setAttribute('role', 'status');
+      note.textContent = 'Deleted ' + label(form) + '.';
+      form.closest('article').replaceWith(note);
+    }
+    refresh();
+    if (!failed.length) { dialog.close(); return; }
+    // Keep the dialog open on the runs that could not be deleted, so the user can retry or cancel.
+    targets = failed.map(([form]) => form);
+    title.textContent = failed.length === 1 ? 'This run was not deleted' : failed.length + ' runs were not deleted';
+    runText.textContent = '';
+    list.replaceChildren(...items(failed.map(([form, problem]) => label(form) + ': ' + problem)));
+    error.textContent = 'Retry, or cancel to leave them in the history.';
+    confirmButton.textContent = 'Retry';
+    confirmButton.disabled = false;
+  });
+  refresh();
+})();
+</script></body></html>

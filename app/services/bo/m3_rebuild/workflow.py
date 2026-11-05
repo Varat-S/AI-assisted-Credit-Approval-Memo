@@ -24,6 +24,42 @@ def diagnostics():
             "unavailable_values": "null HTTP/token values mean unavailable, never fabricated"}
 
 
+def _assess_extraction(directory, sources, diag, step, *, extraction, extractor,
+                       reviewer, enforce_validators, feedback):
+    """One management extraction through artifact validation; ``step`` tracks the stage reached."""
+    if extraction is not None:
+        diag["extraction_mode"] = "saved_offline_extraction"
+        raw = Path(extraction).read_text(encoding="utf-8") if isinstance(extraction, (str, Path)) else extraction
+    else:
+        diag["extraction_mode"] = getattr(extractor, "extraction_mode", "model")
+        raw = (extractor.extract(sources, diag, feedback=feedback) if feedback
+               else extractor.extract(sources, diag))
+        # Preserve raw returned answer for replay, even if malformed.
+        (directory / "management_response.txt").write_text(raw or "", encoding="utf-8")
+    step["stage"] = "parsing"
+    if isinstance(raw, str):
+        raw = json.loads(raw)
+    diag["parsing"] = "passed"
+    write_json(directory / "management_extraction.json", raw)
+    step["stage"] = "schema_validation"
+    validate_extraction(raw)
+    diag["schema_validation"] = "passed"
+    write_json(directory / "management_validated_extraction.json", raw)
+    step["stage"] = "evidence_validation"
+    artifact = assess_management(raw, sources, reviewer=reviewer, enforce=enforce_validators)
+    write_json(directory/'management_claim_validation.json',artifact['validation'])
+    if hasattr(extractor,'record_validation'):
+        extractor.record_validation(artifact)
+    claims=artifact['validation']['claim_results']
+    diag["quotation_validation"] = "partial" if any(
+        c['outcome']=='unsupported' for claim in claims for c in claim['citation_results']) else "passed"
+    diag["semantic_validation"] = "claim_level_"+artifact['completion_status']
+    diag['validator7_mode']=artifact['validation']['validator_7']['mode']
+    step["stage"] = "artifact_validation"
+    validate_management(artifact)
+    return artifact
+
+
 def run_rebuild(output_dir, *, case_id, structure_input=None, filing_pdf=None,
                 company=None, filing_period=None, extraction=None, extractor=None,
                 filing_sources=None, structure_provenance=None,
@@ -80,41 +116,36 @@ def run_rebuild(output_dir, *, case_id, structure_input=None, filing_pdf=None,
                                 quotation_validation="unavailable", semantic_validation="information_insufficiency")
                 else:
                     stage = "extraction"
-                    if extraction is not None:
-                        diag["extraction_mode"] = "saved_offline_extraction"
-                        raw = Path(extraction).read_text(encoding="utf-8") if isinstance(extraction, (str, Path)) else extraction
-                    elif extractor is not None:
-                        diag["extraction_mode"] = getattr(
-                            extractor, "extraction_mode", "model"
-                        )
-                        raw = extractor.extract(sources, diag)
-                        # Preserve raw returned answer for replay, even if malformed.
-                        (directory / "management_response.txt").write_text(raw or "", encoding="utf-8")
-                    else:
+                    if extraction is None and extractor is None:
                         reason = "Executive section found; extraction not attempted because no saved extraction or explicitly authorized extractor was supplied"
                         result["reason"] = reason
                         diag["details"].append({"stage": "extraction", "detail": reason})
                         continue
-                    stage = "parsing"
-                    if isinstance(raw, str):
-                        raw = json.loads(raw)
-                    diag["parsing"] = "passed"
-                    write_json(directory / "management_extraction.json", raw)
-                    stage = "schema_validation"
-                    validate_extraction(raw)
-                    diag["schema_validation"] = "passed"
-                    write_json(directory / "management_validated_extraction.json", raw)
-                    stage = "evidence_validation"
-                    artifact = assess_management(raw, sources, reviewer=reviewer,
-                                                 enforce=enforce_validators)
-                    write_json(directory/'management_claim_validation.json',artifact['validation'])
-                    if hasattr(extractor,'record_validation'):
-                        extractor.record_validation(artifact)
-                    claims=artifact['validation']['claim_results']
-                    diag["quotation_validation"] = "partial" if any(
-                        c['outcome']=='unsupported' for claim in claims for c in claim['citation_results']) else "passed"
-                    diag["semantic_validation"] = "claim_level_"+artifact['completion_status']
-                    diag['validator7_mode']=artifact['validation']['validator_7']['mode']
+                    # A model answer that fails validation runs once more with its
+                    # issues fed back (at most 2 runs); a provider failure does not.
+                    retries = 0 if extraction is not None else getattr(extractor, "validation_retries", 0)
+                    feedback = []
+                    for attempt in range(1, retries + 2):
+                        diag["attempts"] = attempt
+                        step = {"stage": "extraction"}
+                        try:
+                            artifact = _assess_extraction(
+                                directory, sources, diag, step, extraction=extraction,
+                                extractor=extractor, reviewer=reviewer,
+                                enforce_validators=enforce_validators, feedback=feedback)
+                            break
+                        except Exception as exc:
+                            stage = step["stage"]
+                            if attempt > retries or diag.get("provider_call_error"):
+                                raise
+                            feedback = [f"{stage}: {type(exc).__name__}: {str(exc)[:2500]}"]
+                            diag["first_attempt"] = {"error_stage": stage, "error_type": type(exc).__name__,
+                                                     "detail": str(exc)[:2500]}
+                            response = directory / "management_response.txt"
+                            if response.exists():
+                                response.replace(directory / "management_response_attempt1.txt")
+                            diag.update(parsing="not_attempted", schema_validation="not_attempted",
+                                        quotation_validation="not_attempted", semantic_validation="not_attempted")
                 stage = "artifact_validation"
                 validate_management(artifact)
                 name = "Senior Management Assessment.json"

@@ -62,7 +62,7 @@
 <p class="subtle">As of {{ view.case.as_of_date }}; evidence cut-off {{ view.case.evidence_cutoff }}.</p>
 </section>
 
-<details class="wb-section" id="agents"><summary><h2>Agent execution status</h2><span class="subtle">{{ n_agents_ok }} of {{ view.agents|length }} validated · {{ view.execution.ai_calls }} AI calls · {{ view.execution.runtime_seconds }} s</span></summary>
+<details class="wb-section" id="agents" open><summary><h2>Agent execution status</h2><span class="subtle">{{ n_agents_ok }} of {{ view.agents|length }} validated · {{ view.execution.ai_calls }} AI calls · {{ view.execution.runtime_seconds }} s</span></summary>
 <p>AI calls: {{ view.execution.ai_calls }} · runtime {{ view.execution.runtime_seconds }} s · tokens: {{ view.execution.token_usage }}</p>
 <div class="table-wrap"><table><thead><tr><th>Code</th><th>Agent</th><th>Role</th><th>Status</th><th>Runs</th><th>Detail</th></tr></thead><tbody>
 {% for a in view.agents %}<tr><td>{{ a.code or '' }}</td><td><code>{{ a.agent_id }}</code></td><td>{{ a.role }}</td><td>{{ st(a.status) }}</td><td>{{ a.runs }}</td><td>{{ a.detail or '' }}{% for i in a.validation_issues %}<br>{{ i }}{% endfor %}</td></tr>{% endfor %}
@@ -75,17 +75,17 @@
 {% for h in items %}<tr><td><code>{{ h.hypothesis_id }}</code></td><td class="claim">{{ h.claim }}{% if h.corrects_hypothesis_id %}<br><span class="subtle">corrects {{ h.corrects_hypothesis_id }}</span>{% endif %}</td><td>{% if h.claim_type in ['fact', 'calculated_fact'] %}<span class="epistemic fact">FACT</span>{% elif h.claim_type == 'assumption' %}<span class="epistemic assumption">ASSUMPTION</span>{% elif h.claim_type == 'management_claim' %}<span class="epistemic inference">ATTRIBUTED CLAIM</span>{% else %}<span class="epistemic inference">INFERENCE</span>{% endif %}</td><td>{{ h.direction }}</td><td>{{ st(h.disposition) }}<br><span class="subtle">{{ h.admissibility|replace('_', ' ') }}</span></td><td>{{ h.confidence|replace('_', ' ') }}</td><td>{% for n in h.validation_notes %}{{ n }}<br>{% endfor %}{% for m in h.missing_information %}<span class="subtle">missing: {{ m }}</span><br>{% endfor %}</td></tr>{% endfor %}
 </tbody></table></div>{% else %}<p>None.</p>{% endif %}
 {% endmacro %}
-<details class="wb-section" id="accepted" open><summary><h2>Accepted and qualified hypotheses</h2><span class="subtle">{{ view.accepted_hypotheses|length }}</span></summary>{{ hypotheses(view.accepted_hypotheses) }}</details>
-<details class="wb-section" id="rejected"{% if view.rejected_hypotheses or view.unverified_hypotheses %} open{% endif %}><summary><h2>Rejected hypotheses</h2><span class="subtle">{{ view.rejected_hypotheses|length }} rejected · {{ view.unverified_hypotheses|length }} unverified</span></summary>{{ hypotheses(view.rejected_hypotheses) }}
+<details class="wb-section" id="accepted"><summary><h2>Accepted and qualified hypotheses</h2><span class="subtle">{{ view.accepted_hypotheses|length }}</span></summary>{{ hypotheses(view.accepted_hypotheses) }}</details>
+<details class="wb-section" id="rejected"><summary><h2>Rejected hypotheses</h2><span class="subtle">{{ view.rejected_hypotheses|length }} rejected · {{ view.unverified_hypotheses|length }} unverified</span></summary>{{ hypotheses(view.rejected_hypotheses) }}
 <h3 id="unverified">Unverified hypotheses</h3>{{ hypotheses(view.unverified_hypotheses) }}</details>
 
-<details class="wb-section" id="contradictions"{% if n_contra %} open{% endif %}><summary><h2>Contradictions</h2><span class="subtle">{{ n_contra }} · {{ view.duplicate_groups|length }} duplicate group(s) merged</span></summary>
+<details class="wb-section" id="contradictions"><summary><h2>Contradictions</h2><span class="subtle">{{ n_contra }} · {{ view.duplicate_groups|length }} duplicate group(s) merged</span></summary>
 {% if view.contradictions %}<ul>{% for c in view.contradictions %}<li>{{ c.kind|replace('_', ' ') }}: <code>{{ c.hypothesis_ids|join(' vs ') }}</code></li>{% endfor %}</ul>{% else %}<p>No cross-agent contradiction was detected.</p>{% endif %}
 {% if oq.unresolved_contradictions %}<ul>{% for c in oq.unresolved_contradictions %}<li>{{ c }}</li>{% endfor %}</ul>{% endif %}
 <p class="subtle">Duplicate groups merged across specialists: {{ view.duplicate_groups|length }}.</p>
 </details>
 
-<details class="wb-section" id="open"{% if n_open or challenges %} open{% endif %}><summary><h2>Open questions</h2><span class="subtle">{{ oq.open_questions|length }} open · {{ oq.missing_information|length }} missing · {{ oq.data_limitations|length }} limitation(s) · {{ challenges|length }} unresolved challenge(s)</span></summary>
+<details class="wb-section" id="open"><summary><h2>Open questions</h2><span class="subtle">{{ oq.open_questions|length }} open · {{ oq.missing_information|length }} missing · {{ oq.data_limitations|length }} limitation(s) · {{ challenges|length }} unresolved challenge(s)</span></summary>
 {% for title, items in [('Open questions', oq.open_questions), ('Missing information', oq.missing_information), ('Coverage and retrieval limitations', oq.data_limitations)] %}
 <h3>{{ title }}</h3>{% if items %}<ul>{% for i in items %}<li>{{ i }}</li>{% endfor %}</ul>{% else %}<p class="subtle">None recorded.</p>{% endif %}{% endfor %}
 <h3 id="challenges">Unresolved challenger findings</h3>

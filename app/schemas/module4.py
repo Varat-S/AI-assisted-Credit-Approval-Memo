@@ -135,7 +135,11 @@ class NonNoteDebtObligation(BaseModel):
     legal_borrower: str = Field(description="Legal Borrower")
     principal_drawn_m: float = Field(description="Principal / Drawn ($M)")
     available_facility_limit_m: float | None = Field(
-        default=None, description="Available Facility Limit ($M)"
+        default=None,
+        description=("Undrawn Availability ($M): what can still be drawn, as the "
+                     "filing states it (after draws, letters of credit, reserves and "
+                     "any borrowing base). Null for a program the facility backstops "
+                     "(e.g. commercial paper) or when the filing states none."),
     )
     interest_rate_terms: str = Field(description="Interest Rate / Terms")
     maturity: str = Field(description="Maturity")

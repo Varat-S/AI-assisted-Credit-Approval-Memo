@@ -127,7 +127,7 @@
 {% for n in m.d1.senior_notes_schedule %}<tr><td>{{ n.senior_note_series }}</td><td>{{ n.legal_borrower }}</td><td class="num">{{ n.principal_amount_m|money }}</td><td>{{ n.coupon_interest_rate }}</td><td>{{ n.maturity_year }}</td><td>{{ n.collateral_security_status|replace('_', ' ') }}</td><td>{{ n.priority_ranking_tier|replace('_', ' ') }}</td></tr>{% endfor %}
 </table></div>{% endif %}
 {% if m.d1.non_note_obligations_schedule %}
-<div class="tablewrap"><table><tr><th>Other obligations</th><th>Borrower</th><th class="num">Drawn $M</th><th class="num">Limit $M</th><th>Terms</th><th>Maturity</th><th>Tier</th></tr>
+<div class="tablewrap"><table><tr><th>Other obligations</th><th>Borrower</th><th class="num">Drawn $M</th><th class="num">Undrawn $M</th><th>Terms</th><th>Maturity</th><th>Tier</th></tr>
 {% for n in m.d1.non_note_obligations_schedule %}<tr><td>{{ n.obligation_facility }}</td><td>{{ n.legal_borrower }}</td><td class="num">{{ n.principal_drawn_m|money }}</td><td class="num">{{ n.available_facility_limit_m|money }}</td><td>{{ n.interest_rate_terms }}</td><td>{{ n.maturity }}</td><td>{{ n.priority_ranking_tier|replace('_', ' ') }}</td></tr>{% endfor %}
 </table></div>{% endif %}
 {% if m.d1.reconciling_items %}

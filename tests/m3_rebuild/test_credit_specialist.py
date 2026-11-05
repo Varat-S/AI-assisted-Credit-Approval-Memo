@@ -133,3 +133,70 @@ def test_unrelated_as_of_date_in_canonical_chunk_is_not_an_executive_roster():
     roster=result['validation']['claim_results'][0]
     assert roster['outcome']=='unsupported' and 'consistent roster date' in roster['reason']
     assert result['facts']  # Independent source claims survive an invalid roster date.
+
+
+class _SequenceBackend(LLMBackend):
+    """Answers each M3 request with the next scripted reply (a string or an exception)."""
+
+    def __init__(self, *replies):
+        self.replies, self.requests = list(replies), []
+
+    def generate(self, request):
+        self.requests.append(request)
+        reply = self.replies.pop(0)
+        if isinstance(reply, Exception):
+            raise reply
+        if reply == 'valid':
+            reply = json.dumps(response_for(_packet_of(request)))
+        return LLMRawResult(reply, 'fake-m3', {'backend': 'fake'})
+
+
+def _packet_of(request):
+    from app.schemas.agentic import EvidencePacket
+    inputs = {k: v for k, v in request.inputs.items() if k != 'validation_feedback'}
+    return EvidencePacket.model_validate(inputs)
+
+
+def _m3_run(db_session, tmp_path, backend):
+    from pathlib import Path
+    result = BusinessOverviewRunner(
+        db_session, backend=ScriptedBoBackend(_script()), bo_roster='v3',
+        data_root=tmp_path/'data', output_root=tmp_path/'out', m3_backend=backend,
+        m3_reviewer_backend=FixtureReviewerBackend(),
+    ).run_case('CREDIT_M3', package=_package(), write_outputs=False)
+    block = result.handoff['module_conclusions']['M3']
+    folder = Path(block['source_manifest']).parent
+    manifest = json.loads((folder/'m3_rebuild_manifest.json').read_text(encoding='utf-8'))
+    diag = json.loads((folder/'management_diagnostics.json').read_text(encoding='utf-8'))
+    return manifest['components']['management'], diag, folder
+
+
+def test_m3_answer_failing_validation_runs_once_more_with_its_issues(db_session, tmp_path):
+    backend = _SequenceBackend('not json', 'valid')
+    component, diag, folder = _m3_run(db_session, tmp_path, backend)
+    assert len(backend.requests) == 2
+    feedback = backend.requests[1].inputs['validation_feedback']
+    assert feedback['issues'][0].startswith('parsing: JSONDecodeError')
+    assert 'validation_feedback' not in backend.requests[0].inputs
+    assert component['status'] == 'complete' and component['validation_status'] == 'passed'
+    assert diag['attempts'] == 2 and diag['first_attempt']['error_stage'] == 'parsing'
+    assert (folder/'management_response_attempt1.txt').read_text(encoding='utf-8') == 'not json'
+
+
+def test_m3_answer_failing_validation_twice_is_failed_after_two_runs(db_session, tmp_path):
+    backend = _SequenceBackend('not json', 'still not json')
+    component, diag, _ = _m3_run(db_session, tmp_path, backend)
+    assert len(backend.requests) == 2
+    assert component['status'] == 'failed' and component['validation_status'] == 'failed'
+    assert diag['attempts'] == 2 and diag['error_stage'] == 'parsing'
+
+
+def test_m3_provider_call_error_is_not_retried_for_validation(db_session, tmp_path, monkeypatch):
+    from app.services.agents import runtime
+    from app.services.llm.providers import ProviderCallError
+    monkeypatch.setattr(runtime, 'PROVIDER_CALL_RETRIES', 0)
+    backend = _SequenceBackend(ProviderCallError('provider down'), 'valid')
+    component, diag, _ = _m3_run(db_session, tmp_path, backend)
+    assert len(backend.requests) == 1
+    assert component['status'] == 'failed'
+    assert diag['provider_call_error'] is True and diag['attempts'] == 1

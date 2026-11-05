@@ -327,8 +327,8 @@ def load_bo(handoff: dict | None = None, m4_analysis: dict | None = None) -> BoI
     metrics = d2.get("metrics") or {}
     notes = d1.get("senior_notes_schedule") or []
     revolver, cp = _facility(d1, ("revolv",)), _facility(d1, ("commercial paper",))
-    revolver_available = (None if revolver is None or revolver.get("available_facility_limit_m") is None
-                          else revolver["available_facility_limit_m"] - (revolver.get("principal_drawn_m") or 0))
+    # M4 reports undrawn availability as the filing states it, already net of draws.
+    revolver_available = None if revolver is None else revolver.get("available_facility_limit_m")
     debt_funded, distributions_3y = _distributions(d3)
     m3 = _m3(handoff)
     rebuild = m3.get("m3_rebuild") or {}
