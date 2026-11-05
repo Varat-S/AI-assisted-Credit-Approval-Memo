@@ -201,6 +201,12 @@ def _skeleton() -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     edge("output.bo_handoff", "output.so_handoff", "handoff")
     edge("output.fo_overview", "output.so_handoff", "handoff")
 
+    # Bind the visible RMS stage itself to its recorded assessment. A second
+    # architecture-only RMS node would misleadingly open an empty inspector.
+    nodes.append(_node("architecture.rms", "RMS Risk, capacity & terms", 10,
+                       kind="governance", group="RMS", producer_agent="rms",
+                       prefer_artifact_type="module_output"))
+
     return nodes, edges
 
 
@@ -323,7 +329,6 @@ def build_pipeline_graph(
             n.update(category='artifact', states=dict(execution='absent', validation='unavailable', governance='not_applicable'))
             nodes.append(n)
     for nid, label, layer, category in [('review', 'Governed human review', 10, 'human'),
-            ('rms', 'RMS Risk, capacity & terms', 10, 'deterministic'),
             ('memo', 'Final credit memo assembly', 11, 'deterministic')]:
         n = _node('architecture.'+nid, label, layer, kind='governance', illustration=True)
         n.update(category=category, states=dict(execution='absent', validation='unavailable', governance='not_applicable'))

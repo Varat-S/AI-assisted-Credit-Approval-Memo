@@ -128,3 +128,26 @@ def test_rms_sources_must_agree_with_the_workflow_fo_reference(workflow):
     doc=json.loads(path.read_text());doc['sources']['fo_run_id']='unrelated-fo';path.write_text(json.dumps(doc))
     response=graph(client,workflow_id='workflow-one')
     assert response.status_code==409 and 'run bindings' in response.text
+
+
+@pytest.mark.parametrize('scope', ['workflow', 'rms-run', 'bo-run'])
+def test_main_rms_stage_has_one_node_and_opens_its_own_recorded_assessment(workflow,scope):
+    _,client,_=workflow
+    params=({'workflow_id':'workflow-one'} if scope=='workflow' else
+            {'run_id':'rms-recorded' if scope=='rms-run' else 'bo-recorded'})
+    response=graph(client,**params)
+    assert response.status_code==200
+    nodes=response.json()['nodes']
+    rms=[n for n in nodes if n['group']=='RMS' or n['id']=='architecture.rms']
+    assert len(rms)==1
+    node=rms[0]
+    assert node['id']=='architecture.rms' and node['category']=='deterministic'
+    if scope=='bo-run':
+        assert node['illustration'] and node['artifact_id'] is None
+    else:
+        assert not node['illustration']
+        assert node['artifact_id']=='rms.assessment.rms-recorded'
+        report=client.get(url(node['artifact_id'],'/report.html'))
+        assert report.status_code==200 and 'Provisional recommendation' in report.text
+        assert 'Output unavailable' not in report.text
+        assert node['states']['governance']=='pending'
