@@ -244,7 +244,7 @@ def test_going_concern_fail_waits_for_the_analyst_then_continues(db_session, aud
 
     decided = review_run(db_session, result.run_id, decision="continue", reviewer="A. Analyst",
                          reason="Refinancing agreed after year-end.", output_root=tmp_path / "out")
-    assert (decided["run_status"], decided["composite_score"], decided["credit_rating"]) == ("completed", 10, "D+")
+    assert (decided["run_status"], decided["composite_score"], decided["credit_rating"]) == ("completed", 10, "D")
     assert "not counted; agent triggers skipped" in decided["result"]
     assert row.human_review_status == "continued" and content_hash(row.payload) == row.content_hash
     folder = result.paths["financial_overview.html"].parent
@@ -423,7 +423,7 @@ def test_siding_with_the_agents_fail_scores_the_run_as_a_going_concern_fail(db_s
         review_run(db_session, result.run_id, decision="accept", reviewer="A", reason="r")
     decided = review_run(db_session, result.run_id, decision="continue", reviewer="A", reason="Agree with the agent.",
                          output_root=tmp_path / "out")
-    assert (decided["run_status"], decided["composite_score"], decided["credit_rating"]) == ("completed", 10, "D+")
+    assert (decided["run_status"], decided["composite_score"], decided["credit_rating"]) == ("completed", 10, "D")
     html = (result.paths["financial_overview.html"]).read_text(encoding="utf-8")
     assert "Analysis continued by A" in html and "Superseded by going-concern fail" in html
 

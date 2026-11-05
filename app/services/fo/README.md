@@ -1280,6 +1280,10 @@ maturity or capitalised interest.
 ICR bands (this project's own since 2026-10-22, set for interest incurred): ≥ 12x → 1, 8–12x → 1.5, 6–8x → 2.5,
 4–6x → 3.5, 3–4x → 5, 2–3x → 6, 1.5–2x → 7.5, 1.0–1.5x → 8.5, below 1.0x → 10. Each band includes its lower bound.
 
+Letter rating: the composite's whole number picks the grade (1 = AAA … 10 = D), and the first decimal notches it
+(above .5 a minus, below .5 a plus, exactly .5 none). AAA and D are never notched: a composite of 10 (every
+going-concern fail) is "D", where the FO project gave "D+" (this project's own since 2026-11-05).
+
 Another deliberate difference from the FO project: on a going-concern fail, the FO project also set the
 liquidity row to 10. Here every row keeps its own score for display, is marked superseded and is not counted
 (no weights, no contributions). The composite is 10 either way.

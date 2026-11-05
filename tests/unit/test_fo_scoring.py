@@ -44,7 +44,7 @@ def test_fixed_bands_take_the_first_band_reached():
 
 
 @pytest.mark.parametrize("score,rating", [
-    (1.0, "AAA"), (1.4, "AAA"), (2.0, "AA+"), (4.0, "BBB+"), (4.5, "BBB"), (4.6, "BBB-"), (9.9, "C-"), (10.0, "D+"),
+    (1.0, "AAA"), (1.4, "AAA"), (2.0, "AA+"), (4.0, "BBB+"), (4.5, "BBB"), (4.6, "BBB-"), (9.9, "C-"), (10.0, "D"),
 ])
 def test_credit_rating_notches_like_the_fo_project(score, rating):
     assert credit_rating(score) == rating

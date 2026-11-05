@@ -118,11 +118,11 @@ def risk_level(score):
 
 def credit_rating(score):
     """The letter rating for a composite risk score: the whole number picks the grade (1 = AAA ... 10 = D), then the
-    first decimal notches it: above .5 adds a minus, below .5 (a whole number included) a plus; exactly .5 or AAA
+    first decimal notches it: above .5 adds a minus, below .5 (a whole number included) a plus; exactly .5, AAA or D
     stays as is."""
     tenths = round(score * 10)
     grade, frac = CREDIT_RATINGS[tenths // 10 - 1], tenths % 10
-    if grade == "AAA":
+    if grade in ("AAA", "D"):
         return grade
     return grade + ("-" if frac > 5 else "+" if frac < 5 else "")
 
