@@ -257,8 +257,11 @@ def _apply_manifest(
 
 def build_pipeline_graph(
     manifest: Optional[ArtifactManifest] = None, *, run_id: str | None = None,
+    linked_runs: dict[str, str] | None = None,
 ) -> dict[str, Any]:
-    """Bind one explicit run; recorded RMS sources may bind other exact runs.
+    """Bind an individual run or the explicit stage runs of one recorded job.
+
+    Recorded RMS sources may bind other exact source artifacts.
 
     Multiple runs require selection. Architecture edges are never represented as
     observed execution lineage. Unmatched artifacts remain individually accessible.
@@ -269,8 +272,13 @@ def build_pipeline_graph(
     runs = sorted({a.run_id for a in all_entries if a.run_id})
     primary_runs = sorted({a.run_id for a in all_entries if a.run_id and a.producer_module != 'M3'})
     defaults = primary_runs or runs
-    selected = run_id or (defaults[0] if len(defaults) == 1 else None)
-    entries = [a for a in all_entries if selected and a.run_id == selected]
+    selected = None if linked_runs is not None else run_id or (defaults[0] if len(defaults) == 1 else None)
+    if linked_runs is not None:
+        entries = [a for a in all_entries
+                   if linked_runs.get(a.artifact_id.split('.', 1)[0]) is not None
+                   and a.run_id == linked_runs[a.artifact_id.split('.', 1)[0]]]
+    else:
+        entries = [a for a in all_entries if selected and a.run_id == selected]
     # RMS source ids are explicit persisted bindings, never a latest-run guess.
     source_ids = {dep for a in entries for dep in a.depends_on}
     entries += [a for a in all_entries if a.artifact_id in source_ids and a not in entries]
@@ -337,7 +345,8 @@ def build_pipeline_graph(
                 edges.append(dict(source=by_artifact[dep], target=by_artifact[entry.artifact_id],
                                   reason='recorded_artifact_reference', kind='recorded'))
     return dict(graph_version=PIPELINE_GRAPH_VERSION, case_id=manifest.case_id if manifest else None,
-                run_id=selected, runs=runs, selection_required=len(defaults)>1 and not selected,
+                run_id=selected, runs=runs, selection_required=linked_runs is None and len(defaults)>1 and not selected,
+                scope='workflow' if linked_runs is not None else 'run', bound_runs=linked_runs or {},
                 layers={0:'Raw input',1:'Evidence admission',2:'Canonical snapshot',3:'Specialists & financials',
                         4:'Validation & M3',5:'Synthesis',6:'Challenge',7:'Revised synthesis',8:'Governance',
                         9:'Governed outputs',10:'Review & RMS',11:'Memo & artifacts'},

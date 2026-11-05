@@ -56,12 +56,27 @@ def pipeline_home() -> HTMLResponse:
 
 
 @router.get("/pipeline/{case_id}/graph.json")
-def pipeline_graph(case_id: str, run_id: str | None = None) -> JSONResponse:
+def pipeline_graph(case_id: str, run_id: str | None = None,
+                   workflow_id: str | None = None) -> JSONResponse:
     """The dataflow graph (nodes + declared-dependency edges) for a case."""
+    from app.services.registry.workflow_scope import recorded_workflows, WorkflowScopeError
+    if workflow_id and run_id:
+        raise HTTPException(400, 'Select either a workflow or an individual run.')
     try:
-        graph = graph_for_case(case_id, _output_dir(), repo_root=".", run_id=run_id)
+        workflows = recorded_workflows(get_settings().database_url, case_id)
+    except WorkflowScopeError as exc:
+        raise HTTPException(409, str(exc)) from exc
+    workflow = next((w for w in workflows if w['workflow_id'] == workflow_id), None)
+    if workflow_id and workflow is None:
+        raise HTTPException(404, 'No recorded workflow for this case and identity.')
+    if workflow and not workflow['available']:
+        raise HTTPException(409, workflow['error'])
+    try:
+        graph = graph_for_case(case_id, _output_dir(), repo_root=".", run_id=run_id,
+                               workflow=workflow)
     except ArtifactAccessError as exc:
-        raise HTTPException(404, str(exc)) from exc
+        raise HTTPException(409 if isinstance(exc, ArtifactConflictError) else 404, str(exc)) from exc
+    graph['workflows'] = workflows
     return JSONResponse(graph)
 
 

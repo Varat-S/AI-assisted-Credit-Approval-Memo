@@ -87,12 +87,27 @@ def manifest_for_case(
 def graph_for_case(
     case_id: str, output_dir: str | Path, *, repo_root: str | Path = ".",
     run_id: str | None = None,
+    workflow: dict | None = None,
 ) -> dict[str, Any]:
     """Return the dataflow graph for a case; illustration graph if unknown."""
     manifest = manifest_for_case(case_id, output_dir, repo_root=repo_root)
     if run_id and (manifest is None or not any(a.run_id == run_id for a in manifest.artifacts)):
         raise ArtifactAccessError('The selected run does not exist for this case.')
-    graph = build_pipeline_graph(manifest, run_id=run_id)
+    if workflow and run_id:
+        raise ArtifactAccessError('Select either an entire workflow or an individual run.')
+    if workflow and workflow.get('case_id') != case_id:
+        raise ArtifactConflictError('The recorded workflow belongs to another case.')
+    linked_runs = workflow['run_ids'] if workflow else None
+    if linked_runs and manifest:
+        rms = manifest.by_id('rms.assessment.' + linked_runs.get('rms', ''))
+        if rms:
+            for section, prefix in [('bo', 'bo.handoff.'), ('fo', 'fo.overview.')]:
+                if linked_runs.get(section) and any(
+                        dep.startswith(prefix) and dep != prefix + linked_runs[section]
+                        for dep in rms.depends_on):
+                    raise ArtifactConflictError('RMS sources differ from the recorded workflow run bindings.')
+    graph = build_pipeline_graph(manifest, run_id=run_id, linked_runs=linked_runs)
+    graph['workflow_id'] = workflow['workflow_id'] if workflow else None
     graph["case_id"] = case_id
     if manifest:
         from hashlib import sha256

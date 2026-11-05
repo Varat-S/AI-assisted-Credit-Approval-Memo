@@ -1,0 +1,8 @@
+{
+  "legacyLinkSelectsEntireWorkflow": true,
+  "foStagesWithRecordedReports": 5,
+  "explicitIndividualRunPersistsOnReload": true,
+  "errors": [],
+  "mobileOverflow": false,
+  "noModelExecution": true
+}
