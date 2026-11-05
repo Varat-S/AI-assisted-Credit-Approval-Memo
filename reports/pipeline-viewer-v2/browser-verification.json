@@ -1,0 +1,13 @@
+{
+  "errors": [],
+  "mobileOverflow": false,
+  "frameOverflow": false,
+  "desktop": [
+    1600,
+    1000
+  ],
+  "mobile": [
+    390,
+    844
+  ]
+}

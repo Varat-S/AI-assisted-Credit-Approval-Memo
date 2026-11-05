@@ -1,0 +1,714 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="29" skipped="1" tests="100" time="32.904" timestamp="2026-11-05T14:20:56.300735+08:00" hostname="MacBook-Air-2.local"><testcase classname="tests.integration.test_bo_four_section" name="test_populated_deep_equality_order_omissions_and_persistence" time="0.459"><failure message="AssertionError: [['Educational structure is not a verified legal/obligor assessment. Management observations are bounded continuity ru...a are unavailable.', 'Competitor staffing data'], ['M2-H001: preserve qualified_narrative qualification/attribution.']]&#10;assert 'incomplete' == 'complete'&#10;  &#10;  - complete&#10;  + incomplete&#10;  ? ++">populated = (BoRunResult(analysis_run_id='ar_c928325f8d71421c', case_id='NFH_BO', snapshot_version=1, conclusion_status='human_rev...88d-4da0-b8e9-610e5bb34b83', 'challenge_status': 'escalated', 'supersedes_id': None, 'acceptance_state': 'accepted'}}))
+db_session = &lt;sqlalchemy.orm.session.Session object at 0x107a140d0&gt;
+
+    def test_populated_deep_equality_order_omissions_and_persistence(populated, db_session):
+        result, backend, saved = populated
+        memo = result.four_section_memo
+        assert memo == read_four_section(db_session, result.analysis_run_id)
+        assert [(s['id'], s['title']) for s in memo['sections']] == SECTION_TITLES
+&gt;       assert memo['governance']['memo_completeness'] == 'complete', [s['visible_warnings'] for s in memo['sections']]
+E       AssertionError: [['Educational structure is not a verified legal/obligor assessment. Management observations are bounded continuity ru...a are unavailable.', 'Competitor staffing data'], ['M2-H001: preserve qualified_narrative qualification/attribution.']]
+E       assert 'incomplete' == 'complete'
+E
+E         - complete
+E         + incomplete
+E         ? ++
+
+tests/integration/test_bo_four_section.py:47: AssertionError</failure></testcase><testcase classname="tests.integration.test_bo_four_section" name="test_missing_component_preserves_others[M2-3]" time="0.369" /><testcase classname="tests.integration.test_bo_four_section" name="test_missing_component_preserves_others[M4-0]" time="0.408" /><testcase classname="tests.integration.test_bo_four_section" name="test_missing_component_preserves_others[M1-2]" time="0.367" /><testcase classname="tests.integration.test_bo_four_section" name="test_missing_structure_preserves_management_and_debt" time="0.369"><failure message="assert None is not None">populated = (BoRunResult(analysis_run_id='ar_478577e7ca1b4e46', case_id='NFH_BO', snapshot_version=1, conclusion_status='human_rev...6c3-4ca5-8399-26b96e85e200', 'challenge_status': 'escalated', 'supersedes_id': None, 'acceptance_state': 'accepted'}}))
+
+    def test_missing_structure_preserves_management_and_debt(populated):
+        _, _, saved = populated
+        def change(a, p, h):
+            a['module_conclusions']['M3']['m3_rebuild']['structure'].update(status='not_attempted', artifact=None,
+                validation_status='not_attempted', error='No submitted corporate input')
+        memo = assemble(edit(saved, change))
+        assert memo['sections'][0]['structure']['content'] is None
+&gt;       assert memo['sections'][0]['debt_obligations']['content'] is not None
+E       assert None is not None
+
+tests/integration/test_bo_four_section.py:113: AssertionError</failure></testcase><testcase classname="tests.integration.test_bo_four_section" name="test_malformed_structure_contract_is_component_local" time="0.408"><failure message="AssertionError: assert 'unavailable' == 'complete'&#10;  &#10;  - complete&#10;  + unavailable">populated = (BoRunResult(analysis_run_id='ar_cfe680005ae2480c', case_id='NFH_BO', snapshot_version=1, conclusion_status='human_rev...9d2-4b5a-b94f-01edd2b4876c', 'challenge_status': 'escalated', 'supersedes_id': None, 'acceptance_state': 'accepted'}}))
+
+    def test_malformed_structure_contract_is_component_local(populated):
+        _, _, saved = populated
+        def change(a, p, h):
+            a['module_conclusions']['M3']['m3_rebuild']['structure']['artifact']['companies'] = {}
+        memo = assemble(edit(saved, change, rebind=['structure']))
+        assert memo['sections'][0]['structure']['status'] == 'unavailable'
+&gt;       assert memo['sections'][0]['debt_obligations']['status'] == 'complete'
+E       AssertionError: assert 'unavailable' == 'complete'
+E
+E         - complete
+E         + unavailable
+
+tests/integration/test_bo_four_section.py:123: AssertionError</failure></testcase><testcase classname="tests.integration.test_bo_four_section" name="test_partial_reviewed_management_is_copied_whole" time="0.370" /><testcase classname="tests.integration.test_bo_four_section" name="test_debt_integrity_failure_is_component_local[failed]" time="0.373" /><testcase classname="tests.integration.test_bo_four_section" name="test_debt_integrity_failure_is_component_local[advisory]" time="0.408" /><testcase classname="tests.integration.test_bo_four_section" name="test_debt_integrity_failure_is_component_local[failed_check]" time="0.369" /><testcase classname="tests.integration.test_bo_four_section" name="test_debt_integrity_failure_is_component_local[wrong_hash]" time="0.373" /><testcase classname="tests.integration.test_bo_four_section" name="test_debt_integrity_failure_is_component_local[wrong_case]" time="0.421" /><testcase classname="tests.integration.test_bo_four_section" name="test_debt_integrity_failure_is_component_local[wrong_run]" time="0.372" /><testcase classname="tests.integration.test_bo_four_section" name="test_debt_integrity_failure_is_component_local[wrong_snapshot]" time="0.374" /><testcase classname="tests.integration.test_bo_four_section" name="test_debt_integrity_failure_is_component_local[wrong_period]" time="0.375" /><testcase classname="tests.integration.test_bo_four_section" name="test_debt_integrity_failure_is_component_local[wrong_company]" time="0.421" /><testcase classname="tests.integration.test_bo_four_section" name="test_debt_integrity_failure_is_component_local[wrong_producer]" time="0.377" /><testcase classname="tests.integration.test_bo_four_section" name="test_debt_integrity_failure_is_component_local[different_d1]" time="0.371" /><testcase classname="tests.integration.test_bo_four_section" name="test_management_integrity_failure_keeps_structure_and_other_modules[company]" time="0.374"><failure message="assert None is not None">populated = (BoRunResult(analysis_run_id='ar_258cb2899d9f432e', case_id='NFH_BO', snapshot_version=1, conclusion_status='human_rev...40e-4e83-9bff-24ee9080555f', 'challenge_status': 'escalated', 'supersedes_id': None, 'acceptance_state': 'accepted'}}))
+defect = 'company'
+
+    @pytest.mark.parametrize('defect', ['company', 'period', 'cutoff', 'source_hash', 'packet_run', 'packet_hash', 'binding'])
+    def test_management_integrity_failure_keeps_structure_and_other_modules(populated, defect):
+        _, _, saved = populated
+        def change(a, p, h):
+            m = a['module_conclusions']['M3']['m3_rebuild']['management']['artifact']
+            if defect == 'company': m['company'] = 'Other Company'
+            elif defect == 'period': m['filing_period'] = '2024-12-31'
+            elif defect == 'cutoff': m['roster_date'] = '2099-01-01'
+            elif defect == 'source_hash': m['source']['sha256'] = '0' * 64
+            elif defect == 'packet_run':
+                p['m3_packet']['analysis_run_id'] = 'foreign'
+                p['m3_packet']['packet_hash'] = content_hash({k: v for k, v in p['m3_packet'].items() if k != 'packet_hash'})
+            elif defect == 'packet_hash': p['m3_packet']['packet_hash'] = '0' * 64
+            else: p['component_bindings']['management']['identity']['case_id'] = 'foreign'
+        memo = assemble(edit(saved, change, rebind=['management']))
+        assert memo['sections'][1]['status'] == 'unavailable'
+&gt;       assert memo['sections'][0]['debt_obligations']['content'] is not None
+E       assert None is not None
+
+tests/integration/test_bo_four_section.py:185: AssertionError</failure></testcase><testcase classname="tests.integration.test_bo_four_section" name="test_management_integrity_failure_keeps_structure_and_other_modules[period]" time="0.373"><failure message="assert None is not None">populated = (BoRunResult(analysis_run_id='ar_7f7d7ddc8c434ce4', case_id='NFH_BO', snapshot_version=1, conclusion_status='human_rev...606-4222-8535-959aec35eb94', 'challenge_status': 'escalated', 'supersedes_id': None, 'acceptance_state': 'accepted'}}))
+defect = 'period'
+
+    @pytest.mark.parametrize('defect', ['company', 'period', 'cutoff', 'source_hash', 'packet_run', 'packet_hash', 'binding'])
+    def test_management_integrity_failure_keeps_structure_and_other_modules(populated, defect):
+        _, _, saved = populated
+        def change(a, p, h):
+            m = a['module_conclusions']['M3']['m3_rebuild']['management']['artifact']
+            if defect == 'company': m['company'] = 'Other Company'
+            elif defect == 'period': m['filing_period'] = '2024-12-31'
+            elif defect == 'cutoff': m['roster_date'] = '2099-01-01'
+            elif defect == 'source_hash': m['source']['sha256'] = '0' * 64
+            elif defect == 'packet_run':
+                p['m3_packet']['analysis_run_id'] = 'foreign'
+                p['m3_packet']['packet_hash'] = content_hash({k: v for k, v in p['m3_packet'].items() if k != 'packet_hash'})
+            elif defect == 'packet_hash': p['m3_packet']['packet_hash'] = '0' * 64
+            else: p['component_bindings']['management']['identity']['case_id'] = 'foreign'
+        memo = assemble(edit(saved, change, rebind=['management']))
+        assert memo['sections'][1]['status'] == 'unavailable'
+&gt;       assert memo['sections'][0]['debt_obligations']['content'] is not None
+E       assert None is not None
+
+tests/integration/test_bo_four_section.py:185: AssertionError</failure></testcase><testcase classname="tests.integration.test_bo_four_section" name="test_management_integrity_failure_keeps_structure_and_other_modules[cutoff]" time="0.369"><failure message="assert None is not None">populated = (BoRunResult(analysis_run_id='ar_aefc18bd0b1045d7', case_id='NFH_BO', snapshot_version=1, conclusion_status='human_rev...4f0-4259-9e95-2536e633e446', 'challenge_status': 'escalated', 'supersedes_id': None, 'acceptance_state': 'accepted'}}))
+defect = 'cutoff'
+
+    @pytest.mark.parametrize('defect', ['company', 'period', 'cutoff', 'source_hash', 'packet_run', 'packet_hash', 'binding'])
+    def test_management_integrity_failure_keeps_structure_and_other_modules(populated, defect):
+        _, _, saved = populated
+        def change(a, p, h):
+            m = a['module_conclusions']['M3']['m3_rebuild']['management']['artifact']
+            if defect == 'company': m['company'] = 'Other Company'
+            elif defect == 'period': m['filing_period'] = '2024-12-31'
+            elif defect == 'cutoff': m['roster_date'] = '2099-01-01'
+            elif defect == 'source_hash': m['source']['sha256'] = '0' * 64
+            elif defect == 'packet_run':
+                p['m3_packet']['analysis_run_id'] = 'foreign'
+                p['m3_packet']['packet_hash'] = content_hash({k: v for k, v in p['m3_packet'].items() if k != 'packet_hash'})
+            elif defect == 'packet_hash': p['m3_packet']['packet_hash'] = '0' * 64
+            else: p['component_bindings']['management']['identity']['case_id'] = 'foreign'
+        memo = assemble(edit(saved, change, rebind=['management']))
+        assert memo['sections'][1]['status'] == 'unavailable'
+&gt;       assert memo['sections'][0]['debt_obligations']['content'] is not None
+E       assert None is not None
+
+tests/integration/test_bo_four_section.py:185: AssertionError</failure></testcase><testcase classname="tests.integration.test_bo_four_section" name="test_management_integrity_failure_keeps_structure_and_other_modules[source_hash]" time="0.369"><failure message="assert None is not None">populated = (BoRunResult(analysis_run_id='ar_439218cf27044062', case_id='NFH_BO', snapshot_version=1, conclusion_status='human_rev...ce3-41ff-bf20-6f0556fd235f', 'challenge_status': 'escalated', 'supersedes_id': None, 'acceptance_state': 'accepted'}}))
+defect = 'source_hash'
+
+    @pytest.mark.parametrize('defect', ['company', 'period', 'cutoff', 'source_hash', 'packet_run', 'packet_hash', 'binding'])
+    def test_management_integrity_failure_keeps_structure_and_other_modules(populated, defect):
+        _, _, saved = populated
+        def change(a, p, h):
+            m = a['module_conclusions']['M3']['m3_rebuild']['management']['artifact']
+            if defect == 'company': m['company'] = 'Other Company'
+            elif defect == 'period': m['filing_period'] = '2024-12-31'
+            elif defect == 'cutoff': m['roster_date'] = '2099-01-01'
+            elif defect == 'source_hash': m['source']['sha256'] = '0' * 64
+            elif defect == 'packet_run':
+                p['m3_packet']['analysis_run_id'] = 'foreign'
+                p['m3_packet']['packet_hash'] = content_hash({k: v for k, v in p['m3_packet'].items() if k != 'packet_hash'})
+            elif defect == 'packet_hash': p['m3_packet']['packet_hash'] = '0' * 64
+            else: p['component_bindings']['management']['identity']['case_id'] = 'foreign'
+        memo = assemble(edit(saved, change, rebind=['management']))
+        assert memo['sections'][1]['status'] == 'unavailable'
+&gt;       assert memo['sections'][0]['debt_obligations']['content'] is not None
+E       assert None is not None
+
+tests/integration/test_bo_four_section.py:185: AssertionError</failure></testcase><testcase classname="tests.integration.test_bo_four_section" name="test_management_integrity_failure_keeps_structure_and_other_modules[packet_run]" time="0.423"><failure message="assert None is not None">populated = (BoRunResult(analysis_run_id='ar_8d737b90badd4b77', case_id='NFH_BO', snapshot_version=1, conclusion_status='human_rev...b03-4141-a062-dfc23b2e2fa8', 'challenge_status': 'escalated', 'supersedes_id': None, 'acceptance_state': 'accepted'}}))
+defect = 'packet_run'
+
+    @pytest.mark.parametrize('defect', ['company', 'period', 'cutoff', 'source_hash', 'packet_run', 'packet_hash', 'binding'])
+    def test_management_integrity_failure_keeps_structure_and_other_modules(populated, defect):
+        _, _, saved = populated
+        def change(a, p, h):
+            m = a['module_conclusions']['M3']['m3_rebuild']['management']['artifact']
+            if defect == 'company': m['company'] = 'Other Company'
+            elif defect == 'period': m['filing_period'] = '2024-12-31'
+            elif defect == 'cutoff': m['roster_date'] = '2099-01-01'
+            elif defect == 'source_hash': m['source']['sha256'] = '0' * 64
+            elif defect == 'packet_run':
+                p['m3_packet']['analysis_run_id'] = 'foreign'
+                p['m3_packet']['packet_hash'] = content_hash({k: v for k, v in p['m3_packet'].items() if k != 'packet_hash'})
+            elif defect == 'packet_hash': p['m3_packet']['packet_hash'] = '0' * 64
+            else: p['component_bindings']['management']['identity']['case_id'] = 'foreign'
+        memo = assemble(edit(saved, change, rebind=['management']))
+        assert memo['sections'][1]['status'] == 'unavailable'
+&gt;       assert memo['sections'][0]['debt_obligations']['content'] is not None
+E       assert None is not None
+
+tests/integration/test_bo_four_section.py:185: AssertionError</failure></testcase><testcase classname="tests.integration.test_bo_four_section" name="test_management_integrity_failure_keeps_structure_and_other_modules[packet_hash]" time="0.364"><failure message="assert None is not None">populated = (BoRunResult(analysis_run_id='ar_44a874440f9740c3', case_id='NFH_BO', snapshot_version=1, conclusion_status='human_rev...545-469b-b82a-9e6a9c6035f7', 'challenge_status': 'escalated', 'supersedes_id': None, 'acceptance_state': 'accepted'}}))
+defect = 'packet_hash'
+
+    @pytest.mark.parametrize('defect', ['company', 'period', 'cutoff', 'source_hash', 'packet_run', 'packet_hash', 'binding'])
+    def test_management_integrity_failure_keeps_structure_and_other_modules(populated, defect):
+        _, _, saved = populated
+        def change(a, p, h):
+            m = a['module_conclusions']['M3']['m3_rebuild']['management']['artifact']
+            if defect == 'company': m['company'] = 'Other Company'
+            elif defect == 'period': m['filing_period'] = '2024-12-31'
+            elif defect == 'cutoff': m['roster_date'] = '2099-01-01'
+            elif defect == 'source_hash': m['source']['sha256'] = '0' * 64
+            elif defect == 'packet_run':
+                p['m3_packet']['analysis_run_id'] = 'foreign'
+                p['m3_packet']['packet_hash'] = content_hash({k: v for k, v in p['m3_packet'].items() if k != 'packet_hash'})
+            elif defect == 'packet_hash': p['m3_packet']['packet_hash'] = '0' * 64
+            else: p['component_bindings']['management']['identity']['case_id'] = 'foreign'
+        memo = assemble(edit(saved, change, rebind=['management']))
+        assert memo['sections'][1]['status'] == 'unavailable'
+&gt;       assert memo['sections'][0]['debt_obligations']['content'] is not None
+E       assert None is not None
+
+tests/integration/test_bo_four_section.py:185: AssertionError</failure></testcase><testcase classname="tests.integration.test_bo_four_section" name="test_management_integrity_failure_keeps_structure_and_other_modules[binding]" time="0.360"><failure message="assert None is not None">populated = (BoRunResult(analysis_run_id='ar_f2f306cf6bb54064', case_id='NFH_BO', snapshot_version=1, conclusion_status='human_rev...86b-42b2-b270-a6ee16de2e04', 'challenge_status': 'escalated', 'supersedes_id': None, 'acceptance_state': 'accepted'}}))
+defect = 'binding'
+
+    @pytest.mark.parametrize('defect', ['company', 'period', 'cutoff', 'source_hash', 'packet_run', 'packet_hash', 'binding'])
+    def test_management_integrity_failure_keeps_structure_and_other_modules(populated, defect):
+        _, _, saved = populated
+        def change(a, p, h):
+            m = a['module_conclusions']['M3']['m3_rebuild']['management']['artifact']
+            if defect == 'company': m['company'] = 'Other Company'
+            elif defect == 'period': m['filing_period'] = '2024-12-31'
+            elif defect == 'cutoff': m['roster_date'] = '2099-01-01'
+            elif defect == 'source_hash': m['source']['sha256'] = '0' * 64
+            elif defect == 'packet_run':
+                p['m3_packet']['analysis_run_id'] = 'foreign'
+                p['m3_packet']['packet_hash'] = content_hash({k: v for k, v in p['m3_packet'].items() if k != 'packet_hash'})
+            elif defect == 'packet_hash': p['m3_packet']['packet_hash'] = '0' * 64
+            else: p['component_bindings']['management']['identity']['case_id'] = 'foreign'
+        memo = assemble(edit(saved, change, rebind=['management']))
+        assert memo['sections'][1]['status'] == 'unavailable'
+&gt;       assert memo['sections'][0]['debt_obligations']['content'] is not None
+E       assert None is not None
+
+tests/integration/test_bo_four_section.py:185: AssertionError</failure></testcase><testcase classname="tests.integration.test_bo_four_section" name="test_competitive_positioning_binding_is_component_local[conclusion]" time="0.409" /><testcase classname="tests.integration.test_bo_four_section" name="test_competitive_positioning_binding_is_component_local[producer]" time="0.361" /><testcase classname="tests.integration.test_bo_four_section" name="test_competitive_positioning_binding_is_component_local[challenge]" time="0.361" /><testcase classname="tests.integration.test_bo_four_section" name="test_competitive_positioning_binding_is_component_local[selection_hash]" time="0.360" /><testcase classname="tests.integration.test_bo_four_section" name="test_competitive_positioning_binding_is_component_local[superseded]" time="0.362" /><testcase classname="tests.integration.test_bo_four_section" name="test_industry_foreign_canonical_record_is_not_copied" time="0.418" /><testcase classname="tests.integration.test_bo_four_section" name="test_root_frozen_audit_tamper_fails_closed" time="0.367" /><testcase classname="tests.integration.test_bo_four_section" name="test_saved_input_hash_tamper_is_root_error" time="0.361" /><testcase classname="tests.integration.test_bo_four_section" name="test_correctly_hashed_foreign_root_still_fails_closed[case_id-another-company]" time="0.362" /><testcase classname="tests.integration.test_bo_four_section" name="test_correctly_hashed_foreign_root_still_fails_closed[analysis_run_id-foreign-run]" time="0.420" /><testcase classname="tests.integration.test_bo_four_section" name="test_correctly_hashed_foreign_root_still_fails_closed[as_of_date-2024-12-31]" time="0.362" /><testcase classname="tests.integration.test_bo_four_section" name="test_correctly_hashed_foreign_root_still_fails_closed[evidence_snapshot_version-9]" time="0.363" /><testcase classname="tests.integration.test_bo_four_section" name="test_idempotent_freeze_and_no_file_or_stage_overwrite" time="0.407" /><testcase classname="tests.integration.test_bo_four_section" name="test_partial_real_run_and_legacy_not_backfilled" time="0.567" /><testcase classname="tests.integration.test_bo_four_section" name="test_industry_keeps_low_materiality_order_and_nested_precision" time="0.361" /><testcase classname="tests.integration.test_bo_four_section" name="test_assembly_and_reads_never_invoke_models_validators_or_local_sources" time="0.383" /><testcase classname="tests.integration.test_bo_four_section" name="test_review_overlay_does_not_rewrite_frozen_memo" time="0.395" /><testcase classname="tests.integration.test_bo_four_section" name="test_two_runs_of_same_company_never_use_latest_output" time="0.786" /><testcase classname="tests.integration.test_bo_four_section" name="test_registry_discovers_new_artifact_without_changing_legacy_inventory" time="0.367"><failure message="AssertionError: assert 'incomplete' == 'qualified'&#10;  &#10;  - qualified&#10;  + incomplete">populated = (BoRunResult(analysis_run_id='ar_14de6c9f7446437b', case_id='NFH_BO', snapshot_version=1, conclusion_status='human_rev...205-44a9-89dd-3bc4bac7f1ba', 'challenge_status': 'escalated', 'supersedes_id': None, 'acceptance_state': 'accepted'}}))
+
+    def test_registry_discovers_new_artifact_without_changing_legacy_inventory(populated):
+        from app.services.registry.indexer import _index_bo_run
+        result, _, _ = populated
+        root = result.output_paths[FILENAME].parents[3]
+        entries = _index_bo_run(result.output_paths[FILENAME].parent, root, result.case_id)
+        entry = next(e for e in entries if e.artifact_id == 'bo.four_section.' + result.analysis_run_id)
+        assert entry.schema_version == result.four_section_memo['schema_version']
+        assert entry.human_review_status.value == 'pending'
+&gt;       assert entry.status.value == 'qualified'
+E       AssertionError: assert 'incomplete' == 'qualified'
+E
+E         - qualified
+E         + incomplete
+
+tests/integration/test_bo_four_section.py:343: AssertionError</failure></testcase><testcase classname="tests.integration.test_bo_four_section" name="test_normal_prepared_pipeline_freezes_same_root_without_reacquisition" time="0.409" /><testcase classname="tests.integration.test_bo_four_section" name="test_handoff_cannot_point_at_an_incompatible_assembled_artifact" time="0.431" /><testcase classname="tests.integration.test_bo_four_section" name="test_detached_example_cannot_be_persisted_without_authoritative_run" time="0.366" /><testcase classname="tests.integration.test_bo_four_section_independent" name="test_independent_proof1_lossless_persisted_roundtrip" time="0.353"><failure message="assert False is True">db_session = &lt;sqlalchemy.orm.session.Session object at 0x1143df1d0&gt;
+tmp_path = PosixPath('/private/var/folders/1b/stw6hl_x1dnbs3cw8877crrm0000gn/T/pytest-of-pearn/pytest-21/test_independent_proof1_lossle0')
+
+    def test_independent_proof1_lossless_persisted_roundtrip(db_session, tmp_path):
+&gt;       result, saved = build(db_session, tmp_path)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/integration/test_bo_four_section_independent.py:105:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+session = &lt;sqlalchemy.orm.session.Session object at 0x1143df1d0&gt;
+path = PosixPath('/private/var/folders/1b/stw6hl_x1dnbs3cw8877crrm0000gn/T/pytest-of-pearn/pytest-21/test_independent_proof1_lossle0')
+industry = True
+
+    def build(session, path, *, industry=True):
+        """Construct producers directly; do not import samples or the old run helper."""
+        answers = cp.script()
+        answers['m4_debt'] = debt_output()
+        if not industry:
+            answers['m2_industry'] = {
+                'parameters': [], 'hypotheses': [],
+                'missing_information': ['Independent proof: industry source analysis unavailable.'],
+            }
+        backend = ScriptedBoBackend(answers)
+        runner = BusinessOverviewRunner(
+            session, backend=backend, bo_roster='v3', sector=None,
+            business_orchestrator_contract=OUTPUT_VERSION,
+            data_root=path / 'data', output_root=path / 'out',
+            enable_m4_debt_specialist=True, m3_extractor=ManagementExtractor(),
+            m3_reviewer_backend=FixtureReviewerBackend())
+        runner.m3_config = {'corporate_source': 'corporate.json', 'management_source': 'management.pdf',
+                            'company': COMPANY, 'filing_period': h.PERIOD, 'extraction': None}
+        result = runner.run_prepared(h.CASE, evidence(), h.metrics(), write_outputs=True)
+        saved = load_saved_inputs(session, result.analysis_run_id)
+        assert saved.audit['run']['validators_enforced'] is True
+        assert saved.audit['challenger']['rounds'][-1]['status'] == 'validated'
+&gt;       assert saved.audit['module_conclusions']['M4']['m4_debt_assessment']['validator_report']['passed'] is True
+E       assert False is True
+
+tests/integration/test_bo_four_section_independent.py:57: AssertionError</failure></testcase><testcase classname="tests.integration.test_bo_four_section_independent" name="test_independent_proof2_missing_industry_producer_persists" time="0.362"><failure message="assert False is True">db_session = &lt;sqlalchemy.orm.session.Session object at 0x1134e0090&gt;
+tmp_path = PosixPath('/private/var/folders/1b/stw6hl_x1dnbs3cw8877crrm0000gn/T/pytest-of-pearn/pytest-21/test_independent_proof2_missin0')
+
+    def test_independent_proof2_missing_industry_producer_persists(db_session, tmp_path):
+&gt;       full, full_saved = build(db_session, tmp_path / 'full')
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/integration/test_bo_four_section_independent.py:127:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+session = &lt;sqlalchemy.orm.session.Session object at 0x1134e0090&gt;
+path = PosixPath('/private/var/folders/1b/stw6hl_x1dnbs3cw8877crrm0000gn/T/pytest-of-pearn/pytest-21/test_independent_proof2_missin0/full')
+industry = True
+
+    def build(session, path, *, industry=True):
+        """Construct producers directly; do not import samples or the old run helper."""
+        answers = cp.script()
+        answers['m4_debt'] = debt_output()
+        if not industry:
+            answers['m2_industry'] = {
+                'parameters': [], 'hypotheses': [],
+                'missing_information': ['Independent proof: industry source analysis unavailable.'],
+            }
+        backend = ScriptedBoBackend(answers)
+        runner = BusinessOverviewRunner(
+            session, backend=backend, bo_roster='v3', sector=None,
+            business_orchestrator_contract=OUTPUT_VERSION,
+            data_root=path / 'data', output_root=path / 'out',
+            enable_m4_debt_specialist=True, m3_extractor=ManagementExtractor(),
+            m3_reviewer_backend=FixtureReviewerBackend())
+        runner.m3_config = {'corporate_source': 'corporate.json', 'management_source': 'management.pdf',
+                            'company': COMPANY, 'filing_period': h.PERIOD, 'extraction': None}
+        result = runner.run_prepared(h.CASE, evidence(), h.metrics(), write_outputs=True)
+        saved = load_saved_inputs(session, result.analysis_run_id)
+        assert saved.audit['run']['validators_enforced'] is True
+        assert saved.audit['challenger']['rounds'][-1]['status'] == 'validated'
+&gt;       assert saved.audit['module_conclusions']['M4']['m4_debt_assessment']['validator_report']['passed'] is True
+E       assert False is True
+
+tests/integration/test_bo_four_section_independent.py:57: AssertionError</failure></testcase><testcase classname="tests.integration.test_bo_four_section_independent" name="test_independent_proof3a_same_company_foreign_component" time="0.353"><failure message="assert False is True">db_session = &lt;sqlalchemy.orm.session.Session object at 0x11375f850&gt;
+tmp_path = PosixPath('/private/var/folders/1b/stw6hl_x1dnbs3cw8877crrm0000gn/T/pytest-of-pearn/pytest-21/test_independent_proof3a_same_0')
+
+    def test_independent_proof3a_same_company_foreign_component(db_session, tmp_path):
+&gt;       ra, a = build(db_session, tmp_path / 'a')
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/integration/test_bo_four_section_independent.py:195:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+session = &lt;sqlalchemy.orm.session.Session object at 0x11375f850&gt;
+path = PosixPath('/private/var/folders/1b/stw6hl_x1dnbs3cw8877crrm0000gn/T/pytest-of-pearn/pytest-21/test_independent_proof3a_same_0/a')
+industry = True
+
+    def build(session, path, *, industry=True):
+        """Construct producers directly; do not import samples or the old run helper."""
+        answers = cp.script()
+        answers['m4_debt'] = debt_output()
+        if not industry:
+            answers['m2_industry'] = {
+                'parameters': [], 'hypotheses': [],
+                'missing_information': ['Independent proof: industry source analysis unavailable.'],
+            }
+        backend = ScriptedBoBackend(answers)
+        runner = BusinessOverviewRunner(
+            session, backend=backend, bo_roster='v3', sector=None,
+            business_orchestrator_contract=OUTPUT_VERSION,
+            data_root=path / 'data', output_root=path / 'out',
+            enable_m4_debt_specialist=True, m3_extractor=ManagementExtractor(),
+            m3_reviewer_backend=FixtureReviewerBackend())
+        runner.m3_config = {'corporate_source': 'corporate.json', 'management_source': 'management.pdf',
+                            'company': COMPANY, 'filing_period': h.PERIOD, 'extraction': None}
+        result = runner.run_prepared(h.CASE, evidence(), h.metrics(), write_outputs=True)
+        saved = load_saved_inputs(session, result.analysis_run_id)
+        assert saved.audit['run']['validators_enforced'] is True
+        assert saved.audit['challenger']['rounds'][-1]['status'] == 'validated'
+&gt;       assert saved.audit['module_conclusions']['M4']['m4_debt_assessment']['validator_report']['passed'] is True
+E       assert False is True
+
+tests/integration/test_bo_four_section_independent.py:57: AssertionError</failure></testcase><testcase classname="tests.integration.test_bo_four_section_independent" name="test_independent_proof3b_root_chain_tamper" time="0.420"><failure message="assert False is True">db_session = &lt;sqlalchemy.orm.session.Session object at 0x1134e0850&gt;
+tmp_path = PosixPath('/private/var/folders/1b/stw6hl_x1dnbs3cw8877crrm0000gn/T/pytest-of-pearn/pytest-21/test_independent_proof3b_root_0')
+
+    def test_independent_proof3b_root_chain_tamper(db_session, tmp_path):
+&gt;       result, saved = build(db_session, tmp_path)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/integration/test_bo_four_section_independent.py:216:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+session = &lt;sqlalchemy.orm.session.Session object at 0x1134e0850&gt;
+path = PosixPath('/private/var/folders/1b/stw6hl_x1dnbs3cw8877crrm0000gn/T/pytest-of-pearn/pytest-21/test_independent_proof3b_root_0')
+industry = True
+
+    def build(session, path, *, industry=True):
+        """Construct producers directly; do not import samples or the old run helper."""
+        answers = cp.script()
+        answers['m4_debt'] = debt_output()
+        if not industry:
+            answers['m2_industry'] = {
+                'parameters': [], 'hypotheses': [],
+                'missing_information': ['Independent proof: industry source analysis unavailable.'],
+            }
+        backend = ScriptedBoBackend(answers)
+        runner = BusinessOverviewRunner(
+            session, backend=backend, bo_roster='v3', sector=None,
+            business_orchestrator_contract=OUTPUT_VERSION,
+            data_root=path / 'data', output_root=path / 'out',
+            enable_m4_debt_specialist=True, m3_extractor=ManagementExtractor(),
+            m3_reviewer_backend=FixtureReviewerBackend())
+        runner.m3_config = {'corporate_source': 'corporate.json', 'management_source': 'management.pdf',
+                            'company': COMPANY, 'filing_period': h.PERIOD, 'extraction': None}
+        result = runner.run_prepared(h.CASE, evidence(), h.metrics(), write_outputs=True)
+        saved = load_saved_inputs(session, result.analysis_run_id)
+        assert saved.audit['run']['validators_enforced'] is True
+        assert saved.audit['challenger']['rounds'][-1]['status'] == 'validated'
+&gt;       assert saved.audit['module_conclusions']['M4']['m4_debt_assessment']['validator_report']['passed'] is True
+E       assert False is True
+
+tests/integration/test_bo_four_section_independent.py:57: AssertionError</failure></testcase><testcase classname="tests.integration.test_bo_four_section_independent" name="test_independent_proof3c_persistence_reloads_authority" time="0.353"><failure message="assert False is True">db_session = &lt;sqlalchemy.orm.session.Session object at 0x1168de810&gt;
+tmp_path = PosixPath('/private/var/folders/1b/stw6hl_x1dnbs3cw8877crrm0000gn/T/pytest-of-pearn/pytest-21/test_independent_proof3c_persi0')
+
+    def test_independent_proof3c_persistence_reloads_authority(db_session, tmp_path):
+&gt;       ra, a = build(db_session, tmp_path / 'a')
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/integration/test_bo_four_section_independent.py:239:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+session = &lt;sqlalchemy.orm.session.Session object at 0x1168de810&gt;
+path = PosixPath('/private/var/folders/1b/stw6hl_x1dnbs3cw8877crrm0000gn/T/pytest-of-pearn/pytest-21/test_independent_proof3c_persi0/a')
+industry = True
+
+    def build(session, path, *, industry=True):
+        """Construct producers directly; do not import samples or the old run helper."""
+        answers = cp.script()
+        answers['m4_debt'] = debt_output()
+        if not industry:
+            answers['m2_industry'] = {
+                'parameters': [], 'hypotheses': [],
+                'missing_information': ['Independent proof: industry source analysis unavailable.'],
+            }
+        backend = ScriptedBoBackend(answers)
+        runner = BusinessOverviewRunner(
+            session, backend=backend, bo_roster='v3', sector=None,
+            business_orchestrator_contract=OUTPUT_VERSION,
+            data_root=path / 'data', output_root=path / 'out',
+            enable_m4_debt_specialist=True, m3_extractor=ManagementExtractor(),
+            m3_reviewer_backend=FixtureReviewerBackend())
+        runner.m3_config = {'corporate_source': 'corporate.json', 'management_source': 'management.pdf',
+                            'company': COMPANY, 'filing_period': h.PERIOD, 'extraction': None}
+        result = runner.run_prepared(h.CASE, evidence(), h.metrics(), write_outputs=True)
+        saved = load_saved_inputs(session, result.analysis_run_id)
+        assert saved.audit['run']['validators_enforced'] is True
+        assert saved.audit['challenger']['rounds'][-1]['status'] == 'validated'
+&gt;       assert saved.audit['module_conclusions']['M4']['m4_debt_assessment']['validator_report']['passed'] is True
+E       assert False is True
+
+tests/integration/test_bo_four_section_independent.py:57: AssertionError</failure></testcase><testcase classname="tests.integration.test_bo_four_section_renderer" name="test_management_web_and_print_share_conservative_projection" time="0.432" /><testcase classname="tests.integration.test_bo_four_section_renderer" name="test_unclassified_concerns_and_qualifications_are_accessible_in_both_views" time="0.428" /><testcase classname="tests.integration.test_bo_four_section_renderer" name="test_direction_groups_and_material_qualifications_in_primary_print" time="0.001" /><testcase classname="tests.integration.test_bo_four_section_renderer" name="test_saved_real_hca_run_renders_without_analysis_or_artifact_changes" time="0.000"><skipped type="pytest.skip" message="Saved real HCA run is not installed; no live analysis is permitted in this test.">/Users/pearn/NTU/BU5203/kirotesting-pipeline-viewer-v2/tests/integration/test_bo_four_section_renderer.py:202: Saved real HCA run is not installed; no live analysis is permitted in this test.</skipped></testcase><testcase classname="tests.integration.test_bo_four_section_renderer" name="test_populated_review_routes_debt_and_closed_evidence" time="0.562"><failure message="assert 0 == 6&#10; +  where 0 = len([])&#10; +    where [] = xpath('//*[@data-schedule=&quot;senior_notes&quot;]//tbody/tr')&#10; +      where xpath = &lt;Element html at 0x115fec550&gt;.xpath">db_session = &lt;sqlalchemy.orm.session.Session object at 0x11393c750&gt;
+tmp_path = PosixPath('/private/var/folders/1b/stw6hl_x1dnbs3cw8877crrm0000gn/T/pytest-of-pearn/pytest-21/test_populated_review_routes_d0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x1142d42d0&gt;
+
+    def test_populated_review_routes_debt_and_closed_evidence(db_session, tmp_path, monkeypatch):
+        result, backend = run(db_session, tmp_path)
+        original = deepcopy(bo_artifact(db_session, result.analysis_run_id, 'four_section'))
+        before = [(r.name, r.sha256, r.payload_json) for r in db_session.query(StageArtifact).all()]
+        def forbidden(*args, **kwargs): pytest.fail('Rendering must not invoke analytical work')
+        monkeypatch.setattr(backend, 'generate', forbidden)
+        from app.services.bo import synthesis
+        monkeypatch.setattr(synthesis, 'include_all_validated_findings', forbidden)
+        with client_for(db_session, monkeypatch, [job(result)]) as client:
+            response = client.get('/analysis/saved/review')
+            assert response.status_code == 200, response.text
+            page = html.fromstring(response.text)
+            assert len(page.xpath('//*[@data-memo-section]')) == 4
+            assert page.xpath('//details[contains(@class,"bo-structure-text") and not(@open)]/pre[@class="bo-tree"]')
+            assert not page.xpath('//div[contains(@class,"bo-structure")]/pre[@class="bo-tree"]')
+            assert [x.text_content().strip() for x in page.xpath('//*[@data-memo-section]/h2')] == [
+                '01 Corporate Structure &amp; Debt Obligations', '02 Management', '03 Competitive Positioning', '04 Industry']
+&gt;           assert len(page.xpath('//*[@data-schedule="senior_notes"]//tbody/tr')) == 6
+E           assert 0 == 6
+E            +  where 0 = len([])
+E            +    where [] = xpath('//*[@data-schedule="senior_notes"]//tbody/tr')
+E            +      where xpath = &lt;Element html at 0x115fec550&gt;.xpath
+
+tests/integration/test_bo_four_section_renderer.py:280: AssertionError</failure></testcase><testcase classname="tests.integration.test_bo_four_section_renderer" name="test_missing_components_remain_independent[industry-3-None]" time="0.447"><failure message="assert 0 == 6&#10; +  where 0 = len([])&#10; +    where [] = xpath('//*[@data-schedule=&quot;senior_notes&quot;]//tbody/tr')&#10; +      where xpath = &lt;Element html at 0x113c85540&gt;.xpath">db_session = &lt;sqlalchemy.orm.session.Session object at 0x116aae350&gt;
+tmp_path = PosixPath('/private/var/folders/1b/stw6hl_x1dnbs3cw8877crrm0000gn/T/pytest-of-pearn/pytest-21/test_missing_components_remain0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x1142d6390&gt;
+missing = 'industry', section = 3, component = None
+
+    @pytest.mark.parametrize('missing,section,component', [('industry',3,None), ('structure',0,'structure'),
+        ('management',1,None), ('debt',0,'debt_obligations'), ('competitive',2,None)])
+    def test_missing_components_remain_independent(db_session, tmp_path, monkeypatch, missing, section, component):
+        result, _ = run(db_session, tmp_path, missing=missing)
+        canonical = bo_artifact(db_session, result.analysis_run_id, 'four_section')
+        block = canonical['sections'][section]
+        if component: block = block[component]
+        assert block['status'] == 'unavailable', block
+        with client_for(db_session, monkeypatch, [job(result)]) as client:
+            response = client.get('/analysis/saved/review')
+            assert response.status_code == 200, response.text
+            page = html.fromstring(response.text)
+            assert len(page.xpath('//*[@data-memo-section]')) == 4
+            text = visible(page)
+            assert 'Incomplete' in text and 'Current human review: Pending' in text
+            if missing == 'industry': assert 'Industry analysis is not available in this version.' in text
+            if missing != 'competitive': assert 'Multi-year managed-care agreements set negotiated rates.' in text
+&gt;           if missing != 'debt': assert len(page.xpath('//*[@data-schedule="senior_notes"]//tbody/tr')) == 6
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           assert 0 == 6
+E            +  where 0 = len([])
+E            +    where [] = xpath('//*[@data-schedule="senior_notes"]//tbody/tr')
+E            +      where xpath = &lt;Element html at 0x113c85540&gt;.xpath
+
+tests/integration/test_bo_four_section_renderer.py:325: AssertionError</failure></testcase><testcase classname="tests.integration.test_bo_four_section_renderer" name="test_missing_components_remain_independent[structure-0-structure]" time="0.432"><failure message="assert 0 == 6&#10; +  where 0 = len([])&#10; +    where [] = xpath('//*[@data-schedule=&quot;senior_notes&quot;]//tbody/tr')&#10; +      where xpath = &lt;Element html at 0x1140777a0&gt;.xpath">db_session = &lt;sqlalchemy.orm.session.Session object at 0x1176e0310&gt;
+tmp_path = PosixPath('/private/var/folders/1b/stw6hl_x1dnbs3cw8877crrm0000gn/T/pytest-of-pearn/pytest-21/test_missing_components_remain1')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x113613450&gt;
+missing = 'structure', section = 0, component = 'structure'
+
+    @pytest.mark.parametrize('missing,section,component', [('industry',3,None), ('structure',0,'structure'),
+        ('management',1,None), ('debt',0,'debt_obligations'), ('competitive',2,None)])
+    def test_missing_components_remain_independent(db_session, tmp_path, monkeypatch, missing, section, component):
+        result, _ = run(db_session, tmp_path, missing=missing)
+        canonical = bo_artifact(db_session, result.analysis_run_id, 'four_section')
+        block = canonical['sections'][section]
+        if component: block = block[component]
+        assert block['status'] == 'unavailable', block
+        with client_for(db_session, monkeypatch, [job(result)]) as client:
+            response = client.get('/analysis/saved/review')
+            assert response.status_code == 200, response.text
+            page = html.fromstring(response.text)
+            assert len(page.xpath('//*[@data-memo-section]')) == 4
+            text = visible(page)
+            assert 'Incomplete' in text and 'Current human review: Pending' in text
+            if missing == 'industry': assert 'Industry analysis is not available in this version.' in text
+            if missing != 'competitive': assert 'Multi-year managed-care agreements set negotiated rates.' in text
+&gt;           if missing != 'debt': assert len(page.xpath('//*[@data-schedule="senior_notes"]//tbody/tr')) == 6
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           assert 0 == 6
+E            +  where 0 = len([])
+E            +    where [] = xpath('//*[@data-schedule="senior_notes"]//tbody/tr')
+E            +      where xpath = &lt;Element html at 0x1140777a0&gt;.xpath
+
+tests/integration/test_bo_four_section_renderer.py:325: AssertionError</failure></testcase><testcase classname="tests.integration.test_bo_four_section_renderer" name="test_missing_components_remain_independent[management-1-None]" time="0.477"><failure message="assert 0 == 6&#10; +  where 0 = len([])&#10; +    where [] = xpath('//*[@data-schedule=&quot;senior_notes&quot;]//tbody/tr')&#10; +      where xpath = &lt;Element html at 0x1216b9b80&gt;.xpath">db_session = &lt;sqlalchemy.orm.session.Session object at 0x117d3a990&gt;
+tmp_path = PosixPath('/private/var/folders/1b/stw6hl_x1dnbs3cw8877crrm0000gn/T/pytest-of-pearn/pytest-21/test_missing_components_remain2')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x117f13d10&gt;
+missing = 'management', section = 1, component = None
+
+    @pytest.mark.parametrize('missing,section,component', [('industry',3,None), ('structure',0,'structure'),
+        ('management',1,None), ('debt',0,'debt_obligations'), ('competitive',2,None)])
+    def test_missing_components_remain_independent(db_session, tmp_path, monkeypatch, missing, section, component):
+        result, _ = run(db_session, tmp_path, missing=missing)
+        canonical = bo_artifact(db_session, result.analysis_run_id, 'four_section')
+        block = canonical['sections'][section]
+        if component: block = block[component]
+        assert block['status'] == 'unavailable', block
+        with client_for(db_session, monkeypatch, [job(result)]) as client:
+            response = client.get('/analysis/saved/review')
+            assert response.status_code == 200, response.text
+            page = html.fromstring(response.text)
+            assert len(page.xpath('//*[@data-memo-section]')) == 4
+            text = visible(page)
+            assert 'Incomplete' in text and 'Current human review: Pending' in text
+            if missing == 'industry': assert 'Industry analysis is not available in this version.' in text
+            if missing != 'competitive': assert 'Multi-year managed-care agreements set negotiated rates.' in text
+&gt;           if missing != 'debt': assert len(page.xpath('//*[@data-schedule="senior_notes"]//tbody/tr')) == 6
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           assert 0 == 6
+E            +  where 0 = len([])
+E            +    where [] = xpath('//*[@data-schedule="senior_notes"]//tbody/tr')
+E            +      where xpath = &lt;Element html at 0x1216b9b80&gt;.xpath
+
+tests/integration/test_bo_four_section_renderer.py:325: AssertionError</failure></testcase><testcase classname="tests.integration.test_bo_four_section_renderer" name="test_missing_components_remain_independent[debt-0-debt_obligations]" time="0.432" /><testcase classname="tests.integration.test_bo_four_section_renderer" name="test_missing_components_remain_independent[competitive-2-None]" time="0.431"><failure message="assert 0 == 6&#10; +  where 0 = len([])&#10; +    where [] = xpath('//*[@data-schedule=&quot;senior_notes&quot;]//tbody/tr')&#10; +      where xpath = &lt;Element html at 0x115f8c370&gt;.xpath">db_session = &lt;sqlalchemy.orm.session.Session object at 0x11357d790&gt;
+tmp_path = PosixPath('/private/var/folders/1b/stw6hl_x1dnbs3cw8877crrm0000gn/T/pytest-of-pearn/pytest-21/test_missing_components_remain4')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x11363e9d0&gt;
+missing = 'competitive', section = 2, component = None
+
+    @pytest.mark.parametrize('missing,section,component', [('industry',3,None), ('structure',0,'structure'),
+        ('management',1,None), ('debt',0,'debt_obligations'), ('competitive',2,None)])
+    def test_missing_components_remain_independent(db_session, tmp_path, monkeypatch, missing, section, component):
+        result, _ = run(db_session, tmp_path, missing=missing)
+        canonical = bo_artifact(db_session, result.analysis_run_id, 'four_section')
+        block = canonical['sections'][section]
+        if component: block = block[component]
+        assert block['status'] == 'unavailable', block
+        with client_for(db_session, monkeypatch, [job(result)]) as client:
+            response = client.get('/analysis/saved/review')
+            assert response.status_code == 200, response.text
+            page = html.fromstring(response.text)
+            assert len(page.xpath('//*[@data-memo-section]')) == 4
+            text = visible(page)
+            assert 'Incomplete' in text and 'Current human review: Pending' in text
+            if missing == 'industry': assert 'Industry analysis is not available in this version.' in text
+            if missing != 'competitive': assert 'Multi-year managed-care agreements set negotiated rates.' in text
+&gt;           if missing != 'debt': assert len(page.xpath('//*[@data-schedule="senior_notes"]//tbody/tr')) == 6
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           assert 0 == 6
+E            +  where 0 = len([])
+E            +    where [] = xpath('//*[@data-schedule="senior_notes"]//tbody/tr')
+E            +      where xpath = &lt;Element html at 0x115f8c370&gt;.xpath
+
+tests/integration/test_bo_four_section_renderer.py:325: AssertionError</failure></testcase><testcase classname="tests.integration.test_bo_four_section_renderer" name="test_current_review_overlay_and_historical_selection" time="0.952" /><testcase classname="tests.integration.test_bo_four_section_renderer" name="test_pdf_template_exports_all_results_without_evidence" time="0.398"><failure message="assert 0 == 4&#10; +  where 0 = len([])&#10; +    where [] = xpath('//*[@data-schedule=&quot;non_note&quot;]//tbody/tr')&#10; +      where xpath = &lt;Element html at 0x1216b9f40&gt;.xpath">db_session = &lt;sqlalchemy.orm.session.Session object at 0x115b3c250&gt;
+tmp_path = PosixPath('/private/var/folders/1b/stw6hl_x1dnbs3cw8877crrm0000gn/T/pytest-of-pearn/pytest-21/test_pdf_template_exports_all_0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x116d2a950&gt;
+
+    def test_pdf_template_exports_all_results_without_evidence(db_session, tmp_path, monkeypatch):
+        from app.api import analysis
+        from app.services.reporting import memo as pdf_backend
+        result, _ = run(db_session, tmp_path, missing='industry')
+        view = analysis_workspace.load_review(db_session, job(result))
+        printed = analysis._render_review(db_session, job(result), view, pdf=True)
+        page = html.fromstring(printed)
+        assert len(page.xpath('//*[@data-memo-section]')) == 4
+        assert not page.xpath('//details')
+        assert not page.xpath('//aside[@aria-label="Business Overview evidence appendix"]')
+        assert not page.xpath('//*[contains(@class,"bo-evidence-body")]') and not page.xpath('//*[@data-source-id]')
+        assert not page.xpath('//pre') and 'M1A6-H001' not in page.text_content()  # no raw evidence JSON
+&gt;       assert len(page.xpath('//*[@data-schedule="non_note"]//tbody/tr')) == 4
+E       assert 0 == 4
+E        +  where 0 = len([])
+E        +    where [] = xpath('//*[@data-schedule="non_note"]//tbody/tr')
+E        +      where xpath = &lt;Element html at 0x1216b9f40&gt;.xpath
+
+tests/integration/test_bo_four_section_renderer.py:361: AssertionError</failure></testcase><testcase classname="tests.integration.test_bo_four_section_renderer" name="test_invalid_binding_cannot_fallback_to_legacy" time="0.357" /><testcase classname="tests.integration.test_bo_four_section_renderer" name="test_partial_display_escapes_text_and_withholds_unsupported_judgments" time="0.414" /><testcase classname="tests.integration.test_bo_four_section_renderer" name="test_new_renderer_retains_audit_and_review_controls" time="0.613" /><testcase classname="tests.integration.test_bo_four_section_renderer" name="test_partial_template_states_preserve_supplied_content[0-structure]" time="0.395"><failure message="assert 0 == 6&#10; +  where 0 = len([])&#10; +    where [] = xpath('//*[@data-schedule=&quot;senior_notes&quot;]//tbody/tr')&#10; +      where xpath = &lt;Element html at 0x121a0fb60&gt;.xpath">db_session = &lt;sqlalchemy.orm.session.Session object at 0x1141a36d0&gt;
+tmp_path = PosixPath('/private/var/folders/1b/stw6hl_x1dnbs3cw8877crrm0000gn/T/pytest-of-pearn/pytest-21/test_partial_template_states_p0')
+section = 0, component = 'structure'
+
+    @pytest.mark.parametrize('section,component', [(0,'structure'),(0,'debt_obligations'),(1,None),(2,None)])
+    def test_partial_template_states_preserve_supplied_content(db_session, tmp_path, section, component):
+        result, _ = run(db_session, tmp_path)
+        view = load_view(db_session, result.analysis_run_id)
+        block = view['memo']['sections'][section]
+        if component: block = block[component]
+        before = deepcopy(block['content'])
+        block['status'] = 'partial'
+        block['visible_warnings'].append('Recorded component coverage remains partial.')
+        output = html.fromstring(render_page(view))
+        assert 'Recorded component coverage remains partial.' not in visible(output)
+        assert 'Recorded component coverage remains partial.' in block['visible_warnings']
+        assert block['content'] == before
+        assert len(output.xpath('//*[@data-memo-section]')) == 4
+&gt;       assert len(output.xpath('//*[@data-schedule="senior_notes"]//tbody/tr')) == 6
+E       assert 0 == 6
+E        +  where 0 = len([])
+E        +    where [] = xpath('//*[@data-schedule="senior_notes"]//tbody/tr')
+E        +      where xpath = &lt;Element html at 0x121a0fb60&gt;.xpath
+
+tests/integration/test_bo_four_section_renderer.py:433: AssertionError</failure></testcase><testcase classname="tests.integration.test_bo_four_section_renderer" name="test_partial_template_states_preserve_supplied_content[0-debt_obligations]" time="0.393"><failure message="assert 0 == 6&#10; +  where 0 = len([])&#10; +    where [] = xpath('//*[@data-schedule=&quot;senior_notes&quot;]//tbody/tr')&#10; +      where xpath = &lt;Element html at 0x117c491d0&gt;.xpath">db_session = &lt;sqlalchemy.orm.session.Session object at 0x115ecac90&gt;
+tmp_path = PosixPath('/private/var/folders/1b/stw6hl_x1dnbs3cw8877crrm0000gn/T/pytest-of-pearn/pytest-21/test_partial_template_states_p1')
+section = 0, component = 'debt_obligations'
+
+    @pytest.mark.parametrize('section,component', [(0,'structure'),(0,'debt_obligations'),(1,None),(2,None)])
+    def test_partial_template_states_preserve_supplied_content(db_session, tmp_path, section, component):
+        result, _ = run(db_session, tmp_path)
+        view = load_view(db_session, result.analysis_run_id)
+        block = view['memo']['sections'][section]
+        if component: block = block[component]
+        before = deepcopy(block['content'])
+        block['status'] = 'partial'
+        block['visible_warnings'].append('Recorded component coverage remains partial.')
+        output = html.fromstring(render_page(view))
+        assert 'Recorded component coverage remains partial.' not in visible(output)
+        assert 'Recorded component coverage remains partial.' in block['visible_warnings']
+        assert block['content'] == before
+        assert len(output.xpath('//*[@data-memo-section]')) == 4
+&gt;       assert len(output.xpath('//*[@data-schedule="senior_notes"]//tbody/tr')) == 6
+E       assert 0 == 6
+E        +  where 0 = len([])
+E        +    where [] = xpath('//*[@data-schedule="senior_notes"]//tbody/tr')
+E        +      where xpath = &lt;Element html at 0x117c491d0&gt;.xpath
+
+tests/integration/test_bo_four_section_renderer.py:433: AssertionError</failure></testcase><testcase classname="tests.integration.test_bo_four_section_renderer" name="test_partial_template_states_preserve_supplied_content[1-None]" time="0.392"><failure message="assert 0 == 6&#10; +  where 0 = len([])&#10; +    where [] = xpath('//*[@data-schedule=&quot;senior_notes&quot;]//tbody/tr')&#10; +      where xpath = &lt;Element html at 0x121ee5d10&gt;.xpath">db_session = &lt;sqlalchemy.orm.session.Session object at 0x11411b010&gt;
+tmp_path = PosixPath('/private/var/folders/1b/stw6hl_x1dnbs3cw8877crrm0000gn/T/pytest-of-pearn/pytest-21/test_partial_template_states_p2')
+section = 1, component = None
+
+    @pytest.mark.parametrize('section,component', [(0,'structure'),(0,'debt_obligations'),(1,None),(2,None)])
+    def test_partial_template_states_preserve_supplied_content(db_session, tmp_path, section, component):
+        result, _ = run(db_session, tmp_path)
+        view = load_view(db_session, result.analysis_run_id)
+        block = view['memo']['sections'][section]
+        if component: block = block[component]
+        before = deepcopy(block['content'])
+        block['status'] = 'partial'
+        block['visible_warnings'].append('Recorded component coverage remains partial.')
+        output = html.fromstring(render_page(view))
+        assert 'Recorded component coverage remains partial.' not in visible(output)
+        assert 'Recorded component coverage remains partial.' in block['visible_warnings']
+        assert block['content'] == before
+        assert len(output.xpath('//*[@data-memo-section]')) == 4
+&gt;       assert len(output.xpath('//*[@data-schedule="senior_notes"]//tbody/tr')) == 6
+E       assert 0 == 6
+E        +  where 0 = len([])
+E        +    where [] = xpath('//*[@data-schedule="senior_notes"]//tbody/tr')
+E        +      where xpath = &lt;Element html at 0x121ee5d10&gt;.xpath
+
+tests/integration/test_bo_four_section_renderer.py:433: AssertionError</failure></testcase><testcase classname="tests.integration.test_bo_four_section_renderer" name="test_partial_template_states_preserve_supplied_content[2-None]" time="0.485"><failure message="assert 0 == 6&#10; +  where 0 = len([])&#10; +    where [] = xpath('//*[@data-schedule=&quot;senior_notes&quot;]//tbody/tr')&#10; +      where xpath = &lt;Element html at 0x116c27cf0&gt;.xpath">db_session = &lt;sqlalchemy.orm.session.Session object at 0x117d11c50&gt;
+tmp_path = PosixPath('/private/var/folders/1b/stw6hl_x1dnbs3cw8877crrm0000gn/T/pytest-of-pearn/pytest-21/test_partial_template_states_p3')
+section = 2, component = None
+
+    @pytest.mark.parametrize('section,component', [(0,'structure'),(0,'debt_obligations'),(1,None),(2,None)])
+    def test_partial_template_states_preserve_supplied_content(db_session, tmp_path, section, component):
+        result, _ = run(db_session, tmp_path)
+        view = load_view(db_session, result.analysis_run_id)
+        block = view['memo']['sections'][section]
+        if component: block = block[component]
+        before = deepcopy(block['content'])
+        block['status'] = 'partial'
+        block['visible_warnings'].append('Recorded component coverage remains partial.')
+        output = html.fromstring(render_page(view))
+        assert 'Recorded component coverage remains partial.' not in visible(output)
+        assert 'Recorded component coverage remains partial.' in block['visible_warnings']
+        assert block['content'] == before
+        assert len(output.xpath('//*[@data-memo-section]')) == 4
+&gt;       assert len(output.xpath('//*[@data-schedule="senior_notes"]//tbody/tr')) == 6
+E       assert 0 == 6
+E        +  where 0 = len([])
+E        +    where [] = xpath('//*[@data-schedule="senior_notes"]//tbody/tr')
+E        +      where xpath = &lt;Element html at 0x116c27cf0&gt;.xpath
+
+tests/integration/test_bo_four_section_renderer.py:433: AssertionError</failure></testcase><testcase classname="tests.integration.test_bo_four_section_renderer" name="test_long_debt_display_records_are_not_truncated" time="0.388"><failure message="TypeError: 'NoneType' object is not subscriptable">db_session = &lt;sqlalchemy.orm.session.Session object at 0x121f17950&gt;
+tmp_path = PosixPath('/private/var/folders/1b/stw6hl_x1dnbs3cw8877crrm0000gn/T/pytest-of-pearn/pytest-21/test_long_debt_display_records0')
+
+    def test_long_debt_display_records_are_not_truncated(db_session, tmp_path):
+        result, _ = run(db_session, tmp_path)
+        view = load_view(db_session, result.analysis_run_id)
+        long_record = 'Recorded guarantee, security and legal support provisions. ' * 60
+        debt = view['memo']['sections'][0]['debt_obligations']['content']
+&gt;       debt['senior_notes_schedule'][0]['guarantors_credit_support'] = long_record
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: 'NoneType' object is not subscriptable
+
+tests/integration/test_bo_four_section_renderer.py:441: TypeError</failure></testcase><testcase classname="tests.integration.test_bo_four_section_renderer" name="test_portrait_print_summary_and_full_schedules_preserve_sources" time="0.457"><failure message="assert []&#10; +  where [] = xpath('//*[contains(@class,&quot;bo-print-schedules&quot;)]')&#10; +    where xpath = &lt;Element html at 0x12169a990&gt;.xpath">db_session = &lt;sqlalchemy.orm.session.Session object at 0x121353dd0&gt;
+tmp_path = PosixPath('/private/var/folders/1b/stw6hl_x1dnbs3cw8877crrm0000gn/T/pytest-of-pearn/pytest-21/test_portrait_print_summary_an0')
+
+    def test_portrait_print_summary_and_full_schedules_preserve_sources(db_session, tmp_path):
+        from app.api.analysis import _render_review
+        from tests.integration.test_analysis_review_workspace import seed_run
+        result, _ = run(db_session, tmp_path)
+        original = deepcopy(bo_artifact(db_session, result.analysis_run_id, 'four_section'))
+        selected = job(result)
+        view = analysis_workspace.load_review(db_session, selected)
+        screen = html.fromstring(_render_review(db_session, selected, view))
+        assert not screen.xpath('//*[@class="bo-debt-summary"]')
+        printed = _render_review(db_session, selected, view, pdf=True)
+        standalone = render_page(load_view(db_session, result.analysis_run_id), pdf=True)
+        for output in (printed, standalone):
+            assert '@page{size:A4;' in output and 'landscape' not in output
+            page = html.fromstring(output)
+            assert page.xpath('//*[@class="bo-structure"]/parent::*/*[@class="bo-debt-summary"]')
+&gt;           assert page.xpath('//*[contains(@class,"bo-print-schedules")]')
+E           assert []
+E            +  where [] = xpath('//*[contains(@class,"bo-print-schedules")]')
+E            +    where xpath = &lt;Element html at 0x12169a990&gt;.xpath
+
+tests/integration/test_bo_four_section_renderer.py:463: AssertionError</failure></testcase><testcase classname="tests.integration.test_bo_four_section_renderer" name="test_pdf_omits_cross_dimensional_insights_but_screen_keeps_them" time="0.400" /><testcase classname="tests.integration.test_analysis_workspace" name="test_home_title_and_exactly_two_primary_options" time="0.021" /><testcase classname="tests.integration.test_analysis_workspace" name="test_new_analysis_hca_only_and_defaults" time="0.056" /><testcase classname="tests.integration.test_analysis_workspace" name="test_every_filing_folder_is_a_company_choice" time="0.054" /><testcase classname="tests.integration.test_analysis_workspace" name="test_source_metadata_and_correct_backend_map" time="0.146" /><testcase classname="tests.integration.test_analysis_workspace" name="test_scope_modes_map_only_bo_enforcement[standard-on-both]" time="0.048" /><testcase classname="tests.integration.test_analysis_workspace" name="test_scope_modes_map_only_bo_enforcement[standard-on-bo]" time="0.048" /><testcase classname="tests.integration.test_analysis_workspace" name="test_scope_modes_map_only_bo_enforcement[exploratory-off-both]" time="0.047" /><testcase classname="tests.integration.test_analysis_workspace" name="test_scope_modes_map_only_bo_enforcement[exploratory-off-bo]" time="0.047" /><testcase classname="tests.integration.test_analysis_workspace" name="test_missing_evidence_clear_error_and_no_execution" time="0.046" /><testcase classname="tests.integration.test_analysis_workspace" name="test_tampered_source_is_not_accepted" time="0.045" /><testcase classname="tests.integration.test_analysis_workspace" name="test_wrong_company_package_is_not_accepted" time="0.045" /><testcase classname="tests.integration.test_analysis_workspace" name="test_invalid_setup_values_are_visible[query0]" time="0.045" /><testcase classname="tests.integration.test_analysis_workspace" name="test_invalid_setup_values_are_visible[query1]" time="0.153" /><testcase classname="tests.integration.test_analysis_workspace" name="test_invalid_setup_values_are_visible[query2]" time="0.046" /><testcase classname="tests.integration.test_analysis_workspace" name="test_invalid_setup_values_are_visible[query3]" time="0.047" /><testcase classname="tests.integration.test_analysis_workspace" name="test_invalid_setup_values_are_visible[query4]" time="0.047" /><testcase classname="tests.integration.test_analysis_workspace" name="test_invalid_setup_values_are_visible[query5]" time="0.046" /><testcase classname="tests.integration.test_analysis_workspace" name="test_advanced_selections_survive_query_navigation" time="0.047" /><testcase classname="tests.integration.test_analysis_workspace" name="test_missing_provider_configuration_is_explained" time="0.045" /><testcase classname="tests.integration.test_analysis_workspace" name="test_no_run_created_and_no_new_launch_endpoint" time="0.054" /><testcase classname="tests.integration.test_analysis_workspace" name="test_history_is_only_a_placeholder_and_legacy_routes_remain" time="0.079" /><testcase classname="tests.integration.test_analysis_workspace" name="test_bo_only_configuration_check_does_not_apply_to_fo" time="0.000" /><testcase classname="tests.integration.test_bo_memo_modules" name="test_v3_memo_attaches_a_panel_to_each_of_m2_to_m4" time="0.413" /><testcase classname="tests.integration.test_bo_memo_modules" name="test_v3_memo_renders_the_assembled_m4_debt_deliverables" time="0.303"><failure message="assert (True and False)">db_session = &lt;sqlalchemy.orm.session.Session object at 0x122d3fb90&gt;
+tmp_path = PosixPath('/private/var/folders/1b/stw6hl_x1dnbs3cw8877crrm0000gn/T/pytest-of-pearn/pytest-21/test_v3_memo_renders_the_assem0')
+
+    def test_v3_memo_renders_the_assembled_m4_debt_deliverables(db_session, tmp_path):
+        result, _ = run_with_debt(db_session, tmp_path)
+        m4 = _modules(result)["M4"]["m4"]
+
+&gt;       assert m4["debt_run"] and m4["debt_validated"]
+E       assert (True and False)
+
+tests/integration/test_bo_memo_modules.py:40: AssertionError</failure></testcase><testcase classname="tests.integration.test_bo_memo_modules" name="test_v3_memo_says_when_the_debt_specialist_did_not_run" time="0.271" /><testcase classname="tests.integration.test_bo_memo_modules" name="test_v2_memo_has_no_module_panels" time="0.238" /></testsuite></testsuites>

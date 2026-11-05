@@ -1,0 +1,24 @@
+{
+  "schema_version": "m3-rebuild-manifest-1.0",
+  "case_id": "HCA_registry_fixture",
+  "run_id": "run_fixture",
+  "workflow": "m3-rebuild",
+  "components": {
+    "structure": {
+      "status": "complete",
+      "artifact": "Visualized HCA Healthcare Corporate structure.json",
+      "schema_version": "2.0",
+      "validation_status": "passed",
+      "artifact_sha256": "15f644be3517b825ce1cf11ca1e0e58b30e95dfa6013c1fa597ffbbfb3414766",
+      "diagnostics": "structure_diagnostics.json"
+    },
+    "management": {
+      "status": "complete",
+      "artifact": "Senior Management Assessment.json",
+      "schema_version": "m3-management-assessment-3.0",
+      "validation_status": "passed",
+      "artifact_sha256": "b4004b51a92c3f58da653a369c68b48ad7f38aa60a0f9cde01e3267c4025bdf2",
+      "diagnostics": "management_diagnostics.json"
+    }
+  }
+}

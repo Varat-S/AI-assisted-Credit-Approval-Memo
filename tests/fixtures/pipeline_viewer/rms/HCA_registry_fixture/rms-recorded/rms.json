@@ -1,0 +1,44 @@
+{
+  "schema_version": "rms-1.0",
+  "case_id": "HCA_registry_fixture",
+  "run_id": "rms-recorded",
+  "data_status": "Synthetic recorded viewer fixture",
+  "verdict": "refer",
+  "requires_human_review": true,
+  "grade": {
+    "rating": "A+",
+    "score": 3.3,
+    "level": "low"
+  },
+  "request": {
+    "requested_amount_m": 2000,
+    "tenor_years": 5
+  },
+  "capacity": {
+    "derived_capacity_m": 10371.4,
+    "binding_test": "downside_leverage"
+  },
+  "gates": [
+    {
+      "gate_id": "RMS-G01",
+      "reason": "Unresolved business challenge"
+    }
+  ],
+  "warnings": [
+    {
+      "gate_id": "RMS-G02",
+      "reason": "Going concern accepted by human reviewer",
+      "would_have_been": "refer",
+      "waived_after_human_acceptance": true
+    }
+  ],
+  "sources": {
+    "bo_analysis_run_id": "bo-recorded",
+    "fo_run_id": "fo-recorded",
+    "bo_review_status": "pending",
+    "fo_decisions": {
+      "review": "review-fixture",
+      "overrides": []
+    }
+  }
+}

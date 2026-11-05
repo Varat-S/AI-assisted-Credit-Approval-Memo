@@ -1,0 +1,17 @@
+{
+  "request_attempted": false,
+  "http_status": null,
+  "answer_returned": false,
+  "model": null,
+  "adapter_version": "m3-shared-specialist-2.0",
+  "schema_version": "m3-management-response-2.0",
+  "prompt_version": "m3-management-credit-2.0",
+  "parsing": "not_attempted",
+  "schema_validation": "not_attempted",
+  "quotation_validation": "not_attempted",
+  "semantic_validation": "not_attempted",
+  "token_usage": null,
+  "error_stage": null,
+  "details": [],
+  "unavailable_values": "null HTTP/token values mean unavailable, never fabricated"
+}

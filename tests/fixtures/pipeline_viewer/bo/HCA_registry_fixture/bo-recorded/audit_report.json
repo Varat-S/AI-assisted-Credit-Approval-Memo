@@ -1,0 +1,125 @@
+{
+  "schema_version": "bo-audit-1.0",
+  "case_id": "HCA_registry_fixture",
+  "analysis_run_id": "bo-recorded",
+  "data_status": "Synthetic recorded viewer fixture; not a live credit assessment.",
+  "agents": [
+    {
+      "agent_id": "m1_revenue_quality",
+      "status": "validated",
+      "dependencies": [],
+      "runs": [
+        {
+          "validation_status": "valid",
+          "model_id": "offline-recorded-fixture"
+        }
+      ]
+    },
+    {
+      "agent_id": "m2_industry",
+      "status": "validated",
+      "dependencies": [
+        "m1_revenue_quality"
+      ],
+      "runs": [
+        {
+          "validation_status": "valid"
+        }
+      ]
+    },
+    {
+      "agent_id": "m4_strategy_capital",
+      "status": "validated",
+      "runs": [
+        {
+          "validation_status": "valid"
+        }
+      ]
+    },
+    {
+      "agent_id": "business_orchestrator",
+      "status": "validated",
+      "dependencies": [
+        "m2_industry"
+      ],
+      "runs": [
+        {
+          "validation_status": "valid"
+        }
+      ]
+    },
+    {
+      "agent_id": "business_challenge",
+      "status": "rejected",
+      "dependencies": [
+        "business_orchestrator"
+      ],
+      "runs": [
+        {
+          "validation_status": "rejected"
+        }
+      ]
+    }
+  ],
+  "hypotheses": {
+    "records": [
+      {
+        "agent_id": "m1_revenue_quality",
+        "hypothesis_id": "fixture-pricing",
+        "claim": "Contract renewals support realized pricing; payer concentration remains a vulnerability.",
+        "evidence_ids": [
+          "fixture-e1"
+        ],
+        "qualifications": [
+          "Synthetic teaching fixture."
+        ],
+        "acceptance_state": "accepted"
+      }
+    ]
+  },
+  "parameters": [
+    {
+      "agent_id": "m1_revenue_quality",
+      "evidence_ids": [
+        "fixture-e1"
+      ],
+      "value": "Recorded supporting factor"
+    }
+  ],
+  "evidence_packets": [
+    {
+      "agent_id": "m1_revenue_quality",
+      "items": [
+        {
+          "evidence_id": "fixture-e1",
+          "source_document": "Fixture filing",
+          "section": "Business",
+          "page": 12,
+          "excerpt": "Renewal rates reflect contractual reimbursement terms.",
+          "source_url": "https://www.sec.gov/"
+        }
+      ]
+    }
+  ],
+  "challenger": {
+    "rounds": [
+      {
+        "status": "rejected",
+        "reason": "Concentration risk is unresolved.",
+        "resolution": null
+      }
+    ]
+  },
+  "orchestrator": {
+    "overall_assessment": {
+      "text": "Synthetic synthesis with an unresolved challenge."
+    }
+  },
+  "final_conclusion": {
+    "acceptance_state": "rejected",
+    "unresolved_challenges": [
+      "Concentration risk requires analyst review."
+    ]
+  },
+  "conclusion_status": "rejected"
+}

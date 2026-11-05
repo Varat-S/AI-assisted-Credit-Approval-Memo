@@ -39,7 +39,7 @@ from app.services.registry.provenance import provenance_from_payload
 def _load_json(path: Path) -> Optional[Any]:
     try:
         return json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError):
+    except (OSError, json.JSONDecodeError, UnicodeError):
         return None
 
 
@@ -277,6 +277,18 @@ def _index_bo_agents(
             audit_subpath=f"agents[agent_id={aid}]",
         )
         entries.append(entry)
+        # Roster validators are separately inspectable views of their recorded
+        # audit blocks. Validator 8 is already indexed with its module artifacts.
+        from app.services.bo.roster_v3 import V3_SPEC_BY_AGENT
+        spec = V3_SPEC_BY_AGENT.get(aid)
+        if spec and spec.validator_id and spec.validator_id != 'validator_8':
+            entries.append(ArtifactEntry(
+                artifact_id=f'bo.validation.{aid}.{run_id}', artifact_type=ArtifactType.VALIDATION_REPORT,
+                case_id=case_id, run_id=run_id, producer_module=module, producer_agent=aid,
+                producer_validator=spec.validator_id, file_location=audit_loc,
+                audit_subpath=f'agents[agent_id={aid}]#validation',
+                depends_on=[kind_id], status=status, validation_status=val_status,
+                validator_issues_count=len(agent.get('validation_issues') or [])))
     return entries
 
 
@@ -688,17 +700,42 @@ def index_case_from_dir(
 
     # M3 runs: output/m3_rebuild/<case>/<run>/m3_rebuild_manifest.json.
     from app.services.bo.m3_rebuild.adapters import registry_entries
+    def rebuild_entries(path):
+        try:
+            return registry_entries(path, root, case_id)
+        except (OSError, ValueError, KeyError, TypeError) as exc:
+            return [ArtifactEntry(artifact_id='m3.manifest.' + path.parent.name,
+                artifact_type=ArtifactType.RUN_MANIFEST, case_id=case_id, run_id=path.parent.name,
+                producer_module='M3', file_location=_rel(path, root), status=ExecutionStatus.ERROR,
+                status_reason='Unsupported or corrupt M3 manifest: ' + str(exc)[:200])]
     rebuild_root = output_root / "m3_rebuild" / case_id
     if rebuild_root.is_dir():
         for recorded in sorted(rebuild_root.glob("*/m3_rebuild_manifest.json")):
-            manifest.artifacts.extend(registry_entries(recorded, root, case_id))
+            manifest.artifacts.extend(rebuild_entries(recorded))
 
     for m3_dir in m3_dirs or []:
         m3_path = Path(m3_dir)
         if (m3_path / "m3_rebuild_manifest.json").is_file():
-            entries = registry_entries(m3_path / "m3_rebuild_manifest.json", root, case_id)
+            entries = rebuild_entries(m3_path / "m3_rebuild_manifest.json")
             existing = {a.artifact_id for a in manifest.artifacts}
             manifest.artifacts.extend(e for e in entries if e.artifact_id not in existing)
+
+    # RMS records include their exact BO/FO inputs and decisions at assessment
+    # time. Index those records without calling assess/reassess or reading latest.
+    rms_case = output_root / 'rms' / case_id
+    for run_dir in sorted(p for p in rms_case.iterdir() if p.is_dir()) if rms_case.is_dir() else []:
+        entry = _entry_for_file(run_dir / 'rms.json', root,
+            artifact_id=f'rms.assessment.{run_dir.name}', artifact_type=ArtifactType.MODULE_OUTPUT,
+            case_id=case_id, run_id=run_dir.name, producer_module='RMS', producer_agent='rms')
+        record = _load_json(run_dir / 'rms.json')
+        if isinstance(record, dict):
+            sources = record.get('sources') or {}
+            entry.depends_on = [prefix + sources[key] for prefix, key in
+                [('bo.handoff.', 'bo_analysis_run_id'), ('fo.overview.', 'fo_run_id')] if sources.get(key)]
+            entry.status = ExecutionStatus.QUALIFIED
+            entry.status_reason = 'Recorded provisional RMS recommendation; not final credit approval.'
+            entry.human_review_status = _review_status(record.get('requires_human_review'))
+        manifest.artifacts.append(entry)
 
     return manifest
 

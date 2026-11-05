@@ -34,7 +34,7 @@ from typing import Any, Optional
 
 from app.schemas.artifact_manifest import ArtifactManifest, ExecutionStatus
 
-PIPELINE_GRAPH_VERSION = "pipeline-graph-1.0"
+PIPELINE_GRAPH_VERSION = "pipeline-graph-2.0"
 
 
 # -- fixed module / agent scaffolding ----------------------------------------
@@ -163,7 +163,7 @@ def _skeleton() -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     edge("fo.precheck", "fo.scoring", "declared_dependency")
 
     # Layer 5: cross-module synthesis (orchestrator) = synthesis V1.
-    nodes.append(_node("synthesis_v1", "Cross-module synthesis V1 (orchestrator)", 5,
+    nodes.append(_node("synthesis_v1", "Recorded cross-module synthesis", 5,
                        kind="synthesis", producer_agent="business_orchestrator",
                        prefer_artifact_type="module_output"))
     for agent_id, _ in _M1_AGENTS:
@@ -226,6 +226,9 @@ def _apply_manifest(
                 if (pv and entry.producer_validator == pv) or \
                         (pa and entry.producer_agent == pa):
                     return entry
+            # Sharing a producer is not evidence of the same stage. In
+            # particular a memo must never stand in for a missing synthesis.
+            return None
 
         # 2. Exact / prefix artifact-id match.
         aid = node.get("artifact_id")
@@ -243,6 +246,8 @@ def _apply_manifest(
         return None
 
     for node in nodes:
+        if node["illustration"]:
+            continue
         entry = find(node)
         if entry is not None:
             node["status"] = entry.status.value
@@ -251,49 +256,90 @@ def _apply_manifest(
 
 
 def build_pipeline_graph(
-    manifest: Optional[ArtifactManifest] = None,
+    manifest: Optional[ArtifactManifest] = None, *, run_id: str | None = None,
 ) -> dict[str, Any]:
-    """Return the left-to-right dataflow graph (nodes + edges + metadata).
+    """Bind one explicit run; recorded RMS sources may bind other exact runs.
 
-    With no manifest, every node is ``absent`` (illustration mode) and the graph
-    still renders. Layout metadata is kept separate from any financial content.
+    Multiple runs require selection. Architecture edges are never represented as
+    observed execution lineage. Unmatched artifacts remain individually accessible.
     """
+    from app.services.registry.stage_report import states
     nodes, edges = _skeleton()
-    if manifest is not None:
-        # Module 3 runs add their two component outputs.
-        for entry in manifest.artifacts:
-            if entry.artifact_id.startswith("m3.rebuild."):
-                node_id = "artifact." + entry.artifact_id
-                nodes.append(_node(node_id, "M3 " + (
-                    "Corporate conversion" if entry.producer_agent == "m3_structure_conversion"
-                    else "Management continuity"),
-                    4, kind="output", group="M3", artifact_id=entry.artifact_id))
-                edges.append({"source": "raw_input", "target": node_id,
-                              "reason": "independent_selected_source"})
-                edges.append({"source": node_id, "target": "synthesis_v1",
-                              "reason": "optional_typed_artifact"})
-        _apply_manifest(nodes, manifest)
-
-    layers = {
-        0: "Raw input", 1: "Evidence admission", 2: "Canonical evidence snapshot",
-        3: "Modules & agents", 4: "Validators & module outputs",
-        5: "Cross-module synthesis", 6: "Challenger", 7: "Revised synthesis",
-        8: "Final governance", 9: "Governed outputs",
-    }
-    return {
-        "graph_version": PIPELINE_GRAPH_VERSION,
-        "case_id": manifest.case_id if manifest else None,
-        "run_id": manifest.run_id if manifest else None,
-        "layers": layers,
-        "nodes": nodes,
-        "edges": edges,
-        "legend": {
-            ExecutionStatus.VALIDATED.value: "Produced & validated",
-            ExecutionStatus.QUALIFIED.value: "Accepted with qualification",
-            ExecutionStatus.INCOMPLETE.value: "Partial / incomplete",
-            ExecutionStatus.FAILED.value: "Failed / rejected",
-            ExecutionStatus.SKIPPED.value: "Skipped",
-            ExecutionStatus.ABSENT.value: "No recorded output",
-            ExecutionStatus.ERROR.value: "Unreadable artifact",
-        },
-    }
+    all_entries = manifest.artifacts if manifest else []
+    runs = sorted({a.run_id for a in all_entries if a.run_id})
+    primary_runs = sorted({a.run_id for a in all_entries if a.run_id and a.producer_module != 'M3'})
+    defaults = primary_runs or runs
+    selected = run_id or (defaults[0] if len(defaults) == 1 else None)
+    entries = [a for a in all_entries if selected and a.run_id == selected]
+    # RMS source ids are explicit persisted bindings, never a latest-run guess.
+    source_ids = {dep for a in entries for dep in a.depends_on}
+    entries += [a for a in all_entries if a.artifact_id in source_ids and a not in entries]
+    scoped = ArtifactManifest(case_id=manifest.case_id, run_id=selected, artifacts=entries) if manifest else None
+    if scoped:
+        _apply_manifest(nodes, scoped)
+    for node in nodes:
+        entry = next((a for a in entries if a.artifact_id == node.get('artifact_id')), None)
+        node['illustration'] = entry is None
+        if entry is None:
+            node['artifact_id'] = None
+        node['states'] = states(entry) if entry else dict(execution='absent', validation='unavailable', governance='not_applicable')
+        node['run_id'] = entry.run_id if entry else None
+        node['expected_hash'] = entry.content_hash if entry and not entry.audit_subpath else None
+        node['category'] = ('deterministic' if node['id'].startswith('fo.') else
+                            {'agent':'ai', 'validator':'validator', 'synthesis':'orchestration',
+                             'challenger':'orchestration', 'output':'artifact', 'snapshot':'artifact'}.get(node['kind'], 'deterministic'))
+    bound = {n['artifact_id'] for n in nodes if n['artifact_id']}
+    for entry in entries:
+        if entry.artifact_id in bound:
+            continue
+        aid = entry.artifact_id
+        is_structure = entry.producer_agent == 'm3_structure_conversion'
+        is_management = entry.producer_agent == 'm3_management_assessment'
+        label = ('M3 Corporate structure' if is_structure else 'M3 Management continuity' if is_management
+                 else 'RMS Provisional recommendation' if entry.producer_module == 'RMS'
+                 else 'Final credit memo' if aid.startswith('bo.four_section.') else aid)
+        if entry.artifact_type.value == 'validation_report':
+            from app.services.bo.roster_v3 import V3_SPEC_BY_AGENT
+            spec = V3_SPEC_BY_AGENT.get(entry.producer_agent)
+            label = (spec.title if spec else entry.producer_validator or 'Recorded') + ' · validation'
+        layer = 4 if entry.producer_module == 'M3' or entry.artifact_type.value == 'validation_report' else 10 if entry.producer_module == 'RMS' else 11
+        n = _node('artifact.' + aid, label, layer, kind='validator' if entry.artifact_type.value == 'validation_report' else 'output', group=entry.producer_module, artifact_id=aid)
+        n.update(status=entry.status.value, status_reason=entry.status_reason, states=states(entry),
+                 run_id=entry.run_id, category='validator' if entry.artifact_type.value == 'validation_report' else 'artifact', expected_hash=entry.content_hash if not entry.audit_subpath else None)
+        nodes.append(n)
+    # Show both M3 components even when this run did not record them.
+    for agent, label in [('m3_structure_conversion', 'M3 Corporate structure'),
+                         ('m3_management_assessment', 'M3 Management continuity')]:
+        if not any(a.producer_agent == agent for a in entries):
+            n = _node('architecture.' + agent, label, 4, kind='output', group='M3', illustration=True)
+            n.update(category='artifact', states=dict(execution='absent', validation='unavailable', governance='not_applicable'))
+            nodes.append(n)
+    for nid, label, layer, category in [('review', 'Governed human review', 10, 'human'),
+            ('rms', 'RMS Risk, capacity & terms', 10, 'deterministic'),
+            ('memo', 'Final credit memo assembly', 11, 'deterministic')]:
+        n = _node('architecture.'+nid, label, layer, kind='governance', illustration=True)
+        n.update(category=category, states=dict(execution='absent', validation='unavailable', governance='not_applicable'))
+        nodes.append(n)
+    for node in nodes:
+        if node.get('group') == 'M3':
+            edges.extend([dict(source='raw_input', target=node['id'], reason='architecture_independent_source', kind='architecture'),
+                          dict(source=node['id'], target='synthesis_v1', reason='architecture_optional_typed_input', kind='architecture')])
+    for src, dst in [('output.bo_handoff','architecture.review'), ('output.fo_overview','architecture.rms'),
+                     ('output.bo_handoff','architecture.rms'), ('architecture.rms','architecture.memo'),
+                     ('architecture.review','architecture.memo')]:
+        edges.append(dict(source=src, target=dst, reason='architecture_stage', kind='architecture'))
+    for edge in edges:
+        edge['kind'] = 'architecture'
+    by_artifact = {n['artifact_id']: n['id'] for n in nodes if n.get('artifact_id')}
+    for entry in entries:
+        for dep in entry.depends_on:
+            if dep in by_artifact:
+                edges.append(dict(source=by_artifact[dep], target=by_artifact[entry.artifact_id],
+                                  reason='recorded_artifact_reference', kind='recorded'))
+    return dict(graph_version=PIPELINE_GRAPH_VERSION, case_id=manifest.case_id if manifest else None,
+                run_id=selected, runs=runs, selection_required=len(defaults)>1 and not selected,
+                layers={0:'Raw input',1:'Evidence admission',2:'Canonical snapshot',3:'Specialists & financials',
+                        4:'Validation & M3',5:'Synthesis',6:'Challenge',7:'Revised synthesis',8:'Governance',
+                        9:'Governed outputs',10:'Review & RMS',11:'Memo & artifacts'},
+                nodes=nodes, edges=edges,
+                lineage_notice='Solid edges are recorded artifact references. Dashed edges describe architecture only; they do not establish execution or shared evidence.')

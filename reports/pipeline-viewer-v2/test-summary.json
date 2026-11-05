@@ -1,0 +1,49 @@
+{
+  "base_commit": "0a50457",
+  "focused": {
+    "tests": "112",
+    "failures": "0",
+    "errors": "0",
+    "skipped": "0"
+  },
+  "compatibility": {
+    "tests": "100",
+    "failures": "29",
+    "errors": "0",
+    "skipped": "1"
+  },
+  "new_compatibility_failures": [],
+  "baseline_compatibility_failures": [
+    "tests/integration/test_bo_four_section.py::test_malformed_structure_contract_is_component_local",
+    "tests/integration/test_bo_four_section.py::test_management_integrity_failure_keeps_structure_and_other_modules[binding]",
+    "tests/integration/test_bo_four_section.py::test_management_integrity_failure_keeps_structure_and_other_modules[company]",
+    "tests/integration/test_bo_four_section.py::test_management_integrity_failure_keeps_structure_and_other_modules[cutoff]",
+    "tests/integration/test_bo_four_section.py::test_management_integrity_failure_keeps_structure_and_other_modules[packet_hash]",
+    "tests/integration/test_bo_four_section.py::test_management_integrity_failure_keeps_structure_and_other_modules[packet_run]",
+    "tests/integration/test_bo_four_section.py::test_management_integrity_failure_keeps_structure_and_other_modules[period]",
+    "tests/integration/test_bo_four_section.py::test_management_integrity_failure_keeps_structure_and_other_modules[source_hash]",
+    "tests/integration/test_bo_four_section.py::test_missing_structure_preserves_management_and_debt",
+    "tests/integration/test_bo_four_section.py::test_populated_deep_equality_order_omissions_and_persistence",
+    "tests/integration/test_bo_four_section.py::test_registry_discovers_new_artifact_without_changing_legacy_inventory",
+    "tests/integration/test_bo_four_section_independent.py::test_independent_proof1_lossless_persisted_roundtrip",
+    "tests/integration/test_bo_four_section_independent.py::test_independent_proof2_missing_industry_producer_persists",
+    "tests/integration/test_bo_four_section_independent.py::test_independent_proof3a_same_company_foreign_component",
+    "tests/integration/test_bo_four_section_independent.py::test_independent_proof3b_root_chain_tamper",
+    "tests/integration/test_bo_four_section_independent.py::test_independent_proof3c_persistence_reloads_authority",
+    "tests/integration/test_bo_four_section_renderer.py::test_long_debt_display_records_are_not_truncated",
+    "tests/integration/test_bo_four_section_renderer.py::test_missing_components_remain_independent[competitive-2-None]",
+    "tests/integration/test_bo_four_section_renderer.py::test_missing_components_remain_independent[industry-3-None]",
+    "tests/integration/test_bo_four_section_renderer.py::test_missing_components_remain_independent[management-1-None]",
+    "tests/integration/test_bo_four_section_renderer.py::test_missing_components_remain_independent[structure-0-structure]",
+    "tests/integration/test_bo_four_section_renderer.py::test_partial_template_states_preserve_supplied_content[0-debt_obligations]",
+    "tests/integration/test_bo_four_section_renderer.py::test_partial_template_states_preserve_supplied_content[0-structure]",
+    "tests/integration/test_bo_four_section_renderer.py::test_partial_template_states_preserve_supplied_content[1-None]",
+    "tests/integration/test_bo_four_section_renderer.py::test_partial_template_states_preserve_supplied_content[2-None]",
+    "tests/integration/test_bo_four_section_renderer.py::test_pdf_template_exports_all_results_without_evidence",
+    "tests/integration/test_bo_four_section_renderer.py::test_populated_review_routes_debt_and_closed_evidence",
+    "tests/integration/test_bo_four_section_renderer.py::test_portrait_print_summary_and_full_schedules_preserve_sources",
+    "tests/integration/test_bo_memo_modules.py::test_v3_memo_renders_the_assembled_m4_debt_deliverables"
+  ],
+  "baseline_comparison": "Identical 28 four-section/workspace failures on untouched base; the additional legacy memo failure also reproduced separately on the base. Current Explorer tests assert the recorded V8-07 rejection rather than claiming a validation pass.",
+  "scope": "Offline presentation and integrity verification; not live-model analytical accuracy."
+}

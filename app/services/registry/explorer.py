@@ -48,7 +48,7 @@ def discover_cases(
     repo = Path(repo_root)
     found: dict[str, CaseSource] = {}
 
-    for family in ("bo", "fo", "m3_rebuild"):
+    for family in ("bo", "fo", "m3_rebuild", "rms"):
         base = output_root / family
         if base.is_dir():
             for case_dir in sorted(p for p in base.iterdir() if p.is_dir()):
@@ -85,17 +85,115 @@ def manifest_for_case(
 
 
 def graph_for_case(
-    case_id: str, output_dir: str | Path, *, repo_root: str | Path = "."
+    case_id: str, output_dir: str | Path, *, repo_root: str | Path = ".",
+    run_id: str | None = None,
 ) -> dict[str, Any]:
     """Return the dataflow graph for a case; illustration graph if unknown."""
     manifest = manifest_for_case(case_id, output_dir, repo_root=repo_root)
-    graph = build_pipeline_graph(manifest)
+    if run_id and (manifest is None or not any(a.run_id == run_id for a in manifest.artifacts)):
+        raise ArtifactAccessError('The selected run does not exist for this case.')
+    graph = build_pipeline_graph(manifest, run_id=run_id)
     graph["case_id"] = case_id
+    if manifest:
+        from hashlib import sha256
+        from app.services.registry.stage_report import states
+        source = _source_for(case_id, output_dir, repo_root)
+        hashes = {}
+        documents = {}
+        for node in graph['nodes']:
+            entry = manifest.by_id(node.get('artifact_id'))
+            if entry and entry.file_location:
+                try:
+                    path = _safe_resolve(source.repo_root / entry.file_location, [source.output_root])
+                    if path not in hashes:
+                        raw = path.read_bytes()
+                        hashes[path] = sha256(raw).hexdigest()
+                        documents[path] = json.loads(raw)
+                    node['source_file_sha256'] = hashes[path]
+                    payload = _extract_slice(documents[path], entry) if entry.audit_subpath else documents[path]
+                    node['states'] = states(entry, payload)
+                except (ArtifactAccessError, OSError, ValueError):
+                    node['source_file_sha256'] = None
     return graph
 
 
 class ArtifactAccessError(ValueError):
     """Raised when an artifact id cannot be safely resolved to a readable file."""
+
+
+class ArtifactConflictError(ArtifactAccessError):
+    """Recorded integrity or exact-run identity could not be verified."""
+
+
+def _verified_read(path, entry, output_root=None):
+    from app.core.hashing import content_hash
+    try:
+        raw = path.read_bytes()
+        payload = json.loads(raw)
+    except (OSError, ValueError, UnicodeError) as exc:
+        raise ArtifactConflictError('Artifact is missing, corrupt or unreadable.') from exc
+    if entry.status.value == 'error' or (entry.producer_module == 'M3' and
+            entry.artifact_id.startswith('m3.rebuild.') and not entry.content_hash):
+        raise ArtifactConflictError(entry.status_reason or 'Recorded component failed integrity verification.')
+    if not entry.audit_subpath and entry.content_hash and content_hash(payload) != entry.content_hash:
+        raise ArtifactConflictError('Artifact content hash differs from the indexed artifact.')
+    if isinstance(payload, dict):
+        for field, expected in [('case_id', entry.case_id), ('analysis_run_id', entry.run_id),
+                                ('run_id', entry.run_id)]:
+            if payload.get(field) is not None and expected and payload[field] != expected:
+                raise ArtifactConflictError(f'Artifact {field} differs from its exact directory binding.')
+        case = payload.get('case')
+        run = payload.get('run')
+        if isinstance(case, dict) and case.get('case_id') not in (None, entry.case_id):
+            raise ArtifactConflictError('Artifact case differs from its exact directory binding.')
+        if isinstance(run, dict) and run.get('analysis_run_id') not in (None, entry.run_id):
+            raise ArtifactConflictError('Artifact run differs from its exact directory binding.')
+        if entry.artifact_id.startswith('bo.four_section.'):
+            from app.services.bo.four_section import verify_memo
+            try:
+                verify_memo(payload)
+                identity = payload['identity']
+                if identity['case_id'] != entry.case_id or identity['analysis_run_id'] != entry.run_id:
+                    raise ValueError('Memo identity mismatch')
+                audit_path = _safe_resolve(path.parent / 'audit_report.json',
+                                           [Path(output_root) if output_root else path.parent])
+                if audit_path.is_file():
+                    from app.services.bo.four_section import _at
+                    audit = json.loads(audit_path.read_bytes())
+                    for ref in payload['sources']:
+                        if (ref['stage_name'] != 'bo_audit:' + entry.run_id or
+                                ref['sha256'] != content_hash(audit) or
+                                ref['content_hash'] != content_hash(_at(audit, ref['source_path']))):
+                            raise ValueError('Memo source differs from its exact-run recorded binding.')
+            except (ValueError, OSError, KeyError, IndexError, TypeError) as exc:
+                raise ArtifactConflictError(str(exc)) from exc
+        if entry.producer_module == 'RMS' and output_root is not None:
+            sources = payload.get('sources') or {}
+            fo_run = sources.get('fo_run_id')
+            if fo_run:
+                fo_path = _safe_resolve(Path(output_root) / 'fo' / entry.case_id / fo_run /
+                                        'financial_overview.json', [Path(output_root)])
+                if fo_path.is_file() and sources.get('fo_content_hash'):
+                    try:
+                        digest = content_hash(json.loads(fo_path.read_bytes()))
+                    except (OSError, ValueError) as exc:
+                        raise ArtifactConflictError('RMS bound FO source is unreadable.') from exc
+                    if digest != sources['fo_content_hash']:
+                        raise ArtifactConflictError('RMS FO source differs from its recorded content-hash binding.')
+    return raw, payload
+
+
+def _read_entry(source, entry, expected_source_hash=None):
+    path = _safe_resolve(source.repo_root / entry.file_location,
+                         [source.output_root, *source.m3_dirs])
+    if not path.is_file():
+        raise ArtifactAccessError(f'artifact file missing: {entry.file_location}')
+    raw, payload = _verified_read(path, entry, source.output_root)
+    if expected_source_hash:
+        from hashlib import sha256
+        if sha256(raw).hexdigest() != expected_source_hash:
+            raise ArtifactConflictError('Recorded source bytes changed since selection; no fallback run was loaded.')
+    return raw, payload
 
 
 def _safe_resolve(candidate: Path, roots: list[Path]) -> Path:
@@ -116,6 +214,7 @@ def load_artifact(
     output_dir: str | Path,
     *,
     repo_root: str | Path = ".",
+    expected_source_hash: str | None = None,
 ) -> tuple[Any, ArtifactManifest]:
     """Return ``(payload, manifest)`` for an artifact, enforcing access bounds.
 
@@ -139,11 +238,7 @@ def load_artifact(
             f"{entry.status_reason or 'not produced'})"
         )
 
-    roots = [source.repo_root, source.output_root, *source.m3_dirs]
-    path = _safe_resolve(source.repo_root / entry.file_location, roots)
-    if not path.is_file():
-        raise ArtifactAccessError(f"artifact file missing: {entry.file_location}")
-    payload = json.loads(path.read_text(encoding="utf-8"))
+    _, payload = _read_entry(source, entry, expected_source_hash)
     # Entries that index a slice of a shared recorded file (BO audit or memo)
     # return THAT producer's own recorded output, not the whole file.
     if entry.audit_subpath:
@@ -173,8 +268,7 @@ def _extract_slice(doc: Any, entry) -> Any:
         if isinstance(node, dict) and part in node:
             node = node[part]
         else:
-            return {"error": f"recorded slice '{subpath}' not found",
-                    "artifact_id": entry.artifact_id}
+            raise ArtifactConflictError(f"Recorded slice '{subpath}' not found in this run.")
     return node
 
 
@@ -184,6 +278,7 @@ def load_artifact_bytes(
     output_dir: str | Path,
     *,
     repo_root: str | Path = ".",
+    expected_source_hash: str | None = None,
 ) -> tuple[bytes, str, ArtifactManifest]:
     """Return ``(raw_bytes, original_sha256, manifest)`` for a whole-file artifact.
 
@@ -213,11 +308,7 @@ def load_artifact_bytes(
             f"{entry.status_reason or 'not produced'})")
 
     import hashlib
-    roots = [source.repo_root, source.output_root, *source.m3_dirs]
-    path = _safe_resolve(source.repo_root / entry.file_location, roots)
-    if not path.is_file():
-        raise ArtifactAccessError(f"artifact file missing: {entry.file_location}")
-    raw = path.read_bytes()
+    raw, _ = _read_entry(source, entry, expected_source_hash)
     original_sha256 = hashlib.sha256(raw).hexdigest()
     return raw, original_sha256, manifest
 
@@ -249,8 +340,7 @@ def _extract_agent_slice(audit: Any, entry, *, agent_id: str | None = None,
     if agent_block is None:
         # The named producer is not in this run's audit -> report absence
         # explicitly rather than selecting unrelated records.
-        out["error"] = (f"no recorded audit block for agent '{agent_id}' in this run")
-        return out
+        raise ArtifactConflictError(f"No recorded audit block for agent '{agent_id}' in this run.")
 
     # VALIDATION view: a validator node for this agent shows the validation
     # record only (the roster-v3 agent carries its validator's result).
@@ -265,6 +355,7 @@ def _extract_agent_slice(audit: Any, entry, *, agent_id: str | None = None,
             "validation_issues": agent_block.get("validation_issues") or [],
             "validator_adjustments": agent_block.get("validator_adjustments") or [],
             "runs": [{"agent_run_id": r.get("agent_run_id"),
+                      "error_state": r.get("error_state"),
                       "validation_status": r.get("validation_status"),
                       "validation_detail": r.get("validation_detail")}
                      for r in runs],
@@ -287,6 +378,9 @@ def _extract_agent_slice(audit: Any, entry, *, agent_id: str | None = None,
         out["evidence_packet"] = next(
             (p for p in packets if isinstance(p, dict) and p.get("agent_id") == agent_id),
             None)
+    referenced = set(_collect_evidence_ids(out))
+    out['sources'] = [record for record in audit.get('sources') or []
+                      if isinstance(record, dict) and record.get('evidence_id') in referenced]
     return out
 
 
@@ -298,7 +392,8 @@ def _collect_evidence_ids(payload: Any) -> list[str]:
         if isinstance(node, dict):
             for key, value in node.items():
                 if key in {"evidence_ids", "packet_evidence_ids", "source_fact_ids",
-                           "evidence_refs"} and isinstance(value, list):
+                           "evidence_refs", "supporting_evidence_ids", "contradicting_evidence_ids",
+                           "citation_ids"} and isinstance(value, list):
                     ids.update(str(v) for v in value if isinstance(v, (str, int)))
                 elif key in {"evidence_id", "fact_id", "source_id"} and isinstance(
                         value, (str, int)):
@@ -319,6 +414,7 @@ def inspect_node(
     output_dir: str | Path,
     *,
     repo_root: str | Path = ".",
+    expected_source_hash: str | None = None,
 ) -> dict[str, Any]:
     """Assemble the node-inspector payload for one artifact.
 
@@ -355,6 +451,7 @@ def inspect_node(
         "fo_triggers_fired": list(entry.fo_triggers_fired),
         "fo_prechecks": list(entry.fo_prechecks),
         "schema_name": entry.schema_name,
+        "schema_version": entry.schema_version,
         "content_hash": entry.content_hash,       # canonical SHA-256 of the payload
         "canonical_content_hash": entry.content_hash,
         "original_file_sha256": None,             # set below for whole-file artifacts
@@ -375,24 +472,34 @@ def inspect_node(
         "payload": None,
         "evidence_ids": list(entry.evidence_ids),
     }
+    from app.services.registry.stage_report import states, presentation
+    info['states'] = states(entry)
 
     from app.schemas.artifact_manifest import ExecutionStatus
     if not entry.file_location or entry.status in (
             ExecutionStatus.ABSENT, ExecutionStatus.SKIPPED):
         # Absent/skipped: report the reason, never fabricate or load a payload.
+        info['payload_available'] = False
+        info['presentation'] = presentation(info)
         return info
 
-    # Original-bytes hash only for whole-file artifacts (slices have no own file).
-    if not entry.audit_subpath:
-        try:
-            _, original_sha, _ = load_artifact_bytes(
-                case_id, artifact_id, output_dir, repo_root=repo_root)
-            info["original_file_sha256"] = original_sha
-        except ArtifactAccessError:
-            pass
-
-    payload, _ = load_artifact(case_id, artifact_id, output_dir, repo_root=repo_root)
+    source = _source_for(case_id, output_dir, repo_root)
+    raw, payload = _read_entry(source, entry, expected_source_hash)
+    info['source_disclosures'] = {key: payload[key] for key in
+        ['data_status', 'simulation_notice', 'simulation_provenance', 'agent_mode', 'synthetic', 'simulated']
+        if isinstance(payload, dict) and key in payload}
+    if entry.audit_subpath:
+        payload = _extract_slice(payload, entry)
     info["payload"] = payload
+    from app.core.hashing import content_hash
+    from app.services.registry.stage_report import states, presentation
+    info['canonical_content_hash'] = content_hash(payload)
+    from hashlib import sha256
+    info['source_file_sha256'] = sha256(raw).hexdigest()
+    info['states'] = states(entry, payload)
+    if not entry.audit_subpath:
+        from hashlib import sha256
+        info['original_file_sha256'] = sha256(raw).hexdigest()
     if not info["evidence_ids"]:
         info["evidence_ids"] = _collect_evidence_ids(payload)
     if isinstance(payload, dict):
@@ -401,4 +508,5 @@ def inspect_node(
             info["validator_issues"] = issues
         if payload.get("rejected_items"):
             info["rejected_items"] = payload["rejected_items"]
+    info['presentation'] = presentation(info)
     return info

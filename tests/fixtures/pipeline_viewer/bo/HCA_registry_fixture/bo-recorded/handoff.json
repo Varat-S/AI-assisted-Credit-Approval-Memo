@@ -1,0 +1,11 @@
+{
+  "case_id": "HCA_registry_fixture",
+  "analysis_run_id": "bo-recorded",
+  "human_review_status": "pending",
+  "conclusion_status": "rejected",
+  "requires_human_review": true,
+  "unresolved_challenges": [
+    "Concentration risk requires analyst review."
+  ],
+  "data_status": "Synthetic viewer fixture"
+}

@@ -43,10 +43,13 @@ def test_explorer_indexes_debt_assessment_and_validator(dual_m4_run):
     assert f"bo.validator8_strategy.{run_id}" in ids
 
     debt = m.by_id(f"bo.m4_debt.{run_id}")
-    assert debt.status == ExecutionStatus.VALIDATED
+    # This historical reduced fixture omits tranche-level filing evidence.
+    # Current Validator 8 correctly rejects it under V8-07; the viewer must
+    # preserve that recorded failure rather than promote it to success.
+    assert debt.status == ExecutionStatus.FAILED
     assert debt.producer_agent == "module4_debt_structure_specialist"
     v8 = m.by_id(f"bo.validator8_debt.{run_id}")
-    assert v8.status == ExecutionStatus.VALIDATED
+    assert v8.status == ExecutionStatus.FAILED
     assert v8.producer_validator == "validator_8_debt_structure"
 
 
@@ -58,7 +61,7 @@ def test_graph_nodes_resolve_to_dual_m4_artifacts_same_run(dual_m4_run):
     v8_debt = next(n for n in g["nodes"] if n["id"] == "validator.v8_debt")
     v8_strat = next(n for n in g["nodes"] if n["id"] == "validator.v8_strategy")
     assert debt_node["artifact_id"] == f"bo.m4_debt.{run_id}"
-    assert debt_node["status"] == "validated"
+    assert debt_node["status"] == "failed"
     assert v8_debt["artifact_id"] == f"bo.validator8_debt.{run_id}"
     assert v8_strat["artifact_id"] == f"bo.validator8_strategy.{run_id}"
     # Both strategy and debt capabilities present, distinct, same run.
@@ -74,7 +77,9 @@ def test_clicking_debt_node_returns_its_own_assessment(dual_m4_run):
     # the whole memo.
     assert payload["agent_id"] == "module4_debt_structure_specialist"
     assert payload["assessment"]["deliverable_1"]["senior_notes_schedule"]
-    assert payload["validator_report"]["passed"] is True
+    assert payload["validator_report"]["passed"] is False
+    assert any(c["check_id"] == "V8-07-FILED-AMOUNTS" and not c["passed"]
+               for c in payload["validator_report"]["checks"])
     assert "module_conclusions" not in payload
 
 
