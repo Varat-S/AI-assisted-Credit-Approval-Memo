@@ -24,6 +24,7 @@ from app.services.modules.module4.specialist import (
     Module4Inputs,
     Module4RejectedError,
 )
+from app.services.modules.module4.filed_total import filed_debt_total
 from tests.fixtures.hca_module4 import hca_module4_output
 
 
@@ -232,6 +233,105 @@ def test_items_that_close_the_gap_are_kept(db_session) -> None:
     assert result.validated is True, [c.detail for c in result.validator8.failures]
     assert [i.amount_m for i in result.output.deliverable_1.reconciling_items] == [-436.0]
     assert result.dropped_reconciling_items == []
+
+
+# States every amount the HCA fixture reports, so check 7 passes and the
+# reconciliation is what these tests exercise.
+FIXTURE_SCHEDULE = ("5.000% notes 700\n5.250% notes 750\n5.750% notes 1,500\n6.200% notes 1,250\n"
+                    "Other senior unsecured notes 39,050\nDebentures 450\nCommercial paper 2,207 "
+                    "of a 4,000 program\nOther senior secured debt 1,021\nRevolving credit "
+                    "facility availability 8,000")
+
+
+def _tagged_inputs() -> Module4Inputs:
+    """HCA FY2025's tagged total debt, face total and issuance costs."""
+    inputs = _filing_inputs()
+    inputs.sec_filing_snippets.append({"fact_id": "ev_schedule", "text": FIXTURE_SCHEDULE})
+    inputs.filed_total = filed_debt_total([
+        {"fact_id": "x_total", "name": "us-gaap:DebtLongtermAndShorttermCombinedAmount",
+         "normalized_value": 46492.0, "normalized_unit": "USD_million", "period_end": "2025-12-31"},
+        {"fact_id": "x_face", "name": "us-gaap:DebtInstrumentCarryingAmount",
+         "normalized_value": 46928.0, "normalized_unit": "USD_million", "period_end": "2025-12-31"},
+        {"fact_id": "x_costs", "name": "us-gaap:DeferredFinanceCostsNet", "source_label": "Deferred Finance Costs Net",
+         "normalized_value": 436.0, "normalized_unit": "USD_million", "period_end": "2025-12-31"},
+    ])
+    return inputs
+
+
+def test_the_tagged_total_replaces_the_models_pick(db_session) -> None:
+    """The model reports LongTermDebt (44,285, no commercial paper) and an invented cost line;
+    the tagged total and its tagged bridge stand in for both."""
+    specialist, backend, _ = _specialist(db_session)
+    data = _unreconciled()
+    framework = data["deliverable_1"]["creditor_priority_framework"]
+    framework["consolidated_total_indebtedness_m"] = 44285.0
+    data["deliverable_1"]["reconciling_items"] = [_item(amount_m=-224.0, quote="Debt issuance costs (224)")]
+    backend.register("analyze", data)
+
+    result = specialist.run(_tagged_inputs())
+
+    assert result.validated is True, [c.detail for c in result.validator8.failures]
+    d1 = result.output.deliverable_1
+    assert d1.creditor_priority_framework.consolidated_total_indebtedness_m == 46492.0
+    assert [(i.amount_m, i.evidence_id) for i in d1.reconciling_items] == [(-436.0, "x_costs")]
+    assert result.filed_total["model_total_m"] == 44285.0
+    assert [i["amount_m"] for i in result.filed_total["model_reconciling_items"]] == [-224.0]
+    assert result.reconciliation_followup is None
+
+
+def _total_only_inputs(total_m: float) -> Module4Inputs:
+    """A tagged total with no tagged costs line to bridge it to the face total."""
+    inputs = _tagged_inputs()
+    inputs.filed_total = filed_debt_total([
+        {"fact_id": "x_total", "name": "us-gaap:DebtAndCapitalLeaseObligations",
+         "normalized_value": total_m, "normalized_unit": "USD_million", "period_end": "2025-12-31"}])
+    return inputs
+
+
+def test_without_a_bridge_a_face_total_the_instruments_reconcile_to_stands(db_session) -> None:
+    """EHC FY2025: the table totals at face, just above the tagged carrying total."""
+    specialist, backend, _ = _specialist(db_session)
+    data = _unreconciled()
+    data["deliverable_1"]["creditor_priority_framework"]["consolidated_total_indebtedness_m"] = 46928.0
+    backend.register("analyze", data)
+
+    result = specialist.run(_total_only_inputs(46492.0))
+
+    assert result.output.deliverable_1.creditor_priority_framework.consolidated_total_indebtedness_m == 46928.0
+    assert result.filed_total["applied"] is False
+    assert result.validator8.check("V8-01-RECONCILIATION").passed is True
+
+
+def test_without_a_bridge_a_far_off_total_is_replaced(db_session) -> None:
+    """CYH: an incomplete schedule summed to itself is 17% under the tagged total."""
+    specialist, backend, _ = _specialist(db_session)
+    data = _unreconciled()
+    data["deliverable_1"]["creditor_priority_framework"]["consolidated_total_indebtedness_m"] = 46928.0
+    backend.register("analyze", data)
+
+    result = specialist.run(_total_only_inputs(56000.0))
+
+    assert result.output.deliverable_1.creditor_priority_framework.consolidated_total_indebtedness_m == 56000.0
+    assert result.filed_total["applied"] is True
+    assert result.validated is False
+
+
+def test_the_model_is_given_the_tagged_total() -> None:
+    given = _tagged_inputs().to_payload()["filed_debt_total"]
+    assert (given["total_m"], given["face_m"], given["bridge"]["amount_m"]) == (46492.0, 46928.0, -436.0)
+
+
+def test_with_a_tagged_bridge_a_gap_is_the_schedules_and_gets_no_follow_up(db_session) -> None:
+    specialist, backend, _ = _specialist(db_session)
+    data = _unreconciled()
+    data["deliverable_1"]["senior_notes_schedule"][0]["principal_amount_m"] += 50.0
+    backend.register("analyze", data)
+
+    result = specialist.run(_tagged_inputs())
+
+    assert result.validated is False and result.escalation_id is not None
+    assert result.validator8.check("V8-01-RECONCILIATION").observed["gap_m"] == -50.0
+    assert result.reconciliation_followup is None
 
 
 def test_senior_notes_are_listed_in_maturity_order(db_session) -> None:

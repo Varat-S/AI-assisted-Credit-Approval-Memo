@@ -28,6 +28,7 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass, replace
 from typing import Any, Optional
 
+from app.services.modules.module4.filed_total import filed_debt_total
 from app.services.modules.module4.specialist import (
     Module4Inputs,
     Module4RejectedError,
@@ -93,6 +94,8 @@ class M4DebtResult:
     dropped_reconciling_items: list[dict[str, Any]] = None  # type: ignore[assignment]
     # The failed first attempt (status, issues fed back), when a retry was made.
     first_attempt: Optional[dict[str, Any]] = None
+    # The filing's tagged total debt applied over the model's (and what the model had said).
+    filed_total: Optional[dict[str, Any]] = None
 
     def __post_init__(self) -> None:
         if self.evidence_ids is None:
@@ -120,6 +123,7 @@ class M4DebtResult:
             "reconciliation_followup": self.reconciliation_followup,
             "dropped_reconciling_items": self.dropped_reconciling_items,
             "first_attempt": self.first_attempt,
+            "filed_total": self.filed_total,
         }
 
 
@@ -215,6 +219,7 @@ def build_debt_inputs(
         structured_financials=structured,
         debt_schedule_facts=debt_facts,
         missing_critical_evidence=missing,
+        filed_total=filed_debt_total(getattr(evidence, "facts", None)),
     )
 
 
@@ -331,4 +336,5 @@ def _governed(result, inputs: Module4Inputs, enforce_validator: bool) -> M4DebtR
         validator_issues=issues,
         reconciliation_followup=result.reconciliation_followup,
         dropped_reconciling_items=result.dropped_reconciling_items,
+        filed_total=result.filed_total,
     )

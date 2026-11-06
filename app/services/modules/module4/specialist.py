@@ -11,10 +11,13 @@ Ties the three pieces together:
    :data:`app.schemas.module4.MODULE4_JSON_SCHEMA` BEFORE use.
 3. Run the deterministic :class:`DebtStructureValidator` over the parsed output
    and attach the report; its check 7 ties every reported amount to a figure
-   the filing passages or admitted facts state. Reconciling items are dropped
-   first when the
+   the filing passages or admitted facts state. When the filing tags its total
+   debt (:mod:`.filed_total`), that figure replaces the model's total, and a
+   tagged line bridging it to the face total replaces the model's reconciling
+   items, so only the instruments are left to the model. Reconciling items are
+   dropped first when the
    instruments alone already match the reported total (they would double-count).
-   When its reconciliation leaves a gap, ask the model
+   When its reconciliation leaves a gap and no tagged bridge settles it, ask the model
    ONCE to explain the gap from the filing passages it was given; each item it
    returns counts only if its quote is verbatim in those passages (check 6).
    When the validator still fails, a MANDATORY escalation is raised (explicit
@@ -35,9 +38,11 @@ from app.services.llm.client import LLMClient, ModelRunResult
 from app.services.modules.module4.prompt import MODULE4_AGENT_NAME, MODULE4_RECONCILIATION_NAME
 from app.services.modules.module4.debt_structure_validator import (
     CHECK_RECONCILIATION,
+    RECONCILING_ITEMS_REVIEW_SHARE,
     DebtStructureValidator,
     DebtStructureValidatorReport,
 )
+from app.services.modules.module4.filed_total import FiledDebtTotal
 
 # Explicit rule id for a Validator-8 failure on Module 4 output.
 RULE_VALIDATOR8_FAILURE = "R-MODULE4-VALIDATOR8-01"
@@ -67,6 +72,8 @@ class Module4Inputs:
     missing_critical_evidence: list[str] = field(default_factory=list)
     # Issues of a failed first attempt; set only on its one retry.
     validation_feedback: list[str] = field(default_factory=list)
+    # The filing's tagged total debt, which the schedule is reconciled to.
+    filed_total: FiledDebtTotal | None = None
 
     def to_payload(self) -> dict[str, Any]:
         payload: dict[str, Any] = {
@@ -75,6 +82,15 @@ class Module4Inputs:
             "debt_schedule_facts": self.debt_schedule_facts,
             "missing_critical_evidence": self.missing_critical_evidence,
         }
+        if self.filed_total is not None:
+            payload["filed_debt_total"] = {
+                "instruction": (
+                    "The filing's tagged total debt. Report total_m as "
+                    "consolidated_total_indebtedness_m. List every instrument at "
+                    "its principal; when face_m is given they sum to face_m, and "
+                    "the bridge line between face_m and total_m is added for you."),
+                **self.filed_total.to_payload(),
+            }
         if self.validation_feedback:
             payload["validation_feedback"] = {
                 "instruction": (
@@ -132,6 +148,8 @@ class Module4Result:
     reconciliation_followup: dict[str, Any] | None = None
     # Reconciling items dropped because the instruments already matched the total.
     dropped_reconciling_items: list[dict[str, Any]] = field(default_factory=list)
+    # The tagged total applied over the model's, with what the model had said.
+    filed_total: dict[str, Any] | None = None
 
     @property
     def validated(self) -> bool:
@@ -189,12 +207,18 @@ class Module4Specialist:
             )
 
         output = _in_maturity_order(Module4Output.model_validate(run.parsed))
+        output, filed = self._with_filed_total(output, inputs.filed_total)
         output, dropped = self._without_unneeded_items(output)
         passages = inputs.filing_passages()
+        tagged = _tagged_items(inputs)
         report = self._validator.validate(output, filing_passages=passages,
-                                          filed_values_m=inputs.filed_values_m())
+                                          filed_values_m=inputs.filed_values_m(),
+                                          tagged_items=tagged)
         followup = None
-        if self._enforce and not report.check(CHECK_RECONCILIATION).passed and passages:
+        # With a tagged bridge, a remaining gap is in the instruments, which the
+        # follow-up may not change: it goes to the retry instead.
+        if (self._enforce and not report.check(CHECK_RECONCILIATION).passed and passages
+                and not tagged):
             output, report, followup = self._reconcile(
                 inputs, output, report, case_version=case_version, key=key)
         escalation_id = self.escalate_validator_failure(report) if self._enforce else None
@@ -205,7 +229,25 @@ class Module4Specialist:
             escalation_id=escalation_id,
             reconciliation_followup=followup,
             dropped_reconciling_items=dropped,
+            filed_total=filed,
         )
+
+    def _with_filed_total(self, output: Module4Output, filed: FiledDebtTotal | None):
+        """Apply the tagged total, except where no tagged bridge ties it to the face total
+        and the model's total is the face total its instruments reconcile to.
+
+        EHC FY2025's debt table totals at face (2,518.5) and tags no costs line, so
+        its tagged carrying total (2,490.8) would leave the model's correct schedule
+        27.4 short. A total within ``RECONCILING_ITEMS_REVIEW_SHARE`` of the tagged
+        one is that face total; one further off (CYH's 8,637 against 10,396, an
+        incomplete schedule summed to itself) is not, and the tagged total stands.
+        """
+        if filed is not None and filed.bridge is None:
+            model_total = output.deliverable_1.creditor_priority_framework.consolidated_total_indebtedness_m
+            keep = (abs(model_total - filed.total_m) <= RECONCILING_ITEMS_REVIEW_SHARE * filed.total_m
+                    and self._validator.validate(output).check(CHECK_RECONCILIATION).passed)
+            return _with_filed_total(output, filed, keep_model_total=keep)
+        return _with_filed_total(output, filed)
 
     def _without_unneeded_items(
         self, output: Module4Output,
@@ -292,6 +334,42 @@ class Module4Specialist:
             case_id=self._case_id,
         )
         return escalation.escalation_id
+
+
+def _tagged_items(inputs: Module4Inputs) -> tuple:
+    filed = inputs.filed_total
+    return (filed.bridge,) if filed is not None and filed.bridge is not None else ()
+
+
+def _with_filed_total(
+    output: Module4Output, filed: FiledDebtTotal | None, *, keep_model_total: bool = False,
+) -> tuple[Module4Output, dict[str, Any] | None]:
+    """Put the filing's tagged total (and its tagged bridge, if any) in place of the model's.
+
+    The drag ratio is recomputed over the new total from the model's own Tier 1
+    figure. Returns the record of what was replaced, for the audit trail.
+    """
+    if filed is None:
+        return output, None
+    d1 = output.deliverable_1
+    framework = d1.creditor_priority_framework
+    record = {**filed.to_payload(),
+              "applied": not keep_model_total,
+              "model_total_m": framework.consolidated_total_indebtedness_m,
+              "model_reconciling_items": [i.model_dump(mode="json") for i in d1.reconciling_items]
+              if filed.bridge is not None else None}
+    if keep_model_total:
+        return output, record
+    framework = framework.model_copy(update={
+        "consolidated_total_indebtedness_m": filed.total_m,
+        "structural_subordination_drag_ratio": (
+            framework.tier_1_direct_opco_secured_m / filed.total_m if filed.total_m > 0
+            else framework.structural_subordination_drag_ratio),
+    })
+    update: dict[str, Any] = {"creditor_priority_framework": framework}
+    if filed.bridge is not None:
+        update["reconciling_items"] = [filed.bridge]
+    return output.model_copy(update={"deliverable_1": d1.model_copy(update=update)}), record
 
 
 def _in_maturity_order(output: Module4Output) -> Module4Output:

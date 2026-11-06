@@ -140,8 +140,13 @@ def _normalise_quote(text: str) -> str:
 
 def verify_reconciling_items(
     items: list[ReconcilingItem], filing_passages: dict[str, str] | None,
+    tagged_items=(),
 ) -> list[ReconcilingItemCheck]:
-    """Check each item against the filing text only; nothing is inferred."""
+    """Check each item against the filing text only; nothing is inferred.
+
+    ``tagged_items`` are items built from the filing's tagged XBRL facts (see
+    :mod:`.filed_total`); one of those is shown by the filing without a quote.
+    """
     passages = {k: _normalise_quote(v) for k, v in (filing_passages or {}).items()}
     checks: list[ReconcilingItemCheck] = []
     seen: set[tuple[str, float]] = set()
@@ -150,6 +155,14 @@ def verify_reconciling_items(
         amount = abs(item.amount_m)
         amounts = [float(n.replace(",", "")) for n in _NUMBER.findall(quote)]
         reason = None
+        if item in tagged_items:
+            if (item.kind.value, item.amount_m) in seen:
+                reason = "it repeats an item already counted"
+            seen.add((item.kind.value, item.amount_m))
+            checks.append(ReconcilingItemCheck(
+                item=item, verified=reason is None,
+                reason=reason or "it is tagged in the filing's XBRL and ties face to total"))
+            continue
         if not passages:
             reason = "no filing passages were supplied to check its quote against"
         elif len(quote) < MIN_QUOTE_CHARS:
@@ -215,13 +228,14 @@ class DebtStructureValidator:
 
     def validate(
         self, output: Module4Output, *, filing_passages: dict[str, str] | None = None,
-        filed_values_m=(),
+        filed_values_m=(), tagged_items=(),
     ) -> DebtStructureValidatorReport:
         """``filing_passages`` (evidence id -> text) is what reconciling items and
         reported amounts are checked against; ``filed_values_m`` are admitted
-        structured figures in $M that reported amounts may also match."""
+        structured figures in $M that reported amounts may also match;
+        ``tagged_items`` are reconciling items built from tagged XBRL facts."""
         d1 = output.deliverable_1
-        items = verify_reconciling_items(d1.reconciling_items, filing_passages)
+        items = verify_reconciling_items(d1.reconciling_items, filing_passages, tagged_items)
         adjustment = sum(c.item.amount_m for c in items if c.verified)
         checks = [
             self._check_reconciliation(d1, adjustment),

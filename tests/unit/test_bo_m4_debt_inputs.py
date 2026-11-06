@@ -31,6 +31,17 @@ def test_snapshot_fact_fields_reach_the_specialist():
         'value': 16.0, 'unit': 'USD_millions', 'period': '2025-12-31'}]
 
 
+def test_the_tagged_total_reaches_the_specialist():
+    facts = [*snapshot_facts(),
+             {'fact_id': 'total', 'name': 'us-gaap:DebtAndCapitalLeaseObligations',
+              'normalized_value': 10396.0, 'normalized_unit': 'USD_million',
+              'period_end': '2025-12-31', 'dimensions': {}}]
+    inputs = build_debt_inputs(SimpleNamespace(narrative_evidence=[], facts=facts))
+    assert inputs.filed_total.total_m == 10396.0 and inputs.filed_total.fact_id == 'total'
+    assert build_debt_inputs(SimpleNamespace(
+        narrative_evidence=[], facts=snapshot_facts())).filed_total is None
+
+
 def test_debt_text_block_is_a_quotable_snippet():
     inputs = build_debt_inputs(SimpleNamespace(narrative_evidence=[], facts=snapshot_facts()))
     [snippet] = inputs.sec_filing_snippets
