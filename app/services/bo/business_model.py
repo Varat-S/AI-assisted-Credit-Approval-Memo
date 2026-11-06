@@ -11,6 +11,7 @@ import re
 from app.core.hashing import content_hash
 from app.prompts.business_model import Description, NAME, PROMPT
 from app.prompts.registry import PromptRegistry
+from app.services.bo.hypotheses import quote_in_passage
 from app.services.llm.client import LLMClient
 from app.services.pipeline.artifacts import ArtifactIntegrityError, StageRecorder, verified_artifacts
 
@@ -48,7 +49,7 @@ def select_passages(snapshot):
 
 
 def validate_description(answer, passages):
-    """Validate references/quote occurrence, not semantic entailment or neutrality."""
+    """Validate references/quote occurrence (whitespace-normalised), not semantic entailment or neutrality."""
     value = Description.model_validate(answer).model_dump()
     if value['status'] == 'insufficient_evidence':
         if value['paragraphs'] or not (value['unavailable_reason'] or '').strip():
@@ -63,7 +64,9 @@ def validate_description(answer, passages):
             words += len(re.findall(r'\S+', sentence['text']))
             for citation in sentence['evidence']:
                 source = lookup.get(citation['evidence_id'])
-                if source is None or citation['quote'] not in source['text']:
+                # Same rule as the other BO specialists: exact words, with whitespace and typographic
+                # punctuation normalised (filing text keeps line breaks between table cells and lines).
+                if source is None or not quote_in_passage(citation['quote'], source['text']):
                     raise ValueError('A supporting quotation is not exact selected-10-K evidence.')
     # The approved word count is a target; allow modest variation, never a long report.
     if not 60 <= words <= 220:

@@ -31,6 +31,7 @@ report. It is deterministic (no model) and writes nothing to the database.
 from __future__ import annotations
 
 import json
+import logging
 import sqlite3
 import threading
 import traceback
@@ -217,23 +218,6 @@ def run_bo_fo(*, database: Path, folder: str, bo_backend, fo_backend, fo_mode: s
                 ).run_case(case_id, package=package, produce_pdf=produce_pdf)
                 say("bo", "recording the Business Overview")
                 session.commit()
-                # Informational output is generated only AFTER the analytical run
-                # and handoff are frozen. It is never passed to FO, RMS or BO agents.
-                if stop is not None and stop.is_set():
-                    return bo_summary(result, validators=bo_validators)
-                say("bo", "describing the business model")
-                stage("bo", "business_model", "running")
-                try:
-                    from app.services.bo.business_model import run_description
-                    with session.begin_nested():
-                        description = run_description(session, result.analysis_run_id, bo_backend)
-                    session.commit()
-                    informational_status = description['status']
-                except Exception:
-                    session.rollback()
-                    informational_status = 'unavailable'
-                    say("bo", "Business Model unavailable; saved credit analysis is unchanged")
-                stage("bo", "business_model", "completed", {"informational_status": informational_status})
         finally:
             engine.dispose()
         return bo_summary(result, validators=bo_validators)
@@ -294,6 +278,10 @@ def run_bo_fo(*, database: Path, folder: str, bo_backend, fo_backend, fo_mode: s
                 if isinstance(exc, StagingKept):
                     outcome[section]["staging_database"] = str(exc.staging)
                 say(section, "failed")
+    if outcome.get("bo", {}).get("status") == "completed" and not (stop is not None and stop.is_set()):
+        describe_business_model(database=database, lock_wait=lock_wait, backend=bo_backend,
+                                analysis_run_id=outcome["bo"]["summary"]["analysis_run_id"],
+                                say=say, stage=stage)
     if stop is not None and stop.is_set():
         outcome["rms"] = {"status": "skipped", "reason": "The run was stopped."}
         if not bo_only and not fo_only:
@@ -301,6 +289,38 @@ def run_bo_fo(*, database: Path, folder: str, bo_backend, fo_backend, fo_mode: s
     else:
         outcome["rms"] = run_rms(outcome, rms_request, output_root, say)
     return outcome
+
+
+def describe_business_model(*, database: Path, lock_wait: float, backend, analysis_run_id: str, say, stage) -> str:
+    """The informational Business Model description, generated once BOTH sections have finished.
+
+    It runs after the BO is recorded and after the FO's staging merge, so no other connection is
+    writing: in the BO thread it raced the FO merge's write lock and SQLite refused the read-to-write
+    upgrade ("database is locked"). It is never passed to FO, RMS or BO agents, and a failure here
+    leaves the recorded credit analysis unchanged. Returns the informational status."""
+    say("bo", "describing the business model")
+    stage("bo", "business_model", "running")
+    engine, factory = create_engine_and_session(f"sqlite:///{database.as_posix()}", sqlite_timeout=lock_wait)
+    error = None
+    try:
+        from app.services.bo.business_model import run_description
+        with factory() as session:
+            try:
+                with session.begin_nested():
+                    status = run_description(session, analysis_run_id, backend)['status']
+                session.commit()
+            except Exception:
+                session.rollback()
+                raise
+    except Exception as exc:
+        logging.getLogger(__name__).exception("Business Model step failed for %s", analysis_run_id)
+        status = "unavailable"
+        error = {"type": type(exc).__name__, "message": str(exc)[:500], "traceback": traceback.format_exc()[-4000:]}
+        say("bo", "Business Model unavailable; saved credit analysis is unchanged")
+    finally:
+        engine.dispose()
+    stage("bo", "business_model", "completed", {"informational_status": status, **({"error": error} if error else {})})
+    return status
 
 
 def run_rms(outcome: dict, request: rms.RmsRequest | None, output_root, say) -> dict:

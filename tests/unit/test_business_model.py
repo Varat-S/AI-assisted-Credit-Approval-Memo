@@ -63,6 +63,17 @@ def test_unsupported_or_unbounded_descriptions_rejected(change):
     with pytest.raises(ValueError): validate_description(value, select_passages(snapshot())[0])
 
 
+def test_quote_spanning_filing_line_breaks_is_accepted():
+    # Filing text keeps line breaks (table cells, wrapped lines); the model quotes it with spaces.
+    data = snapshot()
+    data['narrative_evidence'][0]['text'] = TEXT.replace('outpatient clinics. Patients', 'outpatient clinics.\nPatients')
+    value = answer()
+    assert validate_description(value, select_passages(data)[0])['status'] == 'complete'
+    value['paragraphs'][0]['sentences'][0]['evidence'][0]['quote'] = TEXT.replace('Medicare', 'Medicaree')
+    with pytest.raises(ValueError):
+        validate_description(value, select_passages(data)[0])
+
+
 def test_insufficient_evidence_has_no_invented_description():
     assert validate_description({'status': 'insufficient_evidence', 'paragraphs': [],
                                  'unavailable_reason': 'Services are not described.'}, [])['paragraphs'] == []
