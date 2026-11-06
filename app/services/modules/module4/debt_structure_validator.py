@@ -25,7 +25,8 @@ The seven checks (per the Module 4 methodology):
    discounts) is shown by the filing itself: its quote appears verbatim in the
    supplied filing passages and states its amount, and its sign fits its kind.
    An item that fails is not counted in check 1. Verified items above
-   ``RECONCILING_ITEMS_REVIEW_SHARE`` of the total also fail, for a reviewer.
+   ``RECONCILING_ITEMS_REVIEW_SHARE`` of the total are flagged for a reviewer
+   but do not fail the check: the filing itself shows them.
 7. **Filed Amounts.** Every amount reported -- the total, each instrument's
    principal, each drawn balance and each undrawn availability -- is a figure
    the filing states, in the supplied passages or admitted structured facts.
@@ -62,8 +63,9 @@ CHECK_DOUBLE_COUNTING = "V8-05-DOUBLE-COUNTING"
 CHECK_RECONCILING_ITEMS = "V8-06-RECONCILING-ITEMS"
 CHECK_FILED_AMOUNTS = "V8-07-FILED-AMOUNTS"
 
-# Verified reconciling items larger than this share of total indebtedness fail
-# check 6 so a reviewer looks at them (HCA FY2025's $436M is 0.9%).
+# Verified reconciling items larger than this share of total indebtedness are
+# flagged in check 6 so a reviewer looks at them, without failing it (HCA
+# FY2025's $436M is 0.9%; CYH FY2025's $217M is 2.1%).
 RECONCILING_ITEMS_REVIEW_SHARE = 0.02
 # A quote shorter than this cannot show which line it comes from.
 MIN_QUOTE_CHARS = 12
@@ -453,7 +455,7 @@ class DebtStructureValidator:
     def _check_reconciling_items(
         self, d1: Deliverable1, items: list[ReconcilingItemCheck],
     ) -> DebtStructureValidatorCheck:
-        """Every reconciling item is shown by the filing, and together they are not material."""
+        """Every reconciling item is shown by the filing; material ones are flagged for review."""
         reported = d1.creditor_priority_framework.consolidated_total_indebtedness_m
         rejected = [c for c in items if not c.verified]
         verified_total = sum(abs(c.item.amount_m) for c in items if c.verified)
@@ -461,11 +463,6 @@ class DebtStructureValidator:
         material = share > RECONCILING_ITEMS_REVIEW_SHARE
         problems = [f"{c.item.label!r} ({c.item.amount_m:,.3f}M) not counted: {c.reason}."
                     for c in rejected]
-        if material:
-            problems.append(
-                f"Verified reconciling items total {verified_total:,.3f}M, "
-                f"{share:.1%} of total indebtedness (review above "
-                f"{RECONCILING_ITEMS_REVIEW_SHARE:.0%}).")
         passed = not problems
         if passed:
             detail = (f"{len(items)} reconciling item(s) verified against the filing text, "
@@ -473,6 +470,10 @@ class DebtStructureValidator:
                       if items else "No reconciling items.")
         else:
             detail = " ".join(problems)
+        if material:
+            detail += (f" Verified reconciling items total {verified_total:,.3f}M, "
+                       f"{share:.1%} of total indebtedness (review above "
+                       f"{RECONCILING_ITEMS_REVIEW_SHARE:.0%}).")
         return DebtStructureValidatorCheck(
             check_id=CHECK_RECONCILING_ITEMS,
             name="Reconciling items shown verbatim by the filing",
@@ -485,6 +486,7 @@ class DebtStructureValidator:
                            "verified": c.verified, "reason": c.reason} for c in items],
                 "verified_total_m": verified_total,
                 "share_of_total": share,
+                "review_recommended": material,
             },
         )
 

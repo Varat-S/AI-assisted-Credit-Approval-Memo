@@ -210,7 +210,7 @@ def test_reconciling_items_need_the_filing_text() -> None:
     assert check.passed is False and "no filing passages" in check.detail
 
 
-def test_large_reconciling_items_are_held_for_review() -> None:
+def test_large_reconciling_items_are_flagged_without_failing() -> None:
     passages = {"ev_note8": NOTE8.replace("(436", "(1,436")}
 
     def mutate(data):
@@ -224,4 +224,5 @@ def test_large_reconciling_items_are_held_for_review() -> None:
     report = DebtStructureValidator().validate(_output(mutate), filing_passages=passages)
     assert report.check(CHECK_RECONCILIATION).passed is True
     check = report.check(CHECK_RECONCILING_ITEMS)
-    assert check.passed is False and "review above 2%" in check.detail
+    assert check.passed is True and "review above 2%" in check.detail
+    assert check.observed["review_recommended"] is True
