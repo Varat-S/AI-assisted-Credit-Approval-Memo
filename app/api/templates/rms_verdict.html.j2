@@ -7,7 +7,7 @@
 {% if rms.stale %}<div class="notice" id="stale"><strong>Out of date:</strong> {{ rms.stale|join('; ') }}. <form method="post" action="/cases/{{ view.case_id }}/credit/assess" style="display:inline">
 <input type="hidden" name="fo_run" value="{{ fo_run }}"><input type="hidden" name="bo_run" value="{{ bo_run }}">{% if analysis %}<input type="hidden" name="job" value="{{ analysis.job.job_id }}">{% endif %}
 <input type="hidden" name="requested_amount_m" value="{{ rms.request.requested_amount_m if rms.request.requested_amount_m is not none else '' }}"><input type="hidden" name="tenor_years" value="{{ rms.request.tenor_years }}">
-<input type="hidden" name="interest_rate" value="{{ rms.request.interest_rate if rms.request.interest_rate is not none else '' }}"><input type="hidden" name="collateral_value_m" value="{{ rms.request.collateral_value_m if rms.request.collateral_value_m is not none else '' }}">
+<input type="hidden" name="interest_rate" value="{{ rms.request.interest_rate if rms.request.interest_rate is not none else '' }}">
 <button type="submit">Re-assess now</button></form></div>{% endif %}
 {% if r.gates %}<p><strong>Gates holding:</strong></p><ul>{% for g in r.gates %}<li>{{ g }}</li>{% endfor %}</ul>{% endif %}
 {% if r.warnings %}<p class="warn"><strong>Warnings</strong> (gates waived because the BO reviewer accepted the handoff):</p><ul>{% for g in r.warnings %}<li>{{ g }}</li>{% endfor %}</ul>{% endif %}

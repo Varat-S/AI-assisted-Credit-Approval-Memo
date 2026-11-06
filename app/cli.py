@@ -268,7 +268,6 @@ def main(argv=None):
                          help="A debt capacity report: no requested amount, no verdict")
     run_rms.add_argument("--tenor", type=int, help="Requested tenor in years (default 5)")
     run_rms.add_argument("--rate", type=float, help="Interest rate, e.g. 0.065 (default: SOFR + credit spread + business premium)")
-    run_rms.add_argument("--collateral-value", type=float, help="Collateral value, US$ millions")
     run_rms.add_argument("--fo-run", help="FO run id (default: the case's latest)")
     run_rms.add_argument("--bo-run", help="BO analysis run id (default: the case's latest handoff)")
     filing_fetch = commands.add_parser(
@@ -328,8 +327,6 @@ def main(argv=None):
                            "applied (an ungoverned draft, always left for human review)")
     both.add_argument("--tenor", type=int, help="Requested tenor in years (default 5)")
     both.add_argument("--rate", type=float, help="Interest rate, e.g. 0.065 (default: SOFR + credit spread + business premium)")
-    both.add_argument("--collateral-value", type=float,
-                      help="Collateral value, US$ millions (a secured loan's LTV test)")
     approve = commands.add_parser(
         "approve", help="Record your explicit approval of the exact draft content"
     )
@@ -419,10 +416,9 @@ def main(argv=None):
 
                 if args.capacity_only and args.amount is not None:
                     raise ValueError("--capacity-only and --amount can't be used together.")
-                terms_given = args.tenor or args.rate is not None or args.collateral_value is not None
+                terms_given = args.tenor or args.rate is not None
                 # No amount and no terms reuses the latest request; --capacity-only or terms alone size capacity.
-                request = (RmsRequest(args.amount, tenor_years=args.tenor, interest_rate=args.rate,
-                                      collateral_value_m=args.collateral_value)
+                request = (RmsRequest(args.amount, tenor_years=args.tenor, interest_rate=args.rate)
                            if args.amount is not None or args.capacity_only or terms_given else None)
                 print(json.dumps(assess_case(session, args.case_id, output_root=args.output, request=request,
                                              fo_run_id=args.fo_run, bo_run_id=args.bo_run), indent=2))
@@ -661,8 +657,7 @@ def _run_bo_fo(session, database, args):
     from app.services.rms import RmsRequest
 
     # Without --amount RMS gives a debt capacity report, sized at --tenor / --rate when given.
-    rms_request = RmsRequest(args.amount, tenor_years=args.tenor, interest_rate=args.rate,
-                             collateral_value_m=args.collateral_value)
+    rms_request = RmsRequest(args.amount, tenor_years=args.tenor, interest_rate=args.rate)
     if args.ticker:
         if bool(args.fy) == bool(args.accession):
             raise ValueError("--ticker requires exactly one of --fy or --accession.")

@@ -302,7 +302,7 @@ def test_rms_runs_after_both_sections_complete(shared, tmp_path):
     assert record["sources"]["fo_run_id"] == out["fo"]["summary"]["run_id"]
     assert record["request"]["requested_amount_m"] == 500 and record["requires_human_review"] is True
     # The offline BO asserts nothing, so Module 4 has no validated output and RMS refers the case.
-    assert summary["verdict"] == "refer" and any(g.startswith("RMS-G05") for g in summary["gates"])
+    assert summary["verdict"] == "escalated" and any(g.startswith("RMS-G05") for g in summary["gates"])
 
 
 def test_rms_is_skipped_when_a_section_fails(shared, tmp_path, monkeypatch):
@@ -502,7 +502,7 @@ def test_browser_upload_then_run_both(client, loose):
         time.sleep(0.5)
     assert job["status"] == "finished", job
     assert job["sections"]["bo"]["status"] == job["sections"]["fo"]["status"] == "completed"
-    assert job["sections"]["rms"]["status"] == "completed" and job["result"]["rms"]["summary"]["verdict"] == "refer"
+    assert job["sections"]["rms"]["status"] == "completed" and job["result"]["rms"]["summary"]["verdict"] == "escalated"
     page = client.get(f"/run?job={job_id}").text
     assert "Risk Mitigation &amp; Structuring" in page and "US$500.0M requested" in page
     # NVIDIA isn't benchmarked as a healthcare company, so there is no FO composite and no capacity to show.

@@ -90,7 +90,6 @@ def credit_view(session, case_id: str, *, output_root, fo_run_id: str | None = N
                         for r in reversed(history)],
             "request": {"requested_amount_m": request.get("requested_amount_m"),
                         "tenor_years": request.get("tenor_years") or DEFAULT_TENOR_YEARS,
-                        "interest_rate": request.get("interest_rate"),
-                        "collateral_value_m": request.get("collateral_value_m")},
+                        "interest_rate": request.get("interest_rate")},
         },
     }

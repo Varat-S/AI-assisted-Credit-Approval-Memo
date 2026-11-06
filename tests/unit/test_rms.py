@@ -222,8 +222,14 @@ def test_a_secured_placement_adds_collateral_and_leaves_ltv_to_a_valuation():
     ids = [m["rule_id"] for m in r.mitigants]
     assert {"RMS-M08", "RMS-M09"} <= set(ids)
     assert "anti-assignment" in next(m for m in r.mitigants if m["rule_id"] == "RMS-M08")["mitigant"]
-    # No collateral value: LTV is untested (a condition precedent), not a reason to refer.
-    assert r.feasibility["unavailable"] == ["ltv"] and r.feasibility["failures"] == []
+    # Collateral is not valued: no LTV test (the valuation is a condition precedent), nothing to escalate on.
+    assert "ltv" not in r.feasibility and r.feasibility["unavailable"] == [] and r.feasibility["failures"] == []
+
+
+def test_a_recorded_request_with_a_collateral_value_still_loads():
+    request = RmsRequest.from_record({"requested_amount_m": 2000, "tenor_years": 5, "interest_rate": None,
+                                      "purpose": None, "collateral_value_m": 2500})
+    assert request == RmsRequest(2000, tenor_years=5)
 
 
 def test_fo_severity_floor_carries_into_the_adjusted_grade():
@@ -252,12 +258,12 @@ def _incomplete_m4():
 
 @pytest.mark.parametrize("fo, bo, gate, verdict", [
     (fo_with(going_concern="fail"), {"m4_analysis": M4}, "RMS-G01", "decline"),
-    ({**FO, "escalations": [{"id": "e1", "type": "measure_override"}]}, {"m4_analysis": M4}, "RMS-G02", "refer"),
-    (fo_with(covenants="breach"), {"m4_analysis": M4}, "RMS-G03", "refer"),
-    (FO, {}, "RMS-G05", "refer"),
-    (FO, {"m4_analysis": _incomplete_m4()}, "RMS-G05", "refer"),
-    (FO, {"handoff": handoff(escalations=[{"challenge_id": "c1", "severity": "high"}])}, "RMS-G06", "refer"),
-    (FO, {"m4_analysis": _mismatched_m4()}, "RMS-G07", "refer"),
+    ({**FO, "escalations": [{"id": "e1", "type": "measure_override"}]}, {"m4_analysis": M4}, "RMS-G02", "escalated"),
+    (fo_with(covenants="breach"), {"m4_analysis": M4}, "RMS-G03", "escalated"),
+    (FO, {}, "RMS-G05", "escalated"),
+    (FO, {"m4_analysis": _incomplete_m4()}, "RMS-G05", "escalated"),
+    (FO, {"handoff": handoff(escalations=[{"challenge_id": "c1", "severity": "high"}])}, "RMS-G06", "escalated"),
+    (FO, {"m4_analysis": _mismatched_m4()}, "RMS-G07", "escalated"),
 ])
 def test_hard_gates_decline_or_refer(fo, bo, gate, verdict):
     r = assess(RmsRequest(2000), fo, **bo)
@@ -277,12 +283,12 @@ def _reviewed(review, m4=M4, **kw):
 def test_an_accepted_bo_turns_its_gates_into_warnings(bo, gate):
     r = assess(RmsRequest(2000), FO, handoff=bo)
     assert r.gates == [] and r.verdict == "approve" and r.approved_amount_m == 2000
-    assert [(w["gate_id"], w["outcome"], w["would_have_been"]) for w in r.warnings] == [(gate, "warning", "refer")]
+    assert [(w["gate_id"], w["outcome"], w["would_have_been"]) for w in r.warnings] == [(gate, "warning", "escalated")]
 
 
 def test_a_pending_bo_still_holds_its_gates():
     r = assess(RmsRequest(2000), FO, handoff=_reviewed("pending", _mismatched_m4()))
-    assert [g["gate_id"] for g in r.gates] == ["RMS-G07"] and r.verdict == "refer" and r.warnings == []
+    assert [g["gate_id"] for g in r.gates] == ["RMS-G07"] and r.verdict == "escalated" and r.warnings == []
 
 
 def test_an_accepted_bo_does_not_waive_fo_gates_or_a_missing_m4():
@@ -291,12 +297,12 @@ def test_an_accepted_bo_does_not_waive_fo_gates_or_a_missing_m4():
     assert [w["gate_id"] for w in r.warnings] == ["RMS-G07"]
     no_m4 = {"module_conclusions": {}, "human_review_status": "accepted"}
     r = assess(RmsRequest(2000), FO, handoff=no_m4)
-    assert "RMS-G05" in [g["gate_id"] for g in r.gates] and r.verdict == "refer"
+    assert "RMS-G05" in [g["gate_id"] for g in r.gates] and r.verdict == "escalated"
 
 
 def test_a_referral_still_drafts_provisional_terms():
     r = assess(RmsRequest(2000), FO)  # no Module 4 output
-    assert r.verdict == "refer" and r.terms["provisional"] is True and r.terms["amount_m"] == 2000
+    assert r.verdict == "escalated" and r.terms["provisional"] is True and r.terms["amount_m"] == 2000
 
 
 LIQUIDITY_ESCALATION = {"id": "covenants:liquidity", "type": "measure_override", "check": "covenants",
@@ -317,7 +323,7 @@ def _gate_ids(r):
 def test_an_analysts_override_replaces_the_score_and_clears_the_gate():
     fo = {**FO, "escalations": [LIQUIDITY_ESCALATION]}
     before = assess(RmsRequest(2000), fo, m4_analysis=M4)
-    assert before.verdict == "refer" and "RMS-G02" in _gate_ids(before)
+    assert before.verdict == "escalated" and "RMS-G02" in _gate_ids(before)
     overrides = [fo_override("liquidity", "override", 3, 8.0)]
     after = assess(RmsRequest(2000), fo, m4_analysis=M4, fo_overrides=overrides)
     # The composite is re-weighted on the analyst's score, as FO does it.
@@ -338,7 +344,7 @@ def test_accepting_the_engine_score_keeps_the_composite():
 def test_one_decision_of_two_keeps_the_run_referred():
     fo = {**FO, "escalations": [LIQUIDITY_ESCALATION, DSCR_ESCALATION]}
     r = assess(RmsRequest(2000), fo, m4_analysis=M4, fo_overrides=[fo_override("liquidity", "accept", 3, 3)])
-    assert r.verdict == "refer"
+    assert r.verdict == "escalated"
     assert next(g for g in r.gates if g["gate_id"] == "RMS-G02")["reason"].startswith(
         "FO run awaiting an analyst: 1 escalation(s) undecided")
 
@@ -391,7 +397,7 @@ def test_a_capacity_report_records_the_gates_but_decides_nothing():
 
 def test_the_result_serialises_with_its_versions():
     out = json.loads(json.dumps(assess(RmsRequest(2000), FO, m4_analysis=M4).to_dict()))
-    assert out["schema_version"] == "rms-1.3" and out["policy_version"] == "rms-policy-1.4"
+    assert out["schema_version"] == "rms-1.4" and out["policy_version"] == "rms-policy-1.5"
     assert out["verdict"] == "approve" and out["request"]["requested_amount_m"] == 2000
 
 
@@ -454,7 +460,7 @@ def test_a_borrower_mismatch_refers_only_on_a_verified_structure():
     assert simulated.verdict == "approve" and "RMS-G11" not in _gate_ids(simulated)
     assert any(x.startswith("Borrower differs between M3 and M4") for x in simulated.limitations)
     verified = assess(RmsRequest(2000), FO, handoff=rebuild_handoff(simulated=False, borrower="HCA Holdings LLC"))
-    assert verified.verdict == "refer" and "RMS-G11" in _gate_ids(verified)
+    assert verified.verdict == "escalated" and "RMS-G11" in _gate_ids(verified)
     # Case, punctuation and a legal suffix don't make a mismatch.
     same = assess(RmsRequest(2000), FO, handoff=rebuild_handoff(simulated=False, borrower="HCA, Inc"))
     assert next(c for c in same.cross_checks if c["check"] == "borrower")["outcome"] == "match"
@@ -546,7 +552,7 @@ def test_the_revolver_is_cross_checked_gross_or_net_of_commercial_paper():
     next(o for o in m4["deliverable_1"]["non_note_obligations_schedule"]
          if "revolving" in o["obligation_facility"])["available_facility_limit_m"] = 15000.0
     r = assess(RmsRequest(2000), FO, m4_analysis=m4)
-    assert r.verdict == "refer" and "RMS-G12" in _gate_ids(r)
+    assert r.verdict == "escalated" and "RMS-G12" in _gate_ids(r)
 
 
 def test_the_bo_questions_and_an_aggregated_ladder_become_conditions_and_limitations():

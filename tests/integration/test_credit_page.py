@@ -62,10 +62,10 @@ def test_the_page_shows_bo_and_fo_before_any_assessment(client):
 
 
 def test_every_decision_on_the_page_reassesses_rms(client):
-    # 1. A request: the FO escalation is still open, so RMS refers.
+    # 1. A request: the FO escalation is still open, so RMS escalates.
     page = post(client, f"/cases/{CASE}/credit/assess",
                 {"fo_run": FO_RUN, "bo_run": BO_RUN, "requested_amount_m": "2000", "tenor_years": "5"})
-    assert "Assessed: refer." in page and "RMS-G02" in page
+    assert "Assessed: escalated." in page and "RMS-G02" in page
     assert "pending human review" in page  # the BO handoff isn't reviewed yet (a limitation)
     # 2. The analyst overrides the escalated measure: RMS re-assesses at once and approves.
     page = post(client, f"/cases/{CASE}/credit/fo/{FO_RUN}/override",
@@ -74,14 +74,14 @@ def test_every_decision_on_the_page_reassesses_rms(client):
     assert "Decision recorded; RMS re-assessed: approve." in page
     assert "Waiting for an analyst" not in page and "liquidity: override 3 -&gt; 8 (A. Analyst)" in page
     assert "RMS-M01" in page  # liquidity now scores 8: a minimum-liquidity covenant
-    # 3. The reviewer rejects the BO handoff: RMS refers on it.
+    # 3. The reviewer rejects the BO handoff: RMS escalates on it.
     page = post(client, f"/cases/{CASE}/credit/bo/{BO_RUN}/review",
                 {"decision": "reject", "reviewer": "B. Reviewer", "reason": "Payer mix unsupported",
                  "fo_run": FO_RUN})
-    assert "Decision recorded; RMS re-assessed: refer." in page and "RMS-G10" in page
+    assert "Decision recorded; RMS re-assessed: escalated." in page and "RMS-G10" in page
     assert "Accept the Business Overview" not in page
     history = records(client.output_root, CASE)
-    assert [r["verdict"] for r in history] == ["refer", "approve", "refer"]
+    assert [r["verdict"] for r in history] == ["escalated", "approve", "escalated"]
     assert [r["sources"]["bo_review_status"] for r in history] == ["pending", "pending", "rejected"]
     assert history[2]["supersedes"] == history[1]["run_id"]
 
@@ -187,7 +187,7 @@ def test_a_bo_decision_from_the_credit_view_returns_to_it(client, monkeypatch):
                                  "fo_run": FO_RUN})
     assert response.status_code == 303
     page = client.get(response.headers["location"]).text
-    assert "Decision recorded; RMS re-assessed: refer." in page and "RMS-G10" in page
+    assert "Decision recorded; RMS re-assessed: escalated." in page and "RMS-G10" in page
     # Its review form carries the context, and the page shows the way back.
     html = workbench._env.get_template("bo_workbench.html.j2").render(
         runs=[], view=None, credit=credit_context(CASE, FO_RUN, BO_RUN))
@@ -236,7 +236,7 @@ def test_an_analysis_rms_tab_shows_and_reassesses_exactly_its_runs(client, monke
         "fo_run": FO_RUN, "bo_run": BO_RUN, "requested_amount_m": "2000", "tenor_years": "5", "job": "hca-job"})
     assert response.status_code == 303 and response.headers["location"].startswith("/analysis/hca-job/rms?notice=")
     page = client.get(response.headers["location"]).text
-    assert "Assessed: refer." in page and "RMS-G02" in page and "Debt capacity:" in page
+    assert "Assessed: escalated." in page and "RMS-G02" in page and "Debt capacity:" in page
     # So does a decision made in the tab's Decisions panel, and a bad one shows its error on the tab.
     assert page.count('name="job" value="hca-job"') >= 3  # the assess, BO review and FO override forms
     bad = client.post(f"/cases/{CASE}/credit/fo/{FO_RUN}/override", data={
@@ -287,10 +287,10 @@ def test_the_memo_page_explains_the_rms_verdict_and_follows_fo_decisions(client)
     post(client, f"/cases/{CASE}/credit/assess",
          {"fo_run": FO_RUN, "bo_run": BO_RUN, "requested_amount_m": "2000", "tenor_years": "5"})
     text = memo_section()
-    assert "VerdictRefer" in text and "It is referred to a credit officer because of the gates listed below" in text
-    assert "Why it is referred. These gates override the grade and capacity:" in text and "RMS-G02" in text
+    assert "VerdictEscalated" in text and "It is escalated to a credit officer because of the gates listed below" in text
+    assert "Why it is escalated. These gates override the grade and capacity:" in text and "RMS-G02" in text
     assert "RMS starts from the Financial Overview composite of" in text and "Capacity is the smallest of four tests" in text
-    assert "Indicative structure" in text and "It is provisional: the case is referred" in text
+    assert "Indicative structure" in text and "It is provisional: the case is escalated" in text
     assert "every assessment needs human review" in text and "Out of date" not in text
     # An FO override re-assesses RMS, and the memo page explains the new verdict.
     post(client, f"/cases/{CASE}/credit/fo/{FO_RUN}/override",

@@ -14,7 +14,7 @@
 <tr><td><strong>Derived debt capacity</strong></td><td class="num"><strong>{{ usd(c.derived_capacity_m) }}</strong></td></tr>
 </tbody></table></div>{% endif %}
 </div>
-<div class="card"><h3>Structure{% if rec.terms and rec.terms.provisional %} <small class="warn">(provisional: the case is referred)</small>{% endif %}</h3>
+<div class="card"><h3>Structure{% if rec.terms and rec.terms.provisional %} <small class="warn">(provisional: the case is escalated)</small>{% endif %}</h3>
 {% if rec.terms %}{% set t = rec.terms %}
 <dl class="facts">
 <dt>Amount</dt><dd>{{ usd(t.amount_m) }}</dd>

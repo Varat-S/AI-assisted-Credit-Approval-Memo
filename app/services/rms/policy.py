@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from app.services.fo.scoring import COMPOSITE_CORE, COMPOSITE_FLOOR, COMPOSITE_FLOOR_TRIGGER
 
-RMS_POLICY_VERSION = "rms-policy-1.4"  # 1.4: risk-based pricing (SOFR + credit spread + business premium); an
+RMS_POLICY_VERSION = "rms-policy-1.5"  # 1.5: collateral not valued (no LTV test); 1.4: risk-based pricing (SOFR + credit spread + business premium); an
 # accepted BO turns its gates into warnings; 1.3: no business-band notch (the BO no longer gives a band); 1.2: M3
 # rebuild, structured distributions, financial policy, M4 rollover evidence, liquidity and borrower cross-checks;
 # 1.1: each BO signal counted once; sizing at the adjusted grade
@@ -72,12 +72,12 @@ M3_DIMENSIONS = ("guarantor_coverage", "cash_flow_access", "minority_or_jv")
 
 # --- Gates --------------------------------------------------------------------------------------------------
 # FO total debt and M4 consolidated total indebtedness further apart than this (as a share of the larger)
-# refer the case: FO and BO don't share a verified evidence snapshot, so neither figure is picked silently.
+# escalate the case: FO and BO don't share a verified evidence snapshot, so neither figure is picked silently.
 DEBT_MISMATCH_TOLERANCE = 0.10
-# BO handoff escalations (unresolved challenger findings) at these severities refer the case.
+# BO handoff escalations (unresolved challenger findings) at these severities escalate the case.
 BLOCKING_BO_SEVERITIES = ("high", "material")
 # FO's undrawn revolver and M4's revolver availability (limit less drawn, read either gross or net of the
-# commercial paper it backstops) further apart than this refer the case.
+# commercial paper it backstops) further apart than this escalate the case.
 LIQUIDITY_MISMATCH_TOLERANCE = 0.10
 # A reviewer's acceptance of the BO handoff stands in for these gates: the BO's own state (an incomplete or
 # unvalidated M4, unresolved challenges) and its disagreements with FO. They stay on the result as warnings and the
@@ -100,7 +100,7 @@ VERDICT_MATRIX = {
     "low": ("approve", "approve", "counter_offer", "counter_offer"),
     "moderate": ("approve", "approve_with_conditions", "counter_offer", "decline"),
     "elevated": ("approve_with_conditions", "approve_with_conditions_secured", "decline", "decline"),
-    "high": ("refer", "decline", "decline", "decline"),
+    "high": ("escalated", "decline", "decline", "decline"),
 }
 
 # --- Terms by the adjusted level ----------------------------------------------------------------------------
@@ -115,7 +115,7 @@ SECURED_LEVELS = ("elevated", "high")
 # A Tier-1 (secured) share of total debt above this subordinates an unsecured lender: the loan goes secured.
 SUBORDINATION_DRAG_SECURED = 0.25
 GUARANTOR_COVERAGE_MIN = 0.80  # share of consolidated EBITDA the guarantors must generate
-MAX_LTV = 0.80
+MAX_LTV = 0.80  # the RMS-M09 condition precedent only: RMS runs no LTV test
 
 # --- Mitigant triggers (FO measure risk scores, 1-10) ------------------------------------------------------
 LIQUIDITY_SCORE_TRIGGER = 7

@@ -26,12 +26,12 @@ from .policy import (
     BUSINESS_PREMIUM_DEFAULT, CREDIT_SPREAD_BPS, DEBT_MISMATCH_TOLERANCE, DEFAULT_TENOR_YEARS, DOWNSIDE_DSCR_MIN,
     DOWNSIDE_SHOCK, DSCR_COVENANT,
     FINANCIAL_POLICY_COVENANT_HEADROOM, LEVERAGE_COVENANT_HEADROOM, LEVERAGE_MULTIPLE, LIQUIDITY_MISMATCH_TOLERANCE,
-    M4_VERDICT_NOTCH, MAX_LTV, RMS_POLICY_VERSION, SECURED_LEVELS, SEVERITY_FLOOR, SEVERITY_MEASURES,
+    M4_VERDICT_NOTCH, RMS_POLICY_VERSION, SECURED_LEVELS, SEVERITY_FLOOR, SEVERITY_MEASURES,
     SEVERITY_TRIGGER, SUBORDINATION_DRAG_SECURED, TENOR_CAP_YEARS, UTILISATION_EDGES, VERDICT_MATRIX,
 )
 
-RMS_SCHEMA_VERSION = "rms-1.3"  # 1.3: pricing, warnings; 1.2: cross_checks, terms financial_policy; 1.1: fo_decisions,
-# adjusted level
+RMS_SCHEMA_VERSION = "rms-1.4"  # 1.4: verdict "refer" renamed "escalated", no collateral value or feasibility ltv;
+# 1.3: pricing, warnings; 1.2: cross_checks, terms financial_policy; 1.1: fo_decisions, adjusted level
 LEGAL_SUFFIXES = ("inc", "llc", "corp", "corporation", "co", "ltd", "plc", "lp", "company")
 APPROVALS = ("approve", "approve_with_conditions", "approve_with_conditions_secured")
 CAPACITY_ONLY = "capacity_only"  # the verdict of a debt capacity report: no amount was requested
@@ -91,7 +91,7 @@ def pricing(fo, bo, requested_rate=None):
 
 def cross_checks(fo, bo):
     """[{check, outcome, detail}] comparing the figures FO, M3 and M4 each give; outcome is match, mismatch or
-    unavailable. A mismatch refers the case (``gates``), except a borrower mismatch on a simulated M3 structure,
+    unavailable. A mismatch escalates the case (``gates``), except a borrower mismatch on a simulated M3 structure,
     which is a limitation."""
     out = []
     structure = bo.m3_structure
@@ -135,7 +135,7 @@ def financial_policy(bo):
 
 
 def gates(fo, bo, capacity, checks=()):
-    """[{gate_id, outcome, reason}] for each hard gate that holds; outcome is decline or refer."""
+    """[{gate_id, outcome, reason}] for each hard gate that holds; outcome is decline or escalated."""
     out = []
 
     def hold(gate_id, outcome, reason):
@@ -144,34 +144,34 @@ def gates(fo, bo, capacity, checks=()):
     if fo.gc_status == "fail":
         hold("RMS-G01", "decline", "FO going-concern pre-check: fail")
     if fo.escalations:
-        hold("RMS-G02", "refer", f"FO run awaiting an analyst: {len(fo.escalations)} escalation(s) undecided")
+        hold("RMS-G02", "escalated", f"FO run awaiting an analyst: {len(fo.escalations)} escalation(s) undecided")
     if fo.covenant_status == "breach":
-        hold("RMS-G03", "refer", "FO covenant pre-check: breach not waived")
+        hold("RMS-G03", "escalated", "FO covenant pre-check: breach not waived")
     if fo.composite_score is None:
-        hold("RMS-G04", "refer", "No FO composite score")
+        hold("RMS-G04", "escalated", "No FO composite score")
     if not bo.m4_present:
-        hold("RMS-G05", "refer", "No Module 4 output")
+        hold("RMS-G05", "escalated", "No Module 4 output")
     elif bo.m4_status != "complete" or not bo.m4_debt_validated:
-        hold("RMS-G05", "refer", f"Module 4 {bo.m4_status or 'status unknown'}; debt-structure specialist "
+        hold("RMS-G05", "escalated", f"Module 4 {bo.m4_status or 'status unknown'}; debt-structure specialist "
                                  f"{'validated' if bo.m4_debt_validated else 'not validated (Validator 8)'}")
     if bo.blocking_escalations:
-        hold("RMS-G06", "refer", f"{len(bo.blocking_escalations)} unresolved high-severity BO challenge(s)")
+        hold("RMS-G06", "escalated", f"{len(bo.blocking_escalations)} unresolved high-severity BO challenge(s)")
     if fo.debt_m and bo.m4_total_debt_m:
         gap = abs(fo.debt_m - bo.m4_total_debt_m) / max(fo.debt_m, bo.m4_total_debt_m)
         if gap > DEBT_MISMATCH_TOLERANCE:
-            hold("RMS-G07", "refer", f"FO total debt ${fo.debt_m:,.0f}M and M4 total indebtedness "
+            hold("RMS-G07", "escalated", f"FO total debt ${fo.debt_m:,.0f}M and M4 total indebtedness "
                                      f"${bo.m4_total_debt_m:,.0f}M differ by {gap:.0%}")
     if bo.handoff_review_status == "rejected":
-        hold("RMS-G10", "refer", "The Business Overview handoff was rejected by its reviewer")
+        hold("RMS-G10", "escalated", "The Business Overview handoff was rejected by its reviewer")
     if capacity is not None and capacity["derived_capacity_m"] is None:
-        hold("RMS-G08", "refer", "Debt capacity unavailable: " + ", ".join(capacity["unavailable"]))
+        hold("RMS-G08", "escalated", "Debt capacity unavailable: " + ", ".join(capacity["unavailable"]))
     for check in checks:
         if check["outcome"] != "mismatch":
             continue
         if check["check"] == "borrower" and not check.get("simulated"):
-            hold("RMS-G11", "refer", f"Borrower differs between M3 and M4: {check['detail']}")
+            hold("RMS-G11", "escalated", f"Borrower differs between M3 and M4: {check['detail']}")
         elif check["check"] == "revolver":
-            hold("RMS-G12", "refer", f"Revolver liquidity differs between FO and M4: {check['detail']}")
+            hold("RMS-G12", "escalated", f"Revolver liquidity differs between FO and M4: {check['detail']}")
     return out
 
 
@@ -236,9 +236,10 @@ def structure_terms(fo, bo, grade, *, amount, tenor_years, interest_rate, secure
     }
 
 
-def feasibility(fo, bo, terms, protections, grade_level, *, collateral_value_m, analysis_run_id):
+def feasibility(fo, bo, terms, protections, grade_level, *, analysis_run_id):
     """Run the approved structure through the structuring engine. Its CFADS is what is left after the
-    existing debt service, so its DSCR covers the new loan alone."""
+    existing debt service, so its DSCR covers the new loan alone. Collateral is not valued: the engine gets no
+    collateral package, so it runs no LTV test (RMS-M09 makes the valuation a condition precedent)."""
     existing, _ = existing_debt_service(fo, bo)
     by = lambda cat: [p for p in protections if p["category"] == cat]  # noqa: E731
     candidate = assemble_candidate(
@@ -248,26 +249,26 @@ def feasibility(fo, bo, terms, protections, grade_level, *, collateral_value_m, 
         amortization={"type": "bullet" if terms["amortisation"]["type"] == "bullet" else "straight_line",
                       "interest_rate": terms["interest_rate"]},
         covenant_package=[*terms["financial_covenants"], *by("covenant")],
-        collateral=by("collateral"),
         reporting_requirements=by("reporting"),
-        other_protections=[*by("structure"), *by("condition_precedent")],
+        other_protections=[*by("collateral"), *by("structure"), *by("condition_precedent")],
     )
     forecast = BorrowerForecast(
         ebitda=fo.ebitdar_m, cfads=fo.cfads_m - existing, existing_net_debt=fo.adj_net_debt_m,
         available_liquidity=fo.liquidity_sources_m, liquidity_need=fo.liquidity_uses_m,
-        collateral_value=collateral_value_m, downside_shock_pct=DOWNSIDE_SHOCK)
+        downside_shock_pct=DOWNSIDE_SHOCK)
     policy = FeasibilityPolicy(max_leverage=LEVERAGE_MULTIPLE[grade_level], min_dscr=1.0,
-                               min_downside_dscr=DOWNSIDE_DSCR_MIN, min_liquidity_coverage=1.0, max_ltv=MAX_LTV)
+                               min_downside_dscr=DOWNSIDE_DSCR_MIN, min_liquidity_coverage=1.0)
     result = StructuringEngine(policy).evaluate(candidate, forecast)
     detail = result.feasibility_detail
     return {"feasible": result.feasible, "candidate_id": candidate.candidate_id,
             "failures": detail["failures"], "unavailable": detail["unavailable"],
-            "stress": detail["stress"], "ltv": detail.get("ltv")}
+            "stress": detail["stress"]}
 
 
 def _limitations(bo, checks=()):
     out = ["The FO rating methodology is provisional; RMS thresholds are illustrative, not bank policy.",
-           "FO and BO do not share a verified evidence snapshot; overlapping figures are compared, not merged."]
+           "FO and BO do not share a verified evidence snapshot; overlapping figures are compared, not merged.",
+           "Collateral is not valued: no loan-to-value test; a secured loan's valuation is a condition precedent."]
     if bo.handoff_review_status == "pending":
         out.append("The Business Overview handoff is still pending human review.")
     if not bo.validators_enforced:
@@ -333,7 +334,7 @@ class RmsResult:
         return asdict(self)
 
 
-def capacity_report(result, fo, bo, grade, *, tenor, rate, collateral_value_m, analysis_run_id):
+def capacity_report(result, fo, bo, grade, *, tenor, rate, analysis_run_id):
     """Fill ``result`` as a debt capacity report (no requested amount): verdict ``capacity_only``, no approval or
     utilisation, and indicative terms, mitigants and a structuring-engine check at the derived capacity. The gates
     are recorded (they say what would stop a loan) but decide nothing."""
@@ -347,7 +348,7 @@ def capacity_report(result, fo, bo, grade, *, tenor, rate, collateral_value_m, a
     result.terms.update(provisional=True, basis="derived capacity")
     result.mitigants = mitigants(fo, bo, secured=result.terms["secured"])
     result.feasibility = feasibility(fo, bo, result.terms, result.mitigants, grade["level"],
-                                     collateral_value_m=collateral_value_m, analysis_run_id=analysis_run_id)
+                                     analysis_run_id=analysis_run_id)
     return result
 
 
@@ -372,20 +373,19 @@ def assess(request: RmsRequest | None, fo_payload: dict, *, handoff: dict | None
     checks = cross_checks(fo, bo)
     held, warnings = waive_on_bo_acceptance(gates(fo, bo, capacity, checks), bo)
     result = RmsResult(entity_name=fo.entity_name, period_end=fo.period_end, request=asdict(request),
-                       verdict="refer", approved_amount_m=None, utilisation=None, grade=grade, capacity=capacity,
+                       verdict="escalated", approved_amount_m=None, utilisation=None, grade=grade, capacity=capacity,
                        pricing=price, gates=held, warnings=warnings, cross_checks=checks,
                        fo_decisions=list(fo.analyst_decisions),
                        limitations=_limitations(bo, checks))
     if request.requested_amount_m is None:
-        return capacity_report(result, fo, bo, grade, tenor=tenor, rate=rate,
-                               collateral_value_m=request.collateral_value_m, analysis_run_id=analysis_run_id)
+        return capacity_report(result, fo, bo, grade, tenor=tenor, rate=rate, analysis_run_id=analysis_run_id)
     derived = capacity["derived_capacity_m"] if capacity else None
     # No capacity at all is the worst utilisation band; it is recorded as None (JSON has no infinity).
     utilisation = None if derived is None else request.requested_amount_m / derived if derived > 0 else math.inf
     if utilisation is not None and utilisation != math.inf:
         result.utilisation = round(utilisation, 3)
     if held:
-        result.verdict = "decline" if any(g["outcome"] == "decline" for g in held) else "refer"
+        result.verdict = "decline" if any(g["outcome"] == "decline" for g in held) else "escalated"
     else:
         verdict = VERDICT_MATRIX[grade["level"]][utilisation_band(utilisation)]
         amount = request.requested_amount_m
@@ -397,23 +397,20 @@ def assess(request: RmsRequest | None, fo_payload: dict, *, handoff: dict | None
         if verdict in (*APPROVALS, "counter_offer"):
             result.approved_amount_m = amount
     # Terms are drafted for every verdict a structure can follow (approvals and counter-offers), and as
-    # provisional terms for a referral that got as far as a capacity.
-    amount = result.approved_amount_m or (request.requested_amount_m if result.verdict == "refer" else None)
+    # provisional terms for an escalated case that got as far as a capacity.
+    amount = result.approved_amount_m or (request.requested_amount_m if result.verdict == "escalated" else None)
     if amount is not None and grade is not None and derived is not None:
         result.terms = structure_terms(fo, bo, grade, amount=amount, tenor_years=tenor,
                                        interest_rate=rate,
                                        secured_requested=result.verdict == "approve_with_conditions_secured")
-        result.terms["provisional"] = result.verdict == "refer"
+        result.terms["provisional"] = result.verdict == "escalated"
         result.mitigants = mitigants(fo, bo, secured=result.terms["secured"])
         if result.approved_amount_m is not None:
             result.feasibility = feasibility(fo, bo, result.terms, result.mitigants, grade["level"],
-                                             collateral_value_m=request.collateral_value_m,
                                              analysis_run_id=analysis_run_id)
-            # A missing collateral value only leaves LTV untested: RMS-M09 makes the valuation a condition.
-            blocking = [*result.feasibility["failures"],
-                        *(u for u in result.feasibility["unavailable"] if u != "ltv")]
+            blocking = [*result.feasibility["failures"], *result.feasibility["unavailable"]]
             if blocking:
-                result.gates.append({"gate_id": "RMS-G09", "outcome": "refer",
+                result.gates.append({"gate_id": "RMS-G09", "outcome": "escalated",
                                      "reason": "Structuring engine: " + ", ".join(blocking)})
-                result.verdict, result.approved_amount_m = "refer", None
+                result.verdict, result.approved_amount_m = "escalated", None
     return result

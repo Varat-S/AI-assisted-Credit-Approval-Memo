@@ -95,7 +95,7 @@ def _reassess(session, case_id, fo_run, bo_run) -> str:
     if not earlier:
         return "Decision recorded. Enter a requested loan to assess it."
     try:
-        summary = assess_case(session, case_id, output_root=output_root, request=RmsRequest(**earlier[-1]["request"]),
+        summary = assess_case(session, case_id, output_root=output_root, request=RmsRequest.from_record(earlier[-1]["request"]),
                               fo_run_id=fo_run, bo_run_id=bo_run)
     except Exception:  # the decision is recorded either way; say the assessment didn't follow
         log.exception("RMS re-assessment of case %s failed", case_id)
@@ -124,7 +124,6 @@ def credit_assess(
     requested_amount_m: str = Form(default=""),  # blank: a debt capacity report
     tenor_years: str = Form(default=""),
     interest_rate: str = Form(default=""),
-    collateral_value_m: str = Form(default=""),
     job: str = Form(default=""),  # set by an analysis's Credit view tab: go back there
     session: Session = Depends(get_session),
 ):
@@ -133,8 +132,7 @@ def credit_assess(
         request = RmsRequest(
             float(requested_amount_m) if requested_amount_m.strip() else None,
             tenor_years=int(tenor_years) if tenor_years.strip() else None,
-            interest_rate=float(interest_rate) if interest_rate.strip() else None,
-            collateral_value_m=float(collateral_value_m) if collateral_value_m.strip() else None)
+            interest_rate=float(interest_rate) if interest_rate.strip() else None)
         summary = assess_case(session, case_id, output_root=get_settings().output_dir, request=request,
                               fo_run_id=fo_run, bo_run_id=bo_run)
     except (ValueError, RmsRunError) as exc:  # RmsRunError is a ValueError too

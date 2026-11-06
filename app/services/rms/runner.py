@@ -72,7 +72,7 @@ def assess_case(session, case_id: str, *, output_root, request: RmsRequest | Non
         raise RmsRunError(f"No Business Overview handoff for run {bo_run_id!r} in case {case_id!r}.")
     if request is None:
         earlier = records(output_root, case_id)
-        request = RmsRequest(**earlier[-1]["request"]) if earlier else RmsRequest()
+        request = RmsRequest.from_record(earlier[-1]["request"]) if earlier else RmsRequest()
     review = review_view(review_for(session, fo_row.run_id))
     overrides = overrides_for(session, fo_row.run_id)
     run_id = new_run_id()
@@ -123,7 +123,7 @@ def reassess_after_bo_review(session, analysis_run_id: str, output_root) -> dict
     if not earlier:
         return None
     last = earlier[-1]
-    return assess_case(session, row.case_id, output_root=output_root, request=RmsRequest(**last["request"]),
+    return assess_case(session, row.case_id, output_root=output_root, request=RmsRequest.from_record(last["request"]),
                        fo_run_id=last["sources"].get("fo_run_id"), bo_run_id=analysis_run_id)
 
 
@@ -137,7 +137,7 @@ def reassess_after_fo_review(session, fo_run_id: str, output_root) -> dict | Non
     if not earlier:
         return None
     last = earlier[-1]
-    return assess_case(session, run.case_id, output_root=output_root, request=RmsRequest(**last["request"]),
+    return assess_case(session, run.case_id, output_root=output_root, request=RmsRequest.from_record(last["request"]),
                        fo_run_id=fo_run_id, bo_run_id=last["sources"].get("bo_analysis_run_id"))
 
 

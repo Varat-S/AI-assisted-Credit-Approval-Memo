@@ -41,7 +41,7 @@ def seed(session):
 def test_an_fo_override_reassesses_the_case(db_session, tmp_path):
     seed(db_session)
     first = assess_case(db_session, CASE, output_root=tmp_path, request=RmsRequest(2000))
-    assert first["verdict"] == "refer" and any(g.startswith("RMS-G02") for g in first["gates"])
+    assert first["verdict"] == "escalated" and any(g.startswith("RMS-G02") for g in first["gates"])
     override_measure(db_session, FO_RUN, measure="liquidity", decision="override", score=8,
                      reviewer="A. Analyst", reason="Covenant breach cured after the year-end")
     second = reassess_after_fo_review(db_session, FO_RUN, tmp_path)
@@ -88,7 +88,7 @@ def test_cli_run_rms_then_fo_override_reassesses(tmp_path, capsys, monkeypatch):
     engine.dispose()
     common = ["--database", str(db), "--output", str(tmp_path / "out")]
     main([*common, "run-rms", CASE, "--amount", "2000"])
-    assert json.loads(capsys.readouterr().out)["verdict"] == "refer"
+    assert json.loads(capsys.readouterr().out)["verdict"] == "escalated"
     main([*common, "fo-override", FO_RUN, "--measure", "liquidity", "--decision", "override", "--score", "8",
           "--reviewer", "A. Analyst", "--reason", "Covenant breach cured"])
     out = json.loads(capsys.readouterr().out)

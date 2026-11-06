@@ -32,15 +32,19 @@ def _m(value):
 @dataclass(frozen=True)
 class RmsRequest:
     """The loan being asked for. Money in US$ millions; ``tenor_years`` and ``interest_rate`` default to the
-    policy's sizing terms; ``collateral_value_m`` is needed for a secured loan's LTV test. Without
-    ``requested_amount_m`` the assessment is a debt capacity report: no verdict, indicative terms at the
-    capacity."""
+    policy's sizing terms. Without ``requested_amount_m`` the assessment is a debt capacity report: no verdict,
+    indicative terms at the capacity. Collateral is not valued: a secured loan's LTV is left to RMS-M09."""
 
     requested_amount_m: float | None = None
     tenor_years: int | None = None
     interest_rate: float | None = None
     purpose: str | None = None
-    collateral_value_m: float | None = None
+
+    @classmethod
+    def from_record(cls, request):
+        """The request recorded on an earlier assessment. Fields no longer asked for (collateral_value_m) are
+        dropped."""
+        return cls(**{k: v for k, v in request.items() if k in cls.__dataclass_fields__})
 
     def __post_init__(self):
         if self.requested_amount_m is not None and self.requested_amount_m <= 0:
