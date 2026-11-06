@@ -33,7 +33,6 @@
     <h4>Overall assessment</h4>
     <p class="bo-management-classification">{{ m.overall_assessment.wording_label }} · {{ m.overall_assessment.status|title }} · Recorded outcome: {{ m.overall_assessment.outcome|replace('_',' ')|title }}</p>
     <p class="bo-management-assessment-text">{{ m.overall_assessment.text }}</p>
-    {% if m.pdf.qualifications %}<div class="bo-management-qualifications"><h4>Material qualifications</h4><ul>{% for qualification in m.pdf.qualifications %}<li class="qualification">{{ qualification.text }}</li>{% endfor %}</ul></div>{% endif %}
   </div>
   <h3>Key credit considerations</h3>
   {% for group in m.pdf.finding_groups %}
@@ -67,6 +66,5 @@
   {% if m.pdf.follow_up %}<h4>Follow-up evidence required</h4><ul>{% for text in m.pdf.follow_up %}<li>{{ text }}</li>{% endfor %}</ul>{% endif %}
   <h4>Management monitoring priorities</h4>
   {% if m.pdf.monitoring_priorities %}<ul>{% for text in m.pdf.monitoring_priorities %}<li>{{ text }}</li>{% endfor %}</ul>{% else %}<p class="memo-empty">No management-specific monitoring indicators or thresholds were recorded.</p>{% endif %}
-  {% if m.methodology_notices %}<aside class="bo-management-methodology"><h4>Methodology / demonstration notice</h4>{% for text in m.methodology_notices %}<p class="technical-note">{{ text }}</p>{% endfor %}</aside>{% endif %}
 </div>
 {% else %}<p class="memo-empty">Reviewed management analysis is not available for this run.</p>{% endif %}

@@ -130,6 +130,27 @@ def load_view(session, analysis_run_id, case_id=None):
             details['recorded_module_status'] = saved.audit.get('module_conclusions', {}).get('M2', {})
         block['evidence'] = add(block['title'], details, source=block['source_ref'])
         block['evidence']['notices'] = list(block.get('visible_warnings', []))
+    from app.services.bo.industry_view import group_findings
+    industry = group_findings((sections[3].get('content') or {}).get('findings', []))
+    for entry in [entry for group in industry['groups'] for entry in group['findings']] + industry['exposures']:
+        finding = entry['finding']
+        entry['evidence'] = add(entry['title'], finding, claim=finding, source=sections[3]['source_ref'])
+        entry['evidence']['assessment'] = {
+            'specialist_interpretation': list((finding.get('interpretation') or {}).values()),
+            'gaps': finding.get('missing_information') or [],
+            'finding': {'label': (finding.get('claim_type') or 'inference').replace('_', ' ').title(),
+                        'support': (finding.get('disposition') or 'Recorded').title(),
+                        'reason': 'Selected-run industry finding reviewed by Validator 6.',
+                        'support_reason': 'Supporting quotations are limited to this finding’s saved evidence.'},
+            'scope_note': 'Recorded industry analysis; no new assessment is performed when opening this page.'}
+    from app.services.bo.business_model import load_description
+    business_model = load_description(session, analysis_run_id, saved)
+    if business_model and business_model['status'] == 'complete':
+        for paragraph in business_model['paragraphs']:
+            ids = list(dict.fromkeys(citation['evidence_id'] for sentence in paragraph['sentences']
+                                      for citation in sentence['evidence']))
+            paragraph['evidence_panel'] = add('Business Model', deepcopy(paragraph),
+                                             claim={'evidence_ids': ids})
     management = management_view(sections[1].get('content'), documents=documents, passages=passages,
                                  warnings=sections[1].get('visible_warnings', []))
     if management:
@@ -221,10 +242,10 @@ def load_view(session, analysis_run_id, case_id=None):
     # The PDF export leaves out Agent 6's cross-dimensional insights and their evidence.
     cross_dimensional = {entry['evidence']['id'] for group in finding_groups or [] for entry in group['entries']
                          if entry['source_agent_id'] == V3_AGENT_6_ID}
-    return {'memo': artifact, 'svg': svg, 'debt_snapshot': snapshot, 'snapshot_placed': snapshot_placed,
+    return {'memo': artifact, 'business_model': business_model, 'svg': svg, 'debt_snapshot': snapshot, 'snapshot_placed': snapshot_placed,
             'claims': claims, 'finding_groups': finding_groups, 'evidence': evidence,
             'cross_dimensional': cross_dimensional,
-            'management': management,
+            'management': management, 'industry': industry,
             'structure_tree': next(iter(structure['companies'].values()))['plain_text_tree'] if structure else None,
             'review': public_record({'status': row.human_review_status,
                                       'reviewer': row.payload.get('reviewer'), 'reviewed_at': row.payload.get('reviewed_at')}),

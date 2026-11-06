@@ -37,6 +37,7 @@ from app.schemas.bo import (
     DisplayPriority,
     Disposition,
     HypothesisRecord,
+    IndustryMetadata,
     MitigantAssessment,
     MitigantEffectiveness,
 )
@@ -515,7 +516,8 @@ class HypothesisValidator:
         # there removes that field only; the finding itself is unaffected.
         interpretation: dict[str, str] = {}
         raw_interpretation = item.get("interpretation")
-        for key in INTERPRETATION_FIELDS:
+        interpretation_fields = INTERPRETATION_FIELDS + (("company_response",) if self._spec.agent_id == "m2_industry" else ())
+        for key in interpretation_fields:
             text = ((raw_interpretation or {}).get(key) if isinstance(
                 raw_interpretation, dict) else None)
             text = text.strip() if isinstance(text, str) else ""
@@ -726,6 +728,23 @@ class HypothesisValidator:
             materiality is Materiality.HIGH
             and disposition in (Disposition.QUALIFIED, Disposition.UNVERIFIED))
 
+        industry = None
+        if self._spec.agent_id == "m2_industry" and item.get("industry") is not None:
+            try:
+                industry = IndustryMetadata.model_validate(item['industry'])
+                expected = {'tailwind': 'positive', 'headwind': 'negative', 'mixed': 'mixed',
+                            'uncertain': 'neutral', 'company_exposure': 'neutral'}
+                if (expected[industry.category] != direction.value
+                        or (industry.kind == 'exposure') != (industry.category == 'company_exposure')
+                        or (industry.kind == 'development' and industry.linked_development_ids)
+                        or any(link not in dispositions or link == hid for link in industry.linked_development_ids)):
+                    raise ValueError('Industry category or links disagree with the finding.')
+                if unbound_numbers(industry.title, quoted_numbers, quote_texts):
+                    raise ValueError('Industry heading contains an unsupported number.')
+            except ValueError:
+                industry = None
+                adjust('Industry metadata rejected: invalid category, direction, link or heading.')
+
         return HypothesisRecord(
             hypothesis_id=hid,
             analysis_run_id=analysis_run_id,
@@ -748,6 +767,7 @@ class HypothesisValidator:
             materiality=materiality,
             credit_mechanism=item.get("credit_mechanism"),
             interpretation=interpretation,
+            industry=industry,
             missing_information=list(item.get("missing_information") or []),
             display_priority=display,
             review_required=review,

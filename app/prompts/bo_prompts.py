@@ -14,6 +14,8 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
+from app.prompts.industry import PROMPT as INDUSTRY_PROMPT, response_schema as industry_response_schema
+
 from app.prompts.m1_specialist_briefs import M1_SPECIALIST_BRIEFS
 
 from app.prompts.agent_schemas import AGENT_PARAMETER_STATUSES
@@ -580,16 +582,7 @@ _AGENT_BRIEFS.update({
         "Customer Stickiness."
     ),
     "M1A6": M1_AGENT6_SPECIALIST_PROMPT,
-    "M2": (
-        "You are the Industry Information specialist (Business Overview Module 2).\n"
-        "Assess industry structure and concentration, cyclicality, regulatory "
-        "dependencies, external-event exposure, dated industry trends, and threats "
-        "to sustainable cash generation that are relevant to this company. "
-        "Distinguish industry evidence from company evidence: one company's results "
-        "do not establish an industry trend. Preserve dates and qualify any evidence "
-        "that is company-authored or generic. Geographic exposure belongs here; do "
-        "not turn it into a customer-stickiness conclusion."
-    ),
+    "M2": INDUSTRY_PROMPT,
     "M4": (
         "You are the Strategy & Capital Allocation specialist (Business Overview "
         "Module 4).\nAssess acquisition strategy, demonstrated integration outcomes, "
@@ -844,7 +837,7 @@ def bo_v3_prompt_catalogue() -> list[dict]:
                          specialist_block(spec) + "\n" + (
                              M1_SHARED_RULES if spec.code in M1_SPECIALIST_BRIEFS
                              else SHARED_RULES)),
-            "response_schema": BO_NARROW_JSON_SCHEMA,
+            "response_schema": industry_response_schema(BO_NARROW_JSON_SCHEMA) if spec.code == "M2" else BO_NARROW_JSON_SCHEMA,
             "label": f"Business Overview v3 specialist {spec.code}: {spec.title}",
         })
         entries.append({

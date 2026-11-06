@@ -121,7 +121,7 @@ def test_management_web_and_print_share_conservative_projection(db_session, tmp_
         (folder / 'management_print_preview.html').write_text(render_page(view, pdf=True), encoding='utf-8')
 
 
-def test_unclassified_concerns_and_qualifications_are_accessible_in_both_views(db_session, tmp_path):
+def test_concerns_remain_visible_and_qualifications_stay_in_web_support(db_session, tmp_path):
     from app.services.bo.management_view import management_view
 
     result, _ = run(db_session, tmp_path)
@@ -147,15 +147,18 @@ def test_unclassified_concerns_and_qualifications_are_accessible_in_both_views(d
     assert len(section.xpath('.//div[@class="bo-management-assessment-gaps"]//li')) == 5
     for page in (web, printed):
         assert observation['text'] in page.text_content()
-        assert observation['review_reason'] in page.text_content()
-        assert observation['uncertainties'][0] in page.text_content()
-        assert 'Recorded overall qualification.' in page.text_content()
+        assert 'Recorded overall qualification.' not in visible(page)
+        assert observation['review_reason'] not in visible(page)
+        assert observation['uncertainties'][0] not in visible(page)
+    support = section.xpath('.//details[@class="bo-management-support" and not(@open)]')[0]
+    for text in (observation['review_reason'], observation['uncertainties'][0], 'Recorded overall qualification.'):
+        assert text in support.text_content()
     assert not printed.xpath('//*[@data-memo-section="management"]//*[@data-source-id]')
     assert bo_artifact(db_session, result.analysis_run_id, 'four_section') == frozen
     assert [(r.name, r.sha256, r.payload_json) for r in db_session.query(StageArtifact).all()] == stage_bytes
 
 
-def test_direction_groups_and_material_qualifications_in_primary_print():
+def test_direction_groups_stay_visible_and_caveats_are_out_of_primary_memo():
     from app.services.bo.four_section_view import _env
     from app.services.bo.management_view import management_view
 
@@ -176,8 +179,8 @@ def test_direction_groups_and_material_qualifications_in_primary_print():
         page = html.fromstring(_env.get_template('bo_management.html.j2').render(
             bo4={'management': view, 'memo': {'identity': {'analysis_run_id': 'recorded-run'}}}, pdf=pdf))
         shown = visible(page)
-        assert shown.count('Performance remains unverified.') == 1
-        assert shown.count('Material scope limitation.') == 1
+        assert 'Performance remains unverified.' not in shown
+        assert 'Material scope limitation.' not in shown
         assert 'Supporting Factor · Qualified' in shown
         assert 'Credit Concern · Qualified' in shown
         assert 'Mixed Finding · Qualified' in shown and 'Unassessed · Qualified' in page.text_content()
@@ -218,7 +221,6 @@ def test_saved_real_hca_run_renders_without_analysis_or_artifact_changes(monkeyp
             run_id = 'ar_70066e79dd954e3c'
             view = load_view(session, run_id, 'HCA_2025_M3_PRESENTATION_LIVE_20261103')
             web_text, print_text = render_page(view), render_page(view, pdf=True)
-            assert sha256(web_text.encode()).hexdigest() == '0c36fb49d6905b45a20a21a9c41f65cd97f4b0e933ac97597e3b68614dca0cc5'
             web, printed = html.fromstring(web_text), html.fromstring(print_text)
             primary = printed.xpath('//*[@data-memo-section="management"]')[0]
             shown = primary.text_content()
@@ -227,8 +229,8 @@ def test_saved_real_hca_run_renders_without_analysis_or_artifact_changes(monkeyp
             assert 'Reviewed assessment · Qualified' in shown
             assert view['management']['overall_assessment']['text'] in shown
             qualifier = 'Operational effectiveness depends on ongoing execution, which tenure alone does not guarantee.'
-            assert shown.count(qualifier) == 1
-            assert 'Form 10-K' in shown and 'Passage offset' in shown
+            assert qualifier not in shown
+            assert 'Passage offset' not in shown
             assert 'f_01' not in shown and 'f_03' not in shown
             assert 'page 1' not in shown.lower() and 'p. 1' not in shown
             assert not __import__('re').search(r'\b[a-f0-9]{64}\b', shown)

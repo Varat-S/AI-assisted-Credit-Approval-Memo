@@ -217,6 +217,23 @@ def run_bo_fo(*, database: Path, folder: str, bo_backend, fo_backend, fo_mode: s
                 ).run_case(case_id, package=package, produce_pdf=produce_pdf)
                 say("bo", "recording the Business Overview")
                 session.commit()
+                # Informational output is generated only AFTER the analytical run
+                # and handoff are frozen. It is never passed to FO, RMS or BO agents.
+                if stop is not None and stop.is_set():
+                    return bo_summary(result, validators=bo_validators)
+                say("bo", "describing the business model")
+                stage("bo", "business_model", "running")
+                try:
+                    from app.services.bo.business_model import run_description
+                    with session.begin_nested():
+                        description = run_description(session, result.analysis_run_id, bo_backend)
+                    session.commit()
+                    informational_status = description['status']
+                except Exception:
+                    session.rollback()
+                    informational_status = 'unavailable'
+                    say("bo", "Business Model unavailable; saved credit analysis is unchanged")
+                stage("bo", "business_model", "completed", {"informational_status": informational_status})
         finally:
             engine.dispose()
         return bo_summary(result, validators=bo_validators)

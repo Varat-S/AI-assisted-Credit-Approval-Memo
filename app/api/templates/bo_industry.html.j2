@@ -1,0 +1,24 @@
+{% from 'bo_evidence.html.j2' import evidence with context %}
+{% macro industry_finding(entry, exposure=false) %}
+{% set finding = entry.finding %}{% set interpretation = finding.interpretation or {} %}
+<article class="memo-claim bo-industry-finding" id="industry-{{ finding.hypothesis_id }}" data-industry-finding="{{ finding.hypothesis_id }}">
+<h4>{{ entry.title }}</h4>
+{% if entry.state %}<p class="technical-note">{{ entry.state|capitalize }}</p>{% endif %}
+<dl class="bo-finding-points">
+<div class="bo-finding-point"><dt>{{ 'Company exposure' if exposure else 'Industry development' }}</dt><dd><p>{{ finding.claim }}</p></dd></div>
+{% if interpretation.implication or finding.credit_mechanism %}<div class="bo-finding-point"><dt>Effect on the company</dt><dd><p>{{ interpretation.implication or finding.credit_mechanism }}</p></dd></div>{% endif %}
+{% if interpretation.company_response %}<div class="bo-finding-point"><dt>Company response or offset</dt><dd><p>{{ interpretation.company_response }}</p></dd></div>{% endif %}
+{% if exposure and interpretation.magnitude and interpretation.magnitude not in finding.claim %}<div class="bo-finding-point"><dt>Scale</dt><dd><p>{{ interpretation.magnitude }}</p></dd></div>{% endif %}
+{% if interpretation.watch_trigger %}<div class="bo-finding-point"><dt>What to watch</dt><dd><p>{{ interpretation.watch_trigger }}</p></dd></div>{% endif %}
+</dl>
+{% if exposure and entry.links %}<p class="technical-note">Related developments: {% for link in entry.links %}<a href="#industry-{{ link.id }}">{{ link.title }}</a>{% if not loop.last %} · {% endif %}{% endfor %}</p>{% endif %}
+{{ evidence(entry.evidence) }}
+</article>
+{% endmacro %}
+{% if section.content and section.content.findings %}
+{% for group in bo4.industry.groups %}<div class="bo-finding-group bo-industry-group" data-industry-category="{{ group.id }}"><h3>{{ group.title }}</h3>
+{% for entry in group.findings %}{{ industry_finding(entry) }}{% else %}<p class="memo-empty">No supported {{ group.title|lower }} identified in this run.</p>{% endfor %}
+</div>{% endfor %}
+{% if bo4.industry.exposures %}<div class="bo-finding-group bo-industry-exposures" data-industry-category="company_exposure"><h3>Company Exposure</h3>{% for entry in bo4.industry.exposures %}{{ industry_finding(entry, true) }}{% endfor %}</div>{% endif %}
+{% else %}<p class="memo-empty">Industry analysis is not available in this version.</p>{% endif %}
+{{ evidence(section.evidence) }}

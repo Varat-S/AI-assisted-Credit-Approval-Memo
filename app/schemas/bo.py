@@ -20,7 +20,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import Enum
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -90,6 +90,15 @@ class MitigantAssessment(BaseModel):
     outcome_evidence_ids: list[str] = Field(default_factory=list)
 
 
+class IndustryMetadata(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    kind: Literal['development', 'exposure']
+    category: Literal['tailwind', 'headwind', 'mixed', 'uncertain', 'company_exposure']
+    title: str = Field(min_length=1, max_length=140)
+    state: Literal['observed', 'structural', 'proposed', 'expected']
+    linked_development_ids: list[str] = Field(default_factory=list)
+
+
 class HypothesisRecord(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -116,6 +125,7 @@ class HypothesisRecord(BaseModel):
     # watch_trigger). Always the model's inference; a field carrying a number
     # bound to neither an indicator nor a verified quote is dropped.
     interpretation: dict[str, str] = Field(default_factory=dict)
+    industry: IndustryMetadata | None = None
     missing_information: list[str] = Field(default_factory=list)
     display_priority: DisplayPriority = DisplayPriority.ON_DEMAND
     review_required: bool = False

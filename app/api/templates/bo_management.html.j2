@@ -15,7 +15,6 @@
   <h3>Overall assessment</h3>
   <p class="bo-management-classification">{{ m.overall_assessment.wording_label }} · {{ m.overall_assessment.status|title }} · Recorded outcome: {{ m.overall_assessment.outcome|replace('_', ' ')|title }}</p>
   <p class="bo-management-assessment-text">{{ m.overall_assessment.text }}</p>
-  {% if m.qualifications %}<div class="bo-management-qualifications"><h4>Material qualifications</h4><ul>{% for qualification in m.qualifications %}<li class="qualification">{{ qualification.text }}</li>{% endfor %}</ul></div>{% endif %}
 </div>
 
 {% if pdf %}
@@ -55,11 +54,13 @@
 </div>
 {% endif %}
 
-{% if m.methodology_notices %}<aside class="bo-management-methodology"><h4>Methodology / demonstration notice</h4>{% for text in m.methodology_notices %}<p class="technical-note">{{ text }}</p>{% endfor %}</aside>{% endif %}
 
 {% if not pdf %}
 <details class="bo-management-support" data-run-id="{{ bo4.memo.identity.analysis_run_id }}">
   <summary>Executive Profiles &amp; Supporting Evidence</summary>
+  {% if m.qualifications %}<div class="bo-management-qualifications"><h4>Material qualifications</h4><ul>{% for qualification in m.qualifications %}<li class="qualification">{{ qualification.text }}</li>{% endfor %}</ul></div>{% endif %}
+{% if m.methodology_notices %}<aside class="bo-management-methodology"><h4>Methodology / demonstration notice</h4>{% for text in m.methodology_notices %}<p class="technical-note">{{ text }}</p>{% endfor %}</aside>{% endif %}
+
   {% if m.overall_assessment.original_text %}<h3>Original model assessment</h3><p>{{ m.overall_assessment.original_text }}</p>{% endif %}
   <h3>Executive profiles</h3>
   {% for profile in m.executive_profiles %}<div class="memo-claim">
