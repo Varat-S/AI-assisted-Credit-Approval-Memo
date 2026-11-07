@@ -12,8 +12,6 @@
 {% set tiles = [('Composite risk score', comp.text ~ (' / 10' if comp.score is not none else '')), ('Indicative rating', comp.rating or '—'), ('Risk level', comp.label|capitalize), ('Measures scored', ex.measures_scored ~ ' / ' ~ memo.measures|length)] %}
 {% if pdf %}{# the PDF renderer has no grid: the tiles go side by side in a table #}<table class="memo-score-table"><tr>{% for label, value in tiles %}<td><span>{{ label }}</span><br><strong>{{ value }}</strong></td>{% endfor %}</tr></table>
 {% else %}<div class="memo-scores">{% for label, value in tiles %}<div><span>{{ label }}</span><strong>{{ value }}</strong></div>{% endfor %}</div>{% endif %}
-<p class="technical-note">{% if comp.score is not none %}The composite combines the scored measures below by their weights{% if comp.after_override %}, after the analyst's overrides on the Financial Overview tab{% endif %}. {% endif %}Scores run from 1 (lowest risk) to 10 (highest). The rating is the engine's indicative mapping of the composite (1 = AAA, 10 = D), not an agency rating. It updates when an analyst records a decision on the Financial Overview tab.</p>
-<p class="memo-empty">Status: {{ (memo.status.run_status or 'unknown')|replace('_', ' ') }}. {{ memo.status.text }} Analyst review: {{ memo.status.human_review_status }}.</p>
 <div class="memo-columns">
 <section><h3>Financial strengths</h3>{% if ex.strengths %}<ul>{% for s in ex.strengths %}<li>{{ s.text }}</li>{% endfor %}</ul>{% else %}<p class="memo-empty">No measure scores low risk.</p>{% endif %}</section>
 <section><h3>Financial weaknesses</h3>{% if ex.weaknesses %}<ul>{% for s in ex.weaknesses %}<li>{{ s.text }}</li>{% endfor %}</ul>{% else %}<p class="memo-empty">No measure scores above moderate risk.</p>{% endif %}
@@ -24,7 +22,6 @@
 <div class="memo-table-wrap"><table class="memo-table"><thead><tr><th>Check</th><th>Outcome</th><th>Finding</th><th>Effect on the scores</th></tr></thead><tbody>
 {% for p in memo.prechecks %}<tr><td>{{ p.title }}</td><td>{{ outcome(p.status) }}{% if p.decided_by %}<br><small>{{ p.decided_by|replace('_', ' ') }}</small>{% endif %}</td><td>{{ p.reason or '—' }}</td><td>{{ p.effect or '—' }}</td></tr>{% endfor %}
 </tbody></table></div>
-{% if not pdf %}<p class="technical-note">The Pre-check Agent classifies the filing's passages; its quotes are verified against the filing before they count.</p>{% endif %}
 {% else %}<p class="memo-empty">No pre-check was recorded for this run.</p>{% endif %}
 
 <h3>Financial Measures</h3>
@@ -50,8 +47,6 @@
 {% for r in memo.composite.rows %}<tr><td>{{ r.name }}</td><td>{{ cell(r.score) }}</td><td>{{ r.weight }}</td><td>{{ r.share }}</td><td>{{ r.contribution }}</td><td>{{ r.notes or '' }}</td></tr>{% endfor %}
 </tbody></table></div>
 {% endif %}
-{% if memo.composite.formula %}<p class="technical-note">{{ memo.composite.formula }}{% if memo.composite.average and memo.composite.average != '—' %}; weighted average {{ memo.composite.average }}{% endif %}.{% for a in memo.composite.adjustments %} {{ a }}.{% endfor %}</p>{% endif %}
-{% if memo.composite.gaps %}<p class="memo-empty">{{ memo.composite.gaps }}</p>{% endif %}
 
 {% if memo.decisions.review or memo.decisions.overrides %}
 <h3>Analyst decisions</h3><ul>
@@ -66,6 +61,4 @@
 {% if out.data_limitations %}<p><strong>Data limitations</strong></p><ul>{% for d in out.data_limitations %}<li>{{ d }}</li>{% endfor %}</ul>{% endif %}
 {% endif %}
 
-{% if pdf %}<p class="technical-note">Period ending {{ memo.case.period_end or 'unknown' }} (FY{{ memo.case.fiscal_year or '?' }}); amounts are in millions of the reporting currency. Industry group: {{ memo.case.industry_group or 'not classified' }}.</p>
-{% else %}<h3>Basis of Preparation</h3>
-<p class="technical-note">Every figure is computed by code from the {{ memo.case.form }}'s Inline XBRL facts ({{ memo.case.filing_folder }}){% if memo.case.source and memo.case.source.url %}, <a href="{{ memo.case.source.url }}">{{ memo.case.source.url }}</a>{% endif %}, for the period ending {{ memo.case.period_end or 'unknown' }} (FY{{ memo.case.fiscal_year or '?' }}); amounts are in millions of the reporting currency. Industry group: {{ memo.case.industry_group or 'not classified' }}. Run {{ memo.run.run_id }} (hash {{ (memo.run.content_hash or '')[:16] }}), engine {{ memo.run.engine_version }}{% if memo.run.agent_model %}, agent model {{ memo.run.agent_model }}{% endif %}. This section renders the recorded run; it adds no analysis of its own. Version {{ memo.version }}.</p>{% endif %}
+{% if pdf %}<p class="technical-note">Period ending {{ memo.case.period_end or 'unknown' }} (FY{{ memo.case.fiscal_year or '?' }}); amounts are in millions of the reporting currency. Industry group: {{ memo.case.industry_group or 'not classified' }}.</p>{% endif %}

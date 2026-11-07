@@ -110,7 +110,7 @@ def _pdf_details(artifact, view, findings, references):
             topic = next((c['title'] for c in view['categories'] if finding in c['findings']),
                          'Information Gaps' if finding in view['information_gaps'] else 'Other Reviewed Observations')
             entries.append({**finding, 'topic': topic,
-                            'credit_implication': original.get('credit_implication') or original.get('credit_mechanism')})
+                            'credit_implication': finding['credit_implication']})
         if entries:
             groups.append({'id': group['id'], 'title': group['title'], 'findings': entries})
 
@@ -159,6 +159,30 @@ def _pdf_details(artifact, view, findings, references):
                 and o.get('observation_id') not in eligible_ids for o in artifact.get('observations', []))}
 
 
+def _finding_parts(observation, result, claims, citations):
+    """Use only final admitted assertions explicitly referenced by this judgment.
+
+    Prefer atomic fact statements to the appointment/role assertions they repeat.
+    Historical records without claim results remain empty rather than gaining facts
+    from another finding or an original rejected extraction.
+    """
+    ids = result.get('supporting_claim_ids', observation.get('supporting_fact_ids', []))
+    admitted = []
+    for cid in ids:
+        claim = claims.get(cid)
+        if not claim or claim.get('outcome') not in ('accepted', 'qualified'):
+            continue
+        refs = claim.get('citation_ids') or []
+        if not refs or not set(refs) <= set(observation.get('citation_ids', [])) or any(r not in citations for r in refs):
+            continue
+        if claim.get('statement') and claim.get('kind') not in ('identity', 'roster'):
+            admitted.append(claim)
+    atomic = [c for c in admitted if c.get('kind') == 'fact']
+    selected = atomic or admitted
+    return [{'text': c['statement'], 'claim_id': c['claim_id'], 'citation_ids': list(c['citation_ids'])}
+            for i, c in enumerate(selected) if c['statement'] not in {p['statement'] for p in selected[:i]}]
+
+
 def management_view(artifact, *, documents=None, passages=None, warnings=()):
     if not artifact:
         return None
@@ -186,6 +210,7 @@ def management_view(artifact, *, documents=None, passages=None, warnings=()):
                          or (validation.get('overall_recovery') or {}).get('corrected_overall')
                          or review.get('overall', {}))
     judgments = {j['judgment_id']: j for j in validation.get('judgment_results', [])}
+    claims = {c['claim_id']: c for c in validation.get('claim_results', []) if c.get('claim_id')}
     categories = [{'id': key, 'title': title, 'priority': priority,
                    'status': 'insufficient_evidence', 'review_status': None, 'findings': []}
                   for key, title, priority in CATEGORIES]
@@ -212,12 +237,20 @@ def management_view(artifact, *, documents=None, passages=None, warnings=()):
         if not ids or any(cid not in citations for cid in ids):
             continue
         oid = observation.get('observation_id')
+        result = judgments.get(oid, {})
+        parts = _finding_parts(observation, result, claims, citations)
         reason = observation.get('review_reason')
         limits = _unique(([reason] if observation['review_outcome'] == 'qualified' else [])
                          + observation.get('uncertainties', []))
         finding = {'text': observation.get('text', ''), 'direction': observation.get('direction'),
                    'direction_label': DIRECTION_LABELS.get(observation.get('direction'), 'Unassessed'),
                    'classification': {'kind': 'inference', 'label': 'Inference'},
+                   'finding_parts': parts,
+                   'finding_classification': {'kind': 'fact', 'label': 'Fact'} if parts else None,
+                   'credit_implication': observation.get('credit_implication') or observation.get('credit_mechanism') or observation.get('text', ''),
+                   'implication_classification': {'kind': 'inference', 'label': 'Inference'},
+                   'display_limitations': _unique(observation.get('uncertainties', [])) or
+                       ([reason] if reason and observation['review_outcome'] == 'qualified' and not _processing_note(reason) else []),
                    'review_status': observation['review_outcome'], 'limitations': limits,
                    'observation_ids': [oid], 'citation_ids': list(ids), 'references': references(ids)}
         # Evidence-basis restrictions are shown explicitly but the internal fact
@@ -234,7 +267,7 @@ def management_view(artifact, *, documents=None, passages=None, warnings=()):
                 qualify(reason, 'review_reason', [oid])
         for text in observation.get('uncertainties', []):
             qualify(text, 'observation_uncertainty', [oid])
-        key = (finding['text'], finding['direction'], finding['review_status'], tuple(_key(t) for t in limits), observation.get('category'))
+        key = (finding['text'], finding['direction'], finding['review_status'], tuple(_key(t) for t in limits), observation.get('category'), tuple(p['text'] for p in parts))
         if key in seen:
             existing = seen[key]
             existing['observation_ids'].append(oid)

@@ -291,7 +291,8 @@ def test_the_memo_page_explains_the_rms_verdict_and_follows_fo_decisions(client)
     assert "Why it is escalated. These gates override the grade and capacity:" in text and "RMS-G02" in text
     assert "RMS starts from the Financial Overview composite of" in text and "Capacity is the smallest of four tests" in text
     assert "Indicative structure" in text and "It is provisional: the case is escalated" in text
-    assert "every assessment needs human review" in text and "Out of date" not in text
+    assert "every assessment needs human review" not in text and "Out of date" not in text
+    assert "A later decision on either tab" not in text
     # An FO override re-assesses RMS, and the memo page explains the new verdict.
     post(client, f"/cases/{CASE}/credit/fo/{FO_RUN}/override",
          {"measure": "liquidity", "decision": "override", "score": "8", "reviewer": "A. Analyst",

@@ -262,3 +262,27 @@ def test_pdf_exec_context_selects_one_admitted_role_and_recorded_transitions_onl
     assert pdf['monitoring_priorities'] == []
     assert '0 distinct reviewed findings' in pdf['finding_limit_notice']
     assert source == before
+
+
+def test_three_part_findings_use_final_referenced_claims_and_do_not_borrow_rejected_facts():
+    source = {'citations': [{'citation_id': 'c1'}, {'citation_id': 'c2'}],
+        'observations': [{'observation_id': 'j1', 'category': 'continuity', 'direction': 'positive',
+            'review_outcome': 'accepted', 'text': 'Internal succession supports continuity.',
+            'citation_ids': ['c1'], 'supporting_fact_ids': ['old'],
+            'uncertainties': ['Execution remains unproven.', 'Execution remains unproven.']}],
+        'validation': {'judgment_results': [{'judgment_id': 'j1', 'supporting_claim_ids': ['good', 'bad', 'foreign', 'role']}],
+            'claim_results': [
+                {'claim_id': 'good', 'kind': 'fact', 'outcome': 'qualified', 'statement': 'Supported subset.', 'citation_ids': ['c1'], 'original_statement': 'Unsupported full statement.'},
+                {'claim_id': 'bad', 'kind': 'fact', 'outcome': 'unsupported', 'statement': 'Rejected fact.', 'citation_ids': ['c1']},
+                {'claim_id': 'foreign', 'kind': 'fact', 'outcome': 'accepted', 'statement': 'Another finding.', 'citation_ids': ['c2']},
+                {'claim_id': 'role', 'kind': 'prior_internal_role', 'outcome': 'accepted', 'statement': 'Repeated role detail.', 'citation_ids': ['c1']}]}}
+    before = deepcopy(source)
+    view = management_view(source)
+    f = view['key_strengths'][0]
+    assert [p['text'] for p in f['finding_parts']] == ['Supported subset.']
+    assert f['finding_classification']['label'] == 'Fact'
+    assert f['credit_implication'] == 'Internal succession supports continuity.'
+    assert f['implication_classification']['label'] == 'Inference'
+    assert f['display_limitations'] == ['Execution remains unproven.']
+    assert view['pdf']['finding_groups'][0]['findings'][0]['credit_implication'] == f['credit_implication']
+    assert source == before

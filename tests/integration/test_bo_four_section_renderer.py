@@ -179,7 +179,7 @@ def test_direction_groups_stay_visible_and_caveats_are_out_of_primary_memo():
         page = html.fromstring(_env.get_template('bo_management.html.j2').render(
             bo4={'management': view, 'memo': {'identity': {'analysis_run_id': 'recorded-run'}}}, pdf=pdf))
         shown = visible(page)
-        assert 'Performance remains unverified.' not in shown
+        assert 'Performance remains unverified.' in shown
         assert 'Material scope limitation.' not in shown
         assert 'Positive' in shown
         assert 'Supporting Factor' not in shown

@@ -1,6 +1,7 @@
 {# PDF-only layout. Every analytical statement comes from the shared projection. #}
 {% set m = bo4.management %}
 {% from 'bo_badges.html.j2' import direction_badge %}
+{% from 'bo_management_points.html.j2' import management_points %}
 <style>
 @media print {
   .bo-memo-section[data-memo-section="management"]{break-before:page}
@@ -37,11 +38,10 @@
   </div>
   <h3>Key credit considerations</h3>
   {% for group in m.pdf.finding_groups %}
-  <section class="bo-management-direction-group" data-finding-group="{{ group.id }}">{% if group.id not in ['supporting_factors', 'credit_concerns'] %}<h4>{{ group.title }}</h4>{% endif %}
+  <section class="bo-management-direction-group" data-finding-group="{{ group.id }}">
     {% for item in group.findings %}<div class="memo-claim bo-management-finding" data-direction="{{ item.direction or 'unassessed' }}" data-review-status="{{ item.review_status }}">
-      <h4>{{ item.topic }}</h4>{{ direction_badge(item.direction_label, item.classification) }}
-      <p>{{ item.text }}</p>
-      {% if item.credit_implication %}<p><strong>Recorded credit implication:</strong> {{ item.credit_implication }}</p>{% endif %}
+      <h4>{{ item.topic }}</h4>{{ direction_badge(item.direction_label) }}
+      {{ management_points(item) }}
     </div>{% endfor %}
   </section>
   {% else %}<p class="memo-empty">No eligible reviewed management findings are available.</p>{% endfor %}

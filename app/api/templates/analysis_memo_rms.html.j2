@@ -41,8 +41,7 @@
 {% if rec.terms %}{% set t = rec.terms %}<h3>{{ 'Indicative structure' if t.provisional else 'Proposed structure' }}</h3>
 <p>{{ usd(t.amount_m) }} {{ t.rank|replace('_', ' ') }}, {{ t.tenor_years }} years at {{ '{:.2%}'.format(t.interest_rate) }}{% if rec.pricing and rec.pricing.basis != 'requested' %} ({{ rec.pricing.base_rate.name }} + {{ rec.pricing.credit_spread.bps }}bp credit spread + business premium){% endif %}, {{ t.amortisation.type|replace('_', ' ') }} amortisation, pro forma leverage {{ t.pro_forma_leverage }}x, with {{ t.financial_covenants|length }} financial covenant{{ '' if t.financial_covenants|length == 1 else 's' }} and {{ rec.mitigants|length }} mitigant{{ '' if rec.mitigants|length == 1 else 's' }}.{% if t.provisional %} It is provisional: {{ 'it is sized at the derived capacity, with no loan requested' if r.verdict == 'capacity_only' else 'the case is escalated' }}.{% endif %}</p>{% endif %}
 
-{# 5. Freshness and status #}
+{# Retain a stale-result warning when the saved result no longer matches its inputs. #}
 {% if rms.stale %}<p class="technical-note"><strong>Out of date.</strong> This assessment no longer matches its runs: {{ rms.stale|join('; ') }}. Re-assess it on the <a href="{{ rms_tab }}">Credit view tab</a>.</p>
-{% else %}<p class="technical-note">Assessed {{ (rec.assessed_at or '')[:16]|replace('T', ' ') }} UTC, from the current Business Overview review and Financial Overview decisions. A later decision on either tab re-assesses it.</p>{% endif %}
-<p class="technical-note">RMS is decision support, not a credit approval: every assessment needs human review. Full grade, capacity tests, covenants and mitigants are on the <a href="{{ rms_tab }}">Credit view tab</a>.</p>
+{% endif %}
 {% endif %}

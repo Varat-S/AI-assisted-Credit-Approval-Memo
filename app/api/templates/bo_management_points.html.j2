@@ -1,0 +1,12 @@
+{% from 'bo_badges.html.j2' import classification_badge %}
+{% macro management_points(item) %}
+<dl class="bo-finding-points">
+<div class="bo-finding-point"><dt>Findings{{ classification_badge(item.finding_classification) }}</dt><dd>
+{% for part in item.finding_parts %}<p>{{ part.text }}</p>{% else %}<p class="memo-empty">No separate supporting facts were recorded for this saved finding.</p>{% endfor %}
+</dd></div>
+<div class="bo-finding-point"><dt>Credit Implication{{ classification_badge(item.implication_classification) }}</dt><dd><p>{{ item.credit_implication }}</p></dd></div>
+<div class="bo-finding-point"><dt>Limitations of Findings</dt><dd>
+{% for text in item.display_limitations %}<p>{{ text }}</p>{% else %}<p class="memo-empty">No specific limitations were recorded for this finding.</p>{% endfor %}
+</dd></div>
+</dl>
+{% endmacro %}
