@@ -1,12 +1,13 @@
+{% from 'bo_badges.html.j2' import classification_badge, direction_badge %}
 {% from 'bo_evidence.html.j2' import evidence with context %}
 {% macro industry_finding(entry, exposure=false) %}
 {% set finding = entry.finding %}{% set interpretation = finding.interpretation or {} %}
 <article class="memo-claim bo-industry-finding" id="industry-{{ finding.hypothesis_id }}" data-industry-finding="{{ finding.hypothesis_id }}">
 <h4>{{ entry.title }}</h4>
-{% if entry.state %}<p class="technical-note">{{ entry.state|capitalize }}</p>{% endif %}
+{{ direction_badge(entry.direction_label) }}
 <dl class="bo-finding-points">
-<div class="bo-finding-point"><dt>{{ 'Company exposure' if exposure else 'Industry development' }}</dt><dd><p>{{ finding.claim }}</p></dd></div>
-{% if interpretation.implication or finding.credit_mechanism %}<div class="bo-finding-point"><dt>Effect on the company</dt><dd><p>{{ interpretation.implication or finding.credit_mechanism }}</p></dd></div>{% endif %}
+<div class="bo-finding-point"><dt>{{ 'Company exposure' if exposure else 'Industry development' }}{{ classification_badge(entry.assessment.finding) }}</dt><dd><p>{{ finding.claim }}</p></dd></div>
+{% if interpretation.implication or finding.credit_mechanism %}<div class="bo-finding-point"><dt>Effect on the company{{ classification_badge(entry.assessment.implication) }}</dt><dd><p>{{ interpretation.implication or finding.credit_mechanism }}</p></dd></div>{% endif %}
 {% if interpretation.company_response %}<div class="bo-finding-point"><dt>Company response or offset</dt><dd><p>{{ interpretation.company_response }}</p></dd></div>{% endif %}
 {% if exposure and interpretation.magnitude and interpretation.magnitude not in finding.claim %}<div class="bo-finding-point"><dt>Scale</dt><dd><p>{{ interpretation.magnitude }}</p></dd></div>{% endif %}
 {% if interpretation.watch_trigger %}<div class="bo-finding-point"><dt>What to watch</dt><dd><p>{{ interpretation.watch_trigger }}</p></dd></div>{% endif %}

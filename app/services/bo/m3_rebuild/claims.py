@@ -58,6 +58,55 @@ class ClaimValidator:
         span=self.biographies.get(key(name))
         return normalized_m3(self.full[slice(*span)]) if span else ''
 
+    def biography_fragments(self, name):
+        """Canonical pieces of one bounded biography; preserve IDs and offsets."""
+        span = self.biographies.get(key(name))
+        if not span:
+            return []
+        pieces = []
+        for sid in self.sources.section_ids:
+            start = self.starts[sid]
+            lo, hi = max(span[0], start), min(span[1], start + len(self.sources.pages[sid]))
+            if hi > lo:
+                pieces.append({'source_id': sid, 'quote': self.sources.pages[sid][lo-start:hi-start]})
+        return pieces
+
+    def boundary_citations(self, source_id, quote, name):
+        """Recover a verbatim quotation split across adjacent canonical chunks."""
+        bio = self.biographies.get(key(name))
+        if not bio or source_id not in self.sources.section_ids:
+            return []
+        match = locate(self.full, quote)
+        if not match or not (bio[0]<=match['span_start'] and match['span_end']<=bio[1]):
+            return []
+        lo, hi = match['span_start'], match['span_end']
+        members = [(sid, self.starts[sid], self.starts[sid]+len(self.sources.pages[sid]))
+                   for sid in self.sources.section_ids if self.starts[sid]<hi
+                   and self.starts[sid]+len(self.sources.pages[sid])>lo]
+        if len(members)<2 or source_id not in {sid for sid,_,_ in members}:
+            return []
+        # No non-contiguous proxy spans or cross-person joins.
+        if any(a[2]!=b[1] for a,b in zip(members,members[1:])):
+            return []
+        result=[]
+        for sid,start,end in members:
+            left,right=max(lo,start),min(hi,end)
+            if right-left<12:
+                left=max(start,bio[0],left-180)
+                right=min(end,bio[1],max(right,left+12))
+            a,b=left-start,right-start
+            fragment=self.sources.pages[sid][a:b]
+            result.append({'source_id':sid,'quote':fragment,'document_id':self.sources.document_id,
+                'source_sha256':self.sources.sha256,'physical_page':self.sources.physical_pages.get(sid,1),
+                'passage_offset':self.sources.passage_offsets.get(sid,0),
+                'span_start':a,'span_end':b,'original_source_text':fragment,
+                'normalized_quote':normalized_m3(fragment),'matching_method':'canonical_boundary_fragments',
+                'quotation_check':'passed','outcome':'accepted',
+                'page_char_start':self.sources.passage_offsets.get(sid,0)+a,
+                'page_char_end':self.sources.passage_offsets.get(sid,0)+b,
+                'recovery_basis':'Exact original quotation spans adjacent chunks in the same executive biography'})
+        return result
+
     def citations(self,items,name=''):
         results=[]
         seen=set()
@@ -66,6 +115,12 @@ class ClaimValidator:
             if signature in seen: continue
             seen.add(signature)
             result=match_citation(self.sources,*signature)
+            if result['outcome']=='unsupported' and name:
+                recovered=self.boundary_citations(item['source_id'],item['quote'],name)
+                if recovered:
+                    results.append({**result,'recovery':'Recovered as separate adjacent canonical fragments'})
+                    results.extend(recovered)
+                    continue
             if result['outcome']=='accepted' and name:
                 bio=self.biographies.get(key(name))
                 start=self.starts.get(item['source_id'],0)+result['span_start']
@@ -171,7 +226,12 @@ def assess_claims(payload,sources,reviewer=None,enforce=True):
                 # Proxy wording ("was named …", "joined … as …"); tried only after the
                 # original clause fails, so a previously supported claim is unaffected.
                 clause=re.search(r'(?:was named|joined)\b.*?(?=\.\s+[A-Z]|$)',text,re.I)
-            if not clause or key(scope) not in key(clause[0]): raise ValueError('Current title is not supported by its appointment clause')
+            if not clause or key(scope) not in key(clause[0]):
+                from .claim_support import appointment_clause
+                resolved = appointment_clause(text, scope)
+                if not resolved:
+                    raise ValueError('Current title is not supported by its appointment clause')
+                clause = [resolved]
             if not raw['appointment_date']: raise ValueError('Current appointment date is unavailable')
             if not date_supported(raw['appointment_date'],clause[0]): raise ValueError('Appointment date/role is not supported')
             disclosed=re.search(r'\b(?:since|effective|in)\s+('+DATE_TEXT+r')',clause[0],re.I)
@@ -182,24 +242,56 @@ def assess_claims(payload,sources,reviewer=None,enforce=True):
         appointment=validator.admit(prefix+':appointment','appointment',name,
             raw['position']+'; '+raw['appointment_date'],
             [{'source_id':raw['source_id'],'quote':raw['quote']}]+raw.get('supporting_citations',[]),appointment_check)
+        if (appointment['outcome']=='unsupported' and appointment['citation_results'] and any(
+                c['outcome']=='accepted' and key(raw['position']) in key(c['original_source_text'])
+                for c in appointment['citation_results'])):
+            context = validator.biography_fragments(name)
+            if context:
+                original = dict(appointment)
+                repaired = validator.admit(prefix+':appointment','appointment',name,
+                    raw['position']+'; '+raw['appointment_date'], context, appointment_check)
+                validator.claims.pop()
+                appointment.update(repaired, original_outcome=original['outcome'],
+                                   original_reason=original['reason'], context_recovery='same_executive_biography')
+        if appointment['outcome']=='unsupported' and any(c['outcome']=='accepted' for c in appointment['citation_results']):
+            from .claim_support import scoped_appointment
+            surviving_quotes=[c for c in appointment['citation_results'] if c['outcome']=='accepted']
+            scope=scoped_appointment(' '.join(c['original_source_text'] for c in surviving_quotes),
+                                     raw['position'], raw['appointment_date'])
+            if scope:
+                appointment.update(original_statement=appointment['statement'], original_outcome='unsupported',
+                    original_reason=appointment['reason'], outcome='qualified', citations=surviving_quotes,
+                    statement=scope+'; '+raw['appointment_date'], appointment_scope=scope,
+                    partial_appointment_scope=True,
+                    reason='Disclosed date retained for the named office only; other concurrent titles are undated')
         admitted_roles=[]
         for ri,role in enumerate(raw['prior_internal_roles'],1):
             def role_check(text,claim,role=role):
                 if identity['outcome']=='unsupported': raise ValueError('Executive identity is unsupported')
                 if key(role['position']) not in key(text): raise ValueError('Prior role title differs from quotation')
-                for field in ('start_date','end_date'):
-                    if not role[field] or not date_supported(role[field],text): raise ValueError('Prior role date lacks support')
-                pairs=prior_role_date_pairs(normalized_m3(role['position']),text)
-                if pairs and (role['start_date'],role['end_date']) not in pairs:
-                    raise ValueError('Prior role dates are not bound to that title at disclosed precision')
-                lo,hi=date_interval(role['start_date']),date_interval(role['end_date'])
-                if lo[0]>hi[1]: raise ValueError('Prior role dates are reversed')
-                if window and hi[0]>date.fromisoformat(window['end']): raise ValueError('Prior role ends after roster date')
+                from .claim_support import date_assertions
+                retained, dropped = date_assertions(role, text)
+                claim['retained_dates'] = {k: retained[k] for k in ('start_date', 'end_date')}
+                claim['withheld_assertions'] = dropped
+                claim['original_statement'] = claim['statement']
+                hi = date_interval(retained['end_date'])
+                if window and hi and hi[0]>date.fromisoformat(window['end']):
+                    retained['end_date']=''
+                    claim['retained_dates']['end_date']=''
+                    claim['withheld_assertions'].append('end_date')
+                claim['statement'] = role['position'] + (('; ' + retained['start_date']) if retained['start_date'] else '') + ((' to ' + retained['end_date']) if retained['end_date'] else '')
                 # Employer checks receive only canonical biography context and
                 # previously admitted roles, never unvalidated sibling assertions.
                 biography=validator.biography(name)
+                # Employer attribution can use the role's uniquely disclosed
+                # date range even when the model supplied the wrong date. Do
+                # not publish that rejected model value in retained_dates.
+                attribution_role = dict(retained)
+                disclosed_pairs = set(prior_role_date_pairs(normalized_m3(role['position']), text))
+                if len(disclosed_pairs)==1:
+                    attribution_role['start_date'], attribution_role['end_date'] = next(iter(disclosed_pairs))
                 try:
-                    internal_employer({**role,'position':normalized_m3(role['position']),'quote':text},
+                    internal_employer({**attribution_role,'position':normalized_m3(role['position']),'quote':text},
                         {'quote':biography,'prior_internal_roles':admitted_roles},sources.company)
                 except ValueError as exc:
                     if 'ambiguous' not in str(exc): raise
@@ -219,10 +311,24 @@ def assess_claims(payload,sources,reviewer=None,enforce=True):
             claim=validator.admit(prefix+f':role:{ri}','prior_internal_role',name,
                 role['position']+'; '+role['start_date']+' to '+role['end_date'],
                 [{'source_id':role['source_id'],'quote':role['quote']}]+role.get('supporting_citations',[]),role_check)
+            if claim['outcome']=='unsupported' and any(c['outcome']=='accepted' for c in claim['citation_results']):
+                # Context is supplied to attribution checks, not substituted for
+                # an invalid declared quotation or another executive's evidence.
+                context = validator.biography_fragments(name)
+                if context and 'attribution' in claim['reason']:
+                    original = dict(claim)
+                    repaired = validator.admit(prefix+f':role:{ri}','prior_internal_role',name,
+                        role['position'], context, role_check)
+                    validator.claims.pop()
+                    claim.update(repaired, original_outcome=original['outcome'], original_reason=original['reason'])
             if claim['outcome']!='unsupported':
-                start,end=date_interval(role['start_date']),date_interval(role['end_date'])
-                admitted_roles.append({'position':role['position'],'start_date':role['start_date'],
-                    'end_date':role['end_date'],'start_precision':start[2],'end_precision':end[2],
+                dates=claim['retained_dates']
+                start,end=date_interval(dates['start_date']),date_interval(dates['end_date'])
+                if claim.get('withheld_assertions'):
+                    claim.update(outcome='qualified',reason='Role and employer retained; unsupported date assertions withheld')
+                admitted_roles.append({'position':role['position'],'start_date':dates['start_date'],
+                    'end_date':dates['end_date'],'start_precision':start[2] if start else 'unavailable',
+                    'end_precision':end[2] if end else 'unavailable',
                     'source_id':role['source_id'],'quote':role['quote'],
                     'validated_citations':claim['citations']})
         # A concurrently held explicitly attributed company office can validate
@@ -231,7 +337,8 @@ def assess_claims(payload,sources,reviewer=None,enforce=True):
         for ri,role in enumerate(raw['prior_internal_roles'],1):
             cid=prefix+f':role:{ri}'
             old=next(c for c in validator.claims if c['claim_id']==cid)
-            if old['outcome']=='unsupported' and 'employer attribution is ambiguous' in old['reason']:
+            if (old['outcome']=='unsupported' and 'employer attribution is ambiguous' in old['reason']
+                    and role['start_date'] and role['end_date']):
                 try:
                     text=normalized_m3(''.join(c['original_source_text'] for c in old['citation_results'] if c['outcome']=='accepted'))
                     internal_employer({**role,'position':normalized_m3(role['position']),'quote':text},
@@ -257,7 +364,7 @@ def assess_claims(payload,sources,reviewer=None,enforce=True):
                 raw['external_recruitment_quote'],[{'source_id':raw['external_source_id'],
                     'quote':raw['external_recruitment_quote']}],external_check)
         if identity['outcome']!='unsupported':
-            interval=date_interval(raw['appointment_date']) if appointment['outcome']!='unsupported' else None
+            interval=date_interval(raw['appointment_date']) if appointment['outcome']!='unsupported' and not appointment.get('partial_appointment_scope') else None
             anchor=date.fromisoformat(window['end']) if window else None
             profile={'name':name,'position':raw['position'] if position['outcome']!='unsupported' else expected[key(name)]['position'],
                 'roster_position':expected[key(name)]['position'],
@@ -285,6 +392,54 @@ def assess_claims(payload,sources,reviewer=None,enforce=True):
         if claim['outcome']!='unsupported':
             facts.append({**fact,'citations':claim['citations']})
 
+    # Only exact, correctly attributed quotations are eligible for bounded
+    # semantic recovery. Invalid citations never get a second path to admission.
+    candidates = [c for c in validator.claims if c['kind']=='fact' and c['outcome']=='unsupported'
+                  and c['reason']=='Fact statement changes or exceeds its surviving quotations'
+                  and any(q['outcome']=='accepted' for q in c['citation_results'])]
+    if candidates and hasattr(reviewer, 'review_claims'):
+        inputs = [{'claim_id':c['claim_id'], 'executive':c['executive'], 'statement':c['statement'],
+                   'quotations':[{'source_id':q['source_id'], 'quote':q['original_source_text']}
+                                 for q in c['citation_results'] if q['outcome']=='accepted']}
+                  for c in candidates]
+        try:
+            decisions = reviewer.review_claims(inputs, sources)
+            by_id = {d['claim_id']:d for d in decisions}
+            if len(by_id)!=len(decisions) or set(by_id)!={c['claim_id'] for c in candidates}:
+                raise ValueError('Missing or duplicate fact recovery decision')
+        except (ValueError, KeyError, RuntimeError, AssertionError):
+            by_id = {}
+        for claim in candidates:
+            decision = by_id.get(claim['claim_id'])
+            if decision is None:
+                continue
+            claim['entailment_review'] = decision
+            if decision['outcome'] not in {'supported','partially_supported'}:
+                continue
+            try:
+                quotes = validator.citations(decision['supporting_citations'], claim['executive'])
+                quotes = [q for q in quotes if q['outcome']=='accepted']
+                # Recovery may narrow the original evidence; cannot introduce
+                # an uncited passage or enlarge the evidence boundary.
+                original_ids={q['source_id'] for q in claim['citation_results'] if q['outcome']=='accepted'}
+                originals=[q for q in claim['citation_results'] if q['outcome']=='accepted']
+                if (not quotes or not {q['source_id'] for q in quotes} <= original_ids
+                        or any(not any(q['source_id']==old['source_id'] and
+                            locate(old['original_source_text'], q['original_source_text']) is not None
+                            for old in originals) for q in quotes)):
+                    raise ValueError('Recovery changed the declared evidence boundary')
+                from .claim_support import retention_guard
+                retention_guard(decision['retained_statement'], quotes, claim['executive'], sources.expected_roster)
+            except (ValueError, KeyError):
+                claim['recovery_rejected'] = 'Retained assertion failed canonical evidence/identity/number checks'
+                continue
+            original = claim['statement']
+            claim.update(original_statement=original, original_outcome='unsupported', original_reason=claim['reason'],
+                         statement=decision['retained_statement'], outcome='qualified', citations=quotes,
+                         reason='Bounded entailment review retained supported assertions: '+decision['reason'])
+            facts.append({'fact_id':claim['claim_id'], 'executive':claim['executive'],
+                          'statement':claim['statement'], 'citations':quotes})
+
     ids=[c['claim_id'] for c in validator.claims]
     if len(ids)!=len(set(ids)):raise ValueError('Fact identity collides with a reserved evidence claim identity')
     accepted={c['claim_id']:c for c in validator.claims if c['outcome']!='unsupported'}
@@ -310,7 +465,9 @@ def assess_claims(payload,sources,reviewer=None,enforce=True):
         refs=decision['supporting_claim_ids'] if decision else []
         if not set(refs)<=accepted.keys() or not refs:
             outcome='unsupported';reason='No sufficient accepted claim basis supplied by Validator 7'
-        if judgment['executive'] and any(key(accepted[r]['executive']) not in ('',key(judgment['executive'])) for r in refs if r in accepted):
+        from .claim_support import judgment_scope
+        effective_scope, attribution_ok = judgment_scope(judgment, [accepted[r]['executive'] for r in refs if r in accepted])
+        if not attribution_ok:
             outcome='unsupported';reason='Reviewer attributed another executive evidence to this individual'
         if judgment['executive'] and key(judgment['executive']) not in profile_map:
             outcome='unsupported';reason='Individual judgment lacks an admitted executive identity'
@@ -330,10 +487,11 @@ def assess_claims(payload,sources,reviewer=None,enforce=True):
         result={'judgment_id':judgment['judgment_id'],'outcome':outcome,'reason':reason,
                 'original_text':judgment['explanation'],'original_fact_ids':judgment['supporting_fact_ids'],
                 'removed_fact_ids':judgment['rejected_fact_ids'],'supporting_claim_ids':refs,
-                'reviewed_text':decision['reviewed_text'] if decision else None}
+                'reviewed_text':decision['reviewed_text'] if decision else None,
+                'original_executive':judgment['executive'], 'effective_scope':effective_scope}
         judgment_results.append(result)
         if outcome!='unsupported':
-            observations.append({'observation_id':judgment['judgment_id'],'executive':judgment['executive'] or None,
+            observations.append({'observation_id':judgment['judgment_id'],'executive':(judgment['executive'] or None) if effective_scope=='individual' else None,
                 'rule':('unenforced_model_judgment' if advisory
                     else 'explicit_review_correction' if any(
                     change['judgment_id']==judgment['judgment_id']
@@ -347,6 +505,32 @@ def assess_claims(payload,sources,reviewer=None,enforce=True):
     surviving={o['observation_id'] for o in observations}
     overall=review['overall']
     overall_valid=bool(overall['judgment_ids']) and set(overall['judgment_ids'])<=surviving
+    summary_recovery = None
+    if not overall_valid and observations:
+        original_overall = dict(overall)
+        try:
+            if not hasattr(reviewer, 'summarize_surviving'):
+                raise ValueError('No bounded summary reviewer available')
+            corrected = reviewer.summarize_surviving(observations)
+            if not corrected['text'].strip() or not corrected['judgment_ids'] or not set(corrected['judgment_ids']) <= surviving:
+                raise ValueError('Recovered overall references an unavailable judgment')
+            # Summary may restate only supplied values, not add numerical claims.
+            from .claim_support import retention_guard
+            retention_guard(corrected['text'], [{'original_source_text':o['text']} for o in observations], '', [])
+            overall = corrected
+            overall_valid = True
+            summary_recovery = {'original_overall':original_overall, 'method':'bounded_surviving_judgments', 'corrected_overall':corrected}
+        except (ValueError, KeyError, RuntimeError, AssertionError):
+            # A model-independent fallback consists only of surviving reviewed
+            # wording, with no new synthesis or reinstatement of rejected ideas.
+            directions_left={o['signal'] for o in observations}
+            signal = ('mixed' if {'credit_positive','credit_negative'} <= directions_left else
+                      next(iter(directions_left)) if len(directions_left)==1 else 'neutral')
+            overall={'signal':signal,'text':' '.join(o['text'] for o in observations),
+                     'judgment_ids':[o['observation_id'] for o in observations],
+                     'limitations':['Overall limited to surviving reviewed findings.']}
+            overall_valid=True
+            summary_recovery={'original_overall':original_overall,'method':'surviving_reviewed_text_only','corrected_overall':overall}
     limitations=list(sources.limitations)+payload['overall_assessment']['uncertainties']+payload['overall_assessment']['missing_information']+overall['limitations']+review.get('scope_limitations',[])
     if validator.proxy:limitations.append('The proxy statement states no as-of date for its executive officer table; recency and tenure were not calculated.')
     failed=[c for c in validator.claims if c['outcome']=='unsupported']
@@ -369,7 +553,8 @@ def assess_claims(payload,sources,reviewer=None,enforce=True):
             'rejected_facts':[{'fact_id':c['claim_id'],'detail':c['reason']} for c in failed if c['kind']=='fact'],
             'rejected_judgments':[{'judgment_id':j['judgment_id'],'detail':j['reason']} for j in judgment_results if j['outcome']=='unsupported'],
             'overall_references_valid':overall_valid,'validator_7':review.get('original_review',review),
-            'explicit_review_corrections':review.get('explicit_corrections')},
+            'explicit_review_corrections':review.get('explicit_corrections'),
+            'overall_recovery':summary_recovery},
         'coverage':{'expected':len(expected) if sources.coverage_verifiable else None,'admitted':len(profiles),'missing':missing,'verifiable':sources.coverage_verifiable},
         'rejected_profiles':[], 'limitations':limitations,'completion_status':'complete' if complete else 'partial',
         'overall_assessment':{'outcome':directions.get(overall['signal'],overall['signal']) if overall_valid else 'unavailable',

@@ -1,10 +1,11 @@
 {% if pdf %}{% include 'bo_management_pdf.html.j2' %}{% else %}{# Same read-only projection for interactive and print views. #}
 {% set m = bo4.management %}
+{% from 'bo_badges.html.j2' import direction_badge %}
 {% from 'bo_evidence.html.j2' import evidence with context %}
 {% macro references(item) %}{% if item.evidence %}{{ evidence(item.evidence) }}{% endif %}{% endmacro %}
 {% macro finding(item) %}
 <div class="memo-claim bo-management-finding" data-review-status="{{ item.review_status }}" data-direction="{{ item.direction or 'unassessed' }}">
-  <p class="bo-management-classification">{{ item.direction_label }} · {{ item.review_status|title }}</p>
+  {{ direction_badge(item.direction_label, item.classification) }}
   <p>{{ item.text }}</p>
   {{ references(item) }}
 </div>
@@ -13,14 +14,14 @@
 {% if m %}
 <div class="memo-claim bo-management-overall">
   <h3>Overall assessment</h3>
-  <p class="bo-management-classification">{{ m.overall_assessment.wording_label }} · {{ m.overall_assessment.status|title }} · Recorded outcome: {{ m.overall_assessment.outcome|replace('_', ' ')|title }}</p>
+  {{ direction_badge(m.overall_assessment.outcome|replace('_', ' ')|title, m.overall_assessment.classification) }}
   <p class="bo-management-assessment-text">{{ m.overall_assessment.text }}</p>
 </div>
 
 {% if pdf %}
 <div class="bo-management-print"><h3>Key credit considerations</h3>
   {% for group in m.finding_groups if group.print_findings %}
-  <section class="bo-management-direction-group" data-finding-group="{{ group.id }}"><h4>{{ group.title }}</h4>
+  <section class="bo-management-direction-group" data-finding-group="{{ group.id }}">{% if group.id not in ['supporting_factors', 'credit_concerns'] %}<h4>{{ group.title }}</h4>{% endif %}
     {% for item in group.print_findings %}{{ finding(item) }}{% endfor %}
     {% if group.omitted_count %}<p class="technical-note">{{ group.omitted_count }} additional {{ group.title|lower }} remain available in this run's complete supporting evidence and Audit &amp; Review, with their qualifications.</p>{% endif %}
   </section>
@@ -33,7 +34,7 @@
   <section class="bo-management-card" data-management-category="{{ category.id }}">
     <h3>{{ category.title }}</h3>
     {% for group in m.finding_groups %}{% set members = category.findings|selectattr('group_id', 'equalto', group.id)|list %}{% if members %}
-    <div data-finding-group="{{ group.id }}"><h4>{{ group.title }}</h4>{% for item in members %}{{ finding(item) }}{% endfor %}</div>
+    <div data-finding-group="{{ group.id }}">{% if group.id not in ['supporting_factors', 'credit_concerns'] %}<h4>{{ group.title }}</h4>{% endif %}{% for item in members %}{{ finding(item) }}{% endfor %}</div>
     {% endif %}{% endfor %}
   </section>
 {% else %}<p class="memo-empty">No reviewed findings can be reliably assigned to a management category.</p>{% endfor %}
@@ -45,13 +46,6 @@
 </details>
 {% endif %}
 {% if m.information_gaps %}<div class="bo-management-gaps"><h3>Information Gaps</h3>{% for item in m.information_gaps %}{{ finding(item) }}{% endfor %}</div>{% endif %}
-{% endif %}
-
-{% if m.assessment_gaps or m.coverage_missing %}
-<div class="bo-management-assessment-gaps"><h3>Areas Requiring Further Assessment</h3>
-  {% if m.assessment_gaps %}<ul>{% for category in m.assessment_gaps %}<li>{{ category.title }} — {{ category.status|replace('_', ' ')|capitalize }}.</li>{% endfor %}</ul>{% endif %}
-  {% if m.coverage_missing %}<p class="qualification">Missing management coverage: {{ m.coverage_missing|join(', ') }}</p>{% endif %}
-</div>
 {% endif %}
 
 

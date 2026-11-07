@@ -2,8 +2,8 @@
 from copy import deepcopy
 import jsonschema
 
-SCHEMA_VERSION = "m3-management-response-2.0"
-ADAPTER_VERSION = "m3-shared-specialist-2.0"
+SCHEMA_VERSION = "m3-management-response-2.1"
+ADAPTER_VERSION = "m3-shared-specialist-2.1"
 
 
 def obj(properties):
@@ -53,6 +53,10 @@ EXTRACTION_SCHEMA["properties"].update({
         "missing_information": {"type": "array", "items": string()},
     }),
 })
+# Optional for historical/offline responses; strict live schemas request both.
+judgment_properties = EXTRACTION_SCHEMA['properties']['judgments']['items']['properties']
+judgment_properties['scope'] = {'enum': ['individual', 'team', 'company']}
+judgment_properties['executives'] = {'type': 'array', 'items': string()}
 EXTRACTION_SCHEMA["required"] = list(EXTRACTION_SCHEMA["properties"])
 
 

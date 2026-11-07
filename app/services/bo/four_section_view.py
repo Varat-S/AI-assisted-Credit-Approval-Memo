@@ -11,6 +11,7 @@ from app.services.analysis_audit import public_record
 from app.services.analysis_workspace import safe_url
 from app.services.bo.four_section import load_saved_inputs
 from app.services.bo.management_view import management_view
+from app.services.bo.loan_ranking_view import loan_ranking_view
 from app.services.bo.handoff import read_handoff
 from app.services.bo.workbench import bo_artifact, BoRunNotFoundError
 from app.services.pipeline.artifacts import ArtifactIntegrityError
@@ -135,14 +136,6 @@ def load_view(session, analysis_run_id, case_id=None):
     for entry in [entry for group in industry['groups'] for entry in group['findings']] + industry['exposures']:
         finding = entry['finding']
         entry['evidence'] = add(entry['title'], finding, claim=finding, source=sections[3]['source_ref'])
-        entry['evidence']['assessment'] = {
-            'specialist_interpretation': list((finding.get('interpretation') or {}).values()),
-            'gaps': finding.get('missing_information') or [],
-            'finding': {'label': (finding.get('claim_type') or 'inference').replace('_', ' ').title(),
-                        'support': (finding.get('disposition') or 'Recorded').title(),
-                        'reason': 'Selected-run industry finding reviewed by Validator 6.',
-                        'support_reason': 'Supporting quotations are limited to this finding’s saved evidence.'},
-            'scope_note': 'Recorded industry analysis; no new assessment is performed when opening this page.'}
     from app.services.bo.business_model import load_description
     business_model = load_description(session, analysis_run_id, saved)
     if business_model and business_model['status'] == 'complete':
@@ -178,9 +171,12 @@ def load_view(session, analysis_run_id, case_id=None):
                     'specialist_interpretation': [entry.get('text') or
                         (entry.get('name', '') + ' · ' + entry.get('position', ''))],
                     'gaps': entry.get('limitations', entry.get('uncertainties', [])),
-                    'finding': {'label': 'Reviewed Management Finding',
-                                'support': (entry.get('review_status') or entry.get('review_outcome') or 'Recorded').title(),
-                                'reason': entry.get('review_reason') or 'See the saved reviewed statement above.',
+                    'finding': {'label': 'Fact' if entry.get('name') else 'Inference',
+                                'kind': 'fact' if entry.get('name') else 'inference',
+                                'support': {'accepted': 'Supported', 'qualified': 'Qualified'}.get(
+                                    entry.get('review_status') or entry.get('review_outcome'), 'Not assessed'),
+                                'reason': ('This is a sourced executive profile disclosure.' if entry.get('name') else
+                                           'This is a reviewed analytical management judgment drawn from cited facts; it is not a directly disclosed fact.'),
                                 'support_reason': 'The quotations shown are limited to this record’s saved citations.'},
                     'scope_note': 'Saved management review; no new assessment was performed.'}
                 entry['evidence'] = panel
@@ -204,7 +200,11 @@ def load_view(session, analysis_run_id, case_id=None):
     svg = None
     from app.services.bo.debt_snapshot import build_snapshot, annotate_svg, format_date
     structure = sections[0]['structure']['content']
-    snapshot = build_snapshot(structure, sections[0]['debt_obligations']['content'])
+    debt = sections[0]['debt_obligations']['content']
+    loan_ranking = loan_ranking_view(debt)
+    if loan_ranking:
+        sections[0]['debt_obligations']['evidence']['reconciliation'] = loan_ranking['reconciliation']
+    snapshot = build_snapshot(structure, debt)
     snapshot_placed = False
     if snapshot:
         snapshot['as_of'] = artifact['identity']['as_of_date']
@@ -227,6 +227,15 @@ def load_view(session, analysis_run_id, case_id=None):
     source_base = '/cases/' + quote(row.case_id, safe='') + '/bo/runs/' + quote(analysis_run_id, safe='') + '/source'
     for item in evidence:
         item['quotations'] = quotation_cards(item, passages, documents, indexes, source_base)
+    from app.services.bo.finding_assessment import assessment
+    for entry in [entry for group in industry['groups'] for entry in group['findings']] + industry['exposures']:
+        finding = entry['finding']
+        source = hypotheses.get(finding['hypothesis_id'], finding)
+        effect = (finding.get('interpretation') or {}).get('implication') or finding.get('credit_mechanism')
+        pointers = [{'parts': [{'text': finding['claim']}]},
+                    {'parts': [{'text': effect}] if effect else []}]
+        entry['assessment'] = assessment(source, pointers, verified_quotes=entry['evidence']['quotations'])
+        entry['evidence']['assessment'] = entry['assessment']
     if finding_groups is not None:
         from app.services.bo.finding_assessment import assessment
         by_id = {item['id']: item for item in evidence}
@@ -243,7 +252,7 @@ def load_view(session, analysis_run_id, case_id=None):
     cross_dimensional = {entry['evidence']['id'] for group in finding_groups or [] for entry in group['entries']
                          if entry['source_agent_id'] == V3_AGENT_6_ID}
     return {'memo': artifact, 'business_model': business_model, 'svg': svg, 'debt_snapshot': snapshot, 'snapshot_placed': snapshot_placed,
-            'claims': claims, 'finding_groups': finding_groups, 'evidence': evidence,
+            'loan_ranking': loan_ranking, 'claims': claims, 'finding_groups': finding_groups, 'evidence': evidence,
             'cross_dimensional': cross_dimensional,
             'management': management, 'industry': industry,
             'structure_tree': next(iter(structure['companies'].values()))['plain_text_tree'] if structure else None,

@@ -82,9 +82,9 @@ def test_management_web_and_print_share_conservative_projection(db_session, tmp_
     print_management = printed.xpath('//*[@data-memo-section="management"]')
     assert len(web_management) == len(print_management) == 1
     assert len(web_management[0].xpath('.//section[contains(@class,"bo-management-card")]')) == 1
-    assert len(web_management[0].xpath('.//div[@class="bo-management-assessment-gaps"]//li')) == 4
+    assert not web_management[0].xpath('.//div[@class="bo-management-assessment-gaps"]//li')
     assert not print_management[0].xpath('.//section[contains(@class,"bo-management-card")]')
-    assert len(print_management[0].xpath('.//div[@class="bo-management-assessment-gaps"]//li')) == 4
+    assert not print_management[0].xpath('.//div[@class="bo-management-assessment-gaps"]//li')
     assert web_management[0].xpath('.//details[contains(@class,"bo-management-support") and not(@open)]')
     assert not print_management[0].xpath('.//details[contains(@class,"bo-management-support")]')
     assert view['management']['overall_assessment']['text'] in web_management[0].text_content()
@@ -112,7 +112,7 @@ def test_management_web_and_print_share_conservative_projection(db_session, tmp_
             assert panel in view['evidence']
             selected = {view['management']['citations'][cid]['quote'] for cid in finding['citation_ids']}
             assert {q['quote'] for q in panel['quotations']} <= selected
-    assert 'Insufficient evidence' in print_management[0].text_content()
+    assert 'Areas Requiring Further Assessment' not in print_management[0].text_content()
     preview_dir = os.environ.get('BO_M3_PREVIEW_DIR')
     if preview_dir:
         folder = Path(preview_dir)
@@ -144,7 +144,7 @@ def test_concerns_remain_visible_and_qualifications_stay_in_web_support(db_sessi
     assert other.get('open') is not None  # Negative findings are visible by default.
     assert 'Other Reviewed Observations' in other.text_content()
     assert not section.xpath('.//section[@class="bo-management-card"]')
-    assert len(section.xpath('.//div[@class="bo-management-assessment-gaps"]//li')) == 5
+    assert not section.xpath('.//div[@class="bo-management-assessment-gaps"]//li')
     for page in (web, printed):
         assert observation['text'] in page.text_content()
         assert 'Recorded overall qualification.' not in visible(page)
@@ -181,9 +181,15 @@ def test_direction_groups_stay_visible_and_caveats_are_out_of_primary_memo():
         shown = visible(page)
         assert 'Performance remains unverified.' not in shown
         assert 'Material scope limitation.' not in shown
-        assert 'Supporting Factor · Qualified' in shown
-        assert 'Credit Concern · Qualified' in shown
-        assert 'Mixed Finding · Qualified' in shown and 'Unassessed · Qualified' in page.text_content()
+        assert 'Positive' in shown
+        assert 'Supporting Factor' not in shown
+        assert 'Areas Requiring Further Assessment' not in page.text_content()
+        assert 'Limitations of Findings' in shown
+        assert 'Negative' in shown
+        assert 'Mixed' in shown and 'Unassessed' in page.text_content()
+        assert 'Context · Qualified' not in shown
+        assert page.xpath('//div[contains(@class,"bo-management-finding")]//span[contains(@class,"bo-type-inference")]')
+        assert 'Recorded outcome:' not in shown
         assert 'Exact reviewed statement 5.' not in page.text_content()
         assert 'Passage offset 600' not in shown
         assert 'Page 1' not in shown and 'p. 1' not in shown
@@ -226,7 +232,8 @@ def test_saved_real_hca_run_renders_without_analysis_or_artifact_changes(monkeyp
             shown = primary.text_content()
             assert primary.xpath('.//*[@data-finding-group="supporting_factors"]//*[@data-review-status="qualified"]')
             assert not primary.xpath('.//*[@data-finding-group="credit_concerns"]')
-            assert 'Reviewed assessment · Qualified' in shown
+            assert 'Reviewed assessment · Qualified' not in shown
+            assert primary.xpath('.//*[contains(@class,"bo-badge-direction")]')
             assert view['management']['overall_assessment']['text'] in shown
             qualifier = 'Operational effectiveness depends on ongoing execution, which tenure alone does not guarantee.'
             assert qualifier not in shown
@@ -465,8 +472,10 @@ def test_portrait_print_summary_and_full_schedules_preserve_sources(db_session, 
         assert page.xpath('//*[contains(@class,"bo-print-schedules")]')
         d1 = original['sections'][0]['debt_obligations']['content']
         summary = page.xpath('//table[contains(@class,"bo-debt-summary-table")]//tbody/tr')
-        labels = view['four_section']['priority_columns'][:5]
-        assert len(summary) == 5 + len(d1['reconciling_items'])
+        labels = view['four_section']['priority_columns'][:4]
+        assert len(summary) == 4
+        assert 'Structural subordination drag ratio' not in page.text_content()
+        assert page.xpath('//section[@class="bo-loan-ranking"]')
         for row, (field, label) in zip(summary, labels):
             assert row.findtext('th') == label
             assert row.findtext('td') == str(d1['creditor_priority_framework'][field])

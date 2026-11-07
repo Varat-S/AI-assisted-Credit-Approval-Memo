@@ -2,6 +2,16 @@
 {% macro evidence_body(item) %}<div class="bo-evidence-body" id="{{ item.id }}">
 {% for citation in item.quotations %}<article class="bo-source-quotation"><blockquote>{{ citation.quote }}</blockquote><p class="bo-source-location"><strong>Page:</strong> {{ citation.page or 'Not Available' }} <span>·</span> <strong>Paragraph:</strong> {{ citation.paragraph or 'Not Available' }}{% if citation.paragraph %} (Viewer){% endif %} <span>·</span> <strong>Lines:</strong> {{ citation.line or 'Not Available' }}{% if citation.line %} (Viewer){% endif %}</p><p class="technical-note">{{ citation.filename }} · {{ citation.section }}</p><p class="bo-source-actions">{% if citation.original %}<a href="{{ citation.original }}" target="_blank" rel="noopener noreferrer" title="Opens A Verified Local Copy Of The Original Filing With The Quotation Highlighted">Open Original 10-K</a>{% else %}<span class="technical-note">Original Source Highlighting Unavailable</span>{% endif %}</p></article>{% else %}<p class="technical-note">{% if item.title == 'Corporate Structure' %}Source: Supplied Corporate Structure JSON, Not A 10-K Quotation. See Technical Details For The Source Record.{% else %}No Verified Quotation Available For This Panel. See Technical Details For The Saved Supporting Records.{% endif %}</p>{% endfor %}
 {% if item.quotations %}<p class="bo-source-index-note">Open Original 10-K shows the verified original filing with the quotation highlighted. Paragraph and line numbers are app indexes, not printed report numbering.</p>{% endif %}
+{% if item.reconciliation %}{% set r = item.reconciliation %}
+<h4>Debt reconciliation</h4>
+<p>Principal amounts plus signed accounting adjustments reconcile to the recorded consolidated debt total. Undrawn availability is excluded.</p>
+<table class="memo-table"><thead><tr><th scope="col">Component</th><th scope="col">US$ m</th></tr></thead><tbody>
+<tr><th scope="row">Senior notes principal</th><td>{{ bo4.display(r.note_principal_m) }}</td></tr>
+<tr><th scope="row">Other drawn obligations</th><td>{{ bo4.display(r.other_drawn_m) }}</td></tr>
+{% for adjustment in r['items'] %}<tr><th scope="row">{{ adjustment.label }} (signed)</th><td>{{ bo4.display(adjustment.amount_m) }}</td></tr>{% endfor %}
+<tr><th scope="row">Recorded consolidated debt total</th><td>{{ bo4.display(r.reported_total_m) }}</td></tr>
+</tbody></table>
+{% endif %}
 {% if item.assessment %}<dl class="bo-evidence-assessment">
 <div><dt>Specialist Interpretation</dt><dd>{% for text in item.assessment.specialist_interpretation %}<p>{{ text }}</p>{% else %}<p>No Separate Specialist Interpretation Was Recorded.</p>{% endfor %}</dd></div>
 <div><dt>Assumptions / Gaps</dt><dd>{% for text in item.assessment.gaps %}<p>{{ text }}</p>{% else %}<p>No Explicit Assumptions Or Gaps Were Recorded. This Does Not Establish Their Absence.</p>{% endfor %}</dd></div>

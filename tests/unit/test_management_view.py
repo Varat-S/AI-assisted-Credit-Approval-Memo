@@ -100,12 +100,12 @@ def test_print_selection_cap_keeps_remaining_qualified_observations_discoverable
 
 
 @pytest.mark.parametrize('direction,status,group,label', [
-    ('positive', 'accepted', 'supporting_factors', 'Supporting Factor'),
-    ('positive', 'qualified', 'supporting_factors', 'Supporting Factor'),
-    ('negative', 'accepted', 'credit_concerns', 'Credit Concern'),
-    ('negative', 'qualified', 'credit_concerns', 'Credit Concern'),
-    ('mixed', 'qualified', 'mixed_uncertain', 'Mixed Finding'),
-    ('neutral', 'accepted', 'mixed_uncertain', 'Context'),
+    ('positive', 'accepted', 'supporting_factors', 'Positive'),
+    ('positive', 'qualified', 'supporting_factors', 'Positive'),
+    ('negative', 'accepted', 'credit_concerns', 'Negative'),
+    ('negative', 'qualified', 'credit_concerns', 'Negative'),
+    ('mixed', 'qualified', 'mixed_uncertain', 'Mixed'),
+    ('neutral', 'accepted', 'mixed_uncertain', 'Neutral'),
     (None, 'qualified', 'mixed_uncertain', 'Unassessed'),
 ])
 def test_direction_and_review_are_independent(direction, status, group, label):

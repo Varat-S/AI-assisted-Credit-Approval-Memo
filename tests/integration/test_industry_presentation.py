@@ -34,6 +34,13 @@ def test_native_industry_groups_and_exposures_render_without_rewriting_saved_fin
         assert 'Industry development' in industry.text_content()
         assert 'Effect on the company' in industry.text_content() and 'What to watch' in industry.text_content()
         assert 'Company response or offset' not in industry.text_content()
+        assert industry.xpath('.//span[contains(@class,"bo-badge-direction") and .//span[text()="Negative"]]')
+        assert industry.xpath('.//span[contains(@class,"bo-badge-direction") and .//span[text()="Neutral"]]')
+        for entry in [e for g in view['industry']['groups'] for e in g['findings']] + view['industry']['exposures']:
+            assert entry['assessment']['finding']['label'] in {'Fact', 'Inference', 'Assumption'}
+            assert entry['evidence']['assessment'] == entry['assessment']
+        assert industry.xpath('.//dt/span[contains(@class,"bo-badge-type")]')
+        assert not industry.xpath('.//p[@class="technical-note" and (text()="Observed" or text()="Structural")]')
         if not pdf:
             panels = industry.xpath('.//article/details[@class="bo-evidence" and not(@open)]')
             assert len(panels) == 2

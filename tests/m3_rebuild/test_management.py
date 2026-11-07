@@ -212,7 +212,10 @@ def test_date_from_different_prior_role_is_not_admitted():
     p['executives'][4]['prior_internal_roles'][2]['start_date']='2023-01'
     r=assess_management(p,s)
     assert r['completion_status']=='complete'
-    assert any(x['executive']=='Michael A. Marks' and 'bound' in x['reason'] for x in r['validation']['claim_results'])
+    claim=next(c for c in r['validation']['claim_results'] if c['claim_id']=='executive:5:role:3')
+    assert claim['outcome']=='qualified' and 'start_date' in claim['withheld_assertions']
+    assert claim['retained_dates']['start_date']==''
+    assert '2023-01' not in claim['statement']
     assert len(r['profiles'])==7
 
 

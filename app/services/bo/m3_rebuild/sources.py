@@ -359,7 +359,11 @@ def proxy_bio_starts(text):
 
 def proxy_boundaries(text):
     """Offsets where a proxy biography ends: any person's heading or a section heading."""
-    return sorted({p for p, _ in proxy_bio_starts(text)}
+    # Director headings can include credentials and committee lines before
+    # the prose biography. They still end the previous person's biography.
+    director_heads = {m.start() for m in re.finditer(
+        r"^[A-Z][A-Za-z.,'’ -]{1,95}\nDirector\s+since\b", text, re.M)}
+    return sorted({p for p, _ in proxy_bio_starts(text)} | director_heads
                   | {m.start() for m in PROXY_BOUNDARY.finditer(text)})
 
 

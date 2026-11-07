@@ -32,7 +32,8 @@ def internal_employer(role, profile, company):
         start = max(x for x in boundaries if x <= match.start())
         end = min(x for x in boundaries if x >= match.end())
         pairs = prior_role_date_pairs(role['position'], q[start:end])
-        if not pairs or (role['start_date'], role['end_date']) in pairs:
+        if not pairs or any((not role['start_date'] or role['start_date']==p[0]) and
+                            (not role['end_date'] or role['end_date']==p[1]) for p in pairs):
             candidates.append(match)
     if len(candidates) > 1:
         raise ValueError("Ambiguous repeated prior-role employer attribution at the disclosed dates")
@@ -41,19 +42,22 @@ def internal_employer(role, profile, company):
         raise ValueError("Prior role employer/date evidence is not bound to the disclosed position")
     local = q[found.start():found.end()] + re.split(r"[.;]|\bfrom\b|\bsince\b", q[found.end():], maxsplit=1)[0]
     # Never let selected-company mentions elsewhere override explicit employer attribution.
-    suffix = re.search(r"\b(?:of|at|for|with)\s+(.+?)(?=\s+(?:from|since|through|effective)\b|[.;]|$)", local, re.I)
+    suffix = (re.search(r"\b(?:of|at|with)\s+(.+)$", role['position'], re.I)
+              or re.match(r"\s*(?:of|at|for|with)\s+(.+?)(?=\s+(?:from|since|through|effective)\b|[.;]|$)", q[found.end():], re.I))
     joined_role = re.search(r"\bjoined\s+(.+?)\s+(?:in|as)\s+(.+)", q, re.I)
     joined_end = (joined_role.start() + len(re.split(r"(?<!St)\.\s+(?=[A-Z])", q[joined_role.start():], maxsplit=1)[0])) if joined_role else 0
-    established_entity = bool(joined_role and company_link(joined_role[1], company)
+    established_entity = bool(joined_role and (company_link(joined_role[1], company) or joined_role[1].strip().casefold()=='us')
                               and joined_role.start() <= found.start() < joined_end
                               and not re.search(r"\b(?:prior to|previously|before joining)\b", q[joined_role.start():found.start()], re.I))
     if suffix:
         employer = suffix[1].strip()
-        if company_link(employer, company):
+        if (company_link(employer, company) or re.match(r'^our (?:affiliated hospitals|subsidiaries|company)\b', employer, re.I)):
             return "explicit_selected_company"
         if not established_entity and not re.search(r"^the .+\b(?:Group|Division|Region|Services)\b", employer, re.I):
             raise ValueError("Prior role explicitly belongs to an outside/unestablished employer: " + employer)
     before = q[max(0, found.start()-140):found.start()]
+    if re.search(r'\bour\s+$', before, re.I):
+        return 'explicit_company_pronoun'
     if re.search(r"(?:the Company|" + re.escape(company) + r")[’']s\s*$", before, re.I):
         return "explicit_company_possessive"
     entity_names = re.findall(r"[—–-]\s*([A-Z][A-Za-z ]{1,60}?(?:Group|Division|Region))\s+of the Company", q)
@@ -68,13 +72,22 @@ def internal_employer(role, profile, company):
         return "explicit_selected_company"
     bio = normalized(profile['quote'])
     joined = re.search(r"\bjoined\s+(.+?)\s+(?:in|as)\s+(.+?)(?=\.|$)", bio, re.I)
-    if joined and company_link(joined[1], company):
+    if joined and (company_link(joined[1], company) or joined[1].strip().casefold() == 'us'):
         years = re.findall(r"\b(?:19|20)\d{2}\b", joined[2])
         if years and role['start_date'] and role['start_date'][:4] >= years[0]:
             return "dated_company_join_and_biography_scope"
     boundary = re.search(r"(?:prior to|before) joining\s+(.+?)(?=[,.])", bio, re.I)
     if boundary and company_link(boundary[1], company) and found.start() < boundary.start() and company_link(bio[:found.start()], company):
         return "explicit_company_scope_before_external_history"
+    # A canonical biography's explicitly disclosed company-career block ends
+    # at "prior to joining us". Do not compare quote-local indexes to biography
+    # indexes, or read another director's history as this executive's scope.
+    external_boundary = re.search(r"(?:prior to|before) joining\s+us\b", bio, re.I)
+    role_positions = list(re.finditer(pattern, bio, re.I))
+    if (external_boundary and len(role_positions)==1
+            and role_positions[0].start() < external_boundary.start()
+            and re.search(r"\bjoined us in \d{4}\b", bio[:external_boundary.start()], re.I)):
+        return 'explicit_bounded_company_career_before_external_history'
     for other in profile['prior_internal_roles']:
         if other is role:
             continue

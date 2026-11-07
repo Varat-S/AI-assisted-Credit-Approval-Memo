@@ -12,6 +12,7 @@ def group_findings(findings):
         metadata = finding.get('industry') or {}
         category = metadata.get('category') or DIRECTIONS.get(finding.get('direction'), 'uncertain')
         entry = {'finding': finding, 'title': metadata.get('title') or 'Industry finding',
+                 'direction_label': {'positive': 'Positive', 'negative': 'Negative', 'neutral': 'Neutral', 'mixed': 'Mixed'}.get(finding.get('direction'), 'Unassessed'),
                  'state': metadata.get('state'), 'linked_development_ids': metadata.get('linked_development_ids', [])}
         if category == 'company_exposure' and metadata.get('kind') == 'exposure':
             exposures.append(entry)

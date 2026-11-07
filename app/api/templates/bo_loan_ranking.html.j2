@@ -1,0 +1,13 @@
+{% if bo4.loan_ranking %}{% set ranking = bo4.loan_ranking %}
+<section id="bo-loan-ranking" class="bo-loan-ranking" aria-label="Where would a new loan rank?">
+<h4>Where would a new loan rank?</h4>
+<p>{{ ranking.summary }}</p>
+<p>{{ ranking.scope }}</p>
+<div class="memo-table-wrap" tabindex="0" role="region" aria-label="Conditional new loan ranking"><table class="memo-table">
+<thead><tr><th scope="col">Proposed loan</th><th scope="col">Indicative position</th><th scope="col">What needs confirming</th></tr></thead>
+<tbody>{% for case in ranking.cases %}<tr><th scope="row">{{ case.loan }}</th><td>{{ case.position }}</td><td>{{ case.confirm }}</td></tr>{% endfor %}</tbody>
+</table></div>
+<h4>To confirm for the proposed loan</h4>
+<ul>{% for text in ranking.to_confirm %}<li>{{ text }}</li>{% endfor %}</ul>
+</section>
+{% endif %}

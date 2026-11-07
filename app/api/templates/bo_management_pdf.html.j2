@@ -1,5 +1,6 @@
 {# PDF-only layout. Every analytical statement comes from the shared projection. #}
 {% set m = bo4.management %}
+{% from 'bo_badges.html.j2' import direction_badge %}
 <style>
 @media print {
   .bo-memo-section[data-memo-section="management"]{break-before:page}
@@ -31,15 +32,14 @@
   <h3>Management Credit Assessment</h3>
   <div class="memo-claim bo-management-overall">
     <h4>Overall assessment</h4>
-    <p class="bo-management-classification">{{ m.overall_assessment.wording_label }} · {{ m.overall_assessment.status|title }} · Recorded outcome: {{ m.overall_assessment.outcome|replace('_',' ')|title }}</p>
+    {{ direction_badge(m.overall_assessment.outcome|replace('_', ' ')|title, m.overall_assessment.classification) }}
     <p class="bo-management-assessment-text">{{ m.overall_assessment.text }}</p>
   </div>
   <h3>Key credit considerations</h3>
   {% for group in m.pdf.finding_groups %}
-  <section class="bo-management-direction-group" data-finding-group="{{ group.id }}"><h4>{{ group.title }}</h4>
+  <section class="bo-management-direction-group" data-finding-group="{{ group.id }}">{% if group.id not in ['supporting_factors', 'credit_concerns'] %}<h4>{{ group.title }}</h4>{% endif %}
     {% for item in group.findings %}<div class="memo-claim bo-management-finding" data-direction="{{ item.direction or 'unassessed' }}" data-review-status="{{ item.review_status }}">
-      <p class="bo-management-classification">{{ item.topic }} · {{ item.direction_label }} · {{ item.review_status|title }}</p>
-      <h4>{% if item.credit_implication %}Reviewed finding{% else %}Reviewed finding and credit implication{% endif %}</h4>
+      <h4>{{ item.topic }}</h4>{{ direction_badge(item.direction_label, item.classification) }}
       <p>{{ item.text }}</p>
       {% if item.credit_implication %}<p><strong>Recorded credit implication:</strong> {{ item.credit_implication }}</p>{% endif %}
     </div>{% endfor %}
@@ -62,7 +62,6 @@
     </tr>{% endfor %}</tbody>
   </table>
   {% else %}<p class="memo-empty">No sourced executive profiles are available for this run.</p>{% endif %}
-  {% if m.assessment_gaps or m.coverage_missing %}<div class="bo-management-assessment-gaps"><h4>Areas Requiring Further Assessment</h4><ul>{% for category in m.assessment_gaps %}<li>{{ category.title }} — {{ category.status|replace('_',' ')|capitalize }}.</li>{% endfor %}</ul>{% if m.coverage_missing %}<p class="qualification">Missing management coverage: {{ m.coverage_missing|join(', ') }}</p>{% endif %}</div>{% endif %}
   {% if m.pdf.follow_up %}<h4>Follow-up evidence required</h4><ul>{% for text in m.pdf.follow_up %}<li>{{ text }}</li>{% endfor %}</ul>{% endif %}
   <h4>Management monitoring priorities</h4>
   {% if m.pdf.monitoring_priorities %}<ul>{% for text in m.pdf.monitoring_priorities %}<li>{{ text }}</li>{% endfor %}</ul>{% else %}<p class="memo-empty">No management-specific monitoring indicators or thresholds were recorded.</p>{% endif %}

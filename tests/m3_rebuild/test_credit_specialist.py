@@ -1,3 +1,4 @@
+from app.core.hashing import content_hash
 """Milestone 3: shared BO generation, model judgments and fragmented evidence."""
 from copy import deepcopy
 import json
@@ -61,10 +62,13 @@ def test_normal_bo_shared_vertex_task_and_exact_audit_are_offline(db_session, tm
         EvidencePacketRow.agent_id == M3_PACKET_AGENT_ID,
         EvidencePacketRow.analysis_run_id == result.analysis_run_id,
     )).one()
-    assert json.loads(request['contents']) == packet.payload
+    actual_inputs=json.loads(request['contents'])
+    assert {k:v for k,v in actual_inputs.items() if k!='executive_biographies'} == packet.payload
+    assert actual_inputs['executive_biographies'][0]['fragments']
+    assert all(f['source_id'] in packet.payload['evidence_ids'] for b in actual_inputs['executive_biographies'] for f in b['fragments'])
     model = db_session.scalars(select(ModelRun).where(ModelRun.prompt_name == AGENT_ID)).one()
     agent = db_session.scalars(select(AgentRunRow).where(AgentRunRow.agent_id == AGENT_ID)).one()
-    assert agent.input_hash == packet.packet_hash
+    assert agent.input_hash == content_hash(actual_inputs)
     assert model.raw_response == agent.raw_response
     assert agent.validation_status == 'valid'
     assert model.model_config_json['thinking_tokens'] == 7
@@ -93,7 +97,12 @@ def test_unfounded_facts_or_judgments_do_not_pass(mutation):
     if mutation == 'competence':
         payload['judgments'][0]['explanation'] = 'Long tenure proves management competence.'
     artifact = assess_management(payload, sources)
-    assert artifact['completion_status'] == 'partial'
+    if mutation=='overall_reference':
+        assert artifact['validation']['overall_recovery']
+        assert artifact['validation']['overall_references_valid']
+        assert 'not-admitted' not in artifact['validation']['overall_recovery']['corrected_overall']['judgment_ids']
+    else:
+        assert artifact['completion_status'] == 'partial'
 
 
 def test_adjacent_chunks_keep_individual_ids_and_support_split_appointment():
@@ -153,7 +162,7 @@ class _SequenceBackend(LLMBackend):
 
 def _packet_of(request):
     from app.schemas.agentic import EvidencePacket
-    inputs = {k: v for k, v in request.inputs.items() if k != 'validation_feedback'}
+    inputs = {k: v for k, v in request.inputs.items() if k not in {'validation_feedback','executive_biographies'}}
     return EvidencePacket.model_validate(inputs)
 
 

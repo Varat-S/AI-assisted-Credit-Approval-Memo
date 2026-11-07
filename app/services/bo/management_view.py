@@ -10,8 +10,8 @@ CATEGORIES = (
     ('leadership_stability', 'Leadership Stability and Succession', 'Medium'),
     ('relevant_expertise', 'Relevant Expertise', 'Supporting'),
 )
-DIRECTION_LABELS = {'positive': 'Supporting Factor', 'negative': 'Credit Concern',
-                    'mixed': 'Mixed Finding', 'neutral': 'Context', 'unavailable': 'Unassessed'}
+DIRECTION_LABELS = {'positive': 'Positive', 'negative': 'Negative',
+                    'mixed': 'Mixed', 'neutral': 'Neutral', 'unavailable': 'Unassessed'}
 
 
 def _key(text):
@@ -182,7 +182,9 @@ def management_view(artifact, *, documents=None, passages=None, warnings=()):
     validation = artifact.get('validation', {})
     review = validation.get('validator_7', {})
     corrections = validation.get('explicit_review_corrections') or {}
-    effective_overall = corrections.get('corrected_overall') or review.get('overall', {})
+    effective_overall = (corrections.get('corrected_overall')
+                         or (validation.get('overall_recovery') or {}).get('corrected_overall')
+                         or review.get('overall', {}))
     judgments = {j['judgment_id']: j for j in validation.get('judgment_results', [])}
     categories = [{'id': key, 'title': title, 'priority': priority,
                    'status': 'insufficient_evidence', 'review_status': None, 'findings': []}
@@ -215,6 +217,7 @@ def management_view(artifact, *, documents=None, passages=None, warnings=()):
                          + observation.get('uncertainties', []))
         finding = {'text': observation.get('text', ''), 'direction': observation.get('direction'),
                    'direction_label': DIRECTION_LABELS.get(observation.get('direction'), 'Unassessed'),
+                   'classification': {'kind': 'inference', 'label': 'Inference'},
                    'review_status': observation['review_outcome'], 'limitations': limits,
                    'observation_ids': [oid], 'citation_ids': list(ids), 'references': references(ids)}
         # Evidence-basis restrictions are shown explicitly but the internal fact
@@ -271,7 +274,7 @@ def management_view(artifact, *, documents=None, passages=None, warnings=()):
 
     groups = []
     for key, title in [('supporting_factors', 'Supporting Factors'), ('credit_concerns', 'Credit Concerns'),
-                        ('mixed_uncertain', 'Mixed or Uncertain Findings'), ('information_gaps', 'Information Gaps')]:
+                        ('mixed_uncertain', 'Limitations of Findings'), ('information_gaps', 'Information Gaps')]:
         selected = [f for f in findings if (
             'supporting_factors' if f['direction'] == 'positive' else 'credit_concerns' if f['direction'] == 'negative'
             else 'information_gaps' if f in gaps else 'mixed_uncertain') == key]
@@ -295,6 +298,7 @@ def management_view(artifact, *, documents=None, passages=None, warnings=()):
     for item in profiles + observations:
         item['references'] = references(item.get('citation_ids', []))
     view = {'overall_assessment': {'text': reviewed_text or overall.get('policy') or 'Management assessment unavailable.',
+                'classification': {'kind': 'inference', 'label': 'Inference'},
                 'wording_label': 'Reviewed assessment' if reviewed_text else 'Recorded assessment',
                 'original_text': model.get('explanation') or overall.get('policy'), 'recorded_text': overall.get('policy'),
                 'outcome': overall.get('outcome', 'unavailable'), 'status': status, 'limitations': overall_limits},
