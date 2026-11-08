@@ -9,15 +9,17 @@
 <p class="bo-refinancing-date">{{ transaction.execution_date_fiscal_period }}</p>
 <p class="bo-refinancing-issue"><strong>Issue:</strong> {{ transaction.obligation_series_description }}</p>
 <p><strong>Amount:</strong> {{ entry.amount }}{% if transaction.transaction_category == 'facility_amendment' %} (facility capacity){% endif %}</p>
-<p>{{ transaction.use_of_proceeds_impact }}</p>
+<p>{{ entry.summary }}</p>
 <p class="bo-refinancing-maturity">Original maturity: {{ entry.original_maturity }}</p>
 <p class="bo-refinancing-maturity">{{ entry.maturity_outcome }}</p>
-</div></li>
+</div>
+{% if not pdf %}<details class="bo-evidence bo-refinancing-event-evidence" data-run-id="{{ bo4.memo.identity.analysis_run_id }}"><summary aria-label="Evidence for event {{ loop.index }}">Evidence</summary><div class="bo-evidence-body">
+{% for quote in entry.evidence.quotations %}<article class="bo-source-quotation"><blockquote>{{ quote.quote }}</blockquote><p class="bo-source-location">{{ quote.filename }} · Page {{ quote.page or 'Not Available' }}{% if quote.paragraph %} · Paragraph {{ quote.paragraph }}{% endif %}</p>{% if quote.original %}<p class="bo-source-actions"><a href="{{ quote.original }}" target="_blank" rel="noopener noreferrer">Open Original 10-K</a></p>{% endif %}</article>{% else %}<p class="technical-note">Verified quotations are unavailable for the recorded source locations.</p>{% endfor %}
+</div></details>{% endif %}
+</li>
 {% endfor %}
 </ol>
 <p class="technical-note">Dates and periods are shown as recorded; spacing does not represent elapsed time. Facility amounts represent capacity, not additional debt.</p>
-{% if not pdf %}<details class="bo-evidence" data-run-id="{{ bo4.memo.identity.analysis_run_id }}"><summary>Evidence · Refinancing History</summary><div class="bo-evidence-body">
-{% for quote in bo4.refinancing.evidence.quotations %}<article class="bo-source-quotation"><blockquote>{{ quote.quote }}</blockquote><p class="bo-source-location">{{ quote.filename }} · Page {{ quote.page or 'Not Available' }}{% if quote.paragraph %} · Paragraph {{ quote.paragraph }}{% endif %}</p>{% if quote.original %}<p class="bo-source-actions"><a href="{{ quote.original }}" target="_blank" rel="noopener noreferrer">Open Original 10-K</a></p>{% endif %}</article>{% else %}<p class="technical-note">Verified quotations are unavailable for the recorded source locations.</p>{% endfor %}
-</div></details>{% endif %}
+
 </section>
 {% endif %}

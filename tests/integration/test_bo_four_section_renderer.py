@@ -534,13 +534,16 @@ def test_refinancing_timeline_uses_selected_saved_debt_on_web_and_print(db_sessi
         for row in rows:
             assert row['obligation_series_description'] in text
             assert row['execution_date_fiscal_period'] in text
-            assert row['use_of_proceeds_impact'] in text
-        panels = timeline.xpath('./details[contains(@class,"bo-evidence")]')
-        assert len(panels) == (0 if pdf else 1)
-        if panels:
-            assert panels[0].xpath('./summary')[0].text_content() == 'Evidence · Refinancing History'
-            assert not panels[0].xpath('.//details')
-            assert view['refinancing']['evidence']['content']['assessment']['extraction_source']['narrative'] not in panels[0].text_content()
+            if row['transaction_category'] != 'early_redemption':
+                assert row['use_of_proceeds_impact'] in text
+        assert not timeline.xpath('./details')
+        panels = timeline.xpath('.//li/details[contains(@class,"bo-evidence")]')
+        assert len(panels) == (0 if pdf else len(rows))
+        for number, panel in enumerate(panels, 1):
+            assert 'Evidence' in panel.xpath('./summary')[0].text_content()
+            assert panel.xpath('./summary')[0].get('aria-label') == 'Evidence for event ' + str(number)
+            assert not panel.xpath('.//details')
+        assert 'Evidence · Refinancing History' not in text
     assert len(backend.requests) == before
 
 

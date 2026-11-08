@@ -52,3 +52,15 @@ def test_execution_year_filter_does_not_confuse_note_maturity_with_event_date():
                              'execution_date_fiscal_period': 'May 2025 (FY2025)'}]},
         citations, {'filing': [{'page': '67', 'text': t} for t in [actual, later]]})
     assert [q['quote'] for q in quotes] == [actual]
+
+
+def test_each_event_gets_its_own_action_not_another_transaction_of_same_amount():
+    issued = 'We issued $1.500 billion of senior notes due 2035.'
+    redeemed = 'We redeemed all $1.500 billion of senior notes due 2026.'
+    texts = [issued, redeemed]
+    citations = [{'passage': passage(str(i), t)} for i, t in enumerate(texts)]
+    index = {'filing': [{'page': '23', 'text': t} for t in texts]}
+    for category, expected in [('new_issuance', issued), ('early_redemption', redeemed)]:
+        result = historical_quotes({'extraction_source': {'page_references': ['23']},
+            'refinancing_log': [{'principal_amount_m': 1500, 'transaction_category': category}]}, citations, index)
+        assert [q['quote'] for q in result] == [expected]

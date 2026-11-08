@@ -36,6 +36,18 @@ def related(text, row):
     return row.get('transaction_category') == 'repayment_at_maturity' and sum(values) == target
 
 
+def matches_event(text, row):
+    """Amount alone cannot make an issuance prove a redemption of the same size."""
+    actions = {
+        'new_issuance': r'\b(?:issued|completed (?:a private |an |the )?offering)\b',
+        'early_redemption': r'\b(?:redeemed|repurchased|extinguished|exercised)\b',
+        'repayment_at_maturity': r'\brepaid at maturity\b',
+        'facility_amendment': r'\b(?:entered into|amended and restated|lenders have extended)\b',
+        'tender_exchange': r'\b(?:redeemed|repurchased|extinguished|accepted for purchase|completed.*tender)\b',
+    }
+    return related(text, row) and bool(re.search(actions.get(row.get('transaction_category'), r'(?!)'), text, re.I))
+
+
 def historical_quotes(deliverable, citations, indexes):
     pages = source_pages((deliverable.get('extraction_source') or {}).get('page_references', []))
     rows = deliverable.get('refinancing_log') or []
@@ -67,9 +79,14 @@ def historical_quotes(deliverable, citations, indexes):
                 historical.append(sentence)
             # Keep the transaction's use-of-proceeds sentence with its issuance,
             # even when it states the retired amount rather than the issued amount.
-            if not any(related(s, row) for s in historical for row in rows):
+            if not any(matches_event(s, row) for s in historical for row in rows):
                 continue
             for sentence in historical:
+                if not any(matches_event(sentence, row) for row in rows):
+                    # Only linked use-of-proceeds / replaced-facility context;
+                    # another event mentioned in the same paragraph is not support.
+                    if not re.search(r'^(?:We used (?:the )?net proceeds|(?:The )?Proceeds (?:from|of)|We terminated)', sentence, re.I):
+                        continue
                 if not re.search(r'\b(notes|debentures|credit|facility|facilities|paper|loan|offering)\b', sentence, re.I):
                     continue
                 key = (document_id, normalized(sentence))

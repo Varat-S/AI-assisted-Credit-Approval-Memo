@@ -130,8 +130,9 @@ def load_view(session, analysis_run_id, case_id=None):
         deliverable = assessment.get('deliverable_2')
         refinancing = refinancing_view(deliverable)
         if refinancing:
-            panel = add('Refinancing History', public_record(deepcopy(deliverable)), source='debt')
-            refinancing['evidence'] = panel
+            for number, entry in enumerate(refinancing['entries'], 1):
+                selected = {**deepcopy(deliverable), 'refinancing_log': [deepcopy(entry['record'])]}
+                entry['evidence'] = add('Refinancing event ' + str(number), public_record(selected), source='debt')
     for index in (1, 2, 3):
         block = sections[index]
         details = {'artifact': block['content']}
@@ -242,9 +243,10 @@ def load_view(session, analysis_run_id, case_id=None):
     indexes = {did: source_index(session, doc, row.case_id) for did, doc in documents.items()}
     if refinancing:
         from app.services.bo.refinancing_evidence import historical_quotes
-        panel = refinancing['evidence']
-        panel['content'] = {'assessment': panel['content'], 'citations': historical_quotes(
-            panel['content'], panel['citations'], indexes)}
+        for entry in refinancing['entries']:
+            panel = entry['evidence']
+            panel['content'] = {'assessment': panel['content'], 'citations': historical_quotes(
+                panel['content'], panel['citations'], indexes)}
     source_base = '/cases/' + quote(row.case_id, safe='') + '/bo/runs/' + quote(analysis_run_id, safe='') + '/source'
     for item in evidence:
         item['quotations'] = quotation_cards(item, passages, documents, indexes, source_base)

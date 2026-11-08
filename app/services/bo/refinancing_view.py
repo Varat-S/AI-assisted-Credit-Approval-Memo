@@ -47,6 +47,11 @@ def refinancing_view(deliverable):
             'amount': '$' + formatted + 'M' if formatted is not None else 'Not recorded',
             'original_maturity': row.get('original_retired_maturity') or 'Not recorded',
             'maturity_outcome': maturity_outcome(row),
+            # Redemption records must not imply an unproven funding source or
+            # strategic motive. The original specialist wording stays in audit.
+            'summary': ('Repaid $' + formatted + 'M principal before maturity.'
+                        if row.get('transaction_category') == 'early_redemption' and formatted is not None
+                        else row.get('use_of_proceeds_impact', '')),
         })
     return {'entries': entries} if entries else None
 
