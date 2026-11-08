@@ -464,3 +464,51 @@ def test_failed_management_review_still_withholds_section(browser_env,monkeypatc
         assert memo['sections'][1]['content'] is None
         assert memo['sections'][1]['visible_warnings']
         assert memo['sections'][2]['content'] is not None
+
+
+def _orchestrator_requests(backend):
+    seen = []
+    original = backend.generate
+    def capture(request):
+        if request.method == 'orchestrate':
+            seen.append(request)
+        return original(request)
+    backend.generate = capture
+    return seen
+
+
+def test_the_selector_is_sent_an_enum_of_exactly_the_eligible_ids(browser_env):
+    env = browser_env
+    backend = business_backend()
+    seen = _orchestrator_requests(backend)
+    outcome = bo_fo.run_bo_fo(database=env['database'], folder=FOLDER, case_id='NFH_ENUM', bo_backend=backend,
+        m3_backend=ManagementBackend(), fo_backend=None, fo_mode='scripted', bo_only=True,
+        output_root=env['root']/'out', business_orchestrator_contract=OUTPUT_VERSION)
+    assert outcome['bo']['status'] == 'completed', outcome
+    assert outcome['bo']['summary']['has_synthesis'] is True
+    request, = seen
+    eligible = sorted(h['hypothesis_id'] for h in request.inputs['hypotheses'])
+    props = request.prompt.response_schema['properties']
+    for group in ('selections', 'omissions'):
+        assert props[group]['items']['properties']['hypothesis_id']['enum'] == eligible
+    assert not {h['hypothesis_id'] for h in request.inputs['audit_only_hypotheses']} & set(eligible)
+    assert props['schema_version'] == {'type': 'string', 'enum': [OUTPUT_VERSION]}
+    assert props['policy_version'] == {'type': 'string', 'enum': [POLICY_VERSION]}
+
+
+def test_a_non_eligible_id_is_rejected_then_repaired_once(browser_env):
+    env = browser_env
+    backend = business_backend()
+    good = deepcopy(backend._script['orchestrate'][0])
+    bad = deepcopy(good)
+    bad['omissions'].append(dict(hypothesis_id='M1S1-H099', reason='Audit-only hypothesis excluded by policy.'))
+    backend._script['orchestrate'] = [bad, good]
+    seen = _orchestrator_requests(backend)
+    outcome = bo_fo.run_bo_fo(database=env['database'], folder=FOLDER, case_id='NFH_REPAIR', bo_backend=backend,
+        m3_backend=ManagementBackend(), fo_backend=None, fo_mode='scripted', bo_only=True,
+        output_root=env['root']/'out', business_orchestrator_contract=OUTPUT_VERSION)
+    assert outcome['bo']['status'] == 'completed', outcome
+    assert outcome['bo']['summary']['has_synthesis'] is True
+    assert len(seen) == 2
+    assert all('M1S1-H099' not in r.prompt.response_schema['properties']['omissions']['items']['properties']
+               ['hypothesis_id']['enum'] for r in seen)

@@ -356,11 +356,21 @@ class LLMClient:
         case_version: int | None = None,
         key: str | None = None,
         model_tier: str | None = None,
+        response_schema: dict[str, Any] | None = None,
     ) -> LLMRequest:
-        """Build an immutable :class:`LLMRequest` without touching the DB."""
+        """Build an immutable :class:`LLMRequest` without touching the DB.
+
+        ``response_schema`` narrows the registered prompt's schema for this one
+        request (e.g. an ``enum`` of the IDs actually supplied). The provider is
+        sent, and the answer validated against, the narrowed schema; the prompt's
+        registered identity and content hash are unchanged.
+        """
+        prompt = self.resolve_prompt(prompt_name)
+        if response_schema is not None:
+            prompt = replace(prompt, response_schema=response_schema)
         return LLMRequest(
             method=method,
-            prompt=self.resolve_prompt(prompt_name),
+            prompt=prompt,
             inputs=inputs,
             evidence_ids=list(evidence_ids or []),
             case_id=case_id,

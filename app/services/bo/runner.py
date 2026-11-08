@@ -1022,7 +1022,9 @@ class _BoRun:
 
     # -- task building --------------------------------------------------------
 
-    def _task(self, agent, inputs, evidence_ids, schema, parents=()) -> PreparedTask:
+    def _task(self, agent, inputs, evidence_ids, schema, parents=(), request_schema=None) -> PreparedTask:
+        """``request_schema`` narrows ``schema`` for this call only; it is what the provider is
+        sent and the answer is validated against, so it is also what is hashed."""
         prior = self.agents[agent.agent_id].run_ids
         return PreparedTask(
             task=AgentTask(
@@ -1040,7 +1042,8 @@ class _BoRun:
             evidence_ids=sorted(evidence_ids),
             parent_run_ids=[r for r in parents if r],
             router_version=ROUTER_VERSION,
-            response_schema_hash=content_hash(schema),
+            response_schema_hash=content_hash(request_schema if request_schema is not None else schema),
+            response_schema=request_schema,
         )
 
     def _build(self, agent, context):
@@ -1418,7 +1421,8 @@ class _BoRun:
         if self.business_orchestrator_contract == source_selection.OUTPUT_VERSION:
             self.editorial_input.update(schema_version=source_selection.INPUT_VERSION,
                                        policy_version=source_selection.POLICY_VERSION)
-            return self._task(agent, self.editorial_input, admitted, source_selection.WRITER_SCHEMA, parents)
+            return self._task(agent, self.editorial_input, admitted, source_selection.WRITER_SCHEMA, parents,
+                              request_schema=source_selection.writer_request_schema(ids))
         return self._task(agent, self.editorial_input, admitted, WRITER_SCHEMA, parents)
 
     def _build_challenger(self, agent):

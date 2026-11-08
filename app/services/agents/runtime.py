@@ -84,9 +84,10 @@ class AgentRuntime:
         evidence_ids: list[str] | None = None,
         execution_wave: int = 0,
         parent_run_ids: list[str] | None = None,
+        response_schema: dict | None = None,
     ) -> AgentRuntimeOutput:
         """Execute ``task`` synchronously; returns typed result + unpersisted run."""
-        request = self._build_request(task, inputs, evidence_ids)
+        request = self._build_request(task, inputs, evidence_ids, response_schema)
         started = time.monotonic()
         result = self._client.generate_only(request)
         for attempt in range(1, PROVIDER_CALL_RETRIES + 1):
@@ -116,6 +117,7 @@ class AgentRuntime:
         evidence_ids: list[str] | None = None,
         execution_wave: int = 0,
         parent_run_ids: list[str] | None = None,
+        response_schema: dict | None = None,
     ) -> AgentRuntimeOutput:
         """Execute ``task`` off the event loop; captures provider failures.
 
@@ -123,7 +125,7 @@ class AgentRuntime:
         LLMClient's DB-free path, so this coroutine never raises a provider
         error into the surrounding ``TaskGroup`` (Req 30).
         """
-        request = self._build_request(task, inputs, evidence_ids)
+        request = self._build_request(task, inputs, evidence_ids, response_schema)
         started = time.monotonic()
         result = await self._client.generate_only_async(request)
         for attempt in range(1, PROVIDER_CALL_RETRIES + 1):
@@ -145,7 +147,8 @@ class AgentRuntime:
     # -- internals ------------------------------------------------------------
 
     def _build_request(
-        self, task: AgentTask, inputs: dict, evidence_ids: list[str] | None
+        self, task: AgentTask, inputs: dict, evidence_ids: list[str] | None,
+        response_schema: dict | None = None,
     ):
         return self._client.build_request(
             task.task_type,
@@ -155,6 +158,7 @@ class AgentRuntime:
             case_id=task.case_id,
             case_version=task.snapshot_version,
             model_tier=task.model_tier.value,
+            response_schema=response_schema,
         )
 
     def _assemble(

@@ -75,6 +75,9 @@ class PreparedTask:
     router_version: str = "router-unknown"
     response_schema_hash: str | None = None
     packet_hash: str | None = None
+    # Optional per-request narrowing of the prompt's registered schema (e.g. an
+    # enum of the supplied IDs); ``response_schema_hash`` should hash it.
+    response_schema: dict | None = None
 
     def resolved_packet_hash(self) -> str:
         return self.packet_hash or self.task.packet_ref
@@ -246,6 +249,7 @@ class DagExecutor:
                                 evidence_ids=pt.evidence_ids,
                                 execution_wave=wave_index,
                                 parent_run_ids=pt.parent_run_ids,
+                                response_schema=pt.response_schema,
                             ),
                             timeout=self._timeout,
                         )

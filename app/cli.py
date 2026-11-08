@@ -696,7 +696,10 @@ def _run_bo_fo(session, database, args):
         bo_backend=bo_backend, fo_backend=fo_backend, fo_mode=fo_mode,
         m3_backend=m3_backend,
         output_root=args.output, produce_pdf=args.pdf, rms_request=rms_request, on_progress=show,
-        bo_validators=not getattr(args, "no_validators", False))
+        bo_validators=not getattr(args, "no_validators", False),
+        # The same source-selection orchestrator as the browser's /analysis runs, so the CLI exercises
+        # the current workflow (four-section memo, Business Model) rather than the legacy synthesis path.
+        business_orchestrator_contract=bo_fo.BROWSER_BO_CONTRACT)
     for section in ("bo", "fo", "rms"):
         if outcome[section]["status"] == "failed":
             print(outcome[section].pop("traceback"), file=sys.stderr)

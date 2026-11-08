@@ -126,3 +126,64 @@ def test_retention_does_not_promote_unverified_costs(editorial):
     assert 'M1S4-H999' not in {h['hypothesis_id'] for h in source['hypotheses']}
     output = project(plan(source), source)
     assert all('M1S4-H999' not in c['hypothesis_ids'] for _, c in iter_claims(output))
+
+
+def _with_audit_only(records):
+    from app.schemas.bo import HypothesisRecord
+    cost = next(h for h in records if h.agent_id == 'm1_operating_model')
+    return HypothesisRecord.model_validate({**cost.model_dump(mode='json'),
+        'hypothesis_id': 'M1S4-H999', 'disposition': 'unverified', 'admissibility': 'audit_only'})
+
+
+def _schema_errors(plan_, schema):
+    import jsonschema
+    return [e.message for e in jsonschema.Draft202012Validator(schema).iter_errors(plan_)]
+
+
+def test_request_schema_accepts_a_valid_plan_and_stays_within_the_contract(editorial):
+    records, _ = editorial
+    source = packet(records)
+    narrowed = contract.writer_request_schema(h['hypothesis_id'] for h in source['hypotheses'])
+    assert _schema_errors(plan(source), narrowed) == []
+    assert _schema_errors(plan(source), contract.WRITER_SCHEMA) == []
+    assert contract.WRITER_SCHEMA['properties']['schema_version'] == {'const': contract.OUTPUT_VERSION}
+
+
+@pytest.mark.parametrize('defect', ['audit_only_omission', 'audit_only_selection', 'input_schema_version',
+                                    'unknown_id'])
+def test_request_schema_rejects_the_recorded_live_failure_modes(editorial, defect):
+    """HCA live runs on gemini-3.1-flash-lite (2026-11-08): the selector echoed the input contract version,
+    listed audit-only findings as omissions, and selected a finding that was not eligible."""
+    records, _ = editorial
+    source = packet([*records, _with_audit_only(records)])
+    assert [h['hypothesis_id'] for h in source['audit_only_hypotheses']] == ['M1S4-H999']
+    narrowed = contract.writer_request_schema(h['hypothesis_id'] for h in source['hypotheses'])
+    choice = plan(source)
+    if defect == 'audit_only_omission':
+        choice['omissions'].append(dict(hypothesis_id='M1S4-H999', reason='Audit-only hypothesis excluded by policy.'))
+    elif defect == 'audit_only_selection':
+        choice['selections'].append(dict(hypothesis_id='M1S4-H999', placement='risk', reason='Material.'))
+    elif defect == 'input_schema_version':
+        choice['schema_version'] = contract.INPUT_VERSION
+    else:
+        choice['omissions'].append(dict(hypothesis_id='M1S9-H001', reason='Invented.'))
+    assert _schema_errors(choice, narrowed)
+
+
+def test_coverage_feedback_names_the_exact_ids(editorial):
+    records, _ = editorial
+    source = packet([*records, _with_audit_only(records)])
+    choice = plan(source)
+    missing = choice['omissions'].pop()['hypothesis_id']
+    choice['omissions'].append(dict(hypothesis_id='M1S4-H999', reason='Audit-only hypothesis excluded by policy.'))
+    choice['omissions'].append(deepcopy(choice['omissions'][0]))
+    issue = next(i for i in validate_plan(choice, source) if i.startswith('selection_coverage:'))
+    assert 'missing: ' + missing in issue
+    assert 'M1S4-H999' in issue.split('not eligible')[1]
+    assert 'duplicated: ' + choice['omissions'][0]['hypothesis_id'] in issue
+
+
+def test_writer_prompt_keeps_audit_only_ids_out_of_both_lists():
+    template = contract.WRITER_TEMPLATE
+    assert 'never put their IDs in selections or in\nomissions' in template
+    assert f'schema_version to\n{contract.OUTPUT_VERSION}' in template

@@ -16,7 +16,13 @@ def validate_plan(plan, source):
     entries = plan['selections'] + plan['omissions']
     counts = Counter(d['hypothesis_id'] for d in entries)
     if set(counts) != set(records) or any(n != 1 for n in counts.values()):
-        issues.append('selection_coverage: every eligible finding must occur exactly once; unknown/duplicate IDs are forbidden.')
+        # Name the exact IDs so the single repair attempt can correct them.
+        detail = [f'{label}: {", ".join(sorted(ids))}' for label, ids in (
+            ('missing', set(records) - set(counts)),
+            ('not eligible (remove; audit-only IDs never appear)', set(counts) - set(records)),
+            ('duplicated', {h for h, n in counts.items() if n > 1})) if ids]
+        issues.append('selection_coverage: every eligible finding must occur exactly once; unknown/duplicate IDs '
+                      'are forbidden. ' + '; '.join(detail) + '.')
     if sum(d['placement'] == 'lead' for d in plan['selections']) != 1:
         issues.append('selection_lead: exactly one source finding must be the lead.')
     for d in entries:
