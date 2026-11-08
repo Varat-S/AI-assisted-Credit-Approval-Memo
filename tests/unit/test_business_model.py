@@ -118,3 +118,59 @@ def test_missing_10k_never_calls_model(db_session, monkeypatch):
     monkeypatch.setattr('app.services.bo.four_section.load_saved_inputs', lambda *args: source)
     result = run_description(db_session, 'run-1', None)
     assert result['status'] == 'insufficient_evidence' and result['model_run_id'] is None
+
+
+def test_cross_chunk_quote_is_split_into_exact_original_source_ids():
+    data = snapshot(); first = data['narrative_evidence'][0]; split = 95
+    first['text'] = TEXT[:split]
+    data['narrative_evidence'].append({**first, 'evidence_id': 'E2', 'location': split, 'text': TEXT[split:]})
+    value = answer();value['paragraphs'][0]['sentences'][0]['evidence'][0]['evidence_id'] = 'E2'
+    original = deepcopy(value)
+    result = validate_description(value, select_passages(data)[0])
+    citations = result['paragraphs'][0]['sentences'][0]['evidence']
+    assert {c['evidence_id'] for c in citations} == {'E1', 'E2'}
+    lookup = {p['evidence_id']: p['text'] for p in data['narrative_evidence']}
+    assert all(c['quote'] in lookup[c['evidence_id']] for c in citations)
+    assert value == original
+    assert validate_description(result, select_passages(data)[0]) == result
+    for mutation in ['gap', 'other_document', 'changed_number']:
+        changed = deepcopy(data); trial = deepcopy(value)
+        if mutation == 'gap': changed['narrative_evidence'][1]['location'] += 1
+        if mutation == 'other_document': changed['narrative_evidence'][1]['document_id'] = 'other'
+        if mutation == 'changed_number': trial['paragraphs'][0]['sentences'][0]['evidence'][0]['quote'] = TEXT.replace('Northfield', 'Northfield 2099')
+        with pytest.raises(ValueError): validate_description(trial, changed['narrative_evidence'])
+
+
+def test_one_bad_sentence_does_not_discard_other_supported_sentences():
+    value = answer()
+    value['paragraphs'][0]['sentences'].append({'text': 'Unsupported assertion.',
+        'evidence': [{'evidence_id': 'E1', 'quote': 'Invented source quotation.'}]})
+    result = validate_description(value, select_passages(snapshot())[0], retain_supported=True)
+    assert result['paragraphs'] == answer()['paragraphs']
+    assert len(value['paragraphs'][0]['sentences']) == 2
+
+
+def test_saved_rejection_recovery_is_append_only_and_makes_no_model_call(db_session, monkeypatch):
+    from app.services.bo import business_model as module
+    from app.models.orm import StageArtifact
+    source = saved()
+    monkeypatch.setattr('app.services.bo.four_section.load_saved_inputs', lambda *args: source)
+    backend = FakeLLMBackend();backend.register('analyze', answer(), key=NAME)
+    validator = module.validate_description
+    def old_rejection(*args, **kwargs): raise ValueError('Previous evidence validation failure')
+    monkeypatch.setattr(module, 'validate_description', old_rejection)
+    original = run_description(db_session, 'run-1', backend)
+    assert original['status'] == 'rejected'
+    row = db_session.query(StageArtifact).filter_by(name='informational_business_model:run-1').one()
+    before_count = db_session.query(StageArtifact).count()
+    frozen = (row.payload_json, row.sha256, row.chain_hash)
+    monkeypatch.setattr(module, 'validate_description', validator)
+    monkeypatch.setattr(backend, 'generate', lambda *a: pytest.fail('No model calls during recovery'))
+    recovered = module.recover_description(db_session, 'run-1')
+    assert recovered['status'] == 'complete'
+    assert (row.payload_json, row.sha256, row.chain_hash) == frozen
+    assert db_session.query(StageArtifact).count() == before_count + 1
+    assert db_session.query(ModelRun).count() == 1
+    assert load_description(db_session, 'run-1', source) == recovered
+    assert module.recover_description(db_session, 'run-1') == recovered
+    assert run_description(db_session, 'run-1', backend) == recovered
