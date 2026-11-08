@@ -12,6 +12,7 @@ HISTORY = re.compile(
     r'\bwas amended and restated\b|\blenders have extended\b', re.I)
 OPTION = re.compile(r'\b(?:may|might|could|will|would|can)\s+(?:also\s+)?(?:redeem|repay|repurchase)|'
                     r'\b(?:entitled|at (?:its|our) option|right to redeem)\b', re.I)
+MONTHS = r'January|February|March|April|May|June|July|August|September|October|November|December'
 MONEY = re.compile(r'\$\s*([\d,]+(?:\.\d+)?)\s*(billion|million)?', re.I)
 
 
@@ -40,11 +41,17 @@ def matches_event(text, row):
     """Amount alone cannot make an issuance prove a redemption of the same size."""
     actions = {
         'new_issuance': r'\b(?:issued|completed (?:a private |an |the )?offering)\b',
-        'early_redemption': r'\b(?:redeemed|repurchased|extinguished|exercised)\b',
-        'repayment_at_maturity': r'\brepaid at maturity\b',
+        'early_redemption': r'\b(?:redeemed|repurchased|extinguished|exercised)\b|\bused\b.*?\bto (?:redeem|repurchase)\b',
+        'repayment_at_maturity': r'\b(?:repaid|redeemed|paid|retired)\b.*?\bat maturity\b',
         'facility_amendment': r'\b(?:entered into|amended and restated|lenders have extended)\b',
         'tender_exchange': r'\b(?:redeemed|repurchased|extinguished|accepted for purchase|completed.*tender)\b',
     }
+    if row.get('transaction_category') == 'early_redemption' and re.search(r'\bat maturity\b', text, re.I):
+        return False
+    maturity_years = set(re.findall(r'\b(?:19|20)\d{2}\b', row.get('original_retired_maturity') or ''))
+    source_maturities = set(re.findall(r'(?:notes?|debentures?)\s+(?:due|maturing in)\s+((?:19|20)\d{2})', text, re.I))
+    if maturity_years and source_maturities and not maturity_years & source_maturities:
+        return False
     return related(text, row) and bool(re.search(actions.get(row.get('transaction_category'), r'(?!)'), text, re.I))
 
 
@@ -58,9 +65,10 @@ def historical_quotes(deliverable, citations, indexes):
         by_document.setdefault(passage['document_id'], []).append(passage)
     quotes, seen = [], set()
     for document_id, passages in by_document.items():
-        for paragraph in indexes.get(document_id) or []:
-            if str(paragraph.get('page')) not in pages:
-                continue
+        # Model page references are hints, not proof: scan the checksum-verified
+        # source and still require continuous coverage by this run's debt evidence.
+        paragraphs = sorted(indexes.get(document_id) or [], key=lambda p: str(p.get('page')) not in pages)
+        for paragraph in paragraphs:
             # Split on sentence endings, not decimal coupon rates or dollar amounts.
             sentences = re.split(r'(?<=[.!?])\s+(?=[A-Z])', paragraph['text'])
             historical = []
@@ -72,9 +80,16 @@ def historical_quotes(deliverable, citations, indexes):
                 # to an earlier transaction merely because both appear together.
                 prefix = sentence[:event.start()]
                 dated = set(re.findall(r'\b(?:January|February|March|April|May|June|July|August|September|October|November|December) '
-                                       r'\d{1,2}, ((?:19|20)\d{2})\b', prefix, re.I))
+                                       r'(?:\d{1,2}, )?((?:19|20)\d{2})\b', prefix, re.I))
                 dated.update(re.findall(r'\b(?:during|in) ((?:19|20)\d{2})\b', prefix, re.I))
                 if execution_years and dated and not dated & execution_years:
+                    continue
+                # Where a month is explicitly recorded, do not attach another
+                # month's same-size transaction. Respect jointly dated events.
+                row_months = {m.lower() for row in rows for m in re.findall(MONTHS, row.get('execution_date_fiscal_period', ''), re.I)}
+                source_months = {m.lower() for m in re.findall(MONTHS, prefix, re.I)}
+                if (dated and row_months and source_months and not row_months & source_months
+                        and not any(re.search(r'/\s*Q[1-4]', row.get('execution_date_fiscal_period', '')) for row in rows)):
                     continue
                 historical.append(sentence)
             # Keep the transaction's use-of-proceeds sentence with its issuance,

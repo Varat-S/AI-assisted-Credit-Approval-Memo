@@ -250,6 +250,13 @@ def load_view(session, analysis_run_id, case_id=None):
     source_base = '/cases/' + quote(row.case_id, safe='') + '/bo/runs/' + quote(analysis_run_id, safe='') + '/source'
     for item in evidence:
         item['quotations'] = quotation_cards(item, passages, documents, indexes, source_base)
+    if refinancing:
+        # Keep every original event in the audit, but publish only quotations
+        # with a reproducible location and a link to the verified original.
+        refinancing['entries'] = [entry for entry in refinancing['entries']
+            if any(q.get('viewer') and q.get('original') for q in entry['evidence']['quotations'])]
+        if not refinancing['entries']:
+            refinancing = None
     from app.services.bo.finding_assessment import assessment
     for entry in [entry for group in industry['groups'] for entry in group['findings']] + industry['exposures']:
         finding = entry['finding']

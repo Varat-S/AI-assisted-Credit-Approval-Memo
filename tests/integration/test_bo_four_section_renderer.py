@@ -519,9 +519,20 @@ def test_pdf_omits_cross_dimensional_insights_but_screen_keeps_them(db_session, 
     assert 'CROSSDIM-FINDING' in screen and 'Revenue &amp; Cost Interactions' in screen
 
 
-def test_refinancing_timeline_uses_selected_saved_debt_on_web_and_print(db_session, tmp_path):
+def test_refinancing_timeline_uses_selected_saved_debt_on_web_and_print(db_session, tmp_path, monkeypatch):
     result, backend = run(db_session, tmp_path)
     before = len(backend.requests)
+    # Rendering fixture has no admitted HTML. Supply resolved cards; real source
+    # verification and highlighting are exercised in the evidence unit tests.
+    from app.services.bo import evidence_presentation as ep
+    original = ep.quotation_cards
+    def located_cards(item, *args):
+        if item['title'].startswith('Refinancing event '):
+            return [{'quote':'Verified transaction quotation.', 'filename':'filing.htm',
+                     'page':'23', 'paragraph':1, 'viewer':'/source/doc#page-1-paragraph-1',
+                     'original':'/original/doc/token'}]
+        return original(item, *args)
+    monkeypatch.setattr(ep, 'quotation_cards', located_cards)
     view = load_view(db_session, result.analysis_run_id)
     rows = f.debt_output()['deliverable_2']['refinancing_log']
     assert len(view['refinancing']['entries']) == len(rows)
@@ -552,3 +563,17 @@ def test_refinancing_is_not_shown_when_debt_did_not_validate(db_session, tmp_pat
     view = load_view(db_session, result.analysis_run_id)
     assert view['refinancing'] is None
     assert 'Refinancing History' not in html.fromstring(render_page(view)).text_content()
+
+
+
+def test_refinancing_events_without_located_quotes_are_withheld_but_saved_audit_remains(db_session, tmp_path):
+    result, backend = run(db_session, tmp_path)
+    before = len(backend.requests)
+    view = load_view(db_session, result.analysis_run_id)
+    assert view['refinancing'] is None  # no admitted HTML in this offline fixture
+    panels = [p for p in view['evidence'] if p['title'].startswith('Refinancing event ')]
+    assert len(panels) == len(f.debt_output()['deliverable_2']['refinancing_log'])
+    assert all(p['content']['assessment']['refinancing_log'] for p in panels)
+    page = render_page(view)
+    assert 'Verified quotations are unavailable for the recorded source locations.' not in page
+    assert len(backend.requests) == before

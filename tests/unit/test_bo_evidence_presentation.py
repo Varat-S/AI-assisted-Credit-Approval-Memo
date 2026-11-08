@@ -65,3 +65,17 @@ def test_local_source_requires_case_path_and_hash(monkeypatch, tmp_path):
     assert source_index(session, doc, 'case') is None
     path = tmp_path/'outside.htm'; path.write_bytes(SOURCE); row.storage_path = str(path)
     assert source_index(session, doc, 'case') is None
+
+
+def test_div_based_inline_xbrl_paragraphs_have_exact_page_and_anchor():
+    source = b'''<html><body><div><div>Long-term Debt</div>
+    <div>In September 2025, we redeemed the remaining $<ix:nonfraction>100</ix:nonfraction>
+    million of our 2025 Notes at maturity.</div>
+    <div style="text-align:center">F-31</div></div><hr style="page-break-after:always">
+    <div>Next page.</div><div style="text-align:center">F-32</div></body></html>'''
+    index = html_index(source)
+    text = 'In September 2025, we redeemed the remaining $100 million of our 2025 Notes at maturity.'
+    position = locate(text, index)
+    assert position['page'] == 'F-31' and position['paragraph'] == 2
+    assert position['id'] == 'page-1-paragraph-2'
+    assert sum(text in p['text'] for p in index) == 1

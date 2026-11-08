@@ -30,7 +30,11 @@ def html_index(data):
         style = node.get('style', '').replace(' ', '').lower()
         if node.tag.lower() == 'hr' and 'page-break-after:always' in style:
             pages.append([])
-        if node.tag.lower() == 'p' and normalized(node.text_content()):
+        # SEC filers use both paragraph tags and leaf divs (including inline XBRL).
+        # Never index wrapper divs as duplicate, whole-page paragraphs.
+        tag = node.tag.lower()
+        is_block = tag in {'p', 'li'} or (tag == 'div' and not node.xpath('.//div | .//p | .//table | .//li'))
+        if is_block and normalized(node.text_content()):
             pages[-1].append((normalized(node.text_content()), style))
     result = []
     for page_index, blocks in enumerate(pages, 1):
