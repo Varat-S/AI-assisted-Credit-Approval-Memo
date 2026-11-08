@@ -41,14 +41,14 @@
 {{ schedule('Non-note obligations and facilities', d.non_note_obligations_schedule, bo4.facility_columns, 'non_note') }}
 {% include 'bo_loan_ranking.html.j2' %}
 {% else %}<p class="memo-empty">Debt obligations are not available as validated content for this run.</p>{% endif %}{{ evidence(section.debt_obligations.evidence) }}</div>{% if not pdf %}</div>{% endif %}
-{% elif loop.index == 2 %}{% include 'bo_management.html.j2' %}{{ evidence(section.evidence) }}
+{% elif loop.index == 2 %}{% include 'bo_management.html.j2' %}
 {% elif loop.index == 3 %}{% if section.content %}{% if bo4.finding_groups is defined and bo4.finding_groups is not none %}
 {% for group in bo4.finding_groups %}{% set entries = group.entries|rejectattr('evidence.id', 'in', bo4.cross_dimensional or [])|list if pdf else group.entries %}{% if entries or not group.entries %}<div class="bo-finding-group"><h3>{{ group.title }}</h3>{% if not group.entries %}<p class="memo-empty">No selected findings were recorded in this category.</p>{% endif %}
 {% for entry in entries %}<div class="memo-claim" data-claim-id="{{ entry.claim.claim_id }}" data-source-finding="{{ entry.source_hypothesis_id }}">
 <h4>{{ entry.topic }}</h4>{{ direction_badge(entry.direction_label) }}
 {% if entry.pointers is defined %}<dl class="bo-finding-points">{% for pointer in entry.pointers %}<div class="bo-finding-point"><dt>{{ pointer.label }}{{ classification_badge(pointer.classification) }}</dt><dd>{% if pointer.parts %}{% for part in pointer.parts %}<p>{{ part.text }}</p>{% endfor %}{% else %}<p class="memo-empty">{{ pointer.empty_text }}</p>{% endif %}</dd></div>{% endfor %}</dl>{% else %}<p>{{ entry.claim.text }}</p>{% for detail in entry.details %}<p><strong>{{ detail.label }}:</strong> {{ detail.text }}</p>{% endfor %}{% endif %}
 {{ evidence(entry.evidence) }}</div>{% endfor %}</div>{% endif %}{% endfor %}
-{% else %}{% for entry in bo4.claims %}<div class="memo-claim" data-claim-id="{{ entry.claim.claim_id }}">{% if not loop.first %}<h3>{{ entry.category }}{% if entry.claim.title %} · {{ entry.claim.title }}{% endif %}</h3>{% endif %}<p>{{ entry.claim.text }}</p>{{ evidence(entry.evidence) }}</div>{% endfor %}{% endif %}{% else %}<p class="memo-empty">Competitive Positioning is not available as validated content for this run.</p>{% endif %}{{ evidence(section.evidence) }}
+{% else %}{% for entry in bo4.claims %}<div class="memo-claim" data-claim-id="{{ entry.claim.claim_id }}">{% if not loop.first %}<h3>{{ entry.category }}{% if entry.claim.title %} · {{ entry.claim.title }}{% endif %}</h3>{% endif %}<p>{{ entry.claim.text }}</p>{{ evidence(entry.evidence) }}</div>{% endfor %}{% endif %}{% else %}<p class="memo-empty">Competitive Positioning is not available as validated content for this run.</p>{% endif %}
 {% else %}{% include 'bo_industry.html.j2' %}{% endif %}
 </section>{% endfor %}
 {# The PDF carries results only; evidence belongs to the separate audit report. #}

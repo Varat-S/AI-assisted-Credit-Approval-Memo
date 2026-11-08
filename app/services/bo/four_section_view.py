@@ -247,6 +247,9 @@ def load_view(session, analysis_run_id, case_id=None):
                 entry['pointers'][0]['classification'] = entry['assessment']['finding']
                 entry['pointers'][1]['classification'] = entry['assessment']['implication']
                 entry['evidence']['assessment'] = entry['assessment']
+                from app.services.bo.competitive_presentation import insight_formation
+                entry['evidence']['insight_formation'] = insight_formation(
+                    hypotheses[entry['source_hypothesis_id']], saved.audit, saved.provenance)
     from app.services.bo.roster_v3 import V3_AGENT_6_ID
     # The PDF export leaves out Agent 6's cross-dimensional insights and their evidence.
     cross_dimensional = {entry['evidence']['id'] for group in finding_groups or [] for entry in group['entries']

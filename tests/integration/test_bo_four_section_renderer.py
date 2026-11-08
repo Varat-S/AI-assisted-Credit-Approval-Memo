@@ -85,7 +85,7 @@ def test_management_web_and_print_share_conservative_projection(db_session, tmp_
     assert not web_management[0].xpath('.//div[@class="bo-management-assessment-gaps"]//li')
     assert not print_management[0].xpath('.//section[contains(@class,"bo-management-card")]')
     assert not print_management[0].xpath('.//div[@class="bo-management-assessment-gaps"]//li')
-    assert web_management[0].xpath('.//details[contains(@class,"bo-management-support") and not(@open)]')
+    assert not web_management[0].xpath('.//details[contains(@class,"bo-management-support")]')
     assert not print_management[0].xpath('.//details[contains(@class,"bo-management-support")]')
     assert view['management']['overall_assessment']['text'] in web_management[0].text_content()
     assert view['management']['overall_assessment']['text'] in print_management[0].text_content()
@@ -121,7 +121,7 @@ def test_management_web_and_print_share_conservative_projection(db_session, tmp_
         (folder / 'management_print_preview.html').write_text(render_page(view, pdf=True), encoding='utf-8')
 
 
-def test_concerns_remain_visible_and_qualifications_stay_in_web_support(db_session, tmp_path):
+def test_concerns_remain_visible_and_qualifications_stay_in_saved_records(db_session, tmp_path):
     from app.services.bo.management_view import management_view
 
     result, _ = run(db_session, tmp_path)
@@ -149,10 +149,10 @@ def test_concerns_remain_visible_and_qualifications_stay_in_web_support(db_sessi
         assert observation['text'] in page.text_content()
         assert 'Recorded overall qualification.' not in visible(page)
         assert observation['review_reason'] not in visible(page)
-        assert observation['uncertainties'][0] not in visible(page)
-    support = section.xpath('.//details[@class="bo-management-support" and not(@open)]')[0]
+        assert observation['uncertainties'][0] in page.text_content()
+    assert not section.xpath('.//details[@class="bo-management-support"]')
     for text in (observation['review_reason'], observation['uncertainties'][0], 'Recorded overall qualification.'):
-        assert text in support.text_content()
+        assert text in str(view['management'])
     assert not printed.xpath('//*[@data-memo-section="management"]//*[@data-source-id]')
     assert bo_artifact(db_session, result.analysis_run_id, 'four_section') == frozen
     assert [(r.name, r.sha256, r.payload_json) for r in db_session.query(StageArtifact).all()] == stage_bytes
@@ -248,9 +248,8 @@ def test_saved_real_hca_run_renders_without_analysis_or_artifact_changes(monkeyp
             assert '1 distinct reviewed finding' in shown
             assert 'three to five distinct findings are not supported' in shown
             assert 'No management-specific monitoring indicators or thresholds were recorded.' in shown
-            support = web.xpath('//details[@class="bo-management-support"]')[0]
-            assert support.get('open') is None
-            assert 'f_01' in support.text_content()  # Original rationale remains available.
+            assert not web.xpath('//details[@class="bo-management-support"]')
+            assert 'f_01' in str(view['management'])  # Original rationale remains in records.
             assert len(view['management']['sources']) == 3
             assert session.query(ModelRun).count() == count
             assert [(r.name, r.sha256, r.payload_json) for r in session.query(StageArtifact).all()] == before

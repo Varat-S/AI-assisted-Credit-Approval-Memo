@@ -50,31 +50,4 @@
 {% endif %}
 
 
-{% if not pdf %}
-<details class="bo-management-support" data-run-id="{{ bo4.memo.identity.analysis_run_id }}">
-  <summary>Executive Profiles &amp; Supporting Evidence</summary>
-  {% if m.qualifications %}<div class="bo-management-qualifications"><h4>Material qualifications</h4><ul>{% for qualification in m.qualifications %}<li class="qualification">{{ qualification.text }}</li>{% endfor %}</ul></div>{% endif %}
-{% if m.methodology_notices %}<aside class="bo-management-methodology"><h4>Methodology / demonstration notice</h4>{% for text in m.methodology_notices %}<p class="technical-note">{{ text }}</p>{% endfor %}</aside>{% endif %}
-
-  {% if m.overall_assessment.original_text %}<h3>Original model assessment</h3><p>{{ m.overall_assessment.original_text }}</p>{% endif %}
-  <h3>Executive profiles</h3>
-  {% for profile in m.executive_profiles %}<div class="memo-claim">
-    <h4>{{ profile.name }} · {{ profile.position }}</h4>
-    <p>Appointment: {{ profile.appointment_date or 'Not recorded' }}{% if profile.appointment_precision %} ({{ profile.appointment_precision }}){% endif %}</p>
-    {% if profile.tenure %}<p>Recorded tenure: {{ profile.tenure.minimum_days }} to {{ profile.tenure.maximum_days }} days as of {{ profile.tenure.as_of }}</p>{% endif %}
-    {% if profile.succession %}<p>Succession: {{ profile.succession|replace('_',' ')|capitalize }}</p>{% endif %}
-    {% for role in profile.prior_internal_roles %}<p>{{ role.position }} · {{ role.start_date or 'Not recorded' }} to {{ role.end_date or 'Not recorded' }}</p>{% endfor %}
-    {{ references(profile) }}
-  </div>{% endfor %}
-  <h3>Original reviewed observations</h3>
-  {% for observation in m.reviewed_observations %}<div class="memo-claim"><p>{{ observation.text }}</p>
-    <p class="technical-note">Recorded direction: {{ observation.direction or 'Unassessed' }} · Review: {{ observation.review_outcome|title }}</p>
-    {% if observation.review_outcome == 'qualified' %}<p class="qualification">{{ observation.review_reason }}</p>{% endif %}
-    {% for limitation in observation.uncertainties %}<p class="qualification">{{ limitation }}</p>{% endfor %}
-    {{ references(observation) }}
-  </div>{% endfor %}
-  {% if m.recorded_limitations %}<h3>Original qualifications and limitations</h3>{% for text in m.recorded_limitations %}<p class="qualification">{{ text }}</p>{% endfor %}{% endif %}
-  {% if m.technical_notes %}<h3>Processing and detailed review records</h3>{% for text in m.technical_notes %}<p class="technical-note">{{ text }}</p>{% endfor %}{% endif %}
-</details>
-{% endif %}
 {% else %}<p class="memo-empty">Reviewed management analysis is not available for this run.</p>{% endif %}{% endif %}

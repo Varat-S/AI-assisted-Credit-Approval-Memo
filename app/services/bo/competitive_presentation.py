@@ -100,3 +100,37 @@ def grouped_findings(entries, audit, provenance):
     for entries in groups.values():
         entries.sort(key=lambda e: (SOURCE_ORDER[e['source_agent_id']], e['source_hypothesis_id']))
     return [{'title': name, 'entries': deepcopy(groups[name])} for name in GROUPS if groups[name] or name in (REVENUE, COST)]
+
+
+def insight_formation(source, audit, provenance):
+    """Exact current-run specialist lineage for Agent 6's recorded component IDs.
+
+    Never infer contributors from matching wording or filing quotations. Invalid,
+    withheld or superseded components are not replaced with another finding.
+    """
+    from app.services.bo.roster_v3 import V3_M1_PRIMARY_IDS, V3_SPEC_BY_AGENT
+    if source.get('agent_id') != V3_AGENT_6_ID:
+        return None
+    producers = {p['agent_id']: p['agent_run_id'] for p in provenance['producer_records']
+                 if p['validation_status'] == 'valid'}
+    groups, unavailable = {}, 0
+    for hid in dict.fromkeys(source.get('component_hypothesis_ids', [])):
+        matches = [h for h in audit['hypotheses']['records'] if h['hypothesis_id'] == hid]
+        if len(matches) != 1:
+            unavailable += 1
+            continue
+        h = matches[0]
+        record = HypothesisRecord.model_validate({k: v for k, v in h.items() if k in HypothesisRecord.model_fields})
+        if not (record.agent_id in V3_M1_PRIMARY_IDS and eligible(record)
+                and record.acceptance_state.value == 'accepted'
+                and record.analysis_run_id == audit['run']['analysis_run_id']
+                and record.agent_run_id == producers.get(record.agent_id)):
+            unavailable += 1
+            continue
+        spec = V3_SPEC_BY_AGENT[record.agent_id]
+        group = groups.setdefault(spec.code, {'agent_number': spec.code[-1], 'agent_name': spec.title, 'findings': []})
+        group['findings'].append({'hypothesis_id': hid, 'text': h['claim']})
+    return {'contributors': [groups[k] for k in sorted(groups)], 'unavailable_count': unavailable,
+            'text': source['claim'], 'credit_implication': source.get('credit_mechanism'),
+            'direction_label': {'positive': 'Positive', 'negative': 'Negative', 'neutral': 'Neutral',
+                                'mixed': 'Mixed'}.get(source.get('direction'), 'Unassessed')}

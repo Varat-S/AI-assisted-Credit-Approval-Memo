@@ -22,4 +22,3 @@
 </div>{% endfor %}
 {% if bo4.industry.exposures %}<div class="bo-finding-group bo-industry-exposures" data-industry-category="company_exposure"><h3>Company Exposure</h3>{% for entry in bo4.industry.exposures %}{{ industry_finding(entry, true) }}{% endfor %}</div>{% endif %}
 {% else %}<p class="memo-empty">Industry analysis is not available in this version.</p>{% endif %}
-{{ evidence(section.evidence) }}

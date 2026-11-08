@@ -1,0 +1,18 @@
+{% from 'bo_badges.html.j2' import direction_badge %}
+<section class="bo-insight-formation" aria-label="How this insight was formed">
+<h4>How this insight was formed</h4>
+<div class="bo-insight-contributors">
+{% for contributor in item.insight_formation.contributors %}<section class="bo-insight-contributor">
+<p class="bo-insight-agent">Agent {{ contributor.agent_number }}</p><h5>{{ contributor.agent_name }}</h5>
+{% for finding in contributor.findings %}<p>{{ finding.text }}</p>{% endfor %}
+</section>{% else %}<p class="memo-empty">Linked specialist findings were not available in this saved run.</p>{% endfor %}
+</div>
+{% if item.insight_formation.unavailable_count %}<p class="technical-note">Some linked specialist findings could not be verified against this run’s accepted records.</p>{% endif %}
+<p class="bo-insight-merge">↓ Combined by Agent 6</p>
+<section class="bo-insight-synthesis"><h5>Business Resilience, Risk Interactions &amp; Synthesis</h5>
+{{ direction_badge(item.insight_formation.direction_label, {'kind':'inference','label':'Inference'}) }}
+<p>{{ item.insight_formation.text }}</p>
+{% if item.insight_formation.credit_implication %}<p>{{ item.insight_formation.credit_implication }}</p>{% endif %}
+</section>
+</section>
+<h4>10-K evidence</h4>

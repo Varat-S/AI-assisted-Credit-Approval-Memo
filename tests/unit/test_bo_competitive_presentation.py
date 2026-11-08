@@ -105,3 +105,53 @@ def test_all_agent6_insights_follow_both_primary_groups(editorial, components):
     assert [g['title'] for g in groups] == [REVENUE, COST, INTERACTIONS]
     assert [e['source_hypothesis_id'] for e in groups[-1]['entries']] == [interaction.hypothesis_id]
     assert all(e['source_agent_id'] != interaction.agent_id for g in groups[:-1] for e in g['entries'])
+
+
+def test_agent6_lineage_uses_only_explicit_current_specialist_references(editorial):
+    from app.services.bo.competitive_presentation import insight_formation
+    entries, audit, provenance = data(editorial[0])
+    source = next(h for h in audit['hypotheses']['records'] if h['hypothesis_id'] == 'M1A6-H001')
+    source['component_hypothesis_ids'] = ['M1S1-H001', 'M1S4-H001', 'M1S1-H001']
+    before = deepcopy((audit, provenance))
+    lineage = insight_formation(source, audit, provenance)
+    assert [(c['agent_number'], c['agent_name']) for c in lineage['contributors']] == [('1', 'Pricing Power'), ('4', 'Cost Resilience')]
+    assert lineage['unavailable_count'] == 0
+    assert lineage['contributors'][0]['findings'][0]['text'] == audit['hypotheses']['records'][0]['claim']
+    assert lineage['text'] == source['claim']
+    assert (audit, provenance) == before
+
+
+@pytest.mark.parametrize('defect', ['missing', 'foreign_run', 'producer', 'duplicate', 'withheld'])
+def test_agent6_lineage_does_not_substitute_unusable_components(editorial, defect):
+    from app.services.bo.competitive_presentation import insight_formation
+    _, audit, provenance = data(editorial[0])
+    source = next(h for h in audit['hypotheses']['records'] if h['hypothesis_id'] == 'M1A6-H001')
+    source['component_hypothesis_ids'] = ['M1S1-H001']
+    component = next(h for h in audit['hypotheses']['records'] if h['hypothesis_id'] == 'M1S1-H001')
+    if defect == 'missing': audit['hypotheses']['records'].remove(component)
+    if defect == 'foreign_run': component['analysis_run_id'] = 'other-run'
+    if defect == 'producer': component['agent_run_id'] = 'superseded-producer'
+    if defect == 'duplicate': audit['hypotheses']['records'].append(deepcopy(component))
+    if defect == 'withheld': component['acceptance_state'] = 'rejected'
+    lineage = insight_formation(source, audit, provenance)
+    assert lineage['contributors'] == []
+    assert lineage['unavailable_count'] == 1
+
+
+def test_lineage_and_filing_quotes_are_inside_one_evidence_disclosure():
+    from app.services.bo.four_section_view import _env
+    from lxml import html
+    item = {'title': 'Cross-dimensional insight', 'id': 'test-insight',
+        'insight_formation': {'contributors': [{'agent_number': '2', 'agent_name': 'Demand Defensiveness',
+            'findings': [{'text': 'Capacity is constrained by staffing.'}]}], 'unavailable_count': 0,
+            'text': 'A combined inference.', 'credit_implication': 'Admission growth can be restricted.', 'direction_label': 'Negative'},
+        'quotations': [{'quote': 'An exact filing quotation.', 'filename': 'hca-20251231.htm', 'section': '10-K'}]}
+    t = _env.from_string("{% from 'bo_evidence.html.j2' import evidence with context %}{{ evidence(item) }}")
+    p = html.fromstring(t.render(item=item, pdf=False, bo4={'memo': {'identity': {'analysis_run_id': 'saved', 'evidence_snapshot_version': 1}}}))
+    panel = p.xpath('//details[@class="bo-evidence"]')[0]
+    assert panel.get('open') is None
+    assert panel.xpath('./div/section[@class="bo-insight-formation"]')
+    assert panel.xpath('./div/article/blockquote[text()="An exact filing quotation."]')
+    assert not panel.xpath('.//section[@class="bo-insight-formation"]//details')
+    assert not panel.xpath('.//details[summary[text()="Supporting 10-K evidence"]]')
+    assert 'Agent 2' in panel.text_content() and 'How this insight was formed' in panel.text_content()
