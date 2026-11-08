@@ -55,7 +55,13 @@ def evidence():
                    'assumption_status': 'simulated', 'validation_status': 'contract_validated'})]
     passages = [*base.narrative_evidence,
                 {'evidence_id': 'ev_debt_adjustment', 'document_id': 'doc_10k', 'section': 'Item 8',
-                 'location': 80000, 'text': 'Debt issuance costs and discounts (436). The additional receivables credit facility is undrawn.'}, *[
+                 'location': 80000, 'text': 'Debt issuance costs and discounts (436). The additional receivables credit facility is undrawn. '
+                 # Fictional source schedule for the existing amount-verification check.
+                 'Amounts in millions: 5.000% notes $700 million; 5.250% notes $750 million; '
+                 '5.750% notes $1,500 million; 6.200% notes $1,250 million; other senior notes $39,050 million; '
+                 'debentures $450 million; commercial paper drawn $2,207 million; other secured debt $1,021 million. '
+                 'Undrawn availability: commercial paper $4,000 million; revolving facility $8,000 million; '
+                 'receivables facility $1,000 million.'}, *[
         {'evidence_id': f'mgmt-page-{i}', 'document_id': 'mgmt-doc', 'page': i,
          'location': (i - 1) * 1000, 'text': text, 'section': 'Item 10', 'heading': 'Executive Officers'}
         for i, text in enumerate(pages, 1)]]

@@ -295,7 +295,9 @@ def test_populated_review_routes_debt_and_closed_evidence(db_session, tmp_path, 
         assert not page.xpath('//*[contains(concat(" ", normalize-space(@class), " "), " notice-warning ")]')
         assert 'SIMULATED EDUCATIONAL EXAMPLE' in page.text_content()
         assert 'Tier 2 · Senior unsecured guaranteed' in shown
-        assert 'Not recorded' in shown and '-436.0' in shown
+        assert 'Not recorded' in shown
+        assert '-436.0' not in shown  # reconciliation is retained in debt evidence
+        assert '-436.0' in page.text_content()
         assert 'Admissions were stable during the year.' not in shown
         assert 'M1A6-H001' not in shown and 'M2-H001' not in shown and 'ev_payer' not in shown
         assert 'Our managed care contracts are generally multi-year agreements' not in shown
@@ -304,7 +306,7 @@ def test_populated_review_routes_debt_and_closed_evidence(db_session, tmp_path, 
         cp_content = original['sections'][2]['content']
         for claim in [cp_content['overall_assessment'], *cp_content['key_drivers'], *cp_content['material_risks']]:
             assert claim['text'] in shown
-            if claim.get('uncertainty'): assert claim['uncertainty'] in shown
+            if claim.get('uncertainty'): assert claim['uncertainty'] in page.text_content()
         base = f'/cases/{result.case_id}/bo/runs/{result.analysis_run_id}'
         assert client.get(base+'/memo.html').status_code == 200
         assert client.get(base+'/memo.json').json() == original
@@ -515,3 +517,35 @@ def test_pdf_omits_cross_dimensional_insights_but_screen_keeps_them(db_session, 
     assert 'Revenue &amp; Cost Interactions' not in printed and 'Cross-dimensional insight' not in printed
     assert 'No selected findings were recorded in this category.' in printed
     assert 'CROSSDIM-FINDING' in screen and 'Revenue &amp; Cost Interactions' in screen
+
+
+def test_refinancing_timeline_uses_selected_saved_debt_on_web_and_print(db_session, tmp_path):
+    result, backend = run(db_session, tmp_path)
+    before = len(backend.requests)
+    view = load_view(db_session, result.analysis_run_id)
+    rows = f.debt_output()['deliverable_2']['refinancing_log']
+    assert len(view['refinancing']['entries']) == len(rows)
+    assert [entry['record'] for entry in view['refinancing']['entries']] == rows
+    for pdf in (False, True):
+        page = html.fromstring(render_page(view, pdf=pdf))
+        timeline = page.xpath('//section[contains(@class,"bo-refinancing")]')[0]
+        assert len(timeline.xpath('.//li')) == len(rows)
+        text = timeline.text_content()
+        for row in rows:
+            assert row['obligation_series_description'] in text
+            assert row['execution_date_fiscal_period'] in text
+            assert row['use_of_proceeds_impact'] in text
+        panels = timeline.xpath('./details[contains(@class,"bo-evidence")]')
+        assert len(panels) == (0 if pdf else 1)
+        if panels:
+            assert panels[0].xpath('./summary')[0].text_content() == 'Evidence · Refinancing History'
+            assert not panels[0].xpath('.//details')
+            assert view['refinancing']['evidence']['content']['assessment']['extraction_source']['narrative'] not in panels[0].text_content()
+    assert len(backend.requests) == before
+
+
+def test_refinancing_is_not_shown_when_debt_did_not_validate(db_session, tmp_path):
+    result, _ = run(db_session, tmp_path, missing='debt')
+    view = load_view(db_session, result.analysis_run_id)
+    assert view['refinancing'] is None
+    assert 'Refinancing History' not in html.fromstring(render_page(view)).text_content()

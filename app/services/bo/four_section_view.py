@@ -119,6 +119,19 @@ def load_view(session, analysis_run_id, case_id=None):
         block = sections[0][key]
         block['evidence'] = add(title, block['content'], source=block['source_ref'])
         block['evidence']['notices'] = list(block.get('visible_warnings', []))
+    # D2 lives in the same hash-verified, exact-run audit as D1. Only expose it
+    # when the existing assembly has verified the M4 producer and its validation.
+    from app.services.bo.refinancing_view import refinancing_view
+    debt_block = sections[0]['debt_obligations']
+    refinancing = None
+    if debt_block.get('validation_status') == 'passed' and debt_block.get('content'):
+        assessment = ((saved.audit.get('module_conclusions', {}).get('M4', {})
+                       .get('m4_debt_assessment') or {}).get('assessment') or {})
+        deliverable = assessment.get('deliverable_2')
+        refinancing = refinancing_view(deliverable)
+        if refinancing:
+            panel = add('Refinancing History', public_record(deepcopy(deliverable)), source='debt')
+            refinancing['evidence'] = panel
     for index in (1, 2, 3):
         block = sections[index]
         details = {'artifact': block['content']}
@@ -227,6 +240,11 @@ def load_view(session, analysis_run_id, case_id=None):
     selected_ids = {hid for entry in claims for hid in entry['claim'].get('hypothesis_ids', [])}
     sections[2]['evidence']['hypotheses'] = [hypotheses[hid] for hid in sorted(selected_ids) if hid in hypotheses]
     indexes = {did: source_index(session, doc, row.case_id) for did, doc in documents.items()}
+    if refinancing:
+        from app.services.bo.refinancing_evidence import historical_quotes
+        panel = refinancing['evidence']
+        panel['content'] = {'assessment': panel['content'], 'citations': historical_quotes(
+            panel['content'], panel['citations'], indexes)}
     source_base = '/cases/' + quote(row.case_id, safe='') + '/bo/runs/' + quote(analysis_run_id, safe='') + '/source'
     for item in evidence:
         item['quotations'] = quotation_cards(item, passages, documents, indexes, source_base)
@@ -258,7 +276,7 @@ def load_view(session, analysis_run_id, case_id=None):
     cross_dimensional = {entry['evidence']['id'] for group in finding_groups or [] for entry in group['entries']
                          if entry['source_agent_id'] == V3_AGENT_6_ID}
     return {'memo': artifact, 'business_model': business_model, 'svg': svg, 'debt_snapshot': snapshot, 'snapshot_placed': snapshot_placed,
-            'loan_ranking': loan_ranking, 'claims': claims, 'finding_groups': finding_groups, 'evidence': evidence,
+            'loan_ranking': loan_ranking, 'refinancing': refinancing, 'claims': claims, 'finding_groups': finding_groups, 'evidence': evidence,
             'cross_dimensional': cross_dimensional,
             'management': management, 'industry': industry,
             'structure_tree': next(iter(structure['companies'].values()))['plain_text_tree'] if structure else None,

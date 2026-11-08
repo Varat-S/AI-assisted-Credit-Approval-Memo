@@ -40,7 +40,7 @@
 {{ schedule('Senior notes', d.senior_notes_schedule, bo4.note_columns, 'senior_notes') }}
 {{ schedule('Non-note obligations and facilities', d.non_note_obligations_schedule, bo4.facility_columns, 'non_note') }}
 {% include 'bo_loan_ranking.html.j2' %}
-{% else %}<p class="memo-empty">Debt obligations are not available as validated content for this run.</p>{% endif %}{{ evidence(section.debt_obligations.evidence) }}</div>{% if not pdf %}</div>{% endif %}
+{% else %}<p class="memo-empty">Debt obligations are not available as validated content for this run.</p>{% endif %}{{ evidence(section.debt_obligations.evidence) }}{% include 'bo_refinancing.html.j2' %}</div>{% if not pdf %}</div>{% endif %}
 {% elif loop.index == 2 %}{% include 'bo_management.html.j2' %}
 {% elif loop.index == 3 %}{% if section.content %}{% if bo4.finding_groups is defined and bo4.finding_groups is not none %}
 {% for group in bo4.finding_groups %}{% set entries = group.entries|rejectattr('evidence.id', 'in', bo4.cross_dimensional or [])|list if pdf else group.entries %}{% if entries or not group.entries %}<div class="bo-finding-group"><h3>{{ group.title }}</h3>{% if not group.entries %}<p class="memo-empty">No selected findings were recorded in this category.</p>{% endif %}

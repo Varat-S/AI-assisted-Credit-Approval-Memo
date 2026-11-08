@@ -1,5 +1,6 @@
 """Exact saved quotations and honest, reproducible HTML source locations."""
 from hashlib import sha256
+from difflib import SequenceMatcher
 from pathlib import Path
 import re
 import textwrap
@@ -85,6 +86,29 @@ def locate(quotation, index):
     return {**paragraph, 'line': str(lines[0]) if len(lines) == 1 else f'{lines[0]}–{lines[-1]}'} if lines else None
 
 
+def covering_passages(text, passages):
+    """Require continuous verbatim coverage, allowing only whitespace at chunk seams."""
+    target = normalized(text)
+    if not target:
+        return []
+    spans = []
+    for passage in passages:
+        source = normalized(passage.get('text', ''))
+        if target in source:
+            return [passage['evidence_id']]
+        match = SequenceMatcher(None, target, source, autojunk=False).find_longest_match()
+        if len(source) >= 16 and match.size >= min(40, len(source)):
+            spans.append((match.a, match.a + match.size, passage['evidence_id']))
+    end, ids = 0, []
+    for start, stop, eid in sorted(spans):
+        if start > end and target[end:start].strip():
+            return []
+        if stop > end:
+            end = stop
+            ids.append(eid)
+    return ids if not target[end:].strip() else []
+
+
 def quotation_cards(item, passages, documents, indexes, base):
     candidates = []
     def collect(value):
@@ -94,7 +118,7 @@ def quotation_cards(item, passages, documents, indexes, base):
         elif isinstance(value, dict):
             text = value.get('quote') or value.get('raw_quote') or value.get('normalized_quote')
             if isinstance(text, str) and text.strip():
-                candidates.append((text, value.get('evidence_id'), value.get('document_id')))
+                candidates.append((text, value.get('evidence_id'), value.get('document_id'), value.get('supporting_evidence_ids')))
             for key, child in value.items():
                 if key in {'model_stated', 'recovery', 'raw_response'}:
                     continue
@@ -107,8 +131,15 @@ def quotation_cards(item, passages, documents, indexes, base):
         collect(item.get('content'))
     cards, seen = [], set()
     allowed = set((item.get('claim') or {}).get('evidence_ids', []))
-    for text, eid, doc_id in candidates:
-        if eid:
+    for text, eid, doc_id, supporting_ids in candidates:
+        if supporting_ids:
+            support = [passages[e] for e in supporting_ids if e in passages and (not allowed or e in allowed)]
+            if (len(support) != len(supporting_ids) or not doc_id
+                    or any(p['document_id'] != doc_id for p in support)
+                    or not covering_passages(text, support)):
+                continue
+            passage = support[0]
+        elif eid:
             passage = passages.get(eid)
             if not passage or (allowed and eid not in allowed):
                 continue

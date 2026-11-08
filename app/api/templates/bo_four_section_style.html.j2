@@ -42,4 +42,22 @@
 
 .bo-insight-formation{margin-bottom:24px}.bo-insight-contributors{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:14px 0}.bo-insight-contributor{padding:16px;border:1px solid var(--c-c7d5d4);border-radius:.3rem;background:var(--c-f5f8f7);min-width:0}.bo-insight-agent{font-size:.78rem;color:var(--c-315e62);margin:0 0 4px!important}.bo-insight-contributor h5,.bo-insight-synthesis h5{font-size:.95rem;margin:0 0 10px}.bo-insight-merge{text-align:center;color:var(--c-315e62);font-size:.82rem}.bo-insight-synthesis{border-left:3px solid var(--c-517273);padding-left:16px;margin:14px 0 20px}
 @media(max-width:760px){.bo-insight-contributors{grid-template-columns:minmax(0,1fr)}}
+
+.bo-refinancing{margin-top:32px;padding-top:16px;border-top:1px solid var(--c-c7d5d4)}
+.bo-refinancing-timeline{position:relative;list-style:none!important;padding:0!important;margin:24px 0!important}
+.bo-refinancing-timeline:before{content:"";position:absolute;left:50%;top:18px;bottom:24px;width:2px;background:var(--c-c7d5d4);transform:translateX(-50%)}
+.bo-refinancing-event{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 44px minmax(0,1fr);gap:16px;margin:0!important;padding-bottom:26px;break-inside:avoid}
+.bo-refinancing-event:last-child{padding-bottom:0}
+.bo-refinancing-node{grid-column:2;grid-row:1;justify-self:center;display:flex;align-items:center;justify-content:center;width:32px;height:32px;border:2px solid var(--c-517273);border-radius:50%;background:var(--c-f5f8f7);color:var(--c-315e62);font-size:.85rem;font-weight:700;z-index:1}
+.bo-refinancing-content{grid-column:1;grid-row:1;text-align:right;min-width:0;overflow-wrap:anywhere}
+.bo-refinancing-event:nth-child(even) .bo-refinancing-content{grid-column:3;text-align:left}
+.bo-four-section .bo-refinancing-content p{text-align:inherit;margin:6px 0;font-size:.84rem}
+.bo-refinancing-date,.bo-refinancing-maturity{font-weight:600;color:var(--c-315e62)}
+@media screen and (max-width:600px),print{
+.bo-refinancing-timeline:before{left:17px}
+.bo-refinancing-event{grid-template-columns:34px minmax(0,1fr);gap:14px}
+.bo-refinancing-node{grid-column:1}
+.bo-refinancing-event .bo-refinancing-content,.bo-refinancing-event:nth-child(even) .bo-refinancing-content{grid-column:2;text-align:left}
+}
+@media print{.bo-refinancing-timeline:before{display:none}.bo-refinancing-content p{font-size:10pt!important}.bo-refinancing-content h4{font-size:11pt!important}}
 </style>
