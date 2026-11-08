@@ -24,6 +24,7 @@ BUSINESS_RESULTS_TOPIC = "business_results"
 BUSINESS_RESULTS = (r"revenues?|admissions|volumes?|compared to|increased|decreased|"
                     r"primarily (?:due|attributable) to|compet|pric(?:e|es|ing)|margins?|"
                     r"segments?")
+DEBT_DETAILS = r'debentures?|principal\s+amount|notes\s+(?:due|payable)|indebtedness|debt\s+maturit'
 
 
 def split_items(text):
@@ -58,6 +59,8 @@ def find_excerpts(text, *, max_length=2000, business_results=False):
         ]
         if not topics and business_results and re.search(BUSINESS_RESULTS, part, re.I):
             topics = [BUSINESS_RESULTS_TOPIC]
+        if not topics and business_results and re.search(DEBT_DETAILS, part, re.I):
+            topics = ['debt_details']
         if topics:
             excerpts.append(
                 {"text": part, "location": start, "candidate_topics": topics}

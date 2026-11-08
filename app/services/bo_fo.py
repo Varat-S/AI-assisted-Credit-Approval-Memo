@@ -175,6 +175,10 @@ def run_bo_fo(*, database: Path, folder: str, bo_backend, fo_backend, fo_mode: s
     settled = plan(folder, case_id, cutoff)
     from app.services.analysis_preflight import check_database
     check_database(database)
+    from app.doctor import check_vertex_setup
+    selected_backends = ([] if fo_only else [bo_backend, m3_backend]) + ([] if bo_only else [fo_backend])
+    for backend in selected_backends:
+        check_vertex_setup(backend)
     if business_orchestrator_contract not in {None, BROWSER_BO_CONTRACT, 'bo-competitive-positioning-output-1.0.0'}:
         raise BoFoError('Unsupported Business Overview orchestrator contract.')
     if not fo_only and not any(f.role == 'schema' for f in settled['bundle'].files):

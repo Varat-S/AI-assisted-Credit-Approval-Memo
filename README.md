@@ -223,7 +223,7 @@ Python 3.11+ is supported. The preferred reproducible setup uses the checked-in
 
 ```powershell
 python -m pip install uv==0.12.23
-uv sync --locked --python 3.11 --extra dev
+uv sync --locked --python 3.11 --extra dev --extra vertex
 .\.venv\Scripts\Activate.ps1
 $env:DEBUG = 'false'
 python -m pytest -q
@@ -233,6 +233,28 @@ python -m pytest -q
 existing pip environment, `pip install -e ".[dev]"` remains available but resolves
 the declared version ranges rather than the lock. Optional `ocr` and `pdf`
 extras require system dependencies; the default setup produces JSON and HTML.
+
+For the live browser programme on a fresh clone (no shared database required):
+
+1. Copy `.env.example` to `.env`, set your SEC contact identification, Google Cloud
+   project and credentials. Use your own credentials; never copy another user's
+   database or credential files as application configuration.
+2. For Vertex ADC, run `gcloud auth application-default login`. An explicitly
+   configured Vertex API key is also supported. Confirm your project has access
+   to the model named in `.env`; the example matches the selected project setup,
+   but does not grant model access to another Google Cloud project.
+3. Run `uv run python -m app.doctor`. This checks local dependencies, credential
+   discovery and fresh database creation without calling a model.
+4. Run `uv run python -m app.preview --port 8001`, open
+   `http://127.0.0.1:8001/`, and download/admit the filing you want to analyse.
+
+On macOS/Linux the equivalent install command is the same `uv sync` command
+above; `uv run` avoids platform-specific virtual-environment activation.
+`data/`, `output/` and downloaded filings are local runtime data. The application
+creates the database schema from tracked code; an LLM does not create its schema.
+Use the same commit, lockfile, model configuration and filing snapshot when
+comparing results. Live LLM responses can still vary: validation failures remain
+visible rather than accepting unsupported results just to mark a run successful.
 
 Create an offline draft from the labelled synthetic evidence package:
 

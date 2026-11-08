@@ -208,6 +208,10 @@ class Module4Specialist:
 
         output = _in_maturity_order(Module4Output.model_validate(run.parsed))
         output, filed = self._with_filed_total(output, inputs.filed_total)
+        from app.services.modules.module4.filed_groups import recover_filed_groups
+        output, group_corrections = recover_filed_groups(output, inputs)
+        if group_corrections:
+            filed = {**(filed or {}), 'schedule_group_corrections': group_corrections}
         output, dropped = self._without_unneeded_items(output)
         passages = inputs.filing_passages()
         tagged = _tagged_items(inputs)

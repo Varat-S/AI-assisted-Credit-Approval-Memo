@@ -55,3 +55,12 @@ def test_debt_text_block_is_a_quotable_snippet():
         quote='Less: Unamortized deferred debt issuance costs (217)', evidence_id='tb')
     [check] = verify_reconciling_items([item], inputs.filing_passages())
     assert check.verified, check.reason
+
+
+def test_tagged_unsecured_category_and_dimensions_reach_m4():
+    fact = {'fact_id':'unsecured', 'name':'us-gaap:UnsecuredDebt', 'normalized_value':43700,
+            'normalized_unit':'USD_million', 'period_end':'2025-12-31',
+            'dimensions':{'us-gaap:LongtermDebtTypeAxis':'{issuer}SeniorUnsecuredNotesMember'}}
+    inputs = build_debt_inputs(SimpleNamespace(narrative_evidence=[], facts=[fact]))
+    assert inputs.structured_financials[0]['value'] == 43700
+    assert inputs.structured_financials[0]['dimensions'] == fact['dimensions']

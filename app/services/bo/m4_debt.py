@@ -51,6 +51,7 @@ _DEBT_CUES = (
     "refinanc", "term loan", "notes due", "principal amount", "debt tranche",
     "guarantor", "guaranteed by", "structural subordination", "debt covenant",
     "interest expense", "finance lease",
+    "debentures",
 )
 _DEBT_FACT_CUES = (
     "totalindebtedness", "total indebtedness", "longtermdebt", "long-term debt",
@@ -61,6 +62,7 @@ _DEBT_FACT_CUES = (
     # Tagged totals and facility capacity, so Validator 8 can match them.
     "debtlongtermandshortterm", "debtandcapitallease", "lineofcreditfacility",
     "commercialpaper",
+    "unsecureddebt", "secureddebt",
 )
 
 
@@ -128,7 +130,7 @@ class M4DebtResult:
 
 
 def _contains_cue(text: str, cues: tuple[str, ...]) -> bool:
-    low = (text or "").lower()
+    low = ' '.join((text or "").lower().split())
     return any(cue in low for cue in cues)
 
 
@@ -155,6 +157,7 @@ def build_debt_inputs(
             snippets.append({
                 "fact_id": eid,
                 "text": text,
+                "location": passage.get('location'),
                 "document_id": passage.get("document_id"),
                 "section": passage.get("section"),
                 "page": passage.get("page"),
@@ -193,6 +196,8 @@ def build_debt_inputs(
                  "value": _first_present(fact, "value", "normalized_value", "raw_value"),
                  "unit": _first_present(fact, "unit", "normalized_unit", "raw_unit"),
                  "period": _first_present(fact, "period", "period_end")}
+        if fact.get('dimensions'):
+            entry['dimensions'] = fact['dimensions']
         debt_facts.append(entry)
         structured.append(entry)
 

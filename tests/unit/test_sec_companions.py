@@ -106,3 +106,11 @@ def test_results_discussion_is_admitted_without_changing_existing_passages():
     # The proxy is not widened.
     assert narrative_evidence(results, document_id="P", accession=ACCESSION,
                               kind="DEF 14A") == []
+
+
+def test_debt_components_without_generic_business_keywords_are_not_dropped():
+    from app.services.extraction.sec.narrative import find_excerpts
+    text = 'Aggregate principal amount of senior notes and $450 million debentures with maturities through 2095.'
+    chunks = find_excerpts(text, business_results=True)
+    assert len(chunks) == 1 and chunks[0]['text'] == text
+    assert chunks[0]['candidate_topics'] == ['debt_details']
