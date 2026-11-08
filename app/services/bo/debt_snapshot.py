@@ -12,6 +12,7 @@ from datetime import date
 from decimal import Decimal
 from html import escape
 import re
+import textwrap
 
 
 def format_date(value):
@@ -54,7 +55,7 @@ def _amount(rows):
     return f'{sum((Decimal(str(v)) for v in values), Decimal(0)) / 1000:,.2f}'
 
 
-def build_snapshot(structure, debt):
+def build_snapshot(structure, debt, *, ticker=None):
     if not structure or not debt:
         return None
     companies = list(structure['companies'].values())
@@ -110,7 +111,7 @@ def build_snapshot(structure, debt):
                      'amount': _amount([(r, r.get('available_facility_limit_m')) for r in limits])})
     if not rows:
         return None
-    return {'entity': name, 'matched': matched, 'borrower': borrower,
+    return {'entity': name, 'ticker': ticker, 'title': f'{ticker} · Debt Snapshot' if ticker else 'Debt Snapshot', 'matched': matched, 'borrower': borrower,
             'rows': rows, 'note': 'Exact entity match' if matched else 'Entity mapping pending',
             'scope_note': 'Co-borrower facilities included' if any(_name(legal_of(r)) != _name(name) for r in scoped_facilities)
                           else 'Recorded borrower obligations',
@@ -125,7 +126,22 @@ def annotate_svg(svg, structure, snapshot):
     canvas = spec['canvas']
     b = snapshot['borrower']['box']
     width = 440
-    height = 78 + (len(snapshot['rows']) - 1) * 50 + (48 if snapshot['rows'][-1]['detail'] else 26)
+    # Reserve separate label/value columns and wrap before placing the card.
+    # Conservative Arial width bounds keep long labels and missing values inside.
+    def lines(value, available, size):
+        return textwrap.wrap(str(value), width=max(1, int(available / (size * .65))),
+                             break_long_words=True, break_on_hyphens=False) or ['']
+    title_lines = lines(snapshot.get('title', 'Debt Snapshot'), width - 36, 21)
+    caption_y = 29 + (len(title_lines) - 1) * 25 + 24
+    rows, cursor = [], caption_y + 29
+    for row in snapshot['rows']:
+        label = lines(row['label'], 260, 18)
+        amount = lines(row['amount'], 128, 18)
+        detail = lines(row['detail'], width - 36, 16) if row['detail'] else []
+        detail_y = cursor + max(len(label), len(amount)) * 22
+        rows.append((cursor, label, amount, detail_y, detail))
+        cursor = detail_y + len(detail) * 20 + 12
+    height = cursor - 12 + 18
     right = b['center_x_px'] + b['width_px'] / 2
     left = b['center_x_px'] - b['width_px'] / 2
     obstacles = [(n['box']['center_x_px'] - n['box']['width_px']/2, n['box']['top_y_px'],
@@ -162,14 +178,15 @@ def annotate_svg(svg, structure, snapshot):
              f'<rect x="{x}" y="{y}" width="{width}" height="{height}" rx="8" class="bo-snapshot-surface"/>']
     def text(dx, dy, value, cls=''):
         parts.append(f'<text x="{x+dx}" y="{y+dy}" class="bo-snapshot-text {cls}">{escape(str(value))}</text>')
-    title = snapshot['entity']
-    text(18, 29, (title if len(title) < 25 else title[:21] + '…') + ' · Debt Snapshot', 'bo-snapshot-title')
-    text(18, 53, f'{format_date(snapshot.get("as_of"))} · US$ Bn, Rounded', 'bo-snapshot-muted')
-    for index, row in enumerate(snapshot['rows']):
-        dy = 82 + index * 50
-        text(18, dy, row['label'])
-        text(width - 18, dy, row['amount'], 'bo-snapshot-value')
-        if row['detail']:
-            text(18, dy+22, row['detail'], 'bo-snapshot-muted')
+    for index, line in enumerate(title_lines):
+        text(18, 29 + index * 25, line, 'bo-snapshot-title')
+    text(18, caption_y, f'{format_date(snapshot.get("as_of"))} · US$ Bn, Rounded', 'bo-snapshot-muted')
+    for baseline, label, amount, detail_y, detail in rows:
+        for index, line in enumerate(label):
+            text(18, baseline + index * 22, line)
+        for index, line in enumerate(amount):
+            text(width - 18, baseline + index * 22, line, 'bo-snapshot-value')
+        for index, line in enumerate(detail):
+            text(18, detail_y + index * 20, line, 'bo-snapshot-muted')
     parts.append('</g>')
     return svg.rsplit('</svg>', 1)[0] + ''.join(parts) + '</svg>', True

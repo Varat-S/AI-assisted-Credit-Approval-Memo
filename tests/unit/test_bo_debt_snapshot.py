@@ -36,7 +36,7 @@ def test_scoped_amounts_priority_mapping_warning_and_no_mutation():
     snapshot = build_snapshot(s, d)
     assert [r['amount'] for r in snapshot['rows']] == ['1.24', '41.12', '7.99']
     assert [r['detail'] for r in snapshot['rows']] == [
-        'Tier 1 · Secured', 'Tier 2 · Guaranteed', '']
+        'Tier 1 · Secured', 'Tier 2 · Guaranteed', 'Subject to borrowing base']
     assert snapshot['excluded_count'] == 1
     assert snapshot['note'] == 'Entity mapping pending'
     assert snapshot['scope_note'] == 'Co-borrower facilities included'
@@ -104,3 +104,27 @@ def test_no_room_falls_back_without_covering_diagram_and_escapes_names():
     snapshot['entity'] = '<script>bad</script>'
     svg, placed = annotate_svg('<svg></svg>', s, snapshot)
     assert placed and '<script>' not in svg and '&lt;script&gt;' in svg
+
+
+def test_ticker_heading_and_wrapped_rows_fit_inside_the_svg_card():
+    from xml.etree import ElementTree as ET
+    s, d = structure('CHS/Community Health Systems, Inc.'), debt()
+    snapshot = build_snapshot(s, d, ticker='CYH')
+    assert snapshot['title'] == 'CYH · Debt Snapshot'
+    snapshot['rows'][0].update(label='Unguaranteed Holding Company Debt Obligations', amount='Not Recorded',
+                               detail='Recorded obligations subject to financing and collateral restrictions')
+    svg, placed = annotate_svg('<svg></svg>', s, snapshot)
+    assert placed
+    root = ET.fromstring(svg)
+    rect = root.find('.//rect');x,y,w,h = [float(rect.get(k)) for k in ['x','y','width','height']]
+    for node in root.findall('.//text'):
+        cls = node.get('class', '')
+        size = 21 if 'bo-snapshot-title' in cls else 16 if 'bo-snapshot-muted' in cls else 18
+        width_bound = len(node.text or '') * size * .65
+        tx,ty = float(node.get('x')),float(node.get('y'))
+        left,right = (tx-width_bound,tx) if 'bo-snapshot-value' in cls else (tx,tx+width_bound)
+        assert x+17 <= left <= right <= x+w-17
+        assert y+size <= ty <= y+h-12
+    assert 'CYH · Debt Snapshot' in svg
+    assert 'CHS/Community' not in ''.join(root.itertext())
+    assert build_snapshot(s,d)['title'] == 'Debt Snapshot'

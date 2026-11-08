@@ -204,7 +204,10 @@ def load_view(session, analysis_run_id, case_id=None):
     loan_ranking = loan_ranking_view(debt)
     if loan_ranking:
         sections[0]['debt_obligations']['evidence']['reconciliation'] = loan_ranking['reconciliation']
-    snapshot = build_snapshot(structure, debt)
+    reporting_entities = [e for e in saved.snapshot.get('entities', []) if e.get('borrower_flag')]
+    tickers = reporting_entities[0].get('tickers', []) if len(reporting_entities) == 1 else []
+    ticker = tickers[0] if len(tickers) == 1 else None
+    snapshot = build_snapshot(structure, debt, ticker=ticker)
     snapshot_placed = False
     if snapshot:
         snapshot['as_of'] = artifact['identity']['as_of_date']
