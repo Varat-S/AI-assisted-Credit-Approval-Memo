@@ -43,7 +43,8 @@ def test_exact_explanation_copy_grouping_no_duplication_and_no_mutation(editoria
     assert entry['evidence']['title']=='Operating costs'
     assert [p['label'] for p in entry['pointers']]==['Finding','Credit Implication','Watch Triggers']
     finding,implication,watch=entry['pointers']
-    assert [p['text'] for p in finding['parts']]==[cost.claim,cost.interpretation['trend']]
+    assert [p['text'] for p in finding['parts']]==[cost.claim]
+    assert any(d['text'] == cost.interpretation['trend'] for d in entry['details'])
     assert [p['text'] for p in implication['parts']]==[cost.credit_mechanism,cost.interpretation['implication'],cost.transmission_mechanism]
     assert [p['text'] for p in watch['parts']]==[cost.interpretation['watch_trigger']]
     assert grouped_findings(list(reversed(entries)),audit,provenance)==groups

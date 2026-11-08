@@ -78,7 +78,7 @@ def grouped_findings(entries, audit, provenance):
         pointers = [
             {'label': 'Finding', 'parts': [{'text': source['claim'],
                 'source_path': f'/hypotheses/records/{index}/claim'},
-                *[d for d in details if d['label'] in {'Magnitude', 'Trend'}]],
+                *[d for d in details if d['label'] == 'Magnitude']],
              'empty_text': ''},
             {'label': 'Credit Implication',
              'parts': [d for d in details if d['label'] in {'Credit explanation', 'Specialist interpretation', 'How the effect transmits'}],
