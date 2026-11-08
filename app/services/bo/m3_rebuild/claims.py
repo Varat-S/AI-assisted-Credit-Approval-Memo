@@ -3,7 +3,7 @@ from datetime import date
 import re
 
 from .contracts import validate_extraction
-from .matching import match_citation, normalized_m3, mapped_text, locate
+from .matching import match_citation, normalized_m3, mapped_text, locate, CANONICAL_BOUNDARY_FRAGMENTS
 
 
 def key(value):
@@ -100,7 +100,7 @@ class ClaimValidator:
                 'source_sha256':self.sources.sha256,'physical_page':self.sources.physical_pages.get(sid,1),
                 'passage_offset':self.sources.passage_offsets.get(sid,0),
                 'span_start':a,'span_end':b,'original_source_text':fragment,
-                'normalized_quote':normalized_m3(fragment),'matching_method':'canonical_boundary_fragments',
+                'normalized_quote':normalized_m3(fragment),'matching_method':CANONICAL_BOUNDARY_FRAGMENTS,
                 'quotation_check':'passed','outcome':'accepted',
                 'page_char_start':self.sources.passage_offsets.get(sid,0)+a,
                 'page_char_end':self.sources.passage_offsets.get(sid,0)+b,

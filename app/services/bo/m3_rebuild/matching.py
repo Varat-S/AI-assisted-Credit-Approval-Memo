@@ -2,6 +2,12 @@
 import re
 import unicodedata
 
+EXACT = 'exact'
+WHITESPACE_TYPOGRAPHY = 'whitespace_typography'
+PDF_WORD_BOUNDARIES = 'pdf_word_boundaries'
+CANONICAL_BOUNDARY_FRAGMENTS = 'canonical_boundary_fragments'
+MATCHING_METHODS = (EXACT, WHITESPACE_TYPOGRAPHY, PDF_WORD_BOUNDARIES, CANONICAL_BOUNDARY_FRAGMENTS)
+
 # Closed vocabulary of ordinary role/operating words; no names, digits or negations.
 # Only boundaries are normalized, never letters, dates, numbers or title content.
 PDF_WORDS = ('Human','Resources','Physician','Services','Finance','Financial',
@@ -59,7 +65,7 @@ def normalized_m3(text):
 def locate(text, quote):
     if not quote.strip():
         return None
-    for method, pdf in [('whitespace_typography',False),('pdf_word_boundaries',True)]:
+    for method, pdf in [(WHITESPACE_TYPOGRAPHY,False),(PDF_WORD_BOUNDARIES,True)]:
         source, mapping=mapped_text(text,pdf=pdf)
         query=mapped_text(quote,pdf=pdf)[0].strip()
         start=source.find(query)
@@ -69,7 +75,7 @@ def locate(text, quote):
             (query[-1].isalnum() and start+len(query)<len(source) and source[start+len(query)].isalnum())):
             continue
         lo,hi=mapping[start],mapping[start+len(query)-1]+1
-        return {'matching_method':'exact' if text[lo:hi]==quote else method,
+        return {'matching_method':EXACT if text[lo:hi]==quote else method,
                 'span_start':lo,'span_end':hi,'original_source_text':text[lo:hi],
                 'normalized_quote':query}
     return None

@@ -1,6 +1,7 @@
 """Authoritative extraction schema and explicit Vertex compatibility transform."""
 from copy import deepcopy
 import jsonschema
+from .matching import MATCHING_METHODS
 
 SCHEMA_VERSION = "m3-management-response-2.1"
 ADAPTER_VERSION = "m3-shared-specialist-2.1"
@@ -147,7 +148,8 @@ def validate_management(payload):
                 'span_start':{'type':'integer'},'span_end':{'type':'integer'},
                 'page_char_start':{'type':'integer'},'page_char_end':{'type':'integer'},
                 'original_source_text':string(),'normalized_quote':string(),
-                'matching_method':{'enum':['exact','whitespace_typography','pdf_word_boundaries']},
+                'matching_method':{'enum':list(MATCHING_METHODS)},
+                'recovery_basis':string(),
                 'outcome':{'const':'accepted'},
             })
             schema['properties']['observations']['items']['properties'].update({

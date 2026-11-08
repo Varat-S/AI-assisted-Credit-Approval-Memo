@@ -183,3 +183,33 @@ def test_boundary_recovery_preserves_real_fragment_ids_and_offsets():
     assert all(sources.pages[q['source_id']][q['span_start']:q['span_end']]==q['original_source_text'] for q in retained)
     assert all(q['page_char_start']==sources.passage_offsets[q['source_id']]+q['span_start'] for q in retained)
     assert not validator.boundary_citations('b','Chief Executive Officer since May 2099.','Alex Sample')
+    # Regression: fragment recovery used to pass admission but fail final artifact
+    # serialization, discarding the whole management section on both attempts.
+    from .responses import with_credit_response
+    payload = with_credit_response({
+        'roster_date': '', 'roster_source_id': '', 'roster_quote': '',
+        'executives': [{'name': 'Alex Sample', 'position': 'Chief Executive Officer',
+            'appointment_date': '2024-05', 'source_id': 'b',
+            'quote': 'Chief Executive Officer since May 2024.', 'prior_internal_roles': [],
+            'external_recruitment_quote': '', 'external_source_id': ''}],
+    })
+    artifact = assess_claims(payload, sources, reviewer=FixtureReviewer())
+    assert any(c['matching_method'] == 'canonical_boundary_fragments' for c in artifact['citations'])
+    assert validate_management(artifact) == artifact
+
+
+def test_management_matching_method_contract_is_closed_and_shared():
+    import pytest
+    import jsonschema
+    from app.services.bo.m3_rebuild.matching import MATCHING_METHODS
+    payload, sources = synthetic()
+    artifact = assess_claims(payload, sources, reviewer=FixtureReviewer())
+    assert artifact['citations']
+    for method in MATCHING_METHODS:
+        candidate = deepcopy(artifact)
+        candidate['citations'][0]['matching_method'] = method
+        validate_management(candidate)
+    candidate = deepcopy(artifact)
+    candidate['citations'][0]['matching_method'] = 'unknown_matching_method'
+    with pytest.raises(jsonschema.ValidationError):
+        validate_management(candidate)
