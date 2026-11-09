@@ -8,6 +8,86 @@ escalation decisions explainable, and humans resolve material judgment calls,
 all over an append-only audit substrate with versioned prompts, models, and
 configuration.
 
+## Quick start: run the full credit memo in your browser
+
+The web app is the main way to produce a complete credit memo: it runs the
+Business Overview, the Financial Overview and Risk Mitigation & Structuring (RMS)
+on one 10-K, then shows the assembled memo with a PDF download. The CLI command
+`run-bo-fo` runs the same pipeline, but it does not build the combined memo view
+or PDF.
+
+**1. Start it** (from the repository folder):
+
+| Platform | Command |
+|---|---|
+| Windows | `.\run.ps1`, or double-click `run.bat` |
+| macOS / Linux | `./run.sh` |
+
+The script installs `uv` if it is missing, installs the locked dependencies into
+`.venv`, runs an offline setup check (no model call), starts the server and opens
+<http://127.0.0.1:8001/analysis/new>. Stop the server with `Ctrl+C`.
+Options: `-Port 8010` / `--port 8010`, `-SkipInstall` / `--skip-install`,
+`-NoBrowser` / `--no-browser`.
+
+**2. First run only: fill in `.env`.** If `.env` is missing, the script copies
+`.env.example` to `.env` and stops. Set:
+
+* `SEC_USER_AGENT`: your name and email, which SEC EDGAR requires for 10-K downloads.
+* `GOOGLE_CLOUD_PROJECT` (with `gcloud auth application-default login`), or
+  `VERTEX_API_KEY`.
+* `VERTEX_MODEL_NARROW` (and optionally `VERTEX_MODEL_ORCHESTRATOR` /
+  `VERTEX_MODEL_CHALLENGE`): Gemini models your project can use.
+
+Then run the script again. If the setup check fails, the app still starts so you
+can view earlier runs, but new analyses cannot run until the check passes.
+
+**3. Run an analysis** on the **Set up your analysis** page (`/analysis/new`):
+
+1. **Hospital company**: pick a saved 10-K, or use **Add a 10-K** to find and
+   download one from SEC EDGAR by ticker, or upload the filing's files. Filings
+   are saved under `edgar_filings/<TICKER> 10-K FY<year>/`. You can also add an
+   optional corporate-structure JSON (used by Module 3) and supporting files.
+2. **Analysis scope**: *Business + Financial Overview* (the full memo, including
+   RMS), *Business Overview Only*, or *Financial Overview Only*.
+3. **Validation safeguards**: *Standard* (recommended) or *Exploratory*.
+   Exploratory output cannot be given final approval.
+4. Click **Run Analysis**. Live runs call the configured model and incur cost.
+   The **Execution** page shows progress and has a **Stop Analysis** button.
+
+**4. Read the results.** When the run finishes, use the analysis tabs:
+
+| Tab | URL | Contents |
+|---|---|---|
+| Memo | `/analysis/<job>/review` | the assembled credit memo; **Download PDF** (`/analysis/<job>/memo.pdf`) |
+| Business Overview | `/cases/<CASE>/bo.html?...` | the four-section BO memo with matched filing evidence |
+| Financial Overview | `/cases/<CASE>/fo.html?...` | ratios, scoring, and measures escalated to an analyst |
+| RMS | `/analysis/<job>/rms` | debt capacity, or a verdict on a requested loan amount |
+| Audit | `/analysis/<job>/audit` | validation and provenance record |
+
+<http://127.0.0.1:8001/credit-memos> lists every analysis you have run.
+
+### Where the outputs are
+
+The web app keeps its database and files apart from CLI runs:
+
+| What | Location |
+|---|---|
+| Downloaded or uploaded 10-Ks | `edgar_filings/<folder>/` |
+| Database (cases, runs, audit log) | `data/browser_demo.db`; job status in `data/browser_demo.db.jobs.sqlite` |
+| Business Overview artifacts | `output/browser_demo/bo/<CASE_ID>/<run_id>/`: `business_overview.html/.json`, `business_overview_four_section.v1.json`, `audit_report.html/.json`, `handoff.json` |
+| Management (Module 3) artifacts | `output/browser_demo/m3_rebuild/<CASE_ID>/<run_id>/` |
+| Financial Overview artifacts | `output/browser_demo/fo/<CASE_ID>/<run_id>/`: `financial_overview.html/.json`, `financial_memo.html/.json`, `precheck_transcript.json` |
+| RMS artifacts | `output/browser_demo/rms/<CASE_ID>/<run_id>/rms.json` |
+| Credit memo PDF | generated on demand by **Download PDF** and saved to your browser's download folder as `<CASE_ID>_<job>_credit_memo.pdf` |
+
+`<CASE_ID>` defaults to `TICKER_FY<year>` (for example `HCA_FY2025`). The PDF
+uses a locally installed Edge or Chrome (headless print) when one is available,
+otherwise `xhtml2pdf`, which the launcher installs. `data/`, `output/` and
+`edgar_filings/` are local and not committed.
+
+To start the server without the launcher, after the dependencies are installed:
+`uv run python -m app.preview --port 8001 --open`.
+
 The default browser test case uses the three supplied Delta PDFs (earnings
 release, non-GAAP supplement and the PDF supplied under the 10-K filename), with
 the Excel alternative excluded. Open `/inspect` to prepare or rerun it without
@@ -233,6 +313,23 @@ python -m pytest -q
 existing pip environment, `pip install -e ".[dev]"` remains available but resolves
 the declared version ranges rather than the lock. Optional `ocr` and `pdf`
 extras require system dependencies; the default setup produces JSON and HTML.
+
+Without uv, `requirements.txt` gives the same pinned versions as `uv.lock` for
+the runtime plus the `vertex` and `pdf` extras (no test tools):
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+python -m app.preview --port 8001 --open
+```
+
+`requirements.txt` is generated from the lock. After changing dependencies in
+`pyproject.toml`, run `uv lock` and then regenerate it:
+
+```powershell
+uv export --locked --format requirements-txt --no-hashes --extra vertex --extra pdf --no-emit-project -o requirements.txt
+```
 
 For the live browser programme on a fresh clone (no shared database required):
 

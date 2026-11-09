@@ -57,6 +57,28 @@ def seed_demo(database: Path, output: Path) -> None:
         engine.dispose()
 
 
+def _open_when_ready(base_url: str, path: str, timeout: float = 60.0) -> None:
+    """Open ``base_url + path`` in the default browser once ``/health`` answers."""
+    import threading
+    import time
+    import urllib.request
+    import webbrowser
+
+    def wait_then_open() -> None:
+        deadline = time.monotonic() + timeout
+        while time.monotonic() < deadline:
+            try:
+                with urllib.request.urlopen(base_url + "/health", timeout=2):
+                    break
+            except OSError:
+                time.sleep(0.5)
+        else:
+            return
+        webbrowser.open(base_url + "/" + path.lstrip("/"))
+
+    threading.Thread(target=wait_then_open, daemon=True).start()
+
+
 def main(argv=None) -> None:
     parser = argparse.ArgumentParser(
         description="Local browser preview of saved credit memo cases."
@@ -73,6 +95,13 @@ def main(argv=None) -> None:
         "--seed-demo",
         action="store_true",
         help="Create full, missing-data and conflicting-source synthetic drafts.",
+    )
+    parser.add_argument(
+        "--open",
+        nargs="?",
+        const="/analysis/new",
+        metavar="PATH",
+        help="Open the browser at PATH (default /analysis/new) once the server answers /health.",
     )
     args = parser.parse_args(argv)
     args.database.parent.mkdir(parents=True, exist_ok=True)
@@ -97,6 +126,8 @@ def main(argv=None) -> None:
     os.environ["DEBUG"] = "false"
     import uvicorn
 
+    if args.open:
+        _open_when_ready(f"http://127.0.0.1:{args.port}", args.open)
     uvicorn.run("app.main:app", host="127.0.0.1", port=args.port)
 
 
