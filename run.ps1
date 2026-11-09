@@ -6,7 +6,8 @@
     1. Finds uv outside the project's .venv (installs uv 0.12.23 if missing).
     2. Installs the locked dependencies into .venv (runtime + Vertex + PDF export).
     3. Creates .env from .env.example on first run and stops so you can fill it in.
-    4. Runs the offline setup check (no model call).
+    4. Runs the offline setup check (no model call), then creates data\browser_demo.db on first run
+       or migrates an existing one.
     5. Starts the web app and opens http://127.0.0.1:<Port>/analysis/new.
 
     Stop the server with Ctrl+C.
@@ -90,6 +91,19 @@ if (-not (Test-Path '.env')) {
 & $uvExe @uvPre run --no-sync python -m app.doctor
 if ($LASTEXITCODE -ne 0) {
     Write-Host 'Setup check failed (see above). The app will start, but new analyses will not run until it passes.' -ForegroundColor Yellow
+}
+
+# 4b. Analysis database: create it on first run, otherwise bring an older schema up to date.
+#     The web app's pre-run check only verifies the database and never creates or migrates it.
+$database = 'data\browser_demo.db'
+if (-not (Test-Path -LiteralPath $database)) {
+    Write-Host "Creating analysis database $database..." -ForegroundColor Cyan
+    New-Item -ItemType Directory -Force 'data' | Out-Null
+    & $uvExe @uvPre run --no-sync python -c "from pathlib import Path; from app.models.base import create_engine_and_session, init_db; e, _ = create_engine_and_session('sqlite:///' + Path(r'$database').resolve().as_posix()); init_db(e); e.dispose()"
+    if ($LASTEXITCODE -ne 0) { Fail 'Could not create the analysis database (see above).' }
+} else {
+    & $uvExe @uvPre run --no-sync python -m app.migrate --database $database
+    if ($LASTEXITCODE -ne 0) { Fail 'Could not update the analysis database schema (see above). Close other copies of the app and retry.' }
 }
 
 # 5. Web app
